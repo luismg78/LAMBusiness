@@ -1,0 +1,47 @@
+﻿@model LAMBusiness.Shared.Catalogo.Municipio
+
+@{
+    ViewData["Title"] = "Municipios";
+}
+
+<div class="modal-content box-responsive box-shadow border-0 m-auto">
+    <div class="modal-header pb-0">
+        <div>
+            <h3 class="modal-title" id="exampleModalLabel">Municipios</h3>
+            <ul class="breadcrumb bg-transparent p-0 small">
+                <li class="breadcrumb-item">Catálogo</li>
+                <li class="breadcrumb-item">Municipios</li>
+                <li class="breadcrumb-item active">Detalle</li>
+            </ul>
+        </div>
+        <a asp-action="Index" asp-controller="Municipios" class="close"><span>&times;</span></a>
+    </div>
+    <div class="modal-body py-4">
+        <dl class="row px-md-3">
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Estados.EstadoDescripcion)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Estados.EstadoDescripcion)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.MunicipioClave)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.MunicipioClave)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.MunicipioDescripcion)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.MunicipioDescripcion)
+            </dd>
+        </dl>
+    </div>
+    <div class="modal-footer justify-content-start">
+        <div class="px-md-3">
+            <a asp-action="Edit" asp-route-id="@Model.MunicipioID" class="btn btn-primary">Editar</a>
+            <a asp-action="Index" class="btn btn-outline-secondary">Regresar</a>
+        </div>
+    </div>
+</div>

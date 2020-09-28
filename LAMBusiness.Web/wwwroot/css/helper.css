@@ -1,0 +1,107 @@
+﻿/*Loader*/
+.loader {align-items:center;animation-delay:1s;display:flex;height:60px;
+         justify-content:center;overflow:hidden;}
+
+.item-1 {align-items:center;background:#f583a1;border-radius:50%;background-color:#eed968;
+         display:flex;height:20px;justify-content:center;margin:7px;width:20px;}
+
+@keyframes scale {
+    0% {transform: scale(1);}
+    50%, 75% {transform: scale(2.5);}
+    78%, 100% {opacity: 0;}
+}
+
+.item-1:before {animation:scale 2s infinite cubic-bezier(0, 0, 0.49, 1.02);animation-delay:200ms;
+                background-color:#eed968;border-radius:50%;content:'';height:20px;opacity:0.7;
+                transition:0.5s all ease;transform:scale(1);width:20px;}
+
+.item-2 {align-items: center;background: #f583a1;background-color: #eece68;border-radius: 50%;
+         display: flex;height: 20px;justify-content: center;margin: 7px;width: 20px;}
+
+@keyframes scale {
+    0% {transform: scale(1);}
+    50%, 75% {transform: scale(2.5);}
+    78%, 100% {opacity: 0;}
+}
+
+.item-2:before {animation: scale 2s infinite cubic-bezier(0, 0, 0.49, 1.02);animation-delay: 400ms;
+                border-radius: 50%;background-color: #eece68;content: '';height: 20px;opacity: 0.7;
+                transition: 0.5s all ease;transform: scale(1);width: 20px;}
+
+.item-3 {align-items: center;background: #f583a1;background-color: #eec368;border-radius: 50%;
+         display: flex;height: 20px;justify-content: center;margin: 7px;width: 20px;}
+
+@keyframes scale {
+    0% {transform: scale(1);}
+    50%, 75% {transform: scale(2.5);}
+    78%, 100% {opacity: 0;}
+}
+
+.item-3:before {animation: scale 2s infinite cubic-bezier(0, 0, 0.49, 1.02);animation-delay: 600ms;
+                background-color: #eec368;border-radius: 50%;content: '';height: 20px;opacity: 0.7;
+                transition: 0.5s all ease;transform: scale(1);width: 20px;}
+
+.item-4 {align-items: center;background: #f583a1;background-color: #eead68;border-radius: 50%;
+         display: flex;height: 20px;justify-content: center;margin: 7px;width: 20px;}
+
+@keyframes scale {
+    0% {transform: scale(1);}
+    50%, 75% {transform: scale(2.5);}
+    78%, 100% {opacity: 0;}
+}
+
+.item-4:before {animation: scale 2s infinite cubic-bezier(0, 0, 0.49, 1.02);animation-delay: 800ms;
+                background-color: #eead68;border-radius: 50%;content: '';height: 20px;opacity: 0.7;
+                transition: 0.5s all ease;transform: scale(1);width: 20px;}
+
+.item-5 {align-items: center;background: #f583a1;background-color: #ee8c68;border-radius: 50%;
+         display: flex;height: 20px;justify-content: center;margin: 7px;width: 20px;}
+
+@keyframes scale {
+    0% {transform: scale(1);}
+    50%, 75% {transform: scale(2.5);}
+    78%, 100% {opacity: 0;}
+}
+
+.item-5:before {animation: scale 2s infinite cubic-bezier(0, 0, 0.49, 1.02);animation-delay: 1000ms;
+                background-color: #ee8c68;border-radius: 50%;content: '';height: 20px;opacity: 0.7;
+                transition: 0.5s all ease;transform: scale(1);width: 20px;}
+
+/*spinner*/
+.spinner { -webkit-animation:spin 2s linear infinite;animation:spin 2s linear infinite;
+          border:5px solid #d9dfe4;border-radius:50%;border-top:5px solid #3498db;
+          height:25px;width:25px;}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/*Placeholder*/
+/* WebKit, Blink, Edge */
+::-webkit-input-placeholder {color:#555;font-weight:300;font-size:0.9em;}
+/* Mozilla Firefox 4 to 18 */
+:-moz-placeholder {color:#555;font-weight:300;font-size:0.9em;opacity:1;}
+/* Mozilla Firefox 19+ */
+::-moz-placeholder {color:#555;font-weight:300;font-size:0.9em;opacity:1;}
+/* Internet Explorer 10-11 */
+:-ms-input-placeholder {color:#555;font-weight:300;font-size:0.9em;}
+/* Microsoft Edge */
+::-ms-input-placeholder {color:#555;font-weight:300;font-size:0.9em;}
+/* Most modern browsers support this now. */
+::placeholder {color:#555;font-weight:300;font-size:0.9em;}
+/*::placeholder,::-ms-input-placeholder,::-webkit-input-placeholder,:-moz-placeholder, 
+::-moz-placeholder, :-ms-input-placeholder{color:#ccc!important;font-weight:100!important;font-size:0.8em!important;text-transform:capitalize!important;}
+::-moz-selection, ::selection {background:#ddd;color:#ec7c26;text-shadow:none;}*/
+
+/*ScrollBar*/
+::-webkit-scrollbar{width:8px;}
+::-webkit-scrollbar-track{background:#ccc;}
+::-webkit-scrollbar-thumb{background:#0062ae;}
+    ::-webkit-scrollbar-thumb:hover{background:#0062ae;}

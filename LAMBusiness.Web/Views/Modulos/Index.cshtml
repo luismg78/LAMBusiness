@@ -1,0 +1,63 @@
+﻿@model IEnumerable<LAMBusiness.Web.Models.Entities.Modulo>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Descripcion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Activo)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Descripcion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Activo)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ModuloID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ModuloID">Details</a> |
+                    @*<a asp-action="Delete" asp-route-id="@item.ModuloID">Delete</a>*@
+                    <a href="#" data-id="@item.ModuloID" class="deleteConfirm" data-toggle="modal" data-target="#deleteConfirm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<partial name="_DeleteConfirmDialog" />
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var itemToDelete;
+
+            $('.deleteConfirm').click((e) => {
+                itemToDelete = e.currentTarget.dataset.id;
+            });
+
+            $("#DeleteYesButton").click((e) => {
+                window.location.href = '@Url.Action("Delete", "Modulos")' + '/' + itemToDelete;
+            });
+    	});
+    </script>
+}

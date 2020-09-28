@@ -1,0 +1,45 @@
+﻿@model LAMBusiness.Shared.Catalogo.Puesto
+
+@{
+    ViewData["Title"] = "Puestos";
+}
+
+<form asp-action="Edit">
+    <div class="modal-content border-0 box-shadow box-responsive m-auto">
+        <div class="modal-header pb-0">
+            <div>
+                <h3 class="modal-title" id="exampleModalLabel">Puestos</h3>
+                <ul class="breadcrumb bg-transparent p-0 small">
+                    <li class="breadcrumb-item">Catálogo</li>
+                    <li class="breadcrumb-item">Puestos</li>
+                    <li class="breadcrumb-item active">Editar Registro</li>
+                </ul>
+            </div>
+            <a asp-action="Index" asp-controller="Puestos" class="close"><span>&times;</span></a>
+        </div>
+        <div class="modal-body py-4">
+            <div class="row px-md-3">
+                <div class="col">
+                    <input type="hidden" asp-for="PuestoID" />
+                    <div class="form-group">
+                        <label asp-for="PuestoNombre" class="control-label"></label>
+                        <input asp-for="PuestoNombre" class="form-control" />
+                        <span asp-validation-for="PuestoNombre" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PuestoDescripcion" class="control-label"></label>
+                        <input asp-for="PuestoDescripcion" class="form-control" />
+                        <span asp-validation-for="PuestoDescripcion" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer justify-content-between">
+            <div class="px-md-3">
+                <input type="submit" value="Guardar" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-outline-secondary">Regresar</a>
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        </div>
+    </div>
+</form>

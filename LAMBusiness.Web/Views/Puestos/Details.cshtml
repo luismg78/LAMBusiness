@@ -1,0 +1,47 @@
+﻿@model LAMBusiness.Shared.Catalogo.Puesto
+
+@{
+    ViewData["Title"] = "Puestos";
+}
+
+<div class="modal-content box-responsive box-shadow border-0 m-auto">
+    <div class="modal-header pb-0">
+        <div>
+            <h3 class="modal-title" id="exampleModalLabel">Puestos</h3>
+            <ul class="breadcrumb bg-transparent p-0 small">
+                <li class="breadcrumb-item">Catálogo</li>
+                <li class="breadcrumb-item">Puestos</li>
+                <li class="breadcrumb-item active">Detalle</li>
+            </ul>
+        </div>
+        <a asp-action="Index" asp-controller="Puestos" class="close"><span>&times;</span></a>
+    </div>
+    <div class="modal-body py-4">
+        <dl class="row px-md-3 ">
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.PuestoNombre)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.PuestoNombre)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.PuestoDescripcion)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.PuestoDescripcion)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Colaboradores)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Colaboradores.Count)
+            </dd>
+        </dl>
+    </div>
+    <div class="modal-footer justify-content-start">
+        <div class="px-md-3">
+            <a asp-action="Edit" asp-route-id="@Model.PuestoID" class="btn btn-primary">Editar</a>
+            <a asp-action="Index" class="btn btn-outline-secondary">Regresar</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,51 @@
+﻿@model LAMBusiness.Shared.Dashboard.Catalogo
+
+@{
+    ViewData["Title"] = "Catálogo";
+}
+
+<div class="pb-0">
+    <div>
+        <h3 class="modal-title" id="exampleModalLabel">Catálogos</h3>
+        <ul class="breadcrumb bg-transparent p-0 small">
+            <li class="breadcrumb-item">Menú</li>
+            <li class="breadcrumb-item active">Catálogo</li>
+        </ul>
+    </div>
+    <!--Cambiar link-->
+    @*<a asp-action="Index" asp-controller="Catalogo" class="close"><span>&times;</span></a>*@
+</div>
+<div class="modal-body py-4">
+    <div class="row">
+        <div class="col-xl-4 col-md-6">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <i class="fas fa-globe-americas display-4 text-success"></i>
+                    <h4 class="mt-4"><span class="text-success">@Model.Estados</span> Estados</h4>
+                    <p class="mb-3">Solo se permiten ediciones</p>
+                    <a asp-action="Index" asp-controller="Estados" class="badge badge-success badge-pill px-3 py-2">ir a la página</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-6">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <i class="fas fa-globe-americas display-4 text-warning"></i>
+                    <h4 class="mt-4"><span class="text-warning">@Model.Municipios</span> Municipios</h4>
+                    <p class="mb-3">Solo se permiten ediciones</p>
+                    <a asp-action="Index" asp-controller="Municipios" class="badge badge-warning badge-pill px-3 py-2">ir a la página</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-6">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-cog display-4 text-primary"></i>
+                    <h4 class="mt-4"><span class="text-primary">@Model.Puestos</span> Puestos</h4>
+                    <p class="mb-3">Puestos de los colaboradores</p>
+                    <a asp-action="Index" asp-controller="Puestos" class="badge badge-primary badge-pill px-3 py-2">ir a la página</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

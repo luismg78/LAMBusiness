@@ -1,26 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using LAMBusiness.Web.Models;
-
-namespace LAMBusiness.Web.Controllers
+﻿namespace LAMBusiness.Web.Controllers
 {
+    using System.Diagnostics;
+    using LAMBusiness.Web.Data;
+    using LAMBusiness.Web.Helpers;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+    using Models;
+    using Models.ViewModels;
+
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly DataContext _context;
+        private readonly ICriptografiaHelper _criptografia;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(DataContext context, ICriptografiaHelper criptografia)
         {
-            _logger = logger;
+            _context = context;
+            _criptografia = criptografia;
         }
 
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult SignIn()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult SignIn([Bind("Email, Password")] InicioSesionViewModel inicioSesionViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var pwd = _criptografia.Encrypt(inicioSesionViewModel.Password);
+                if(inicioSesionViewModel.Email.Trim().ToLower() != "luismg78@gmail.com")
+                {
+                    ModelState.AddModelError(string.Empty, "Credenciales Incorrectas, verifique");
+                    return View(inicioSesionViewModel);
+                }
+                return View(nameof(Privacy));
+            }
+            ModelState.AddModelError(string.Empty, "Credenciales Incorrectas");
+            return View(inicioSesionViewModel);
         }
 
         public IActionResult Privacy()
