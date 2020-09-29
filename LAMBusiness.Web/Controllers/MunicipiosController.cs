@@ -21,8 +21,11 @@
 
         public IActionResult Index()
         {
-            var dataContext = _context.Municipios.Include(m => m.Estados);
-            return View(dataContext);
+            var municipios = _context.Municipios
+                .Include(m => m.Estados)
+                .OrderBy(m => m.EstadoID)
+                .ThenBy(m => m.MunicipioDescripcion);
+            return View(municipios);
         }
 
         public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip) {
@@ -68,7 +71,7 @@
 
         }
         
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -78,27 +81,13 @@
             var municipio = await _context.Municipios
                 .Include(m => m.Estados)
                 .FirstOrDefaultAsync(m => m.MunicipioID == id);
+
             if (municipio == null)
             {
                 return NotFound();
             }
 
-            return View(municipio);
-        }
-
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var municipio = await _context.Municipios.FindAsync(id);
-            if (municipio == null)
-            {
-                return NotFound();
-            }
-            ViewData["EstadoID"] = new SelectList(_context.Estados, "EstadoID", "EstadoDescripcion", municipio.EstadoID);
+            //ViewData["EstadoID"] = new SelectList(_context.Estados, "EstadoID", "EstadoDescripcion", municipio.EstadoID);
             return View(municipio);
         }
 
@@ -111,11 +100,17 @@
                 return NotFound();
             }
 
+            var municipioUpdate = await _context.Municipios
+                        .Include(m => m.Estados)
+                        .FirstOrDefaultAsync(m => m.MunicipioID == municipio.MunicipioID);
+
             if (ModelState.IsValid)
             {
+                
+                municipioUpdate.MunicipioDescripcion = municipio.MunicipioDescripcion.Trim().ToUpper();
                 try
                 {
-                    _context.Update(municipio);
+                    _context.Update(municipioUpdate);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -131,8 +126,9 @@
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EstadoID"] = new SelectList(_context.Estados, "EstadoID", "EstadoDescripcion", municipio.EstadoID);
-            return View(municipio);
+            
+            //ViewData["EstadoID"] = new SelectList(_context.Estados, "EstadoID", "EstadoDescripcion", municipio.EstadoID);
+            return View(municipioUpdate);
         }
 
         private bool MunicipioExists(int id)

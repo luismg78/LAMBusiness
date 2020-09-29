@@ -1,35 +1,30 @@
-﻿@model LAMBusiness.Shared.Catalogo.Puesto
+﻿@model LAMBusiness.Shared.Catalogo.Genero
 
 @{
-    ViewData["Title"] = "Puestos";
+    ViewData["Title"] = "Géneros";
 }
 
 <form asp-action="Edit">
     <div class="modal-content border-0 box-shadow box-responsive m-auto">
         <div class="modal-header pb-0">
             <div>
-                <h3 class="modal-title" id="exampleModalLabel">Puestos</h3>
+                <h3 class="modal-title" id="exampleModalLabel">Géneros</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
                     <li class="breadcrumb-item">Catálogo</li>
-                    <li class="breadcrumb-item">Puestos</li>
+                    <li class="breadcrumb-item">Géneros</li>
                     <li class="breadcrumb-item active">Editar Registro</li>
                 </ul>
             </div>
-            <a asp-action="Index" asp-controller="Puestos" class="close"><span>&times;</span></a>
+            <a asp-action="Index" asp-controller="Generos" class="close"><span>&times;</span></a>
         </div>
         <div class="modal-body py-4">
             <div class="row px-md-3">
                 <div class="col">
-                    <input type="hidden" asp-for="PuestoID" />
+                    <input type="hidden" asp-for="GeneroID" />
                     <div class="form-group">
-                        <label asp-for="PuestoNombre" class="control-label"></label>
-                        <input asp-for="PuestoNombre" class="form-control" />
-                        <span asp-validation-for="PuestoNombre" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="PuestoDescripcion" class="control-label"></label>
-                        <input asp-for="PuestoDescripcion" class="form-control" />
-                        <span asp-validation-for="PuestoDescripcion" class="text-danger"></span>
+                        <label asp-for="GeneroDescripcion" class="control-label"></label>
+                        <input asp-for="GeneroDescripcion" class="form-control" />
+                        <span asp-validation-for="GeneroDescripcion" class="text-danger"></span>
                     </div>
                 </div>
             </div>

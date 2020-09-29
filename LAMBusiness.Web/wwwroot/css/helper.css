@@ -69,7 +69,7 @@
 
 /*spinner*/
 .spinner { -webkit-animation:spin 2s linear infinite;animation:spin 2s linear infinite;
-          border:5px solid #d9dfe4;border-radius:50%;border-top:5px solid #3498db;
+          border:5px solid #d9dfe4;border-radius:50%;border-top:5px solid #ff4152;
           height:25px;width:25px;}
 
 /* Safari */
@@ -103,5 +103,5 @@
 /*ScrollBar*/
 ::-webkit-scrollbar{width:8px;}
 ::-webkit-scrollbar-track{background:#ccc;}
-::-webkit-scrollbar-thumb{background:#0062ae;}
-    ::-webkit-scrollbar-thumb:hover{background:#0062ae;}
+::-webkit-scrollbar-thumb{background:#ff4152;}
+    ::-webkit-scrollbar-thumb:hover{background:#ff4152;}

@@ -27,25 +27,34 @@
                 </div>
             </div>
             <div class="col-3 col-md-4 text-right">
-                <p><a asp-action="Create" class="btn btn-primary"><i class="fas fa-plus"></i><span class="d-none d-md-inline-block ml-2">Nuevo Registro</span></a></p>
+                <p><a asp-action="Create" class="btn btn-base"><i class="fas fa-plus"></i><span class="d-none d-md-inline-block ml-2">Nuevo Registro</span></a></p>
             </div>
         </div>
         <div>
-            <div class="border-bottom font-weight-bold px-3 py-2 text-uppercase">
-                @Html.DisplayNameFor(model => model.PuestoDescripcion)
+            <div class="row px-md-3 font-weight-bold text-uppercase">
+                <div class="border-bottom col-12 px-3 py-2">
+                    @Html.DisplayNameFor(model => model.PuestoDescripcion)
+                </div>
             </div>
             <div class="row px-md-3" id="dRows" data-charging="0" data-rows-next="1">
                 @foreach (var item in Model.Take(50))
                 {
-                    <div class="border-bottom col-7 col-md-9 px-3 py-2 text-truncate">
+                    <div class="border-bottom col-8 px-3 py-2 text-truncate">
                         <span class="text-dark">@Html.DisplayFor(modelItem => item.PuestoNombre)</span>
-                        <small class="d-block d-md-inline-block text-muted">Colaboradores: @Html.DisplayFor(modelItem => item.Colaboradores.Count)</small>
+                        <small class="d-block text-muted">Colaboradores asignados: @Html.DisplayFor(modelItem => item.Colaboradores.Count)</small>
                         <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.PuestoDescripcion)</small>
                     </div>
-                    <div class="border-bottom col-5 col-md-3 px-3 py-2 text-right">
-                        <a asp-action="Details" asp-route-id="@item.PuestoID" class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="ver detalle"><i class="fa fa-file-alt"></i></a>
-                        <a asp-action="Edit" asp-route-id="@item.PuestoID" class="btn-icon text-primary rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro"><i class="fa fa-edit"></i></a>
-                        <a href="#" data-id="@item.PuestoID" class="btn-icon deleteConfirm text-danger rounded-circle" data-toggle="modal" data-target="#deleteConfirm" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro"><i class="fa fa-trash"></i></a>
+                    <div class="border-bottom col-4 px-3 py-2 text-right">
+                        <a asp-action="Edit" asp-route-id="@item.PuestoID" class="text-decoration-none">
+                            <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
+                                <i class="fa fa-edit"></i>
+                            </div>
+                        </a>
+                        <a href="#" data-id="@item.PuestoID" class="deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
+                            <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
+                                <i class="fa fa-trash"></i>
+                            </div>
+                        </a>
                     </div>
                 }
             </div>

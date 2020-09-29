@@ -19,11 +19,31 @@
         {
             var catalogo = new Catalogo()
             {
+                Generos = GetCountGeneros(),
+                EstadosCiviles = GetCountEstadosCiviles(),
                 Estados = GetCountEstados(),
                 Municipios = GetCountMunicipios(),
-                Puestos = GetCountPuestos()
+                Productos = GetCountProductos(),
+                Puestos = GetCountPuestos(),
+                TasasImpuestos = GetCountTasasImpuestos(),
+                Unidades = GetCountUnidades()
             };
             return View(catalogo);
+        }
+        
+        private int GetCountGeneros()
+        {
+            return _context.Generos.Count();
+        }
+
+        private int GetCountEstadosCiviles()
+        {
+            return _context.EstadosCiviles.Count();
+        }
+
+        private int GetCountProductos()
+        {
+            return _context.Productos.Count();
         }
 
         private int GetCountPuestos()
@@ -39,6 +59,16 @@
         private int GetCountMunicipios()
         {
             return _context.Municipios.Count();
+        }
+
+        private int GetCountTasasImpuestos()
+        {
+            return _context.TasasImpuestos.Count();
+        }
+
+        private int GetCountUnidades()
+        {
+            return _context.Unidades.Count();
         }
     }
 }

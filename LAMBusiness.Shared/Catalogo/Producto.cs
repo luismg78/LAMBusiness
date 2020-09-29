@@ -44,25 +44,25 @@
 
         [Column(TypeName = "decimal(18,4)")]
         [DisplayFormat(DataFormatString = "${0:N2}", ApplyFormatInEditMode = false)]
-        public decimal Existencia { get; set; }
+        public decimal? Existencia { get; set; }
 
         [Column(TypeName = "decimal(18,4)")]
         [Display(Name = "Precio (Costo)")]
         [DisplayFormat(DataFormatString = "${0:C2}", ApplyFormatInEditMode = false)]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public decimal PrecioCosto { get; set; }
+        public decimal? PrecioCosto { get; set; }
 
         [Column(TypeName = "decimal(18,4)")]
         [Display(Name = "Precio (Venta)")]
         [DisplayFormat(DataFormatString = "${0:C2}", ApplyFormatInEditMode = false)]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public decimal PrecioVenta { get; set; }
+        public decimal? PrecioVenta { get; set; }
 
         [Column(TypeName = "decimal(18,4)")]
         [Display(Name = "Existencia Máxima")]
         [DisplayFormat(DataFormatString = "${0:N2}", ApplyFormatInEditMode = false)]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public decimal ExistenciaMaxima { get; set; }
+        public decimal? ExistenciaMaxima { get; set; }
 
         public bool Activo { get; set; }
     }

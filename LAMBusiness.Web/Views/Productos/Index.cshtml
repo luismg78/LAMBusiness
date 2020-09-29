@@ -1,16 +1,16 @@
-﻿@model IEnumerable<LAMBusiness.Shared.Catalogo.Estado>
+﻿@model IEnumerable<LAMBusiness.Shared.Catalogo.Producto>
 
 @{
-    ViewData["Title"] = "Estados";
+    ViewData["Title"] = "Productos";
 }
 
 <div class="modal-content border-0 box-shadow">
     <div class="modal-header pb-0">
         <div>
-            <h3 class="modal-title" id="exampleModalLabel">Estados</h3>
+            <h3 class="modal-title" id="exampleModalLabel">Productos</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
                 <li class="breadcrumb-item">Catálogo</li>
-                <li class="breadcrumb-item">Estados</li>
+                <li class="breadcrumb-item">Productos</li>
                 <li class="breadcrumb-item active">@Model.Count() Registro(s)</li>
             </ul>
         </div>
@@ -26,27 +26,33 @@
                     </div>
                 </div>
             </div>
+            <div class="col-3 col-md-4 text-right">
+                <p><a asp-action="Create" class="btn btn-base"><i class="fas fa-plus"></i><span class="d-none d-md-inline-block ml-2">Nuevo Registro</span></a></p>
+            </div>
         </div>
         <div>
             <div class="row px-md-3 font-weight-bold text-uppercase">
                 <div class="border-bottom col-12 px-3 py-2">
-                    @Html.DisplayNameFor(model => model.EstadoDescripcion)
+                    @Html.DisplayNameFor(model => model.ProductoDescripcion)
                 </div>
             </div>
             <div class="row px-md-3" id="dRows" data-charging="0" data-rows-next="1">
                 @foreach (var item in Model.Take(50))
                 {
-                    <div class="border-bottom col-9 px-3 py-2 text-truncate">
-                        <span class="text-dark">@Html.DisplayFor(modelItem => item.EstadoDescripcion)</span>
-                        <div class="d-block">
-                            <small class="d-block d-md-inline-block text-muted mr-md-2">Clave: @Html.DisplayFor(modelItem => item.EstadoClave)</small>
-                            <small class="d-block d-md-inline-block text-muted">Municipios: @Html.DisplayFor(modelItem => item.Municipios.Count)</small>
-                        </div>
+                    <div class="border-bottom col-8 px-3 py-2 text-truncate">
+                        <span class="text-dark">@Html.DisplayFor(modelItem => item.ProductoNombre)</span>
+                        <small class="d-block text-muted">Código: @Html.DisplayFor(modelItem => item.Codigo)</small>
+                        <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.ProductoDescripcion)</small>
                     </div>
-                    <div class="border-bottom col-3 px-3 py-2 text-right">
-                        <a asp-action="Edit" asp-route-id="@item.EstadoID" class="text-decoration-none">
+                    <div class="border-bottom col-4 px-3 py-2 text-right">
+                        <a asp-action="Edit" asp-route-id="@item.ProductoID" class="text-decoration-none">
                             <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
                                 <i class="fa fa-edit"></i>
+                            </div>
+                        </a>
+                        <a href="#" data-id="@item.ProductoID" class="deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
+                            <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
+                                <i class="fa fa-trash"></i>
                             </div>
                         </a>
                     </div>
@@ -56,11 +62,14 @@
     </div>
 </div>
 
+<partial name="_DeleteConfirmDialog" />
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <script>
         var skip = 0;
+        var itemToDelete;
 
         $(document).ready(function () {
             $(window).on("scroll", function () {
@@ -77,15 +86,22 @@
                     }
                 }
             });
-            $('#BuscarInput').focus();
+
+            $('.deleteConfirm').click((e) => {
+                itemToDelete = e.currentTarget.dataset.id;
+            });
+
+            $("#DeleteYesButton").click((e) => {
+                window.location.href = '@Url.Action("Delete", "Productos")' + '/' + itemToDelete;
+            });
         });
 
         function addRowsNext(skip, inicio = false) {
-            addProcessWithSpinner('Cargando Estados...');
+            addProcessWithSpinner('Cargando Productos...');
             $('#dRows').attr('data-charging', "1");
             var searchBy = $('#SearchInput')[0] === undefined ? "" : $('#SearchInput').val();
             $.ajax({
-                url: '@Url.Action("_AddRowsNext","Estados")',
+                url: '@Url.Action("_AddRowsNext","Productos")',
                 method: 'POST',
                 datatype: 'text',
                 data: {

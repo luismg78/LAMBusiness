@@ -1,0 +1,50 @@
+﻿@model LAMBusiness.Shared.Catalogo.TasaImpuesto
+
+@{
+    ViewData["Title"] = "Tasas de Impuestos";
+}
+
+<form asp-action="Edit">
+    <div class="modal-content border-0 box-shadow box-responsive m-auto">
+        <div class="modal-header pb-0">
+            <div>
+                <h3 class="modal-title" id="exampleModalLabel">Tasas de Impuestos</h3>
+                <ul class="breadcrumb bg-transparent p-0 small">
+                    <li class="breadcrumb-item">Catálogo</li>
+                    <li class="breadcrumb-item">Tasas de Impuestos</li>
+                    <li class="breadcrumb-item active">Editar Registro</li>
+                </ul>
+            </div>
+            <a asp-action="Index" asp-controller="TasasImpuestos" class="close"><span>&times;</span></a>
+        </div>
+        <div class="modal-body py-4">
+            <div class="row px-md-3">
+                <div class="col">
+                    <input type="hidden" asp-for="TasaID" />
+                    <div class="form-group">
+                        <label asp-for="Tasa" class="control-label"></label>
+                        <input asp-for="Tasa" class="form-control" />
+                        <span asp-validation-for="Tasa" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Porcentaje" class="control-label"></label>
+                        <input asp-for="Porcentaje" class="form-control" />
+                        <span asp-validation-for="Porcentaje" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="TasaDescripcion" class="control-label"></label>
+                        <input asp-for="TasaDescripcion" class="form-control" />
+                        <span asp-validation-for="TasaDescripcion" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer justify-content-between">
+            <div class="px-md-3">
+                <input type="submit" value="Actualizar" class="btn btn-base" />
+                <a asp-action="Index" class="btn btn-outline-secondary">Regresar</a>
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        </div>
+    </div>
+</form>

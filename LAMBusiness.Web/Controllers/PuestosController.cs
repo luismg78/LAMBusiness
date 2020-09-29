@@ -5,11 +5,10 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Rendering;
-    using Microsoft.EntityFrameworkCore;
-    using LAMBusiness.Shared.Catalogo;
-    using LAMBusiness.Web.Data;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
+    using Microsoft.EntityFrameworkCore;
+    using Data;
+    using Shared.Catalogo;
 
     public class PuestosController : Controller
     {
@@ -66,23 +65,6 @@
                             <List<Puesto>>(ViewData, puestos)
             };
 
-        }
-
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var puesto = await _context.Puestos
-                .FirstOrDefaultAsync(m => m.PuestoID == id);
-            if (puesto == null)
-            {
-                return NotFound();
-            }
-
-            return View(puesto);
         }
 
         public IActionResult Create()

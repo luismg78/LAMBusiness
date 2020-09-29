@@ -4,13 +4,16 @@
 {
     foreach (var item in Model)
     {
-        <div class="border-bottom col-7 col-md-9 px-3 py-2 text-truncate">
+        <div class="border-bottom col-9 px-3 py-2 text-truncate">
             <span class="text-dark">@Html.DisplayFor(modelItem => item.MunicipioDescripcion)</span>
-            <small class="d-block d-md-inline-block text-muted">@Html.DisplayFor(modelItem => item.Estados.EstadoDescripcion)</small>
+            <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.Estados.EstadoDescripcion)</small>
         </div>
-        <div class="border-bottom col-5 col-md-3 px-3 py-2 text-right">
-            <a asp-action="Details" asp-route-id="@item.MunicipioID" class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="ver detalle"><i class="fa fa-file-alt"></i></a>
-            <a asp-action="Edit" asp-route-id="@item.MunicipioID" class="btn-icon text-primary rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro"><i class="fa fa-edit"></i></a>
+        <div class="border-bottom col-3 px-3 py-2 text-right">
+            <a asp-action="Edit" asp-route-id="@item.MunicipioID" class="text-decoration-none">
+                <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
+                    <i class="fa fa-edit"></i>
+                </div>
+            </a>
         </div>
     }
 }

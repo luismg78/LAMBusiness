@@ -1,0 +1,76 @@
+﻿@model LAMBusiness.Shared.Catalogo.Producto
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Producto</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ProductoID" />
+            <div class="form-group">
+                <label asp-for="Codigo" class="control-label"></label>
+                <input asp-for="Codigo" class="form-control" />
+                <span asp-validation-for="Codigo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductoNombre" class="control-label"></label>
+                <input asp-for="ProductoNombre" class="form-control" />
+                <span asp-validation-for="ProductoNombre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductoDescripcion" class="control-label"></label>
+                <input asp-for="ProductoDescripcion" class="form-control" />
+                <span asp-validation-for="ProductoDescripcion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UnidadID" class="control-label"></label>
+                <select asp-for="UnidadID" class="form-control" asp-items="ViewBag.UnidadID"></select>
+                <span asp-validation-for="UnidadID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TasaID" class="control-label"></label>
+                <select asp-for="TasaID" class="form-control" asp-items="ViewBag.TasaID"></select>
+                <span asp-validation-for="TasaID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Existencia" class="control-label"></label>
+                <input asp-for="Existencia" class="form-control" />
+                <span asp-validation-for="Existencia" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PrecioCosto" class="control-label"></label>
+                <input asp-for="PrecioCosto" class="form-control" />
+                <span asp-validation-for="PrecioCosto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PrecioVenta" class="control-label"></label>
+                <input asp-for="PrecioVenta" class="form-control" />
+                <span asp-validation-for="PrecioVenta" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ExistenciaMaxima" class="control-label"></label>
+                <input asp-for="ExistenciaMaxima" class="form-control" />
+                <span asp-validation-for="ExistenciaMaxima" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Activo" /> @Html.DisplayNameFor(model => model.Activo)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

@@ -1,0 +1,36 @@
+﻿@model IEnumerable<LAMBusiness.Shared.Catalogo.EstadoCivil>
+
+@{
+    ViewData["Title"] = "Estado Civil";
+}
+
+<div class="modal-content border-0 box-shadow">
+    <div class="modal-header pb-0">
+        <div>
+            <h3 class="modal-title" id="exampleModalLabel">Estado Civil</h3>
+            <ul class="breadcrumb bg-transparent p-0 small">
+                <li class="breadcrumb-item">Catálogo</li>
+                <li class="breadcrumb-item">Estado Civil</li>
+                <li class="breadcrumb-item active">@Model.Count() Registro(s)</li>
+            </ul>
+        </div>
+        <a asp-action="Catalogo" asp-controller="Menu" class="close"><span>&times;</span></a>
+    </div>
+    <div class="modal-body pt-4">
+        <div>
+            <div class="row px-md-3 font-weight-bold text-uppercase">
+                <div class="border-bottom col-12 px-3 py-2">
+                    @Html.DisplayNameFor(model => model.EstadoCivilDescripcion)
+                </div>
+            </div>
+            <div class="row px-md-3" id="dRows" data-charging="0" data-rows-next="1">
+                @foreach (var item in Model)
+                {
+                    <div class="border-bottom col-12 px-3 py-2">
+                        <span class="text-dark">@Html.DisplayFor(modelItem => item.EstadoCivilDescripcion)</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

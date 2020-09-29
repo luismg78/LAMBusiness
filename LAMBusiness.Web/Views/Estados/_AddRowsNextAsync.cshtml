@@ -1,0 +1,22 @@
+﻿@model IEnumerable<LAMBusiness.Shared.Catalogo.Estado>
+
+@if (Model.Any())
+{
+    foreach (var item in Model)
+    {
+        <div class="border-bottom col-9 px-3 py-2 text-truncate">
+            <span class="text-dark">@Html.DisplayFor(modelItem => item.EstadoDescripcion)</span>
+            <div class="d-block">
+                <small class="d-block d-md-inline-block text-muted mr-md-2">Clave: @Html.DisplayFor(modelItem => item.EstadoClave)</small>
+                <small class="d-block d-md-inline-block text-muted">Municipios: @Html.DisplayFor(modelItem => item.Municipios.Count)</small>
+            </div>
+        </div>
+        <div class="border-bottom col-3 px-3 py-2 text-right">
+            <a asp-action="Edit" asp-route-id="@item.EstadoID" class="text-decoration-none">
+                <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
+                    <i class="fa fa-edit"></i>
+                </div>
+            </a>
+        </div>
+    }
+}

@@ -1,0 +1,81 @@
+﻿@model IEnumerable<LAMBusiness.Shared.Catalogo.TasaImpuesto>
+
+@{
+    ViewData["Title"] = "Tasas de Impuestos";
+}
+
+<div class="modal-content border-0 box-shadow">
+    <div class="modal-header pb-0">
+        <div>
+            <h3 class="modal-title" id="exampleModalLabel">Tasas de Impuestos</h3>
+            <ul class="breadcrumb bg-transparent p-0 small">
+                <li class="breadcrumb-item">Catálogo</li>
+                <li class="breadcrumb-item">Tasas de Impuestos</li>
+                <li class="breadcrumb-item active">@Model.Count() Registro(s)</li>
+            </ul>
+        </div>
+        <a asp-action="Catalogo" asp-controller="Menu" class="close"><span>&times;</span></a>
+    </div>
+    <div class="modal-body pt-4">
+        <div class="row px-md-3">
+            <div class="col text-right">
+                <p><a asp-action="Create" class="btn btn-base"><i class="fas fa-plus"></i><span class="d-none d-md-inline-block ml-2">Nuevo Registro</span></a></p>
+            </div>
+        </div>
+        <div>
+            <div class="row px-md-3 font-weight-bold text-uppercase">
+                <div class="border-bottom col-12 px-3 py-2">
+                    @Html.DisplayNameFor(model => model.Tasa)
+                </div>
+            </div>
+            <div class="row px-md-3" id="dRows" data-charging="0" data-rows-next="1">
+                @foreach (var item in Model)
+                {
+                    <div class="border-bottom col-8 px-3 py-2">
+                        <span class="text-dark">@Html.DisplayFor(modelItem => item.Tasa)</span>
+                        <div class="d-block">
+                            <small class="d-block d-md-inline-block text-muted mr-md-2">Porcentaje: @Html.DisplayFor(modelItem => item.Porcentaje)%</small>
+                            <small class="d-block d-md-inline-block text-muted">Productos asignados: @Html.DisplayFor(modelItem => item.Productos.Count)</small>
+                        </div>
+                        <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.TasaDescripcion)</small>
+                    </div>
+                    <div class="border-bottom col-4 px-3 py-2 text-right">
+                        <a asp-action="Edit" asp-route-id="@item.TasaID" class="text-decoration-none">
+                            <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
+                                <i class="fa fa-edit"></i>
+                            </div>
+                        </a>
+                        <a href="#" data-id="@item.TasaID" class="deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
+                            <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
+                                <i class="fa fa-trash"></i>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<partial name="_DeleteConfirmDialog" />
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        var skip = 0;
+        var itemToDelete;
+
+        $(document).ready(function () {
+            $('.deleteConfirm').click((e) => {
+                itemToDelete = e.currentTarget.dataset.id;
+            });
+
+            $("#DeleteYesButton").click((e) => {
+                window.location.href = '@Url.Action("Delete", "TasasImpuestos")' + '/' + itemToDelete;
+            });
+        });
+
+    </script>
+}

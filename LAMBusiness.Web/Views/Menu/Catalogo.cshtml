@@ -17,6 +17,32 @@
 </div>
 <div class="modal-body py-4">
     <div class="row">
+
+        <!--Géneros-->
+        <div class="col-xl-4 col-md-6">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <i class="fas fa-neuter display-4 text-base"></i>
+                    <h4 class="mt-4"><span class="text-base">@Model.Generos</span> Géneros</h4>
+                    <p class="mb-3">Solo se permiten ediciones</p>
+                    <a asp-action="Index" asp-controller="Generos" class="badge badge-base badge-pill px-3 py-2">ir a la página</a>
+                </div>
+            </div>
+        </div>
+
+        <!--Estados Civiles-->
+        <div class="col-xl-4 col-md-6">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <i class="fas fa-ring display-4 text-secondary"></i>
+                    <h4 class="mt-4"><span class="text-secondary">@Model.EstadosCiviles</span> Estado Civiles</h4>
+                    <p class="mb-3">Solo se permite visualizar</p>
+                    <a asp-action="Index" asp-controller="EstadosCiviles" class="badge badge-secondary badge-pill px-3 py-2">ir a la página</a>
+                </div>
+            </div>
+        </div>
+
+        <!--Estados-->
         <div class="col-xl-4 col-md-6">
             <div class="card mb-4">
                 <div class="card-body text-center">
@@ -27,6 +53,8 @@
                 </div>
             </div>
         </div>
+
+        <!--Municipios-->
         <div class="col-xl-4 col-md-6">
             <div class="card mb-4">
                 <div class="card-body text-center">
@@ -37,6 +65,20 @@
                 </div>
             </div>
         </div>
+
+        <!--Productos-->
+        <div class="col-xl-4 col-md-6">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-cog display-4 text-success"></i>
+                    <h4 class="mt-4"><span class="text-success">@Model.Productos</span> Productos</h4>
+                    <p class="mb-3">Catálogo de productos</p>
+                    <a asp-action="Index" asp-controller="Productos" class="badge badge-success badge-pill px-3 py-2">ir a la página</a>
+                </div>
+            </div>
+        </div>
+
+        <!--Puestos-->
         <div class="col-xl-4 col-md-6">
             <div class="card mb-4">
                 <div class="card-body text-center">
@@ -44,6 +86,30 @@
                     <h4 class="mt-4"><span class="text-primary">@Model.Puestos</span> Puestos</h4>
                     <p class="mb-3">Puestos de los colaboradores</p>
                     <a asp-action="Index" asp-controller="Puestos" class="badge badge-primary badge-pill px-3 py-2">ir a la página</a>
+                </div>
+            </div>
+        </div>
+
+        <!--Tasas de Impuestos-->
+        <div class="col-xl-4 col-md-6">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <i class="fas fa-percentage display-4 text-base"></i>
+                    <h4 class="mt-4"><span class="text-base">@Model.TasasImpuestos</span> Tasas de Impuestos</h4>
+                    <p class="mb-3">Aplica solo en el país de origen</p>
+                    <a asp-action="Index" asp-controller="TasasImpuestos" class="badge badge-base badge-pill px-3 py-2">ir a la página</a>
+                </div>
+            </div>
+        </div>
+
+        <!--Unidades-->
+        <div class="col-xl-4 col-md-6">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <i class="fab fa-uniregistry display-4 text-secondary"></i>
+                    <h4 class="mt-4"><span class="text-secondary">@Model.Unidades</span> Unidades</h4>
+                    <p class="mb-3">Solo se permiten ediciones</p>
+                    <a asp-action="Index" asp-controller="Unidades" class="badge badge-secondary badge-pill px-3 py-2">ir a la página</a>
                 </div>
             </div>
         </div>

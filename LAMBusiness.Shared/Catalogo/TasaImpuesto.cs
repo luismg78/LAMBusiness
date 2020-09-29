@@ -1,6 +1,8 @@
 ﻿namespace LAMBusiness.Shared.Catalogo
 {
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using Newtonsoft.Json;
 
@@ -16,10 +18,13 @@
         public string Tasa { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public short Porcentaje { get; set; }
+        [Range(0,100,ErrorMessage = "Valor incorrecto, rango permitido de {1} a {2}.")]
+        public short? Porcentaje { get; set; }
 
         [Display(Name = "Descripción")]
         [MaxLength(150, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         public string TasaDescripcion { get; set; }
+
+        public ICollection<Producto> Productos { get; set; }
     }
 }

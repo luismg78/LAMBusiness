@@ -6,6 +6,8 @@
     using Microsoft.EntityFrameworkCore;
     using Shared.Catalogo;
     using Data;
+    using Microsoft.AspNetCore.Mvc.ViewFeatures;
+    using System.Collections.Generic;
 
     public class EstadosController : Controller
     {
@@ -16,53 +18,58 @@
             _context = context;
         }
 
-        // GET: Estados
         public IActionResult Index()
         {
-            return View(_context.Estados);
+            var estados = _context.Estados
+                .Include(e => e.Municipios)
+                .OrderBy(e => e.EstadoDescripcion);
+
+            return View(estados);
         }
 
-        // GET: Estados/Details/5
-        public async Task<IActionResult> Details(short? id)
+        public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
         {
-            if (id == null)
+            IQueryable<Estado> query = null;
+            if (searchby != null && searchby != "")
             {
-                return NotFound();
+                var words = searchby.Trim().ToUpper().Split(' ');
+                foreach (var w in words)
+                {
+                    if (w.Trim() != "")
+                    {
+                        if (query == null)
+                        {
+                            query = _context.Estados.Include(e => e.Municipios)
+                                    .Where(e => e.EstadoClave.Contains(w) ||
+                                           e.EstadoDescripcion.Contains(w));
+                        }
+                        else
+                        {
+                            query = query.Where(e => e.EstadoClave.Contains(w) ||
+                                                e.EstadoDescripcion.Contains(w));
+                        }
+                    }
+                }
+            }
+            if (query == null)
+            {
+                query = _context.Estados.Include(e => e.Municipios);
             }
 
-            var estado = await _context.Estados
-                .FirstOrDefaultAsync(m => m.EstadoID == id);
-            if (estado == null)
+            var estados = await query.OrderBy(m => m.EstadoDescripcion)
+                .Skip(skip)
+                .Take(50)
+                .ToListAsync();
+
+            return new PartialViewResult
             {
-                return NotFound();
-            }
+                ViewName = "_AddRowsNextAsync",
+                ViewData = new ViewDataDictionary
+                            <List<Estado>>(ViewData, estados)
+            };
 
-            return View(estado);
         }
-
-        // GET: Estados/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Estados/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EstadoID,EstadoClave,EstadoDescripcion")] Estado estado)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(estado);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(estado);
-        }
-
-        // GET: Estados/Edit/5
+        
         public async Task<IActionResult> Edit(short? id)
         {
             if (id == null)
@@ -75,12 +82,10 @@
             {
                 return NotFound();
             }
+
             return View(estado);
         }
 
-        // POST: Estados/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(short id, [Bind("EstadoID,EstadoClave,EstadoDescripcion")] Estado estado)
@@ -111,35 +116,6 @@
                 return RedirectToAction(nameof(Index));
             }
             return View(estado);
-        }
-
-        // GET: Estados/Delete/5
-        public async Task<IActionResult> Delete(short? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var estado = await _context.Estados
-                .FirstOrDefaultAsync(m => m.EstadoID == id);
-            if (estado == null)
-            {
-                return NotFound();
-            }
-
-            return View(estado);
-        }
-
-        // POST: Estados/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(short id)
-        {
-            var estado = await _context.Estados.FindAsync(id);
-            _context.Estados.Remove(estado);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
         }
 
         private bool EstadoExists(short id)

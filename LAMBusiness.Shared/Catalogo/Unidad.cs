@@ -1,6 +1,7 @@
 ﻿namespace LAMBusiness.Shared.Catalogo
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using Newtonsoft.Json;
 
@@ -22,5 +23,7 @@
         public bool Pieza { get; set; }
 
         public bool Paquete { get; set; }
+
+        public ICollection<Producto> Productos { get; set; }
     }
 }

@@ -25,6 +25,10 @@
                     <input type="hidden" asp-for="MunicipioClave" />
 
                     <div class="form-group">
+                        <label asp-for="Estados.EstadoDescripcion" class="control-label"></label>
+                        <label class="d-block text-muted">@Model.Estados.EstadoDescripcion</label>
+                    </div>
+                    <div class="form-group">
                         <label asp-for="MunicipioDescripcion" class="control-label"></label>
                         <input asp-for="MunicipioDescripcion" class="form-control" />
                         <span asp-validation-for="MunicipioDescripcion" class="text-danger"></span>
@@ -34,7 +38,7 @@
         </div>
         <div class="modal-footer justify-content-between">
             <div class="px-md-3">
-                <input type="submit" value="Guardar" class="btn btn-primary" />
+                <input type="submit" value="Actualizar" class="btn btn-base" />
                 <a asp-action="Index" class="btn btn-outline-secondary">Regresar</a>
             </div>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -68,7 +72,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <div>
-                    <input type="submit" value="Guardar" class="btn btn-primary" />
+                    <input type="submit" value="Guardar" class="btn btn-base" />
                     <a asp-action="Index" class="btn btn-outline-secondary">Regresar</a>
                 </div>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
