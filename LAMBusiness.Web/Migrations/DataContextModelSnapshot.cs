@@ -17942,7 +17942,7 @@ namespace LAMBusiness.Web.Migrations
                     b.HasData(
                         new
                         {
-                            ColaboradorID = new Guid("681a1052-9b5c-4d25-b31b-599a4714c3aa"),
+                            ColaboradorID = new Guid("283da3a7-d447-4cfd-80eb-1ab93d42eed8"),
                             Activo = true,
                             CURP = "CURP781227HCSRNS00",
                             CodigoPostal = 29000,
@@ -17952,7 +17952,7 @@ namespace LAMBusiness.Web.Migrations
                             EstadoCivilID = (short)2,
                             EstadoNacimientoID = (short)7,
                             FechaNacimiento = new DateTime(1978, 12, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FechaRegistro = new DateTime(2020, 9, 30, 1, 3, 0, 68, DateTimeKind.Local).AddTicks(5252),
+                            FechaRegistro = new DateTime(2020, 9, 30, 10, 55, 45, 535, DateTimeKind.Local).AddTicks(1484),
                             GeneroID = "M",
                             MunicipioID = 180,
                             Nombre = "NOMBRE",

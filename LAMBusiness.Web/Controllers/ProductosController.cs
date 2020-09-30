@@ -5,12 +5,10 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.EntityFrameworkCore;
     using Data;
-    using Shared.Catalogo;
-    using LAMBusiness.Web.Helpers;
-    using LAMBusiness.Web.Models.ViewModels;
+    using Helpers;
+    using Models.ViewModels;
 
     public class ProductosController : Controller
     {
@@ -32,7 +30,8 @@
             var dataContext = _context.Productos
                 .Include(p => p.TasasImpuestos)
                 .Include(p => p.Unidades)
-                .Include(p => p.Paquete);
+                .Include(p => p.Paquete)
+                .OrderBy(p => p.Codigo);
 
             return View(dataContext);
         }
@@ -47,15 +46,16 @@
             var producto = await _context.Productos
                 .Include(p => p.TasasImpuestos)
                 .Include(p => p.Unidades)
+                .Include(p => p.Paquete)
                 .FirstOrDefaultAsync(m => m.ProductoID == id);
             if (producto == null)
             {
                 return NotFound();
             }
 
-            var productoViewModel = await _converterHelper.ToProductosViewModelAsync(producto);
-
-            return View(productoViewModel);
+            var productoDetailsViewModel = await _converterHelper.ToProductosDetailsViewModelAsync(producto);
+            
+            return View(productoDetailsViewModel);
         }
 
         public async Task<IActionResult> Create()
@@ -209,11 +209,11 @@
                 return NotFound();
             }
 
-            var paquete = await _context.Paquetes.FindAsync(producto.ProductoID);
-            if (paquete != null)
-            {
-                _context.Paquetes.Remove(paquete);
-            }
+            //var paquete = await _context.Paquetes.Where(p => p.PiezaProductoID == producto.ProductoID).ToListAsync();
+            //if (paquete != null)
+            //{
+            //    _context.Paquetes.Remove(paquete);
+            //}
 
             _context.Productos.Remove(producto);
             await _context.SaveChangesAsync();

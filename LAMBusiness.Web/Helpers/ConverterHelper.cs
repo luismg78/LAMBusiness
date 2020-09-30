@@ -1,11 +1,12 @@
 ﻿namespace LAMBusiness.Web.Helpers
 {
     using Data;
-    using Microsoft.AspNetCore.Mvc.Rendering;
+    using Microsoft.EntityFrameworkCore;
     using Models.ViewModels;
     using Shared.Catalogo;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
 
     public class ConverterHelper : IConverterHelper
@@ -14,7 +15,7 @@
         private readonly IGetHelper _getHelper;
         private readonly ICombosHelper _combosHelper;
 
-        public ConverterHelper(DataContext context, 
+        public ConverterHelper(DataContext context,
             IGetHelper getHelper,
             ICombosHelper combosHelper)
         {
@@ -102,6 +103,69 @@
             }
 
             return productoViewModel;
+        }
+
+        /// <summary>
+        /// Convertir clase producto a productoDetailsViewModel (incluye productos asignados, piezas o paquetes)
+        /// </summary>
+        /// <param name="producto"></param>
+        /// <returns>ProductViewModel(class)</returns>
+        public async Task<ProductoDetailsViewModel> ToProductosDetailsViewModelAsync(Producto producto)
+        {
+
+            var productoDetailsViewModel = new ProductoDetailsViewModel()
+            {
+                Activo = producto.Activo,
+                Codigo = producto.Codigo,
+                Existencia = producto.Existencia,
+                ExistenciaMaxima = producto.ExistenciaMaxima,
+                PrecioCosto = producto.PrecioCosto,
+                PrecioVenta = producto.PrecioVenta,
+                ProductoDescripcion = producto.ProductoDescripcion,
+                ProductoID = producto.ProductoID,
+                ProductoNombre = producto.ProductoNombre,
+                TasaID = producto.TasaID,
+                TasasImpuestos = producto.TasasImpuestos,
+                Unidades = producto.Unidades,
+                UnidadID = producto.UnidadID,
+                Paquete = producto.Paquete
+            };
+
+            if (productoDetailsViewModel.Paquete != null)
+            {
+                var productoAsignado = await _context.Productos.FindAsync(productoDetailsViewModel.Paquete.PiezaProductoID);
+                if (productoAsignado != null)
+                {
+                    List<ProductoAsignadoViewModel> productosAsignados = new List<ProductoAsignadoViewModel>();
+                    var productoAsignadoViewModel = new ProductoAsignadoViewModel()
+                    {
+                        ProductoID = productoAsignado.ProductoID,
+                        Codigo = productoAsignado.Codigo,
+                        Descripcion = productoAsignado.ProductoNombre,
+                        Cantidad = productoDetailsViewModel.Paquete.CantidadProductoxPaquete
+                    };
+                    productosAsignados.Add(productoAsignadoViewModel);
+
+                    productoDetailsViewModel.ProductosAsignadosViewModel = productosAsignados;
+                }
+            }
+            else
+            {
+                productoDetailsViewModel.ProductosAsignadosViewModel = await (from p in _context.Productos
+                                                                              join pa in _context.Paquetes on p.ProductoID equals pa.ProductoID
+                                                                              where pa.PiezaProductoID == productoDetailsViewModel.ProductoID
+                                                                              orderby p.Codigo
+                                                                              select new ProductoAsignadoViewModel()
+                                                                              {
+                                                                                  ProductoID = p.ProductoID,
+                                                                                  Codigo = p.Codigo,
+                                                                                  Descripcion = p.ProductoNombre,
+                                                                                  Cantidad = pa.CantidadProductoxPaquete
+                                                                              }).ToListAsync();
+
+            }
+
+            return productoDetailsViewModel;
         }
 
     }

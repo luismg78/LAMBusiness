@@ -7,6 +7,7 @@
     public interface IConverterHelper
     {
         Task<Producto> ToProductoAsync(ProductoViewModel productoViewModel, bool isNew);
+        Task<ProductoDetailsViewModel> ToProductosDetailsViewModelAsync(Producto producto);
         Task<ProductoViewModel> ToProductosViewModelAsync(Producto producto);
     }
 }

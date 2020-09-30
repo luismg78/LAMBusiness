@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LAMBusiness.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200930055423_InitialDatabase")]
-    partial class InitialDatabase
+    [Migration("20200930155546_InitialDB")]
+    partial class InitialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -17545,7 +17545,6 @@ namespace LAMBusiness.Web.Migrations
             modelBuilder.Entity("LAMBusiness.Shared.Catalogo.Paquete", b =>
                 {
                     b.Property<Guid>("ProductoID")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("CantidadProductoxPaquete")
@@ -17580,9 +17579,6 @@ namespace LAMBusiness.Web.Migrations
                         .IsRequired()
                         .HasColumnType("decimal(18,4)");
 
-                    b.Property<Guid?>("PaqueteProductoID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<decimal?>("PrecioCosto")
                         .IsRequired()
                         .HasColumnType("decimal(18,4)");
@@ -17613,8 +17609,6 @@ namespace LAMBusiness.Web.Migrations
 
                     b.HasIndex("Codigo")
                         .IsUnique();
-
-                    b.HasIndex("PaqueteProductoID");
 
                     b.HasIndex("TasaID");
 
@@ -17950,7 +17944,7 @@ namespace LAMBusiness.Web.Migrations
                     b.HasData(
                         new
                         {
-                            ColaboradorID = new Guid("57c0de81-2adb-4fd5-ad7b-117b33f4b5c7"),
+                            ColaboradorID = new Guid("283da3a7-d447-4cfd-80eb-1ab93d42eed8"),
                             Activo = true,
                             CURP = "CURP781227HCSRNS00",
                             CodigoPostal = 29000,
@@ -17960,7 +17954,7 @@ namespace LAMBusiness.Web.Migrations
                             EstadoCivilID = (short)2,
                             EstadoNacimientoID = (short)7,
                             FechaNacimiento = new DateTime(1978, 12, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FechaRegistro = new DateTime(2020, 9, 30, 0, 54, 22, 180, DateTimeKind.Local).AddTicks(9006),
+                            FechaRegistro = new DateTime(2020, 9, 30, 10, 55, 45, 535, DateTimeKind.Local).AddTicks(1484),
                             GeneroID = "M",
                             MunicipioID = 180,
                             Nombre = "NOMBRE",
@@ -18110,13 +18104,17 @@ namespace LAMBusiness.Web.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("LAMBusiness.Shared.Catalogo.Paquete", b =>
+                {
+                    b.HasOne("LAMBusiness.Shared.Catalogo.Producto", "Producto")
+                        .WithOne("Paquete")
+                        .HasForeignKey("LAMBusiness.Shared.Catalogo.Paquete", "ProductoID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("LAMBusiness.Shared.Catalogo.Producto", b =>
                 {
-                    b.HasOne("LAMBusiness.Shared.Catalogo.Paquete", "Paquete")
-                        .WithMany()
-                        .HasForeignKey("PaqueteProductoID")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("LAMBusiness.Shared.Catalogo.TasaImpuesto", "TasasImpuestos")
                         .WithMany("Productos")
                         .HasForeignKey("TasaID")
