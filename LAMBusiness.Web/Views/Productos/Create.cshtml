@@ -1,4 +1,4 @@
-﻿@model LAMBusiness.Shared.Catalogo.Producto
+﻿@model LAMBusiness.Web.Models.ViewModels.ProductoViewModel
 
 @{
     ViewData["Title"] = "Productos";
@@ -22,7 +22,7 @@
                 <div class="col-12 col-md-4">
                     <div class="form-group">
                         <label asp-for="Codigo" class="control-label"></label>
-                        <input asp-for="Codigo" class="form-control" />
+                        <input asp-for="Codigo" class="form-control" autofocus />
                         <span asp-validation-for="Codigo" class="text-danger"></span>
                     </div>
                 </div>
@@ -40,25 +40,40 @@
                         <span asp-validation-for="ProductoDescripcion" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="col-12 col-md-4">
-                    <div class="form-group">
-                        <label asp-for="UnidadID" class="control-label"></label>
-                        <select asp-for="UnidadID" class="form-control" asp-items="ViewBag.UnidadID"></select>
-                    </div>
-                </div>
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-6">
                     <div class="form-group">
                         <label asp-for="TasaID" class="control-label"></label>
-                        <select asp-for="TasaID" class="form-control" asp-items="ViewBag.TasaID"></select>
+                        <select asp-for="TasaID" class="form-control" asp-items="Model.TasasImpuestosDDL"></select>
+                        <span asp-validation-for="TasaID" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label asp-for="Existencia" class="control-label"></label>
-                        <input asp-for="Existencia" class="form-control" />
-                        <span asp-validation-for="Existencia" class="text-danger"></span>
+                        <label asp-for="UnidadID" class="control-label"></label>
+                        <select asp-for="UnidadID" class="form-control" asp-items="Model.UnidadesDDL"></select>
+                        <span asp-validation-for="UnidadID" class="text-danger"></span>
                     </div>
                 </div>
+                <!--add package code for product-->
+                <div id="dPackage" class="col-12" style="display:none;">
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label asp-for="CodigoPieza" class="control-label"></label>
+                                <input asp-for="CodigoPieza" class="form-control" />
+                                <span asp-validation-for="CodigoPieza" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label asp-for="CantidadProductoxPaquete" class="control-label"></label>
+                                <input asp-for="CantidadProductoxPaquete" class="form-control" />
+                                <span asp-validation-for="CantidadProductoxPaquete" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--End Package-->
                 <div class="col-12 col-md-4">
                     <div class="form-group">
                         <label asp-for="PrecioCosto" class="control-label"></label>
@@ -80,11 +95,10 @@
                         <span asp-validation-for="ExistenciaMaxima" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="col-4">
-                    <div class="form-group form-check">
-                        <label class="form-check-label">
-                            <input class="form-check-input" asp-for="Activo" /> @Html.DisplayNameFor(model => model.Activo)
-                        </label>
+                <div class="col-12 col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Activo" class="control-label"></label>
+                        <input class="d-block" asp-for="Activo" />
                     </div>
                 </div>
             </div>
@@ -98,3 +112,25 @@
         </div>
     </div>
 </form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script>
+    $(document).ready(function () {
+        validatedUnitChange();
+    });
+
+    $('#UnidadID').change(function () {
+        validatedUnitChange();
+    });
+
+    function validatedUnitChange() {
+        if ($('#UnidadID').val() === '6C9C7801-D654-11E9-8B00-8CDCD47D68A1' ||
+            $('#UnidadID').val() === '95B850EC-D654-11E9-8B00-8CDCD47D68A1') {
+            $('#dPackage').show();
+        } else {
+            $('#dPackage').hide();
+        }
+    }
+</script>
+}

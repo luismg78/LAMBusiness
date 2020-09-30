@@ -39,18 +39,31 @@
             <div class="row px-md-3" id="dRows" data-charging="0" data-rows-next="1">
                 @foreach (var item in Model.Take(50))
                 {
-                    <div class="border-bottom col-8 px-3 py-2 text-truncate">
+                    <div class="border-bottom col-10 px-3 py-2">
                         <span class="text-dark">@Html.DisplayFor(modelItem => item.ProductoNombre)</span>
-                        <small class="d-block text-muted">Código: @Html.DisplayFor(modelItem => item.Codigo)</small>
+                        <div class="d-block">
+                            <small class="text-muted">Código: @Html.DisplayFor(modelItem => item.Codigo)</small>
+                            @if (item.Paquete == null)
+                            {    <small class="badge badge-info">Pieza</small>}
+                            else
+                            {
+                                <small class="badge badge-warning">Caja</small>}
+
+                        </div>
                         <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.ProductoDescripcion)</small>
                     </div>
-                    <div class="border-bottom col-4 px-3 py-2 text-right">
-                        <a asp-action="Edit" asp-route-id="@item.ProductoID" class="text-decoration-none">
+                    <div class="border-bottom col-2 px-3 py-2 text-right">
+                        <a asp-action="Details" asp-route-id="@item.ProductoID" class="d-block d-md-inline text-decoration-none">
+                            <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="ver detalle">
+                                <i class="fa fa-file-alt"></i>
+                            </div>
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@item.ProductoID" class="d-block d-md-inline text-decoration-none">
                             <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
                                 <i class="fa fa-edit"></i>
                             </div>
                         </a>
-                        <a href="#" data-id="@item.ProductoID" class="deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
+                        <a href="#" data-id="@item.ProductoID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
                             <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
                                 <i class="fa fa-trash"></i>
                             </div>

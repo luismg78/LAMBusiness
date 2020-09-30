@@ -26,7 +26,10 @@ namespace LAMBusiness.Web
                 config.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            services.AddScoped<ICombosHelper, CombosHelper>();
+            services.AddScoped<IConverterHelper, ConverterHelper>();
             services.AddScoped<ICriptografiaHelper, CriptografiaHelper>();
+            services.AddScoped<IGetHelper, GetHelper>();
 
             services.AddControllersWithViews();
         }

@@ -1,78 +1,95 @@
-﻿@model LAMBusiness.Shared.Catalogo.Producto
+﻿@model LAMBusiness.Web.Models.ViewModels.ProductoViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Productos";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Producto</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Codigo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Codigo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProductoNombre)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProductoNombre)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProductoDescripcion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProductoDescripcion)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Unidades)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Unidades.UnidadDescripcion)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TasasImpuestos)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TasasImpuestos.Tasa)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Existencia)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Existencia)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PrecioCosto)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PrecioCosto)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PrecioVenta)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PrecioVenta)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ExistenciaMaxima)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ExistenciaMaxima)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Activo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Activo)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.ProductoID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="modal-content border-0 box-shadow">
+    <div class="modal-header pb-0">
+        <div>
+            <h3 class="modal-title" id="exampleModalLabel">Productos</h3>
+            <ul class="breadcrumb bg-transparent p-0 small">
+                <li class="breadcrumb-item">Catálogo</li>
+                <li class="breadcrumb-item">Productos</li>
+                <li class="breadcrumb-item active">Detalle</li>
+            </ul>
+        </div>
+        <a asp-action="Index" asp-controller="Productos" class="close"><span>&times;</span></a>
+    </div>
+    <div class="modal-body py-4">
+        <div class="row px-md-3">
+            <div class="col">
+                <div class="row">
+                    <div class="col-12 col-md-4 mb-2">
+                        <span class="font-weight-bold">@Html.DisplayNameFor(model => model.Codigo)</span>
+                        <span class="d-block">@Html.DisplayFor(model => model.Codigo)</span>
+                    </div>
+                    <div class="col-12 col-md-8 mb-2">
+                        <span class="font-weight-bold">@Html.DisplayNameFor(model => model.ProductoNombre)</span>
+                        <span class="d-block">@Html.DisplayFor(model => model.ProductoNombre)</span>
+                    </div>
+                    @if (Model.CodigoPieza == "")
+                    {
+                        <div class="col-12 col-md-8 mb-2">
+                            <span class="font-weight-bold">@Html.DisplayNameFor(model => model.ProductoDescripcion)</span>
+                            <span class="d-block">@Html.DisplayFor(model => model.ProductoDescripcion)</span>
+                        </div>
+                        <div class="col-12 col-md-4 mb-2">
+                            <span class="font-weight-bold">@Html.DisplayNameFor(model => model.Unidades.UnidadNombre)</span>
+                            <span class="d-block">@Html.DisplayFor(model => model.Unidades.UnidadNombre)</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-12 mb-2">
+                            <span class="font-weight-bold">@Html.DisplayNameFor(model => model.ProductoDescripcion)</span>
+                            <span class="d-block">@Html.DisplayFor(model => model.ProductoDescripcion)</span>
+                        </div>
+                        <div class="col-12 col-md-4 mb-2">
+                            <span class="font-weight-bold">@Html.DisplayNameFor(model => model.Unidades.UnidadNombre)</span>
+                            <span class="d-block">@Html.DisplayFor(model => model.Unidades.UnidadNombre)</span>
+                        </div>
+                        <div class="col-12 col-md-4 mb-2">
+                            <span class="font-weight-bold text-info">@Html.DisplayNameFor(model => model.CodigoPieza)</span>
+                            <span class="d-block">@Html.DisplayFor(model => model.CodigoPieza)</span>
+                        </div>
+                        <div class="col-12 col-md-4 mb-2">
+                            <span class="font-weight-bold text-info">@Html.DisplayNameFor(model => model.CantidadProductoxPaquete)</span>
+                            <span class="d-block">@Html.DisplayFor(model => model.CantidadProductoxPaquete)</span>
+                        </div>
+                    }
+                    <div class="col-12 col-md-4 mb-2">
+                        <span class="font-weight-bold">@Html.DisplayNameFor(model => model.TasasImpuestos.Tasa)</span>
+                        <span class="d-block">@Html.DisplayFor(model => model.TasasImpuestos.Tasa)</span>
+                    </div>
+                    <div class="col-12 col-md-4 mb-2">
+                        <span class="font-weight-bold">@Html.DisplayNameFor(model => model.Existencia)</span>
+                        <span class="d-block">@Html.DisplayFor(model => model.Existencia)</span>
+                    </div>
+                    <div class="col-12 col-md-4 mb-2">
+                        <span class="font-weight-bold">@Html.DisplayNameFor(model => model.ExistenciaMaxima)</span>
+                        <span class="d-block">@Html.DisplayFor(model => model.ExistenciaMaxima)</span>
+                    </div>
+                    <div class="col-12 col-md-4 mb-2">
+                        <span class="font-weight-bold">@Html.DisplayNameFor(model => model.PrecioCosto)</span>
+                        <span class="d-block">@Html.DisplayFor(model => model.PrecioCosto)</span>
+                    </div>
+                    <div class="col-12 col-md-4 mb-2">
+                        <span class="font-weight-bold">@Html.DisplayNameFor(model => model.PrecioVenta)</span>
+                        <span class="d-block">@Html.DisplayFor(model => model.PrecioVenta)</span>
+                    </div>
+                    <div class="col-12 col-md-4 mb-2">
+                        <span class="font-weight-bold">@Html.DisplayNameFor(model => model.Activo)</span>
+                        <span class="d-block">@Html.DisplayFor(model => model.Activo)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer justify-content-between">
+        <div class="px-md-3">
+            <a asp-action="Edit" asp-route-id="@Model.ProductoID" class="btn btn-base">Editar</a>
+            <a asp-action="Index" class="btn btn-outline-secondary">Regresar</a>
+        </div>
+    </div>
 </div>

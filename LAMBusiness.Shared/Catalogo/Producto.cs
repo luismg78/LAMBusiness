@@ -27,7 +27,7 @@
         [Display(Name = "Unidad")]
         [JsonIgnore]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public Guid UnidadID { get; set; }
+        public Guid? UnidadID { get; set; }
 
         [ForeignKey("UnidadID")]
         [JsonIgnore]
@@ -36,34 +36,36 @@
         [Display(Name = "Tasa (Impuesto)")]
         [JsonIgnore]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public Guid TasaID { get; set; }
+        public Guid? TasaID { get; set; }
 
         [ForeignKey("TasaID")]
         [JsonIgnore]
         public virtual TasaImpuesto TasasImpuestos { get; set; }
 
         [Column(TypeName = "decimal(18,4)")]
-        [DisplayFormat(DataFormatString = "${0:N2}", ApplyFormatInEditMode = false)]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public decimal? Existencia { get; set; }
 
         [Column(TypeName = "decimal(18,4)")]
         [Display(Name = "Precio (Costo)")]
-        [DisplayFormat(DataFormatString = "${0:C2}", ApplyFormatInEditMode = false)]
+        [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = false)]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public decimal? PrecioCosto { get; set; }
 
         [Column(TypeName = "decimal(18,4)")]
         [Display(Name = "Precio (Venta)")]
-        [DisplayFormat(DataFormatString = "${0:C2}", ApplyFormatInEditMode = false)]
+        [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = false)]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public decimal? PrecioVenta { get; set; }
 
         [Column(TypeName = "decimal(18,4)")]
         [Display(Name = "Existencia Máxima")]
-        [DisplayFormat(DataFormatString = "${0:N2}", ApplyFormatInEditMode = false)]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public decimal? ExistenciaMaxima { get; set; }
 
         public bool Activo { get; set; }
+
+        public virtual Paquete Paquete { get; set; }
     }
 }

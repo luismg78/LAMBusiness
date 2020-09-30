@@ -1,76 +1,137 @@
-﻿@model LAMBusiness.Shared.Catalogo.Producto
+﻿@model LAMBusiness.Web.Models.ViewModels.ProductoViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Productos";
 }
 
-<h1>Edit</h1>
-
-<h4>Producto</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form asp-action="Edit">
+    <div class="modal-content border-0 box-shadow">
+        <div class="modal-header pb-0">
+            <div>
+                <h3 class="modal-title" id="exampleModalLabel">Productos</h3>
+                <ul class="breadcrumb bg-transparent p-0 small">
+                    <li class="breadcrumb-item">Catálogo</li>
+                    <li class="breadcrumb-item">Productos</li>
+                    <li class="breadcrumb-item active">Editar Registro</li>
+                </ul>
+            </div>
+            <a asp-action="Index" asp-controller="Productos" class="close"><span>&times;</span></a>
+        </div>
+        <div class="modal-body py-4">
             <input type="hidden" asp-for="ProductoID" />
-            <div class="form-group">
-                <label asp-for="Codigo" class="control-label"></label>
-                <input asp-for="Codigo" class="form-control" />
-                <span asp-validation-for="Codigo" class="text-danger"></span>
+            <div class="row px-md-3">
+                <div class="col-12 col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Codigo" class="control-label"></label>
+                        <input asp-for="Codigo" class="form-control" autofocus />
+                        <span asp-validation-for="Codigo" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-8">
+                    <div class="form-group">
+                        <label asp-for="ProductoNombre" class="control-label"></label>
+                        <input asp-for="ProductoNombre" class="form-control" />
+                        <span asp-validation-for="ProductoNombre" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label asp-for="ProductoDescripcion" class="control-label"></label>
+                        <input asp-for="ProductoDescripcion" class="form-control" />
+                        <span asp-validation-for="ProductoDescripcion" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="TasaID" class="control-label"></label>
+                        <select asp-for="TasaID" class="form-control" asp-items="Model.TasasImpuestosDDL"></select>
+                        <span asp-validation-for="TasaID" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="UnidadID" class="control-label"></label>
+                        <select asp-for="UnidadID" class="form-control" asp-items="Model.UnidadesDDL"></select>
+                        <span asp-validation-for="UnidadID" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--add package code for product-->
+                <div id="dPackage" class="col-12" style="display:none;">
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label asp-for="CodigoPieza" class="control-label"></label>
+                                <input asp-for="CodigoPieza" class="form-control" />
+                                <span asp-validation-for="CodigoPieza" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label asp-for="CantidadProductoxPaquete" class="control-label"></label>
+                                <input asp-for="CantidadProductoxPaquete" class="form-control" />
+                                <span asp-validation-for="CantidadProductoxPaquete" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--End Package-->
+                <div class="col-12 col-md-4">
+                    <div class="form-group">
+                        <label asp-for="PrecioCosto" class="control-label"></label>
+                        <input asp-for="PrecioCosto" class="form-control" />
+                        <span asp-validation-for="PrecioCosto" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="form-group">
+                        <label asp-for="PrecioVenta" class="control-label"></label>
+                        <input asp-for="PrecioVenta" class="form-control" />
+                        <span asp-validation-for="PrecioVenta" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="form-group">
+                        <label asp-for="ExistenciaMaxima" class="control-label"></label>
+                        <input asp-for="ExistenciaMaxima" class="form-control" />
+                        <span asp-validation-for="ExistenciaMaxima" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Activo" class="control-label"></label>
+                        <input class="d-block" asp-for="Activo" />
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="ProductoNombre" class="control-label"></label>
-                <input asp-for="ProductoNombre" class="form-control" />
-                <span asp-validation-for="ProductoNombre" class="text-danger"></span>
+        </div>
+        <div class="modal-footer justify-content-between">
+            <div class="px-md-3">
+                <input type="submit" value="Actualizar" class="btn btn-base" />
+                <a asp-action="Index" class="btn btn-outline-secondary">Regresar</a>
             </div>
-            <div class="form-group">
-                <label asp-for="ProductoDescripcion" class="control-label"></label>
-                <input asp-for="ProductoDescripcion" class="form-control" />
-                <span asp-validation-for="ProductoDescripcion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UnidadID" class="control-label"></label>
-                <select asp-for="UnidadID" class="form-control" asp-items="ViewBag.UnidadID"></select>
-                <span asp-validation-for="UnidadID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TasaID" class="control-label"></label>
-                <select asp-for="TasaID" class="form-control" asp-items="ViewBag.TasaID"></select>
-                <span asp-validation-for="TasaID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Existencia" class="control-label"></label>
-                <input asp-for="Existencia" class="form-control" />
-                <span asp-validation-for="Existencia" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PrecioCosto" class="control-label"></label>
-                <input asp-for="PrecioCosto" class="form-control" />
-                <span asp-validation-for="PrecioCosto" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PrecioVenta" class="control-label"></label>
-                <input asp-for="PrecioVenta" class="form-control" />
-                <span asp-validation-for="PrecioVenta" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ExistenciaMaxima" class="control-label"></label>
-                <input asp-for="ExistenciaMaxima" class="form-control" />
-                <span asp-validation-for="ExistenciaMaxima" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Activo" /> @Html.DisplayNameFor(model => model.Activo)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        </div>
     </div>
-</div>
+</form>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+    $(document).ready(function () {
+        validatedUnitChange();
+    });
 
+    $('#UnidadID').change(function () {
+        validatedUnitChange();
+    });
+
+    function validatedUnitChange() {
+        if ($('#UnidadID').val() === '6C9C7801-D654-11E9-8B00-8CDCD47D68A1' ||
+            $('#UnidadID').val() === '95B850EC-D654-11E9-8B00-8CDCD47D68A1') {
+            $('#dPackage').show();
+        } else {
+            $('#dPackage').hide();
+        }
+    }
+    </script>
+}

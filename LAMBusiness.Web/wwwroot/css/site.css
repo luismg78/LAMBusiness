@@ -4,6 +4,7 @@ a {color: #0366d6;}
 body {background-color:#f7f8f9;margin-bottom:60px;}
 button.accept-policy {font-size: 1rem;line-height: inherit;}
 html {font-size:14px;min-height:100%;position:relative;}
+input[type=checkbox], input[type=radio] {cursor:pointer;height:1.5rem;width:1.4rem;}
 
 /*IDs*/
 #UpButton{background-color:transparent;border:0;bottom:5rem;color:#ff4152;display:none;

@@ -1,10 +1,11 @@
 ﻿namespace LAMBusiness.Web.Data
 {
+    using System.Linq;
     using Microsoft.EntityFrameworkCore;
-    using Shared.Catalogo;
+    using Data.Entities;
     using Models.Entities;
-    using LAMBusiness.Shared.Contacto;
-    using LAMBusiness.Web.Data.Entities;
+    using Shared.Catalogo;
+    using Shared.Contacto;
 
     public class DataContext: DbContext
     {
@@ -36,6 +37,11 @@
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            foreach (var foreignKey in modelBuilder.Model.GetEntityTypes()
+                .SelectMany(e => e.GetForeignKeys())) {
+                foreignKey.DeleteBehavior = DeleteBehavior.NoAction;
+            }
+
             //Catálogo (Atributos con valores únicos)
             modelBuilder.Entity<Estado>()
                 .HasIndex(e => new { e.EstadoClave })
