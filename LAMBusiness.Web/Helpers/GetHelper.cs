@@ -1,6 +1,7 @@
 ﻿namespace LAMBusiness.Web.Helpers
 {
     using Data;
+    using LAMBusiness.Shared.Catalogo;
     using Microsoft.EntityFrameworkCore;
     using System;
     using System.Threading.Tasks;
@@ -14,35 +15,59 @@
             _context = context;
         }
 
+        //Paquetes
+
         /// <summary>
-        /// Obtener el código del producto por medio del ID.
+        /// Obtener paquete por ID.
         /// </summary>
-        /// <param name="productoID"></param>
-        /// <returns>String</returns>
-        public async Task<string> GetCodigoProductoAsync(Guid productoID)
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Paquete> GetPaqueteByIdAsync(Guid id)
         {
-            var producto = await _context.Productos.FindAsync(productoID);
-            if (producto == null)
-            {
-                return "";
-            }
-            else
-            {
-                return producto.Codigo.Trim().ToUpper();
-            }
+            return await _context.Paquetes.FindAsync(id);
         }
 
-        public async Task<Guid> GetProductoIDAsync(string codigo)
+        /// <summary>
+        /// Obtener paquete por id del producto pieza
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Paquete> GetPaqueteByPieceID(Guid id) {
+            return await _context.Paquetes.FirstOrDefaultAsync(p => p.PiezaProductoID == id);
+        }
+
+        //Productos
+
+        /// <summary>
+        /// Obtener producto por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>String</returns>
+        public async Task<Producto> GetProductByIdAsync(Guid id)
         {
-            var producto = await _context.Productos.FirstOrDefaultAsync(p => p.Codigo == codigo);
-            if (producto == null)
-            {
-                return Guid.Empty;
-            }
-            else
-            {
-                return producto.ProductoID;
-            }
+            return await _context.Productos.FindAsync(id);
+        }
+
+        /// <summary>
+        /// Obtener producto por código
+        /// </summary>
+        /// <param name="codigo"></param>
+        /// <returns></returns>
+        public async Task<Producto> GetProductByCodeAsync(string codigo)
+        {
+            return await _context.Productos.FirstOrDefaultAsync(p => p.Codigo == codigo);
+        }
+
+        //Unidad
+
+        /// <summary>
+        /// Obtener unidad por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Unidad> GetUnidadByIdAsync(Guid id)
+        {
+            return await _context.Unidades.FindAsync(id);
         }
 
     }

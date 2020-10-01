@@ -31,6 +31,19 @@
             return View(catalogo);
         }
         
+        public IActionResult Contacto()
+        {
+            var contacto = new Contacto()
+            {
+                Clientes = GetCountClientes(),
+                Colaboradores = GetCountColaboradores(),
+                Proveedores = GetCountProveedores()
+            };
+
+            return View(contacto);
+        }
+
+        #region Category's counts
         private int GetCountGeneros()
         {
             return _context.Generos.Count();
@@ -70,5 +83,24 @@
         {
             return _context.Unidades.Count();
         }
+        #endregion
+
+        #region Contact's counts
+        private int GetCountClientes()
+        {
+            return _context.Clientes.Count();
+        }
+
+        private int GetCountColaboradores()
+        {
+            return _context.Colaboradores.Count();
+        }
+
+        private int GetCountProveedores()
+        {
+            return _context.Proveedores.Count();
+        } 
+        #endregion
+
     }
 }

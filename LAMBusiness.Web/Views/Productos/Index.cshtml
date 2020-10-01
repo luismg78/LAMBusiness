@@ -44,12 +44,17 @@
                         <div class="d-block">
                             <small class="text-muted">Código: @Html.DisplayFor(modelItem => item.Codigo)</small>
                             @if (item.Paquete == null)
-                            {    
-                                <small class="badge badge-light border">Pieza</small>}
+                            {
+                                <small class="badge badge-light border">Pieza</small>
+                            }
                             else
                             {
-                                <small class="badge badge-secondary">Caja</small>}
-
+                                <small class="badge badge-secondary">Caja</small>
+                            }
+                            @if (!item.Activo)
+                            {
+                                <small class="badge badge-danger">No Disponible</small>
+                            }
                         </div>
                         <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.ProductoDescripcion)</small>
                     </div>

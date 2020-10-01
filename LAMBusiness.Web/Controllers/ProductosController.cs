@@ -5,24 +5,29 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.EntityFrameworkCore;
     using Data;
     using Helpers;
     using Models.ViewModels;
+    using Shared.Catalogo;
 
     public class ProductosController : Controller
     {
         private readonly DataContext _context;
         private readonly ICombosHelper _combosHelper;
         private readonly IConverterHelper _converterHelper;
+        private readonly IGetHelper _getHelper;
 
         public ProductosController(DataContext context, 
             ICombosHelper combosHelper,
-            IConverterHelper converterHelper)
+            IConverterHelper converterHelper,
+            IGetHelper getHelper)
         {
             _context = context;
             _combosHelper = combosHelper;
             _converterHelper = converterHelper;
+            _getHelper = getHelper;
         }
 
         public IActionResult Index()
@@ -34,6 +39,50 @@
                 .OrderBy(p => p.Codigo);
 
             return View(dataContext);
+        }
+
+        public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
+        {
+            IQueryable<Producto> query = null;
+            if (searchby != null && searchby != "")
+            {
+                var words = searchby.Trim().ToUpper().Split(' ');
+                foreach (var w in words)
+                {
+                    if (w.Trim() != "")
+                    {
+                        if (query == null)
+                        {
+                            query = _context.Productos
+                                    .Where(p => p.Codigo.Contains(w) ||
+                                                p.ProductoNombre.Contains(w) ||
+                                                p.ProductoDescripcion.Contains(w));
+                        }
+                        else
+                        {
+                            query = query.Where(p => p.Codigo.Contains(w) ||
+                                                p.ProductoNombre.Contains(w) ||
+                                                p.ProductoDescripcion.Contains(w));
+                        }
+                    }
+                }
+            }
+            if (query == null)
+            {
+                query = _context.Productos;
+            }
+
+            var productos = await query.OrderBy(p => p.ProductoNombre)
+                .Skip(skip)
+                .Take(50)
+                .ToListAsync();
+
+            return new PartialViewResult
+            {
+                ViewName = "_AddRowsNextAsync",
+                ViewData = new ViewDataDictionary
+                            <List<Producto>>(ViewData, productos)
+            };
         }
 
         public async Task<IActionResult> Details(Guid? id)
@@ -60,7 +109,7 @@
 
         public async Task<IActionResult> Create()
         {
-            var productoViewModel = new ProductoViewModel() { 
+            var productoViewModel = new ProductoViewModel() {
                 UnidadesDDL = await _combosHelper.GetComboUnidadesAsync(),
                 TasasImpuestosDDL = await _combosHelper.GetComboTasaImpuestosAsync()
             };
@@ -150,9 +199,9 @@
                 try
                 {
                     var producto = await _converterHelper.ToProductoAsync(productoViewModel, false);
-                    var paquete = producto.Paquete;
                     _context.Update(producto);
-
+                    
+                    var paquete = producto.Paquete;
                     bool paqueteExists = PaqueteExists(producto.ProductoID);
 
                     if (paquete != null)
@@ -164,11 +213,35 @@
                     }
                     else
                     {
-                        if (paqueteExists)
+                        paquete = await _getHelper.GetPaqueteByIdAsync(producto.ProductoID);
+                        if (paquete != null) {
+                            if (paqueteExists)
+                            {
+                                _context.Remove(paquete);
+                            }
+                        }
+
+                        if (!producto.Activo)
                         {
-                            paquete = await _context.Paquetes
-                                .FirstOrDefaultAsync(p => p.ProductoID == producto.ProductoID);
-                            _context.Remove(paquete);
+                            var packages = await _context.Paquetes
+                                .Where(p => p.PiezaProductoID == producto.ProductoID)
+                                .ToListAsync();
+                            if (packages != null)
+                            {
+                                foreach (var pack in packages)
+                                {
+                                    var productoPack = await _getHelper
+                                        .GetProductByIdAsync(pack.ProductoID);
+                                    if (productoPack != null)
+                                    {
+                                        if (productoPack.Activo)
+                                        {
+                                            productoPack.Activo = producto.Activo;
+                                            _context.Update(productoPack);
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -203,17 +276,30 @@
                 return NotFound();
             }
 
-            var producto = await _context.Productos.FindAsync(id);
+            var producto = await _context.Productos
+                .Include(p => p.Unidades)
+                .FirstOrDefaultAsync(p => p.ProductoID == id);
             if (producto == null)
             {
                 return NotFound();
             }
 
-            //var paquete = await _context.Paquetes.Where(p => p.PiezaProductoID == producto.ProductoID).ToListAsync();
-            //if (paquete != null)
-            //{
-            //    _context.Paquetes.Remove(paquete);
-            //}
+            if (producto.Unidades.Paquete) {
+                var paquete = await _context.Paquetes.FindAsync(producto.ProductoID);
+                if (paquete != null) {
+                    _context.Remove(paquete);
+                }
+            }else
+            {
+                var piezaAsignada = await _context.Paquetes
+                    .Where(p => p.PiezaProductoID == producto.ProductoID)
+                    .ToListAsync();
+                if (piezaAsignada.Count > 0)
+                {
+                    ModelState.AddModelError(string.Empty, $"El producto no se puede eliminar, porque está asignado a {piezaAsignada.Count} paquete(s).");
+                    return RedirectToAction(nameof(Index));
+                }
+            }
 
             _context.Productos.Remove(producto);
             await _context.SaveChangesAsync();
@@ -232,8 +318,10 @@
 
         private async Task ValidateFieldsAsync(ProductoViewModel productoViewModel)
         {
+            productoViewModel.Unidades = await _getHelper.GetUnidadByIdAsync((Guid)productoViewModel.UnidadID);
             //validate if register exist with that value
             var codeexist = await _context.Productos
+                .Include(p => p.Unidades)
                 .FirstOrDefaultAsync(p => p.Codigo == productoViewModel.Codigo && 
                                      p.ProductoID != productoViewModel.ProductoID);
             if (codeexist != null)
@@ -251,8 +339,7 @@
                 ModelState.AddModelError("UnidadID", "El campo Unidad es requerido");
             }
             //if field unidad have value, then, validate fields CodigoPieza and Cantidad
-            if (productoViewModel.UnidadID == Guid.Parse("6C9C7801-D654-11E9-8B00-8CDCD47D68A1") ||
-                productoViewModel.UnidadID == Guid.Parse("95B850EC-D654-11E9-8B00-8CDCD47D68A1"))
+            if (productoViewModel.Unidades.Paquete)
             {
                 if (string.IsNullOrEmpty(productoViewModel.CodigoPieza))
                 {
@@ -260,32 +347,35 @@
                 }
                 //if field CodigoPieza have value, then, validate if product exist
                 var codepieceexist = await _context.Productos
+                    .Include(p => p.Unidades)
                     .FirstOrDefaultAsync(p => p.Codigo == productoViewModel.CodigoPieza);
                 if (codepieceexist == null)
                 {
                     ModelState.AddModelError("CodigoPieza", "Código de producto inexistente.");
                 }
+                else if(!codepieceexist.Activo){
+                    ModelState.AddModelError("CodigoPieza", "Producto no disponible (ver detalle).");
+                }
                 else {
                     //validate that producto be piece
-                    if (codepieceexist.UnidadID != Guid.Parse("401B9552-D654-11E9-8B00-8CDCD47D68A1") &&
-                        codepieceexist.UnidadID != Guid.Parse("826671FC-D654-11E9-8B00-8CDCD47D68A1"))
+                    if (codepieceexist.Unidades.Paquete)
                     {
                         ModelState.AddModelError("CodigoPieza", "El producto no puede ser caja.");
                     }
                     else
                     {
                         //validate package and piece be whole pieces
-                        if (productoViewModel.UnidadID == Guid.Parse("6C9C7801-D654-11E9-8B00-8CDCD47D68A1"))
+                        if (productoViewModel.Unidades.Pieza)
                         {
-                            if (codepieceexist.UnidadID != Guid.Parse("401B9552-D654-11E9-8B00-8CDCD47D68A1"))
+                            if (!codepieceexist.Unidades.Pieza)
                             {
                                 ModelState.AddModelError("CodigoPieza", "No coincide con la unidad del paquete.");
                             }
                         }
                         //validate package and piece be bulk pieces
-                        else if (productoViewModel.UnidadID == Guid.Parse("95B850EC-D654-11E9-8B00-8CDCD47D68A1"))
+                        else if (!productoViewModel.Unidades.Pieza)
                         {
-                            if (codepieceexist.UnidadID != Guid.Parse("826671FC-D654-11E9-8B00-8CDCD47D68A1"))
+                            if (codepieceexist.Unidades.Pieza)
                             {
                                 ModelState.AddModelError("CodigoPieza", "No coincide con la unidad del paquete.");
                             }

@@ -12,7 +12,7 @@
 <body>
     <header class="fixed-top">
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
+            <div class="container">
                 <a class="navbar-brand text-base" asp-area="" asp-controller="Home" asp-action="Index">LAMBusiness</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -28,15 +28,20 @@
                                 <span class="ml-2 ml-md-0">Inicio</span>
                             </a>
                         </li>
-                        @*<li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>*@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Menu" asp-action="Catalogo">
                                 <div class="d-md-none btn-icon rounded-circle d-inline-block">
                                     <i class="fa fa-th"></i>
                                 </div>
                                 <span class="ml-2 ml-md-0">Catálogos</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Menu" asp-action="Contacto">
+                                <div class="d-md-none btn-icon rounded-circle d-inline-block">
+                                    <i class="fa fa-users"></i>
+                                </div>
+                                <span class="ml-2 ml-md-0">Contactos</span>
                             </a>
                         </li>
                     </ul>
@@ -71,7 +76,7 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container-fluid">
+        <div class="container">
             LAMBusiness &copy; 2020 - <span class="text-base">Punto de Venta</span>
         </div>
     </footer>

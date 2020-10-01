@@ -2,6 +2,7 @@
 {
     using Data;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Diagnostics;
     using Models.ViewModels;
     using Shared.Catalogo;
     using System;
@@ -48,17 +49,18 @@
                 Paquete = null
             };
 
-            if (productoViewModel.UnidadID == Guid.Parse("6C9C7801-D654-11E9-8B00-8CDCD47D68A1") ||
-                productoViewModel.UnidadID == Guid.Parse("95B850EC-D654-11E9-8B00-8CDCD47D68A1"))
+            if (productoViewModel.Unidades.Paquete)
             {
-                var productopiezaid = await _getHelper.GetProductoIDAsync(productoViewModel.CodigoPieza);
+                var pieza = await _getHelper.GetProductByCodeAsync(productoViewModel.CodigoPieza);
+
                 var paquete = new Paquete()
                 {
                     CantidadProductoxPaquete = (decimal)productoViewModel.CantidadProductoxPaquete,
                     ProductoID = producto.ProductoID,
-                    PiezaProductoID = productopiezaid
+                    PiezaProductoID = pieza.ProductoID
                 };
                 producto.Paquete = paquete;
+               
             }
 
             return producto;
@@ -99,7 +101,9 @@
             if (paquete != null)
             {
                 productoViewModel.CantidadProductoxPaquete = paquete.CantidadProductoxPaquete;
-                productoViewModel.CodigoPieza = await _getHelper.GetCodigoProductoAsync(paquete.PiezaProductoID);
+
+                var pieza = await _getHelper.GetProductByIdAsync(paquete.PiezaProductoID);
+                productoViewModel.CodigoPieza = pieza.Codigo;
             }
 
             return productoViewModel;

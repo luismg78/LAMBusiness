@@ -18,94 +18,102 @@
     </div>
     <div class="modal-body py-4">
         <div class="row px-md-3">
-            <div class="col">
-                <div class="row">
-                    <div class="col-12 col-md-4 mb-2">
-                        <span class="font-weight-bold">@Html.DisplayNameFor(model => model.Codigo)</span>
-                        <span class="d-block">@Html.DisplayFor(model => model.Codigo)</span>
-                    </div>
-                    <div class="col-12 col-md-8 mb-2">
-                        <span class="font-weight-bold">@Html.DisplayNameFor(model => model.ProductoNombre)</span>
-                        <span class="d-block">@Html.DisplayFor(model => model.ProductoNombre)</span>
-                    </div>
-                    <div class="col-12 mb-2">
-                        <span class="font-weight-bold">@Html.DisplayNameFor(model => model.ProductoDescripcion)</span>
-                        <span class="d-block">@Html.DisplayFor(model => model.ProductoDescripcion)</span>
-                    </div>
-                    <div class="col-12 col-md-4 mb-2">
-                        <span class="font-weight-bold">@Html.DisplayNameFor(model => model.Unidades.UnidadNombre)</span>
-                        <span class="d-block">@Html.DisplayFor(model => model.Unidades.UnidadNombre)</span>
-                    </div>
-                    <div class="col-12 col-md-4 mb-2">
-                        <span class="font-weight-bold">@Html.DisplayNameFor(model => model.Existencia)</span>
-                        <span class="d-block">@Html.DisplayFor(model => model.Existencia)</span>
-                    </div>
-                    <div class="col-12 col-md-4 mb-2">
-                        <span class="font-weight-bold">@Html.DisplayNameFor(model => model.ExistenciaMaxima)</span>
-                        <span class="d-block">@Html.DisplayFor(model => model.ExistenciaMaxima)</span>
-                    </div>                    
-                    <div class="col-12 col-md-4 mb-2">
-                        <span class="font-weight-bold">@Html.DisplayNameFor(model => model.TasasImpuestos.Tasa)</span>
-                        <span class="d-block">@Html.DisplayFor(model => model.TasasImpuestos.Tasa)</span>
-                    </div>
-                    <div class="col-12 col-md-4 mb-2">
-                        <span class="font-weight-bold">@Html.DisplayNameFor(model => model.PrecioCosto)</span>
-                        <span class="d-block">@Html.DisplayFor(model => model.PrecioCosto)</span>
-                    </div>
-                    <div class="col-12 col-md-4 mb-2">
-                        <span class="font-weight-bold">@Html.DisplayNameFor(model => model.PrecioVenta)</span>
-                        <span class="d-block">@Html.DisplayFor(model => model.PrecioVenta)</span>
-                    </div>
-                    <div class="col-12 col-md-4 mb-2">
-                        <span class="font-weight-bold">@Html.DisplayNameFor(model => model.Activo)</span>
-                        <span class="d-block">@Html.DisplayFor(model => model.Activo)</span>
-                    </div>
-                </div>
-                <div class="my-4">
-                    @if (Model.ProductosAsignadosViewModel.Count > 0)
-                    {
-                        if (Model.Paquete == null)
-                        {
-                            <p class="font-weight-bold text-base">Producto asignado al(os) paquete(s).</p>
-                        }
-                        else
-                        {
-                            <p class="font-weight-bold text-base">Pieza asignada</p>
-                        }
-                        <hr />
-                        foreach (var productoAsignado in Model.ProductosAsignadosViewModel)
-                        {
-                            <div class="row border-bottom">
-                                <div class="col-12 col-md-3 mb-2">
-                                    <span class="font-weight-bold">Código</span>
-                                    <span class="d-block">@productoAsignado.Codigo</span>
-                                </div>
-                                <div class="col-12 col-md-6 mb-2">
-                                    <span class="font-weight-bold">Descripción</span>
-                                    <span class="d-block">@productoAsignado.Descripcion</span>
-                                </div>
-                                <div class="col-12 col-md-2 mb-2 text-md-right">
-                                    <span class="font-weight-bold">Piezas x Paquete</span>
-                                    <span class="d-block">@productoAsignado.Cantidad</span>
-                                </div>
-                                <div class="col-12 col-md-1 mb-2 text-right">
-                                    <a asp-action="Edit" asp-route-id="@productoAsignado.ProductoID" class="d-block d-md-inline text-decoration-none">
-                                        <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar producto">
-                                            <i class="fa fa-edit"></i>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        }
-                    }
+            <div class="align-items-center py-3 mb-4">
+                <img src="~/images/productos/sm/ShoppingCart.png" alt=""/>
+                <div class="ml-4">
+                    <h4 class="font-weight-bold mb-2">@Html.DisplayFor(model => model.ProductoNombre)</h4>
+                    <h6 class="text-muted">@Html.DisplayFor(model => model.ProductoDescripcion)</h6>
+                    <a asp-action="Edit" asp-route-id="@Model.ProductoID" class="btn btn-base">Editar</a>
                 </div>
             </div>
+            @*<div class="col">
+            <div class="row">
+                <div class="col-12 col-md-4 mb-2">
+                    <span class="font-weight-bold">@Html.DisplayNameFor(model => model.Codigo)</span>
+                    <span class="d-block">@Html.DisplayFor(model => model.Codigo)</span>
+                </div>
+                <div class="col-12 col-md-8 mb-2">
+                    <span class="font-weight-bold">@Html.DisplayNameFor(model => model.ProductoNombre)</span>
+                    <span class="d-block">@Html.DisplayFor(model => model.ProductoNombre)</span>
+                </div>
+                <div class="col-12 mb-2">
+                    <span class="font-weight-bold">@Html.DisplayNameFor(model => model.ProductoDescripcion)</span>
+                    <span class="d-block">@Html.DisplayFor(model => model.ProductoDescripcion)</span>
+                </div>
+                <div class="col-12 col-md-4 mb-2">
+                    <span class="font-weight-bold">@Html.DisplayNameFor(model => model.Unidades.UnidadNombre)</span>
+                    <span class="d-block">@Html.DisplayFor(model => model.Unidades.UnidadNombre)</span>
+                </div>
+                <div class="col-12 col-md-4 mb-2">
+                    <span class="font-weight-bold">@Html.DisplayNameFor(model => model.Existencia)</span>
+                    <span class="d-block">@Html.DisplayFor(model => model.Existencia)</span>
+                </div>
+                <div class="col-12 col-md-4 mb-2">
+                    <span class="font-weight-bold">@Html.DisplayNameFor(model => model.ExistenciaMaxima)</span>
+                    <span class="d-block">@Html.DisplayFor(model => model.ExistenciaMaxima)</span>
+                </div>
+                <div class="col-12 col-md-4 mb-2">
+                    <span class="font-weight-bold">@Html.DisplayNameFor(model => model.TasasImpuestos.Tasa)</span>
+                    <span class="d-block">@Html.DisplayFor(model => model.TasasImpuestos.Tasa)</span>
+                </div>
+                <div class="col-12 col-md-4 mb-2">
+                    <span class="font-weight-bold">@Html.DisplayNameFor(model => model.PrecioCosto)</span>
+                    <span class="d-block">@Html.DisplayFor(model => model.PrecioCosto)</span>
+                </div>
+                <div class="col-12 col-md-4 mb-2">
+                    <span class="font-weight-bold">@Html.DisplayNameFor(model => model.PrecioVenta)</span>
+                    <span class="d-block">@Html.DisplayFor(model => model.PrecioVenta)</span>
+                </div>
+                <div class="col-12 col-md-4 mb-2">
+                    <span class="font-weight-bold">@Html.DisplayNameFor(model => model.Activo)</span>
+                    <span class="d-block">@Html.DisplayFor(model => model.Activo)</span>
+                </div>
+            </div>
+            <div class="my-4">
+                @if (Model.ProductosAsignadosViewModel.Count > 0)
+                {
+                    if (Model.Paquete == null)
+                    {
+                        <p class="font-weight-bold text-base">Producto asignado al(os) paquete(s).</p>
+                    }
+                    else
+                    {
+                        <p class="font-weight-bold text-base">Pieza asignada</p>
+                    }
+                    <hr />
+                    foreach (var productoAsignado in Model.ProductosAsignadosViewModel)
+                    {
+                        <div class="row border-bottom">
+                            <div class="col-12 col-md-3 mb-2">
+                                <span class="font-weight-bold">Código</span>
+                                <span class="d-block">@productoAsignado.Codigo</span>
+                            </div>
+                            <div class="col-12 col-md-6 mb-2">
+                                <span class="font-weight-bold">Descripción</span>
+                                <span class="d-block">@productoAsignado.Descripcion</span>
+                            </div>
+                            <div class="col-12 col-md-2 mb-2 text-md-right">
+                                <span class="font-weight-bold">Piezas x Paquete</span>
+                                <span class="d-block">@productoAsignado.Cantidad</span>
+                            </div>
+                            <div class="col-12 col-md-1 mb-2 text-right">
+                                <a asp-action="Edit" asp-route-id="@productoAsignado.ProductoID" class="d-block d-md-inline text-decoration-none">
+                                    <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar producto">
+                                        <i class="fa fa-edit"></i>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>*@
         </div>
     </div>
-    <div class="modal-footer justify-content-between">
+    @*<div class="modal-footer justify-content-between">
         <div class="px-md-3">
             <a asp-action="Edit" asp-route-id="@Model.ProductoID" class="btn btn-base">Editar</a>
             <a asp-action="Index" class="btn btn-outline-secondary">Regresar</a>
         </div>
-    </div>
+    </div>*@
 </div>
