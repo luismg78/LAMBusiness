@@ -34,12 +34,13 @@
 
         [Display(Name = "Codigo Postal")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public int CodigoPostal { get; set; }
+        public int? CodigoPostal { get; set; }
 
         [Display(Name = "Municipio")]
         [ForeignKey("Municipios")]
+        [Range(1, int.MaxValue, ErrorMessage = "El campo {0} debe ser mayor que {1}.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public int MunicipioID { get; set; }
+        public int? MunicipioID { get; set; }
 
         [JsonIgnore]
         public virtual Municipio Municipios { get; set; }
@@ -48,6 +49,7 @@
         [Display(Name = "Teléfono (Fijo)")]
         [MaxLength(15, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [RegularExpression(@"^[0-9]+$", ErrorMessage = "Formato Incorrecto")]
+        [Required(ErrorMessage = "El campo {0} es requerido.")]
         public string Telefono { get; set; }
 
         [DataType(DataType.PhoneNumber)]
@@ -63,8 +65,6 @@
         public string Email { get; set; }
 
         [DataType(DataType.Date)]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0,dd/MM/yyyy}")]
-        [Required(ErrorMessage = "El campo {0} es requerido.")]
         public DateTime FechaRegistro { get; set; }
 
         public bool Activo { get; set; }

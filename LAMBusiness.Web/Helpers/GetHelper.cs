@@ -1,10 +1,12 @@
 ﻿namespace LAMBusiness.Web.Helpers
 {
-    using Data;
-    using LAMBusiness.Shared.Catalogo;
-    using Microsoft.EntityFrameworkCore;
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using Data;
+    using Shared.Catalogo;
 
     public class GetHelper : IGetHelper
     {
@@ -13,6 +15,42 @@
         public GetHelper(DataContext context)
         {
             _context = context;
+        }
+
+        //Estado
+
+        /// <summary>
+        /// Obtener Estado por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Estado> GetEstadosByIdAsync(short id)
+        {
+            return await _context.Estados.FindAsync(id);
+        }
+
+        //Municipio
+
+        /// <summary>
+        /// Obtener Municipio por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Municipio> GetMunicipioByIdAsync(int id)
+        {
+            return await _context.Municipios.FindAsync(id);
+        }
+
+        /// <summary>
+        /// Obtener Municipios por EstadoID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<List<Municipio>> GetMunicipiosByEstadoIdAsync(short id)
+        {
+            return await _context.Municipios.Where(m => m.EstadoID == id)
+                .OrderBy(m => m.MunicipioDescripcion)
+                .ToListAsync();
         }
 
         //Paquetes

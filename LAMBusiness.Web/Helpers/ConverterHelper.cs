@@ -1,14 +1,14 @@
 ﻿namespace LAMBusiness.Web.Helpers
 {
-    using Data;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
-    using Models.ViewModels;
-    using Shared.Catalogo;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using Data;
+    using Models.ViewModels;
+    using Shared.Catalogo;
+    using Shared.Contacto;
 
     public class ConverterHelper : IConverterHelper
     {
@@ -24,6 +24,70 @@
             _getHelper = getHelper;
             _combosHelper = combosHelper;
         }
+
+        //Clientes
+
+        /// <summary>
+        /// Convertir clase clienteViewModel a cliente
+        /// </summary>
+        /// <param name="clienteViewModel"></param>
+        /// <param name="isNew"></param>
+        /// <returns>Cliente(class)</returns>
+        public async Task<Cliente> ToClienteAsync(ClienteViewModel clienteViewModel, bool isNew)
+        {
+            var cliente = new Cliente()
+            {
+                Activo = clienteViewModel.Activo,
+                ClienteID = isNew ? Guid.NewGuid() : clienteViewModel.ClienteID,
+                CodigoPostal = clienteViewModel.CodigoPostal,
+                Colonia = clienteViewModel.Colonia.Trim().ToUpper(),
+                Contacto = clienteViewModel.Contacto.Trim().ToUpper(),
+                Domicilio = clienteViewModel.Domicilio.Trim().ToUpper(),
+                Email = clienteViewModel.Email.Trim().ToLower(),
+                FechaRegistro = DateTime.Now,
+                MunicipioID = clienteViewModel.MunicipioID,
+                Municipios = await _getHelper.GetMunicipioByIdAsync((int)clienteViewModel.MunicipioID),
+                Nombre = clienteViewModel.Nombre.Trim().ToUpper(),
+                RFC = clienteViewModel.RFC.Trim().ToUpper(),
+                Telefono = clienteViewModel.Telefono,
+                TelefonoMovil = clienteViewModel.TelefonoMovil
+            };
+
+            return cliente;
+        }
+
+        /// <summary>
+        /// Convertir clase cliente a clienteViewModel.
+        /// </summary>
+        /// <param name="cliente"></param>
+        /// <returns>ClienteViewModel(class)</returns>
+        public async Task<ClienteViewModel> ToClienteViewModelAsync(Cliente cliente)
+        {
+
+            var clienteViewModel = new ClienteViewModel()
+            {
+                Activo = cliente.Activo,
+                ClienteID = cliente.ClienteID,
+                CodigoPostal = cliente.CodigoPostal,
+                Colonia = cliente.Colonia.Trim().ToUpper(),
+                Contacto = cliente.Contacto.Trim().ToUpper(),
+                Domicilio = cliente.Domicilio.Trim().ToUpper(),
+                Email = cliente.Email.Trim().ToLower(),
+                EstadosDDL = await _combosHelper.GetComboEstadosAsync(),
+                FechaRegistro = DateTime.Now,
+                MunicipioID = cliente.MunicipioID,
+                MunicipiosDDL = await _combosHelper.GetComboMunicipiosAsync(cliente.Municipios.EstadoID),
+                Municipios = await _getHelper.GetMunicipioByIdAsync((int)cliente.MunicipioID),
+                Nombre = cliente.Nombre.Trim().ToUpper(),
+                RFC = cliente.RFC.Trim().ToUpper(),
+                Telefono = cliente.Telefono,
+                TelefonoMovil = cliente.TelefonoMovil
+            };
+
+            return clienteViewModel;
+        }
+
+        //Productos
 
         /// <summary>
         /// Convertir clase productoViewModel a producto (incluye clase paquete)

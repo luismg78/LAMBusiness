@@ -4,7 +4,6 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.EntityFrameworkCore;
     using Data;
@@ -87,7 +86,6 @@
                 return NotFound();
             }
 
-            //ViewData["EstadoID"] = new SelectList(_context.Estados, "EstadoID", "EstadoDescripcion", municipio.EstadoID);
             return View(municipio);
         }
 
@@ -127,7 +125,6 @@
                 return RedirectToAction(nameof(Index));
             }
             
-            //ViewData["EstadoID"] = new SelectList(_context.Estados, "EstadoID", "EstadoDescripcion", municipio.EstadoID);
             return View(municipioUpdate);
         }
 

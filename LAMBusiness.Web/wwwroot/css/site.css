@@ -57,7 +57,9 @@ transparencia: rgba(255,65,82,.5)*/
     .card-header-lam-d1{align-items:flex-start;display:flex;flex:0 0 100%;max-width:100%;padding:1rem 0!important;text-align:left;}
         .card-header-lam-d1 p.title{font-size:1.3rem;}
         .card-header-lam-d1 span.subtitle{font-size:0.8rem;}
-.card-body-lam-d1{display:block;}
+
+.card-body-lam-d1 i{font-size:2rem;}
+
 .card-footer-lam-d1{display:block;}
 
 .footer {bottom:0;line-height:60px;position:absolute;width:100%;white-space:nowrap;}
@@ -70,10 +72,29 @@ transparencia: rgba(255,65,82,.5)*/
 .process-with-spinner {background-color:transparent;border-radius:8px;bottom:4px;display:inline-flex;
                        padding:1rem;position:fixed;right:3px;z-index:999;}
 
+.row-bordered {overflow: hidden;}
+
+    .row-bordered > .col, .row-bordered > [class^="col-"], .row-bordered > [class*=" col-"], 
+    .row-bordered > [class^="col "], .row-bordered > [class*=" col "], 
+    .row-bordered > [class$=" col"], .row-bordered > [class="col"] {position: relative;
+                                                                    padding-top: 1px;}
+
+.row-bordered > .col::before, .row-bordered > [class^="col-"]::before, 
+.row-bordered > [class*=" col-"]::before, .row-bordered > [class^="col "]::before, 
+.row-bordered > [class*=" col "]::before, .row-bordered > [class$=" col"]::before, 
+.row-bordered > [class="col"]::before {border-top: 1px solid #dee2e6;bottom: -1px;content: "";
+                                       display: block;height: 0;left: 0;position: absolute;right: 0;}
+
+.row-bordered > .col::after, .row-bordered > [class^="col-"]::after,
+.row-bordered > [class*=" col-"]::after, .row-bordered > [class^="col "]::after,
+.row-bordered > [class*=" col "]::after, .row-bordered > [class$=" col"]::after,
+.row-bordered > [class="col"]::after {border-left: 1px solid #dee2e6;bottom: 0;content: "";
+                                      display: block;left: -1px;position: absolute;top: 0;width: 0;}
+
 .text-deleteConfirm {margin: 1em 0;}
-    .text-deleteConfirm > i{font-size:4rem;}
-    .text-deleteConfirm > p{font-size:1.6rem;font-weight:700;margin:1.5rem 0 0;}
-    .text-deleteConfirm > span{font-size:1rem;}
+.text-deleteConfirm > i{font-size:4rem;}
+.text-deleteConfirm > p{font-size:1.6rem;font-weight:700;margin:1.5rem 0 0;}
+.text-deleteConfirm > span{font-size:1rem;}
 
 
 /*Css bootstrap replace values*/

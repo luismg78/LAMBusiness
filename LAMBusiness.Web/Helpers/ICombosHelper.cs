@@ -6,6 +6,8 @@
 
     public interface ICombosHelper
     {
+        Task<IEnumerable<SelectListItem>> GetComboEstadosAsync();
+        Task<IEnumerable<SelectListItem>> GetComboMunicipiosAsync(short estadoId);
         Task<IEnumerable<SelectListItem>> GetComboTasaImpuestosAsync();
         Task<IEnumerable<SelectListItem>> GetComboUnidadesAsync();
     }

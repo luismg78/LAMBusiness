@@ -9,14 +9,27 @@
     using Microsoft.EntityFrameworkCore;
     using LAMBusiness.Shared.Contacto;
     using LAMBusiness.Web.Data;
+    using LAMBusiness.Web.Models.ViewModels;
+    using LAMBusiness.Web.Helpers;
+    using Microsoft.AspNetCore.Mvc.ViewFeatures;
+    using LAMBusiness.Shared.Catalogo;
 
     public class ClientesController : Controller
     {
         private readonly DataContext _context;
+        private readonly IGetHelper _getHelper;
+        private readonly ICombosHelper _combosHelper;
+        private readonly IConverterHelper _converterHelper;
 
-        public ClientesController(DataContext context)
+        public ClientesController(DataContext context, 
+            IGetHelper getHelper,
+            ICombosHelper combosHelper,
+            IConverterHelper converterHelper)
         {
             _context = context;
+            _getHelper = getHelper;
+            _combosHelper = combosHelper;
+            _converterHelper = converterHelper;
         }
 
         public async Task<IActionResult> Index()
@@ -25,7 +38,6 @@
             return View(await dataContext.ToListAsync());
         }
 
-        // GET: Clientes/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -44,11 +56,15 @@
             return View(cliente);
         }
 
-        // GET: Clientes/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["MunicipioID"] = new SelectList(_context.Municipios, "MunicipioID", "MunicipioDescripcion");
-            return View();
+            var clienteViewModel = new ClienteViewModel()
+            {
+                EstadosDDL = await _combosHelper.GetComboEstadosAsync(),
+                MunicipiosDDL = await _combosHelper.GetComboMunicipiosAsync(0)
+            };
+
+            return View(clienteViewModel);
         }
 
         // POST: Clientes/Create
@@ -56,17 +72,28 @@
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ClienteID,RFC,Nombre,Contacto,Domicilio,Colonia,CodigoPostal,MunicipioID,Telefono,TelefonoMovil,Email,FechaRegistro,Activo")] Cliente cliente)
+        public async Task<IActionResult> Create(ClienteViewModel clienteViewModel)
         {
             if (ModelState.IsValid)
             {
-                cliente.ClienteID = Guid.NewGuid();
+                var cliente = await _converterHelper.ToClienteAsync(clienteViewModel, true);
                 _context.Add(cliente);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Details), new { id = cliente.ClienteID});
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
             }
-            ViewData["MunicipioID"] = new SelectList(_context.Municipios, "MunicipioID", "MunicipioDescripcion", cliente.MunicipioID);
-            return View(cliente);
+
+            clienteViewModel.EstadosDDL = await _combosHelper.GetComboEstadosAsync();
+            clienteViewModel.MunicipiosDDL = await _combosHelper
+                .GetComboMunicipiosAsync((short)clienteViewModel.EstadoID);
+
+            return View(clienteViewModel);
         }
 
         // GET: Clientes/Edit/5
@@ -141,7 +168,6 @@
             return View(cliente);
         }
 
-        // POST: Clientes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
@@ -150,6 +176,23 @@
             _context.Clientes.Remove(cliente);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> AddMunicipios(short? id) 
+        {
+            if(id == null)
+            {
+                return null;
+            }
+
+            var municipios = await _getHelper.GetMunicipiosByEstadoIdAsync((short)id);
+
+            return new PartialViewResult
+            {
+                ViewName = "_AddComboMunicipios",
+                ViewData = new ViewDataDictionary
+                            <List<Municipio>>(ViewData, municipios)
+            };
         }
 
         private bool ClienteExists(Guid id)

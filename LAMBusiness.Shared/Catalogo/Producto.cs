@@ -10,6 +10,7 @@
         [Key]
         public Guid ProductoID { get; set; }
 
+        [Display(Name = "Código")]
         [MaxLength(14, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public string Codigo { get; set; }

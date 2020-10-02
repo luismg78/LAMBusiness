@@ -1,0 +1,11 @@
+﻿@model IEnumerable<LAMBusiness.Shared.Catalogo.Municipio>
+
+<option value="0">[Seleccionar Municipio]</option>
+
+@if (Model.Any())
+{
+    foreach (var item in Model)
+    {
+        <option value="@item.MunicipioID">@item.MunicipioDescripcion</option>
+    }
+}

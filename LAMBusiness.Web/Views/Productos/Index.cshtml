@@ -39,7 +39,7 @@
             <div class="row px-md-3" id="dRows" data-charging="0" data-rows-next="1">
                 @foreach (var item in Model.Take(50))
                 {
-                    <div class="border-bottom col-10 col-md-9 px-3 py-2">
+                    <div class="border-bottom col-10 col-md-9 p-3">
                         <span class="text-dark">@Html.DisplayFor(modelItem => item.ProductoNombre)</span>
                         <div class="d-block">
                             <small class="text-muted">Código: @Html.DisplayFor(modelItem => item.Codigo)</small>
