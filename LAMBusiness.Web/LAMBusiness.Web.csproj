@@ -20,6 +20,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
     <PackageReference Include="popper.js" Version="1.16.1" />
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
     <PackageReference Include="toastr" Version="2.1.1" />
   </ItemGroup>
 
@@ -28,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
     <Folder Include="wwwroot\images\productos\" />
   </ItemGroup>
 

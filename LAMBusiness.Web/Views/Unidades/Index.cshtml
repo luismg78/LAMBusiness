@@ -26,7 +26,7 @@
             <div class="row px-md-3" id="dRows" data-charging="0" data-rows-next="1">
                 @foreach (var item in Model)
                 {
-                    <div class="border-bottom col-12 px-3 py-2">
+                    <div class="bg-row border-bottom col-12 px-3 py-2">
                         <span class="text-dark">@Html.DisplayFor(modelItem => item.UnidadNombre)</span>
                         <small class="d-block text-muted">Productos asignados: @Html.DisplayFor(modelItem => item.Productos.Count)</small>
                         <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.UnidadDescripcion)</small>

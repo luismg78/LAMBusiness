@@ -5,7 +5,7 @@
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Shared.Contacto;
 
-    public class ClienteViewModel:Cliente
+    public class ProveedorViewModel: Proveedor
     {
         [Display(Name = "Estado")]
         [Range(1, int.MaxValue, ErrorMessage = "Seleccionar un registro del campo {0}.")]

@@ -14,7 +14,7 @@
         public Guid ProveedorID { get; set; }
 
         [JsonIgnore]
-        public virtual Proveedor Proveedores { get; set; }
+        public virtual Proveedor Proveedor { get; set; }
 
         [Column(name: "Nombre")]
         [Display(Name = "Nombre")]

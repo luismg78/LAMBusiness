@@ -18,6 +18,7 @@
     </div>
     <div class="modal-body py-4">
         <div class="row px-md-3">
+            <!--Información del producto-->
             <div class="card-lam-d1 col-12">
                 <div class="card-header-lam-d1">
                     <img src="~/images/productos/sm/ShoppingCart.png" alt="" />
@@ -30,7 +31,7 @@
                 </div>
                 <div class="card-body-lam-d1 mt-2">
                     <div class="row no-gutters row-bordered border">
-                        <div class="d-flex col-md-6 col-lg align-items-center">
+                        <div class="bg-row d-flex col-md-6 col-lg-4 align-items-center">
                             <div class="card-body d-flex align-items-center">
                                 <i class="fas fa-barcode display-4 text-secondary"></i>
                                 <div class="ml-3">
@@ -39,7 +40,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="d-flex col-md-6 col-lg align-items-center">
+                        <div class="bg-row d-flex col-md-6 col-lg-4 align-items-center">
                             <div class="card-body d-flex align-items-center">
                                 <i class="fas fa-dollar-sign display-4 text-secondary"></i>
                                 <div class="ml-3">
@@ -48,7 +49,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="d-flex col-md-6 col-lg align-items-center">
+                        <div class="bg-row d-flex col-md-6 col-lg-4 align-items-center">
                             <div class="card-body d-flex align-items-center">
                                 <i class="fas fa-dollar-sign display-4 text-secondary"></i>
                                 <div class="ml-3">
@@ -57,7 +58,25 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="d-flex col-md-6 col-lg align-items-center">
+                        <div class="bg-row d-flex col-md-6 col-lg-4 align-items-center">
+                            <div class="card-body d-flex align-items-center">
+                                <i class="fab fa-uniregistry display-4 text-secondary"></i>
+                                <div class="ml-3">
+                                    <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.Unidades.UnidadNombre)</div>
+                                    <h5>@Html.DisplayFor(model => model.Unidades.UnidadNombre)</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-row d-flex col-md-6 col-lg-4 align-items-center">
+                            <div class="card-body d-flex align-items-center">
+                                <i class="fas fa-percentage display-4 text-secondary"></i>
+                                <div class="ml-3">
+                                    <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.TasasImpuestos.Tasa)</div>
+                                    <h5>@Html.DisplayFor(model => model.TasasImpuestos.Tasa)</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-row d-flex col-md-6 col-lg-4 align-items-center">
                             <div class="card-body d-flex align-items-center">
                                 @if (Model.Activo)
                                 {
@@ -78,46 +97,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row no-gutters row-bordered border border-top-0">
-                        <div class="d-flex col-md-6 col-lg align-items-center">
-                            <div class="card-body d-flex align-items-center">
-                                <i class="fab fa-uniregistry display-4 text-secondary"></i>
-                                <div class="ml-3">
-                                    <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.Unidades.UnidadNombre)</div>
-                                    <h5>@Html.DisplayFor(model => model.Unidades.UnidadNombre)</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex col-md-6 col-lg align-items-center">
-                            <div class="card-body d-flex align-items-center">
-                                <i class="fas fa-percentage display-4 text-secondary"></i>
-                                <div class="ml-3">
-                                    <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.TasasImpuestos.Tasa)</div>
-                                    <h5>@Html.DisplayFor(model => model.TasasImpuestos.Tasa)</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex col-md-6 col-lg align-items-center">
-                            <div class="card-body d-flex align-items-center">
-                                <i class="fas fa-cubes display-4 text-secondary"></i>
-                                <div class="ml-3">
-                                    <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.ExistenciaMaxima)</div>
-                                    <h5>@Html.DisplayFor(model => model.ExistenciaMaxima)</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex col-md-6 col-lg align-items-center">
-                            <div class="card-body d-flex align-items-center">
-                                <i class="fas fa-cube display-4 text-info"></i>
-                                <div class="ml-3">
-                                    <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.Existencia)</div>
-                                    <h5 class="info">@Html.DisplayFor(model => model.Existencia)</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
+            <!--Productos asignados a paquetes-->
             <div class="col">
                 <div class="my-4">
                     @if (Model.ProductosAsignadosViewModel.Count > 0)
@@ -131,25 +113,46 @@
                             <p class="font-weight-bold text-base">Pieza asignada</p>
                         }
                         <hr />
-                        foreach (var productoAsignado in Model.ProductosAsignadosViewModel)
+                        if (Model.ProductosAsignadosViewModel.Count > 0)
                         {
-                            <div class="row border-bottom">
-                                <div class="col-12 col-md-3 mb-2">
+                            <div class="row border-bottom d-none d-md-flex">
+                                <div class="col-12 col-md-3 col-lg-2 mb-2">
                                     <span class="font-weight-bold">Código</span>
-                                    <span class="d-block">@productoAsignado.Codigo</span>
                                 </div>
                                 <div class="col-12 col-md-6 mb-2">
                                     <span class="font-weight-bold">Descripción</span>
+                                </div>
+                                <div class="col-12 col-md-3 col-lg-2 mb-2 text-md-right">
+                                    <span class="font-weight-bold">Piezas x Paquete</span>
+                                </div>
+                                <div class="col-12 col-md-0 col-lg-2 mb-2 text-right">
+                                </div>
+                            </div>
+                        }
+                        foreach (var productoAsignado in Model.ProductosAsignadosViewModel)
+                        {
+                            <div class="bg-row row align-items-center border-bottom py-2">
+                                <div class="col-12 col-md-3 col-lg-2">
+                                    <span class="font-weight-bold d-block d-md-none">Código</span>
+                                    <span class="d-block">@productoAsignado.Codigo</span>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <span class="font-weight-bold d-block d-md-none">Descripción</span>
                                     <span class="d-block">@productoAsignado.Descripcion</span>
                                 </div>
-                                <div class="col-12 col-md-2 mb-2 text-md-right">
-                                    <span class="font-weight-bold">Piezas x Paquete</span>
+                                <div class="col-12 col-md-2 text-md-right">
+                                    <span class="font-weight-bold d-block d-md-none">Piezas x Paquete</span>
                                     <span class="d-block">@productoAsignado.Cantidad</span>
                                 </div>
-                                <div class="col-12 col-md-1 mb-2 text-right">
-                                    <a asp-action="Edit" asp-route-id="@productoAsignado.ProductoID" class="d-block d-md-inline text-decoration-none">
+                                <div class="col-12 col-md-1 col-lg-2 text-right">
+                                    <a asp-action="Edit" asp-route-id="@productoAsignado.ProductoID" class="text-decoration-none">
                                         <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar producto">
                                             <i class="fa fa-edit"></i>
+                                        </div>
+                                    </a>
+                                    <a href="#" data-id="@productoAsignado.ProductoID" class="deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
+                                        <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar producto">
+                                            <i class="fa fa-trash"></i>
                                         </div>
                                     </a>
                                 </div>
@@ -158,6 +161,28 @@
                     }
                 </div>
             </div>
+            <!--Codigo para existencia (Pendiente)-->
         </div>
     </div>
 </div>
+
+<partial name="_DeleteConfirmDialog" />
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        var itemToDelete;
+
+        $(document).ready(function () {
+
+            $('.deleteConfirm').click((e) => {
+                itemToDelete = e.currentTarget.dataset.id;
+            });
+
+            $("#DeleteYesButton").click((e) => {
+                window.location.href = '@Url.Action("Delete", "Productos")' + '/' + itemToDelete;
+            });
+        });
+    </script>
+}

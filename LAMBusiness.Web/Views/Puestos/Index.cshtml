@@ -36,25 +36,27 @@
                     @Html.DisplayNameFor(model => model.PuestoDescripcion)
                 </div>
             </div>
-            <div class="row px-md-3" id="dRows" data-charging="0" data-rows-next="1">
+            <div class="px-md-3" id="dRows" data-charging="0" data-rows-next="1">
                 @foreach (var item in Model.Take(50))
                 {
-                    <div class="border-bottom col-8 px-3 py-2 text-truncate">
-                        <span class="text-dark">@Html.DisplayFor(modelItem => item.PuestoNombre)</span>
-                        <small class="d-block text-muted">Colaboradores asignados: @Html.DisplayFor(modelItem => item.Colaboradores.Count)</small>
-                        <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.PuestoDescripcion)</small>
-                    </div>
-                    <div class="border-bottom col-4 px-3 py-2 text-right">
-                        <a asp-action="Edit" asp-route-id="@item.PuestoID" class="text-decoration-none">
-                            <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
-                                <i class="fa fa-edit"></i>
-                            </div>
-                        </a>
-                        <a href="#" data-id="@item.PuestoID" class="deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
-                            <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
-                                <i class="fa fa-trash"></i>
-                            </div>
-                        </a>
+                    <div class="row bg-row">
+                        <div class="border-bottom col-8 px-3 py-2 text-truncate">
+                            <span class="text-dark">@Html.DisplayFor(modelItem => item.PuestoNombre)</span>
+                            <small class="d-block text-muted">Colaboradores asignados: @Html.DisplayFor(modelItem => item.Colaboradores.Count)</small>
+                            <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.PuestoDescripcion)</small>
+                        </div>
+                        <div class="border-bottom col-4 px-3 py-2 text-right">
+                            <a asp-action="Edit" asp-route-id="@item.PuestoID" class="text-decoration-none">
+                                <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
+                                    <i class="fa fa-edit"></i>
+                                </div>
+                            </a>
+                            <a href="#" data-id="@item.PuestoID" class="deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
+                                <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
+                                    <i class="fa fa-trash"></i>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 }
             </div>
@@ -75,7 +77,8 @@
             $(window).on("scroll", function () {
                 if ($('#dRows')[0] !== this.undefined &&
                     $('#dRows').attr('data-rows-next') === "1" &&
-                    $('#dRows').attr('data-charging') === "0")
+                    $('#dRows').attr('data-charging') === "0" &&
+                    $('#dRows > div').length % 50 === 0)
                 {
                     var scrollHeight = $(document).height();
                     var scrollPosition = $(window).height() + $(window).scrollTop();

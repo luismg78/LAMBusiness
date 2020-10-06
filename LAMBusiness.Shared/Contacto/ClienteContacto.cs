@@ -14,7 +14,7 @@
         public Guid ClienteID { get; set; }
 
         [JsonIgnore]
-        public virtual Cliente Clientes { get; set; }
+        public virtual Cliente Cliente { get; set; }
 
         [Column(name: "Nombre")]
         [Display(Name = "Nombre")]
@@ -37,7 +37,7 @@
         [DataType(DataType.PhoneNumber)]
         [Display(Name = "Telefono (Móvil)")]
         [MaxLength(15, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
-        [RegularExpression(@"^[0-9]+$", ErrorMessage = "Formato Incorrecto.")]
+        [RegularExpression(@"^[0-9]+$", ErrorMessage = "Formato Incorrecto, teclear solo números.")]
         public string TelefonoMovilContacto { get; set; }
 
         [Column(name: "Email")]

@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using LAMBusiness.Shared.Movimiento;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Shared.Catalogo;
 

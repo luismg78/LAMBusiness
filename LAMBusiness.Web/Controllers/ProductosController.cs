@@ -278,6 +278,7 @@
 
             var producto = await _context.Productos
                 .Include(p => p.Unidades)
+                .Include(p => p.Existencias)
                 .FirstOrDefaultAsync(p => p.ProductoID == id);
             if (producto == null)
             {
@@ -299,6 +300,12 @@
                     ModelState.AddModelError(string.Empty, $"El producto no se puede eliminar, porque está asignado a {piezaAsignada.Count} paquete(s).");
                     return RedirectToAction(nameof(Index));
                 }
+            }
+
+            if(producto.Existencias.Count > 0)
+            {
+                ModelState.AddModelError(string.Empty, $"El producto no se puede eliminar, porque tiene {producto.Existencias.Count} en existencia(s).");
+                return RedirectToAction(nameof(Index));
             }
 
             _context.Productos.Remove(producto);

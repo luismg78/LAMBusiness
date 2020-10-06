@@ -4,14 +4,16 @@ using LAMBusiness.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LAMBusiness.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20201004141618_InitialDB")]
+    partial class InitialDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -17588,20 +17590,6 @@ namespace LAMBusiness.Web.Migrations
                     b.HasKey("ProductoID");
 
                     b.ToTable("Paquetes");
-
-                    b.HasData(
-                        new
-                        {
-                            ProductoID = new Guid("94c079ee-1fbe-4cae-9a16-443261dd0d60"),
-                            CantidadProductoxPaquete = 12m,
-                            PiezaProductoID = new Guid("de7c7462-69ba-4343-a328-012f48f013af")
-                        },
-                        new
-                        {
-                            ProductoID = new Guid("435a7b4d-1347-4282-9b06-3792ed1a99c4"),
-                            CantidadProductoxPaquete = 20m,
-                            PiezaProductoID = new Guid("38abf163-90ad-4d67-9bab-e5867d2715cf")
-                        });
                 });
 
             modelBuilder.Entity("LAMBusiness.Shared.Catalogo.Producto", b =>
@@ -18043,7 +18031,7 @@ namespace LAMBusiness.Web.Migrations
                     b.HasData(
                         new
                         {
-                            ColaboradorID = new Guid("a81256ef-ba5c-4449-97eb-fdb9fd4c3516"),
+                            ColaboradorID = new Guid("61ef6c63-4fdf-4dc1-89c9-56d2ad6f9f3a"),
                             Activo = true,
                             CURP = "CURP781227HCSRNS00",
                             CodigoPostal = 29000,
@@ -18053,7 +18041,7 @@ namespace LAMBusiness.Web.Migrations
                             EstadoCivilID = (short)2,
                             EstadoNacimientoID = (short)7,
                             FechaNacimiento = new DateTime(1978, 12, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FechaRegistro = new DateTime(2020, 10, 4, 9, 24, 24, 919, DateTimeKind.Local).AddTicks(9430),
+                            FechaRegistro = new DateTime(2020, 10, 4, 9, 16, 17, 738, DateTimeKind.Local).AddTicks(1663),
                             GeneroID = "M",
                             MunicipioID = 180,
                             Nombre = "NOMBRE",
@@ -18205,7 +18193,7 @@ namespace LAMBusiness.Web.Migrations
                     b.HasData(
                         new
                         {
-                            ExistenciaID = new Guid("962b837a-e817-42e1-8976-121592111ec0"),
+                            ExistenciaID = new Guid("426676e0-b835-440d-9b9e-c03a6251d3a7"),
                             AlmacenID = new Guid("8706ef28-2eba-463a-bab4-62227965f03f"),
                             ExistenciaEnAlmacen = 22m,
                             ExistenciaEnAlmacenMaxima = 30m,
@@ -18214,7 +18202,7 @@ namespace LAMBusiness.Web.Migrations
                         },
                         new
                         {
-                            ExistenciaID = new Guid("360818ed-c30d-4b93-a8a5-1a705b21373b"),
+                            ExistenciaID = new Guid("f421f650-5e04-4d18-843e-2e7b4f12f4a6"),
                             AlmacenID = new Guid("8706ef28-2eba-463a-bab4-62227965f03f"),
                             ExistenciaEnAlmacen = 5.5m,
                             ExistenciaEnAlmacenMaxima = 15m,

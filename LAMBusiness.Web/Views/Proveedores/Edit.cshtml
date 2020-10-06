@@ -1,23 +1,24 @@
-﻿@model LAMBusiness.Web.Models.ViewModels.ClienteViewModel
+﻿@model LAMBusiness.Web.Models.ViewModels.ProveedorViewModel
 
 @{
-    ViewData["Title"] = "Clientes";
+    ViewData["Title"] = "Proveedores";
 }
 
-<form asp-action="Create">
+<form asp-action="Edit">
     <div class="modal-content border-0 box-shadow">
         <div class="modal-header pb-0">
             <div>
-                <h3 class="modal-title" id="exampleModalLabel">Clientes</h3>
+                <h3 class="modal-title" id="exampleModalLabel">Proveedores</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
                     <li class="breadcrumb-item">Contacto</li>
-                    <li class="breadcrumb-item">Clientes</li>
+                    <li class="breadcrumb-item">Proveedores</li>
                     <li class="breadcrumb-item active">Nuevo Registro</li>
                 </ul>
             </div>
-            <a asp-action="Index" asp-controller="Clientes" class="close"><span>&times;</span></a>
+            <a asp-action="Index" asp-controller="Proveedores" class="close"><span>&times;</span></a>
         </div>
         <div class="modal-body py-4">
+            <input type="hidden" asp-for="ProveedorID" />           
             <div class="row px-md-3">
                 <!--RFC-->
                 <div class="col-md-4">
@@ -102,7 +103,7 @@
         </div>
         <div class="modal-footer justify-content-between">
             <div class="px-md-3">
-                <input type="submit" value="Guardar" class="btn btn-base" />
+                <input type="submit" value="Actualizar" class="btn btn-base" />
                 <a asp-action="Index" class="btn btn-outline-secondary">Regresar</a>
             </div>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -112,7 +113,7 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-<script>
+    <script>
     $('#EstadoID').change(function () {
         StateChange();
     });
@@ -120,7 +121,7 @@
     function StateChange() {
         addProcessWithSpinner('Cargando municipios...');
         $.ajax({
-            url: '@Url.Action("AddMunicipios", "Clientes")',
+            url: '@Url.Action("AddMunicipios", "Proveedores")',
             method: 'POST',
             datatype: 'text',
             data: {
@@ -139,5 +140,5 @@
             cache: false
         });
     }
-</script>
+    </script>
 }

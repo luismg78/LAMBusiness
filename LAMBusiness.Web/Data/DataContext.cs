@@ -6,6 +6,7 @@
     using Models.Entities;
     using Shared.Catalogo;
     using Shared.Contacto;
+    using Shared.Movimiento;
 
     public class DataContext: DbContext
     {
@@ -14,6 +15,7 @@
         }
 
         #region Catálogo
+        public DbSet<Almacen> Almacenes { get; set; }
         public DbSet<Estado> Estados { get; set; }
         public DbSet<EstadoCivil> EstadosCiviles { get; set; }
         public DbSet<Genero> Generos { get; set; }
@@ -32,6 +34,9 @@
         public DbSet<Proveedor> Proveedores { get; set; }
         public DbSet<ProveedorContacto> ProveedorContactos { get; set; }
 
+        #endregion
+        #region Movimiento
+        public DbSet<Existencia> Existencias { get; set; }
         #endregion
         public DbSet<Modulo> Modulos { get; set; }
 
@@ -78,14 +83,20 @@
 
             //Precargar entidades, ver configuraciones en /Data/Entities
             //Catálogo
+            modelBuilder.ApplyConfiguration(new AlmacenConfiguracion());
             modelBuilder.ApplyConfiguration(new EstadoConfiguracion());
             modelBuilder.ApplyConfiguration(new EstadoCivilConfiguracion());
             modelBuilder.ApplyConfiguration(new GeneroConfiguracion());
             modelBuilder.ApplyConfiguration(new MunicipioConfiguracion());
             modelBuilder.ApplyConfiguration(new UnidadConfiguracion());
             modelBuilder.ApplyConfiguration(new PuestoConfiguracion());
+            modelBuilder.ApplyConfiguration(new TasaImpuestoConfiguracion());
+            modelBuilder.ApplyConfiguration(new ProductoConfiguracion());
+            modelBuilder.ApplyConfiguration(new PaqueteConfiguracion());
             //Contacto
             modelBuilder.ApplyConfiguration(new ColaboradorConfiguracion());
+            //Movimiento
+            modelBuilder.ApplyConfiguration(new ExistenciaConfiguracion());
         }
     }
 }

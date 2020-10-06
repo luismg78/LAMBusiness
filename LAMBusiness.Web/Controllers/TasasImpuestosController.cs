@@ -1,9 +1,11 @@
 ﻿namespace LAMBusiness.Web.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.EntityFrameworkCore;
     using Data;
     using Shared.Catalogo;
@@ -24,6 +26,51 @@
                 .OrderBy(t => t.Tasa);
 
             return View(tasaImpuesto);
+        }
+
+        public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
+        {
+            IQueryable<TasaImpuesto> query = null;
+            if (searchby != null && searchby != "")
+            {
+                var words = searchby.Trim().ToUpper().Split(' ');
+                foreach (var w in words)
+                {
+                    if (w.Trim() != "")
+                    {
+                        if (query == null)
+                        {
+                            query = _context.TasasImpuestos
+                                    .Include(t => t.Productos)
+                                    .Where(t => t.Tasa.Contains(w) ||
+                                           t.TasaDescripcion.Contains(w));
+                        }
+                        else
+                        {
+                            query = query.Include(t => t.Productos)
+                                    .Where(t => t.Tasa.Contains(w) ||
+                                           t.TasaDescripcion.Contains(w));
+                        }
+                    }
+                }
+            }
+            if (query == null)
+            {
+                query = _context.TasasImpuestos.Include(t => t.Productos);
+            }
+
+            var tasas = await query.OrderBy(t => t.Tasa)
+                .Skip(skip)
+                .Take(50)
+                .ToListAsync();
+
+            return new PartialViewResult
+            {
+                ViewName = "_AddRowsNextAsync",
+                ViewData = new ViewDataDictionary
+                            <List<TasaImpuesto>>(ViewData, tasas)
+            };
+
         }
 
         public IActionResult Create()

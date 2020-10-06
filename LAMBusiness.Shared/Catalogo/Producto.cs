@@ -1,8 +1,10 @@
 ﻿namespace LAMBusiness.Shared.Catalogo
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using Movimiento;
     using Newtonsoft.Json;
 
     public class Producto
@@ -44,10 +46,6 @@
         public virtual TasaImpuesto TasasImpuestos { get; set; }
 
         [Column(TypeName = "decimal(18,4)")]
-        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
-        public decimal? Existencia { get; set; }
-
-        [Column(TypeName = "decimal(18,4)")]
         [Display(Name = "Precio (Costo)")]
         [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = false)]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
@@ -59,14 +57,11 @@
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public decimal? PrecioVenta { get; set; }
 
-        [Column(TypeName = "decimal(18,4)")]
-        [Display(Name = "Existencia Máxima")]
-        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
-        [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public decimal? ExistenciaMaxima { get; set; }
-
         public bool Activo { get; set; }
 
         public virtual Paquete Paquete { get; set; }
+
+        public virtual ICollection<Existencia> Existencias { get; set; }
+
     }
 }

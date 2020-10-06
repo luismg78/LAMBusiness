@@ -7,6 +7,7 @@
     using Microsoft.EntityFrameworkCore;
     using Data;
     using Shared.Catalogo;
+    using LAMBusiness.Shared.Contacto;
 
     public class GetHelper : IGetHelper
     {
@@ -15,6 +16,68 @@
         public GetHelper(DataContext context)
         {
             _context = context;
+        }
+
+        //Clientes
+
+        /// <summary>
+        /// Obtener cliente por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Cliente> GetClienteByIdAsync(Guid id)
+        {
+            return await _context.Clientes
+                .Include(c => c.ClienteContactos)
+                .FirstOrDefaultAsync(c => c.ClienteID == id);
+        }
+
+        //Contacto (Clientes)
+
+        /// <summary>
+        /// Obtener Contacto del cliente por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ClienteContacto> GetContactoClienteByIdAsync(Guid id)
+        {
+            return await _context.ClienteContactos
+                .Include(c => c.Cliente)
+                .FirstOrDefaultAsync(c => c.ClienteContactoID == id);
+        }
+
+        /// <summary>
+        /// Obtener Contacto del cliente por ID del cliente.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ClienteContacto> GetContactoClienteByClienteIdAsync(Guid id)
+        {
+            return await _context.ClienteContactos.FirstOrDefaultAsync(c => c.ClienteID == id);
+        }
+
+        //Contacto (Proveedores)
+
+        /// <summary>
+        /// Obtener Contacto del proveedor por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ProveedorContacto> GetContactoProveedorByIdAsync(Guid id)
+        {
+            return await _context.ProveedorContactos
+                .Include(c => c.Proveedor)
+                .FirstOrDefaultAsync(c => c.ProveedorContactoID == id);
+        }
+
+        /// <summary>
+        /// Obtener Contacto del proveedor por ID del cliente.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ProveedorContacto> GetContactoProveedorByProveedorIdAsync(Guid id)
+        {
+            return await _context.ProveedorContactos.FirstOrDefaultAsync(c => c.ProveedorID == id);
         }
 
         //Estado
@@ -94,6 +157,20 @@
         public async Task<Producto> GetProductByCodeAsync(string codigo)
         {
             return await _context.Productos.FirstOrDefaultAsync(p => p.Codigo == codigo);
+        }
+
+        //Proveedores
+
+        /// <summary>
+        /// Obtener proveedor por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Proveedor> GetProveedorByIdAsync(Guid id)
+        {
+            return await _context.Proveedores
+                .Include(p => p.ProveedorContactos)
+                .FirstOrDefaultAsync(p => p.ProveedorID == id);
         }
 
         //Unidad

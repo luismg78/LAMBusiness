@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LAMBusiness.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200930155546_InitialDB")]
-    partial class InitialDB
+    [Migration("20201004142426_AddPaqueteConfiguracion")]
+    partial class AddPaqueteConfiguracion
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,40 @@ namespace LAMBusiness.Web.Migrations
                 .HasAnnotation("ProductVersion", "3.1.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("LAMBusiness.Shared.Catalogo.Almacen", b =>
+                {
+                    b.Property<Guid>("AlmacenID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AlmacenDescripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AlmacenNombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("AlmacenID");
+
+                    b.ToTable("Almacenes");
+
+                    b.HasData(
+                        new
+                        {
+                            AlmacenID = new Guid("8706ef28-2eba-463a-bab4-62227965f03f"),
+                            AlmacenDescripcion = "VENTA AL PÚBLICO EN GENERAL.",
+                            AlmacenNombre = "MATRIZ"
+                        },
+                        new
+                        {
+                            AlmacenID = new Guid("bead5f60-1270-4281-bbdd-ff83e5147c4c"),
+                            AlmacenDescripcion = "PROVEEDOR DE PRODUCTOS DE LA MATRIZ.",
+                            AlmacenNombre = "ALMACÉN"
+                        });
+                });
 
             modelBuilder.Entity("LAMBusiness.Shared.Catalogo.Estado", b =>
                 {
@@ -17556,6 +17590,20 @@ namespace LAMBusiness.Web.Migrations
                     b.HasKey("ProductoID");
 
                     b.ToTable("Paquetes");
+
+                    b.HasData(
+                        new
+                        {
+                            ProductoID = new Guid("94c079ee-1fbe-4cae-9a16-443261dd0d60"),
+                            CantidadProductoxPaquete = 12m,
+                            PiezaProductoID = new Guid("de7c7462-69ba-4343-a328-012f48f013af")
+                        },
+                        new
+                        {
+                            ProductoID = new Guid("435a7b4d-1347-4282-9b06-3792ed1a99c4"),
+                            CantidadProductoxPaquete = 20m,
+                            PiezaProductoID = new Guid("38abf163-90ad-4d67-9bab-e5867d2715cf")
+                        });
                 });
 
             modelBuilder.Entity("LAMBusiness.Shared.Catalogo.Producto", b =>
@@ -17571,13 +17619,6 @@ namespace LAMBusiness.Web.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(14)")
                         .HasMaxLength(14);
-
-                    b.Property<decimal?>("Existencia")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal?>("ExistenciaMaxima")
-                        .IsRequired()
-                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal?>("PrecioCosto")
                         .IsRequired()
@@ -17615,6 +17656,56 @@ namespace LAMBusiness.Web.Migrations
                     b.HasIndex("UnidadID");
 
                     b.ToTable("Productos");
+
+                    b.HasData(
+                        new
+                        {
+                            ProductoID = new Guid("de7c7462-69ba-4343-a328-012f48f013af"),
+                            Activo = true,
+                            Codigo = "PIEZA",
+                            PrecioCosto = 10m,
+                            PrecioVenta = 15m,
+                            ProductoDescripcion = "INFORMACIÓN DE APOYO (MODIFICAR INFORMACIÓN).",
+                            ProductoNombre = "PRODUCTO PIEZA (MODIFICAR)",
+                            TasaID = new Guid("89e98cd2-85df-401a-9f1d-308027a75558"),
+                            UnidadID = new Guid("401b9552-d654-11e9-8b00-8cdcd47d68a1")
+                        },
+                        new
+                        {
+                            ProductoID = new Guid("94c079ee-1fbe-4cae-9a16-443261dd0d60"),
+                            Activo = true,
+                            Codigo = "PAQUETE",
+                            PrecioCosto = 90m,
+                            PrecioVenta = 120m,
+                            ProductoDescripcion = "INFORMACIÓN DE APOYO (MODIFICAR INFORMACIÓN).",
+                            ProductoNombre = "PAQUETE PIEZA (MODIFICAR)",
+                            TasaID = new Guid("89e98cd2-85df-401a-9f1d-308027a75558"),
+                            UnidadID = new Guid("6c9c7801-d654-11e9-8b00-8cdcd47d68a1")
+                        },
+                        new
+                        {
+                            ProductoID = new Guid("38abf163-90ad-4d67-9bab-e5867d2715cf"),
+                            Activo = true,
+                            Codigo = "PIEZAKG",
+                            PrecioCosto = 17.99m,
+                            PrecioVenta = 22.99m,
+                            ProductoDescripcion = "INFORMACIÓN DE APOYO (MODIFICAR INFORMACIÓN).",
+                            ProductoNombre = "PRODUCTO KG (MODIFICAR)",
+                            TasaID = new Guid("acbb8324-7514-4c38-8354-fa5147fa87e6"),
+                            UnidadID = new Guid("826671fc-d654-11e9-8b00-8cdcd47d68a1")
+                        },
+                        new
+                        {
+                            ProductoID = new Guid("435a7b4d-1347-4282-9b06-3792ed1a99c4"),
+                            Activo = true,
+                            Codigo = "PAQUETEKG",
+                            PrecioCosto = 149.99m,
+                            PrecioVenta = 199.99m,
+                            ProductoDescripcion = "INFORMACIÓN DE APOYO (MODIFICAR INFORMACIÓN).",
+                            ProductoNombre = "PAQUETE KG (MODIFICAR)",
+                            TasaID = new Guid("acbb8324-7514-4c38-8354-fa5147fa87e6"),
+                            UnidadID = new Guid("95b850ec-d654-11e9-8b00-8cdcd47d68a1")
+                        });
                 });
 
             modelBuilder.Entity("LAMBusiness.Shared.Catalogo.Puesto", b =>
@@ -17673,6 +17764,22 @@ namespace LAMBusiness.Web.Migrations
                         .IsUnique();
 
                     b.ToTable("TasasImpuestos");
+
+                    b.HasData(
+                        new
+                        {
+                            TasaID = new Guid("acbb8324-7514-4c38-8354-fa5147fa87e6"),
+                            Porcentaje = (short)0,
+                            Tasa = "TASA UNO",
+                            TasaDescripcion = "INFORMACIÓN DE APOYO (MODIFICAR INFORMACIÓN)."
+                        },
+                        new
+                        {
+                            TasaID = new Guid("89e98cd2-85df-401a-9f1d-308027a75558"),
+                            Porcentaje = (short)16,
+                            Tasa = "TASA DOS",
+                            TasaDescripcion = "INFORMACIÓN DE APOYO (MODIFICAR INFORMACIÓN)."
+                        });
                 });
 
             modelBuilder.Entity("LAMBusiness.Shared.Catalogo.Unidad", b =>
@@ -17748,15 +17855,11 @@ namespace LAMBusiness.Web.Migrations
                     b.Property<bool>("Activo")
                         .HasColumnType("bit");
 
-                    b.Property<int>("CodigoPostal")
+                    b.Property<int?>("CodigoPostal")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Colonia")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
-                    b.Property<string>("Contacto")
                         .IsRequired()
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
@@ -17774,7 +17877,8 @@ namespace LAMBusiness.Web.Migrations
                     b.Property<DateTime>("FechaRegistro")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("MunicipioID")
+                    b.Property<int?>("MunicipioID")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Nombre")
@@ -17788,10 +17892,7 @@ namespace LAMBusiness.Web.Migrations
                         .HasMaxLength(13);
 
                     b.Property<string>("Telefono")
-                        .HasColumnType("nvarchar(15)")
-                        .HasMaxLength(15);
-
-                    b.Property<string>("TelefonoMovil")
+                        .IsRequired()
                         .HasColumnType("nvarchar(15)")
                         .HasMaxLength(15);
 
@@ -17944,7 +18045,7 @@ namespace LAMBusiness.Web.Migrations
                     b.HasData(
                         new
                         {
-                            ColaboradorID = new Guid("283da3a7-d447-4cfd-80eb-1ab93d42eed8"),
+                            ColaboradorID = new Guid("a81256ef-ba5c-4449-97eb-fdb9fd4c3516"),
                             Activo = true,
                             CURP = "CURP781227HCSRNS00",
                             CodigoPostal = 29000,
@@ -17954,7 +18055,7 @@ namespace LAMBusiness.Web.Migrations
                             EstadoCivilID = (short)2,
                             EstadoNacimientoID = (short)7,
                             FechaNacimiento = new DateTime(1978, 12, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FechaRegistro = new DateTime(2020, 9, 30, 10, 55, 45, 535, DateTimeKind.Local).AddTicks(1484),
+                            FechaRegistro = new DateTime(2020, 10, 4, 9, 24, 24, 919, DateTimeKind.Local).AddTicks(9430),
                             GeneroID = "M",
                             MunicipioID = 180,
                             Nombre = "NOMBRE",
@@ -17975,15 +18076,11 @@ namespace LAMBusiness.Web.Migrations
                     b.Property<bool>("Activo")
                         .HasColumnType("bit");
 
-                    b.Property<int>("CodigoPostal")
+                    b.Property<int?>("CodigoPostal")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Colonia")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
-
-                    b.Property<string>("Contacto")
                         .IsRequired()
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
@@ -18001,7 +18098,8 @@ namespace LAMBusiness.Web.Migrations
                     b.Property<DateTime>("FechaRegistro")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("MunicipioID")
+                    b.Property<int?>("MunicipioID")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Nombre")
@@ -18015,10 +18113,7 @@ namespace LAMBusiness.Web.Migrations
                         .HasMaxLength(13);
 
                     b.Property<string>("Telefono")
-                        .HasColumnType("nvarchar(15)")
-                        .HasMaxLength(15);
-
-                    b.Property<string>("TelefonoMovil")
+                        .IsRequired()
                         .HasColumnType("nvarchar(15)")
                         .HasMaxLength(15);
 
@@ -18074,6 +18169,60 @@ namespace LAMBusiness.Web.Migrations
                     b.HasIndex("ProveedorID");
 
                     b.ToTable("ProveedorContactos");
+                });
+
+            modelBuilder.Entity("LAMBusiness.Shared.Movimiento.Existencia", b =>
+                {
+                    b.Property<Guid>("ExistenciaID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AlmacenID")
+                        .IsRequired()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("ExistenciaEnAlmacen")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal?>("ExistenciaEnAlmacenMaxima")
+                        .IsRequired()
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal?>("ExistenciaEnAlmacenMinima")
+                        .IsRequired()
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<Guid?>("ProductoID")
+                        .IsRequired()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ExistenciaID");
+
+                    b.HasIndex("AlmacenID");
+
+                    b.HasIndex("ProductoID");
+
+                    b.ToTable("Existencias");
+
+                    b.HasData(
+                        new
+                        {
+                            ExistenciaID = new Guid("962b837a-e817-42e1-8976-121592111ec0"),
+                            AlmacenID = new Guid("8706ef28-2eba-463a-bab4-62227965f03f"),
+                            ExistenciaEnAlmacen = 22m,
+                            ExistenciaEnAlmacenMaxima = 30m,
+                            ExistenciaEnAlmacenMinima = 12m,
+                            ProductoID = new Guid("de7c7462-69ba-4343-a328-012f48f013af")
+                        },
+                        new
+                        {
+                            ExistenciaID = new Guid("360818ed-c30d-4b93-a8a5-1a705b21373b"),
+                            AlmacenID = new Guid("8706ef28-2eba-463a-bab4-62227965f03f"),
+                            ExistenciaEnAlmacen = 5.5m,
+                            ExistenciaEnAlmacenMaxima = 15m,
+                            ExistenciaEnAlmacenMinima = 7m,
+                            ProductoID = new Guid("38abf163-90ad-4d67-9bab-e5867d2715cf")
+                        });
                 });
 
             modelBuilder.Entity("LAMBusiness.Web.Models.Entities.Modulo", b =>
@@ -18139,8 +18288,8 @@ namespace LAMBusiness.Web.Migrations
 
             modelBuilder.Entity("LAMBusiness.Shared.Contacto.ClienteContacto", b =>
                 {
-                    b.HasOne("LAMBusiness.Shared.Contacto.Cliente", "Clientes")
-                        .WithMany()
+                    b.HasOne("LAMBusiness.Shared.Contacto.Cliente", "Cliente")
+                        .WithMany("ClienteContactos")
                         .HasForeignKey("ClienteID")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -18189,9 +18338,24 @@ namespace LAMBusiness.Web.Migrations
 
             modelBuilder.Entity("LAMBusiness.Shared.Contacto.ProveedorContacto", b =>
                 {
-                    b.HasOne("LAMBusiness.Shared.Contacto.Proveedor", "Proveedores")
-                        .WithMany()
+                    b.HasOne("LAMBusiness.Shared.Contacto.Proveedor", "Proveedor")
+                        .WithMany("ProveedorContactos")
                         .HasForeignKey("ProveedorID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("LAMBusiness.Shared.Movimiento.Existencia", b =>
+                {
+                    b.HasOne("LAMBusiness.Shared.Catalogo.Almacen", "Almacenes")
+                        .WithMany("Existencias")
+                        .HasForeignKey("AlmacenID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("LAMBusiness.Shared.Catalogo.Producto", "Productos")
+                        .WithMany("Existencias")
+                        .HasForeignKey("ProductoID")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });

@@ -1,23 +1,23 @@
-﻿@model LAMBusiness.Web.Models.ViewModels.ClienteViewModel
+﻿@model LAMBusiness.Web.Models.ViewModels.ProveedorViewModel
 
 @{
-    ViewData["Title"] = "Clientes";
+    ViewData["Title"] = "Proveedores";
 }
 
 <form asp-action="Create">
     <div class="modal-content border-0 box-shadow">
         <div class="modal-header pb-0">
             <div>
-                <h3 class="modal-title" id="exampleModalLabel">Clientes</h3>
+                <h3 class="modal-title" id="exampleModalLabel">Proveedores</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
                     <li class="breadcrumb-item">Contacto</li>
-                    <li class="breadcrumb-item">Clientes</li>
+                    <li class="breadcrumb-item">Proveedores</li>
                     <li class="breadcrumb-item active">Nuevo Registro</li>
                 </ul>
             </div>
-            <a asp-action="Index" asp-controller="Clientes" class="close"><span>&times;</span></a>
+            <a asp-action="Index" asp-controller="Proveedores" class="close"><span>&times;</span></a>
         </div>
-        <div class="modal-body py-4">
+        <div class="modal-body py-4">            
             <div class="row px-md-3">
                 <!--RFC-->
                 <div class="col-md-4">
@@ -112,7 +112,7 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-<script>
+    <script>
     $('#EstadoID').change(function () {
         StateChange();
     });
@@ -120,7 +120,7 @@
     function StateChange() {
         addProcessWithSpinner('Cargando municipios...');
         $.ajax({
-            url: '@Url.Action("AddMunicipios", "Clientes")',
+            url: '@Url.Action("AddMunicipios", "Proveedores")',
             method: 'POST',
             datatype: 'text',
             data: {
@@ -139,5 +139,5 @@
             cache: false
         });
     }
-</script>
+    </script>
 }

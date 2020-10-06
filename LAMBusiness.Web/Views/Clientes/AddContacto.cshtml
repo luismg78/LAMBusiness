@@ -1,0 +1,61 @@
+﻿@model LAMBusiness.Shared.Contacto.ClienteContacto
+
+@{
+    ViewData["Title"] = "Contacto";
+}
+
+<form asp-action="AddContacto">
+    <div class="modal-content border-0 box-shadow box-responsive m-auto">
+        <div class="modal-header pb-0">
+            <div>
+                <h3 class="modal-title" id="exampleModalLabel">Contacto</h3>
+                <ul class="breadcrumb bg-transparent p-0 small">
+                    <li class="breadcrumb-item">Cliente</li>
+                    <li class="breadcrumb-item">@Model.Cliente.RFC</li>
+                    <li class="breadcrumb-item text-base">@Model.Cliente.Nombre</li>
+                    <li class="breadcrumb-item active">Nuevo Registro</li>
+                </ul>
+            </div>
+            <a asp-action="Details" asp-controller="Clientes" asp-route-id="@Model.Cliente.ClienteID" class="close"><span>&times;</span></a>
+        </div>
+        <div class="modal-body py-4">
+            <input type="hidden" asp-for="ClienteID" />
+            <div class="row px-md-3">
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="NombreContacto" class="control-label"></label>
+                        <input asp-for="NombreContacto" class="form-control" autofocus/>
+                        <span asp-validation-for="NombreContacto" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PrimerApellidoContacto" class="control-label"></label>
+                        <input asp-for="PrimerApellidoContacto" class="form-control" />
+                        <span asp-validation-for="PrimerApellidoContacto" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SegundoApellidoContacto" class="control-label"></label>
+                        <input asp-for="SegundoApellidoContacto" class="form-control" />
+                        <span asp-validation-for="SegundoApellidoContacto" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="TelefonoMovilContacto" class="control-label"></label>
+                        <input asp-for="TelefonoMovilContacto" class="form-control" />
+                        <span asp-validation-for="TelefonoMovilContacto" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="EmailContacto" class="control-label"></label>
+                        <input asp-for="EmailContacto" class="form-control" />
+                        <span asp-validation-for="EmailContacto" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer justify-content-between">
+            <div class="px-md-3">
+                <input type="submit" value="Guardar" class="btn btn-base" />
+                <a asp-action="Details" asp-route-id="@Model.ClienteID" class="btn btn-outline-secondary">Regresar</a>
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        </div>
+    </div>
+</form>

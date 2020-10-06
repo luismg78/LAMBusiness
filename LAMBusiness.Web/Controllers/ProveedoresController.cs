@@ -13,28 +13,28 @@
     using Shared.Catalogo;
     using Shared.Contacto;
 
-    public class ClientesController : Controller
+    public class ProveedoresController : Controller
     {
         private readonly DataContext _context;
-        private readonly IGetHelper _getHelper;
         private readonly ICombosHelper _combosHelper;
         private readonly IConverterHelper _converterHelper;
+        private readonly IGetHelper _getHelper;
 
-        public ClientesController(DataContext context, 
-            IGetHelper getHelper,
+        public ProveedoresController(DataContext context,
             ICombosHelper combosHelper,
-            IConverterHelper converterHelper)
+            IConverterHelper converterHelper,
+            IGetHelper getHelper)
         {
             _context = context;
-            _getHelper = getHelper;
             _combosHelper = combosHelper;
             _converterHelper = converterHelper;
+            _getHelper = getHelper;
         }
 
         public async Task<IActionResult> Index()
         {
-            var dataContext = _context.Clientes
-                .Include(c => c.ClienteContactos)
+            var dataContext = _context.Proveedores
+                .Include(c => c.ProveedorContactos)
                 .Include(c => c.Municipios)
                 .Include(c => c.Municipios.Estados);
             return View(await dataContext.ToListAsync());
@@ -42,7 +42,7 @@
 
         public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
         {
-            IQueryable<Cliente> query = null;
+            IQueryable<Proveedor> query = null;
             if (searchby != null && searchby != "")
             {
                 var words = searchby.Trim().ToUpper().Split(' ');
@@ -52,8 +52,8 @@
                     {
                         if (query == null)
                         {
-                            query = _context.Clientes
-                                    .Include(c => c.ClienteContactos)
+                            query = _context.Proveedores
+                                    .Include(c => c.ProveedorContactos)
                                     .Include(c => c.Municipios.Estados)
                                     .Include(c => c.Municipios)
                                     .Where(p => p.RFC.Contains(w) ||
@@ -64,7 +64,7 @@
                         else
                         {
                             query = query
-                                .Include(c => c.ClienteContactos)
+                                .Include(c => c.ProveedorContactos)
                                 .Include(c => c.Municipios.Estados)
                                 .Include(c => c.Municipios)
                                 .Where(c => c.RFC.Contains(w) ||
@@ -77,13 +77,13 @@
             }
             if (query == null)
             {
-                query = _context.Clientes
-                    .Include(c => c.ClienteContactos)
+                query = _context.Proveedores
+                    .Include(c => c.ProveedorContactos)
                     .Include(c => c.Municipios.Estados)
                     .Include(c => c.Municipios);
             }
 
-            var clientes = await query.OrderBy(p => p.RFC)
+            var proveedores = await query.OrderBy(p => p.RFC)
                 .Skip(skip)
                 .Take(50)
                 .ToListAsync();
@@ -92,7 +92,7 @@
             {
                 ViewName = "_AddRowsNextAsync",
                 ViewData = new ViewDataDictionary
-                            <List<Cliente>>(ViewData, clientes)
+                            <List<Proveedor>>(ViewData, proveedores)
             };
         }
 
@@ -103,42 +103,42 @@
                 return NotFound();
             }
 
-            var cliente = await _context.Clientes
-                .Include(c => c.ClienteContactos)
+            var proveedor = await _context.Proveedores
+                .Include(c => c.ProveedorContactos)
                 .Include(c => c.Municipios.Estados)
                 .Include(c => c.Municipios)
-                .FirstOrDefaultAsync(m => m.ClienteID == id);
-            if (cliente == null)
+                .FirstOrDefaultAsync(m => m.ProveedorID == id);
+            if (proveedor == null)
             {
                 return NotFound();
             }
 
-            return View(cliente);
+            return View(proveedor);
         }
 
         public async Task<IActionResult> Create()
         {
-            var clienteViewModel = new ClienteViewModel()
+            var proveedorViewModel = new ProveedorViewModel()
             {
                 EstadosDDL = await _combosHelper.GetComboEstadosAsync(),
                 MunicipiosDDL = await _combosHelper.GetComboMunicipiosAsync(0)
             };
 
-            return View(clienteViewModel);
+            return View(proveedorViewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ClienteViewModel clienteViewModel)
+        public async Task<IActionResult> Create(ProveedorViewModel proveedorViewModel)
         {
             if (ModelState.IsValid)
             {
-                var cliente = await _converterHelper.ToClienteAsync(clienteViewModel, true);
-                _context.Add(cliente);
+                var proveedor = await _converterHelper.ToProveedorAsync(proveedorViewModel, true);
+                _context.Add(proveedor);
                 try
                 {
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Details), new { id = cliente.ClienteID});
+                    return RedirectToAction(nameof(Details), new { id = proveedor.ProveedorID });
                 }
                 catch (Exception ex)
                 {
@@ -146,11 +146,11 @@
                 }
             }
 
-            clienteViewModel.EstadosDDL = await _combosHelper.GetComboEstadosAsync();
-            clienteViewModel.MunicipiosDDL = await _combosHelper
-                .GetComboMunicipiosAsync((short)clienteViewModel.EstadoID);
+            proveedorViewModel.EstadosDDL = await _combosHelper.GetComboEstadosAsync();
+            proveedorViewModel.MunicipiosDDL = await _combosHelper
+                .GetComboMunicipiosAsync((short)proveedorViewModel.EstadoID);
 
-            return View(clienteViewModel);
+            return View(proveedorViewModel);
         }
 
         public async Task<IActionResult> Edit(Guid? id)
@@ -160,24 +160,24 @@
                 return NotFound();
             }
 
-            var cliente = await _context.Clientes
+            var proveedor = await _context.Proveedores
                 .Include(c => c.Municipios)
-                .FirstOrDefaultAsync(c => c.ClienteID == id);
-            if (cliente == null)
+                .FirstOrDefaultAsync(c => c.ProveedorID == id);
+            if (proveedor == null)
             {
                 return NotFound();
             }
 
-            var clienteViewModel = await _converterHelper.ToClienteViewModelAsync(cliente);
+            var proveedorViewModel = await _converterHelper.ToProveedorViewModelAsync(proveedor);
 
-            return View(clienteViewModel);
+            return View(proveedorViewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, ClienteViewModel clienteViewModel)
+        public async Task<IActionResult> Edit(Guid id, ProveedorViewModel proveedorViewModel)
         {
-            if (id != clienteViewModel.ClienteID)
+            if (id != proveedorViewModel.ProveedorID)
             {
                 return NotFound();
             }
@@ -186,27 +186,27 @@
             {
                 try
                 {
-                    var cliente = await _converterHelper.ToClienteAsync(clienteViewModel, false);
-                    _context.Update(cliente);
+                    var proveedor = await _converterHelper.ToProveedorAsync(proveedorViewModel, false);
+                    _context.Update(proveedor);
 
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Details), new { id = cliente.ClienteID });
+                    return RedirectToAction(nameof(Details), new { id = proveedor.ProveedorID });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ClienteExists(clienteViewModel.ClienteID))
+                    if (!ProveedorExists(proveedorViewModel.ProveedorID))
                     {
                         return NotFound();
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "Cliente Inexistente.");
+                        ModelState.AddModelError(string.Empty, "Proveedor Inexistente.");
                     }
                 }
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(clienteViewModel);
+            return View(proveedorViewModel);
         }
 
         public async Task<IActionResult> Delete(Guid? id)
@@ -216,26 +216,26 @@
                 return NotFound();
             }
 
-            var cliente = await _getHelper.GetClienteByIdAsync((Guid)id);
-            if (cliente == null)
+            var proveedor = await _getHelper.GetProveedorByIdAsync((Guid)id);
+            if (proveedor == null)
             {
                 return NotFound();
             }
 
-            if(cliente.ClienteContactos.Count > 0)
+            if (proveedor.ProveedorContactos.Count > 0)
             {
-                ModelState.AddModelError(string.Empty, $"El cliente no se puede eliminar, porque tiene {cliente.ClienteContactos.Count} contacto(s) asignado(s).");
+                ModelState.AddModelError(string.Empty, $"El proveedor no se puede eliminar, porque tiene {proveedor.ProveedorContactos.Count} contacto(s) asignado(s).");
                 return RedirectToAction(nameof(Index));
             }
 
-            _context.Clientes.Remove(cliente);
+            _context.Proveedores.Remove(proveedor);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> AddMunicipios(short? id) 
+        public async Task<IActionResult> AddMunicipios(short? id)
         {
-            if(id == null)
+            if (id == null)
             {
                 return null;
             }
@@ -250,24 +250,24 @@
             };
         }
 
-        private bool ClienteExists(Guid id)
+        private bool ProveedorExists(Guid id)
         {
-            return _context.Clientes.Any(e => e.ClienteID == id);
+            return _context.Proveedores.Any(e => e.ProveedorID == id);
         }
 
         //Contactos
 
         public async Task<IActionResult> AddContacto(Guid? id)
         {
-            if(id == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var contacto = new ClienteContacto()
+            var contacto = new ProveedorContacto()
             {
-                ClienteID = (Guid)id,
-                Cliente = await _context.Clientes.FindAsync((Guid)id)
+                ProveedorID = (Guid)id,
+                Proveedor = await _context.Proveedores.FindAsync((Guid)id)
             };
 
             return View(contacto);
@@ -275,30 +275,30 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddContacto(ClienteContacto clienteContacto)
+        public async Task<IActionResult> AddContacto(ProveedorContacto proveedorContacto)
         {
-            var cliente = await _getHelper.GetClienteByIdAsync(clienteContacto.ClienteID);
+            var proveedor = await _getHelper.GetProveedorByIdAsync(proveedorContacto.ProveedorID);
 
             if (ModelState.IsValid)
             {
-                if (cliente == null)
+                if (proveedor == null)
                 {
-                    ModelState.AddModelError(string.Empty, "Contacto no ingresado, cliente inexistente.");
+                    ModelState.AddModelError(string.Empty, "Contacto no ingresado, proveedor inexistente.");
                     return View();
                 }
 
                 try
                 {
-                    clienteContacto.ClienteContactoID = Guid.NewGuid();
-                    clienteContacto.NombreContacto = clienteContacto.NombreContacto.Trim().ToUpper();
-                    clienteContacto.PrimerApellidoContacto = clienteContacto.PrimerApellidoContacto.Trim().ToUpper();
-                    clienteContacto.SegundoApellidoContacto = clienteContacto.SegundoApellidoContacto.Trim().ToUpper();
-                    clienteContacto.EmailContacto = clienteContacto.EmailContacto.Trim().ToLower();
+                    proveedorContacto.ProveedorContactoID = Guid.NewGuid();
+                    proveedorContacto.NombreContacto = proveedorContacto.NombreContacto.Trim().ToUpper();
+                    proveedorContacto.PrimerApellidoContacto = proveedorContacto.PrimerApellidoContacto.Trim().ToUpper();
+                    proveedorContacto.SegundoApellidoContacto = proveedorContacto.SegundoApellidoContacto.Trim().ToUpper();
+                    proveedorContacto.EmailContacto = proveedorContacto.EmailContacto.Trim().ToLower();
 
-                    _context.Add(clienteContacto);
+                    _context.Add(proveedorContacto);
 
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Details), new { id = clienteContacto.ClienteID });
+                    return RedirectToAction(nameof(Details), new { id = proveedorContacto.ProveedorID });
 
                 }
                 catch (Exception ex)
@@ -307,8 +307,8 @@
                 }
             }
 
-            clienteContacto.Cliente = cliente;
-            return View(clienteContacto);
+            proveedorContacto.Proveedor = proveedor;
+            return View(proveedorContacto);
         }
 
         public async Task<IActionResult> EditContacto(Guid? id)
@@ -318,36 +318,36 @@
                 return NotFound();
             }
 
-            var contacto = await _getHelper.GetContactoClienteByIdAsync((Guid)id);
-                
+            var contacto = await _getHelper.GetContactoProveedorByIdAsync((Guid)id);
+
             return View(contacto);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditContacto(ClienteContacto clienteContacto)
+        public async Task<IActionResult> EditContacto(ProveedorContacto proveedorContacto)
         {
-            var cliente = await _getHelper.GetClienteByIdAsync(clienteContacto.ClienteID);
+            var proveedor = await _getHelper.GetProveedorByIdAsync(proveedorContacto.ProveedorID);
 
             if (ModelState.IsValid)
             {
-                if (cliente == null)
+                if (proveedor == null)
                 {
-                    ModelState.AddModelError(string.Empty, "Actualización no realizada, cliente inexistente.");
+                    ModelState.AddModelError(string.Empty, "Actualización no realizada, proveedor inexistente.");
                     return View();
                 }
 
                 try
                 {
-                    clienteContacto.NombreContacto = clienteContacto.NombreContacto.Trim().ToUpper();
-                    clienteContacto.PrimerApellidoContacto = clienteContacto.PrimerApellidoContacto.Trim().ToUpper();
-                    clienteContacto.SegundoApellidoContacto = clienteContacto.SegundoApellidoContacto.Trim().ToUpper();
-                    clienteContacto.EmailContacto = clienteContacto.EmailContacto.Trim().ToLower();
+                    proveedorContacto.NombreContacto = proveedorContacto.NombreContacto.Trim().ToUpper();
+                    proveedorContacto.PrimerApellidoContacto = proveedorContacto.PrimerApellidoContacto.Trim().ToUpper();
+                    proveedorContacto.SegundoApellidoContacto = proveedorContacto.SegundoApellidoContacto.Trim().ToUpper();
+                    proveedorContacto.EmailContacto = proveedorContacto.EmailContacto.Trim().ToLower();
 
-                    _context.Update(clienteContacto);
+                    _context.Update(proveedorContacto);
 
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Details), new { id = clienteContacto.ClienteID });
+                    return RedirectToAction(nameof(Details), new { id = proveedorContacto.ProveedorID });
 
                 }
                 catch (Exception ex)
@@ -356,8 +356,8 @@
                 }
             }
 
-            clienteContacto.Cliente = cliente;
-            return View(clienteContacto);
+            proveedorContacto.Proveedor = proveedor;
+            return View(proveedorContacto);
         }
 
         public async Task<IActionResult> DeleteContacto(Guid? id)
@@ -367,15 +367,15 @@
                 return NotFound();
             }
 
-            var contacto = await _getHelper.GetContactoClienteByIdAsync((Guid)id);
+            var contacto = await _getHelper.GetContactoProveedorByIdAsync((Guid)id);
             if (contacto == null)
             {
                 return NotFound();
             }
 
-            _context.ClienteContactos.Remove(contacto);
+            _context.ProveedorContactos.Remove(contacto);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Details),new { id = contacto.ClienteID });
+            return RedirectToAction(nameof(Details), new { id = contacto.ProveedorID });
         }
     }
 }
