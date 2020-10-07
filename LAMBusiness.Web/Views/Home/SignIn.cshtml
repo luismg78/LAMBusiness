@@ -7,11 +7,11 @@
 
 <script src="~/js/jquery_encrypt.js"></script>
 
-<div class="modal-content border-0 box-shadow box-responsive m-auto mt-4">
+<div class="modal-content border-0 box-shadow box-responsive m-auto mt-md-5">
     <form asp-action="SignIn">
         <div class="modal-header">
             <div>
-                <h2 class="modal-title py-2" id="exampleModalLabel">Inicio de Sesión</h2>
+                <h2 class="modal-title py-2 text-secondary" id="exampleModalLabel">Inicio de <span class="text-base">Sesión</span></h2>
             </div>
             <a asp-action="Index" asp-controller="Home" class="close"><span>&times;</span></a>
         </div>
@@ -32,7 +32,8 @@
         </div>
         <div class="modal-footer justify-content-between align-items-center">
             <div class="btn-process px-md-3">
-                <input id="IniciarSesionButton" type="submit" value="Iniciar Sesión" class="btn btn-primary" onclick="password();" />
+                <a class="btn btn-secondary text-white">Iniciando sesión <i class="fas fa-angle-double-right ml-2"></i></a>
+                <input id="IniciarSesionButton" type="submit" value="Iniciar Sesión" class="btn btn-base" onclick="password();" />
             </div>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         </div>

@@ -12,6 +12,7 @@
     using Models.ViewModels;
     using Shared.Catalogo;
     using Shared.Contacto;
+    using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
     public class ProveedoresController : Controller
     {
@@ -327,27 +328,32 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditContacto(ProveedorContacto proveedorContacto)
         {
-            var proveedor = await _getHelper.GetProveedorByIdAsync(proveedorContacto.ProveedorID);
-
             if (ModelState.IsValid)
             {
-                if (proveedor == null)
+                var contacto = await _getHelper.GetContactoProveedorByIdAsync(proveedorContacto.ProveedorContactoID);
+                
+                if (contacto == null)
                 {
-                    ModelState.AddModelError(string.Empty, "Actualización no realizada, proveedor inexistente.");
-                    return View();
+                    ModelState.AddModelError(string.Empty, 
+                        "Actualización no realizada, contacto inexistente.");
+                    proveedorContacto.Proveedor = await _getHelper
+                        .GetProveedorByIdAsync(proveedorContacto.ProveedorID);
+
+                    return View(proveedorContacto);
                 }
 
                 try
                 {
-                    proveedorContacto.NombreContacto = proveedorContacto.NombreContacto.Trim().ToUpper();
-                    proveedorContacto.PrimerApellidoContacto = proveedorContacto.PrimerApellidoContacto.Trim().ToUpper();
-                    proveedorContacto.SegundoApellidoContacto = proveedorContacto.SegundoApellidoContacto.Trim().ToUpper();
-                    proveedorContacto.EmailContacto = proveedorContacto.EmailContacto.Trim().ToLower();
+                    contacto.NombreContacto = proveedorContacto.NombreContacto.Trim().ToUpper();
+                    contacto.PrimerApellidoContacto = proveedorContacto.PrimerApellidoContacto.Trim().ToUpper();
+                    contacto.SegundoApellidoContacto = proveedorContacto.SegundoApellidoContacto.Trim().ToUpper();
+                    contacto.EmailContacto = proveedorContacto.EmailContacto.Trim().ToLower();
+                    contacto.TelefonoMovilContacto = proveedorContacto.TelefonoMovilContacto;
 
-                    _context.Update(proveedorContacto);
+                    _context.Update(contacto);
 
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Details), new { id = proveedorContacto.ProveedorID });
+                    return RedirectToAction(nameof(Details), new { id = contacto.ProveedorID });
 
                 }
                 catch (Exception ex)
@@ -356,7 +362,9 @@
                 }
             }
 
-            proveedorContacto.Proveedor = proveedor;
+            proveedorContacto.Proveedor = await _getHelper
+                .GetProveedorByIdAsync(proveedorContacto.ProveedorID);
+
             return View(proveedorContacto);
         }
 

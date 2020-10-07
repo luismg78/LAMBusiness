@@ -36,6 +36,8 @@ transparencia: rgba(255,65,82,.5)*/
 .text-base{color:#ff4152!important;}
 
 /*Class*/
+.bg-card{box-shadow:initial;}
+    .bg-card:hover{box-shadow:0 0.25rem 0.75rem rgba(0,0,0,0.1);}
 .bg-disabled {z-index:9999;}
 .bg-fixed {bottom:0;position:fixed;right:0;top:0;}
 .bg-row{background-color:transparent;}

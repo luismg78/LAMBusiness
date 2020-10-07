@@ -56,6 +56,11 @@
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public string Email { get; set; }
 
+        [Display(Name = "Frecuencia de visitas (días)")]
+        [Range(1, int.MaxValue, ErrorMessage = "El valor del campo debe ser superior o igual a {0}.")]
+        [Required(ErrorMessage = "El campo {0} es requerido.")]
+        public short? FrecuenciaVisitas { get; set; }
+
         [DataType(DataType.Date)]
         public DateTime FechaRegistro { get; set; }
 

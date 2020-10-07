@@ -327,27 +327,32 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditContacto(ClienteContacto clienteContacto)
         {
-            var cliente = await _getHelper.GetClienteByIdAsync(clienteContacto.ClienteID);
-
             if (ModelState.IsValid)
             {
-                if (cliente == null)
+                var contacto = await _getHelper.GetContactoClienteByIdAsync(clienteContacto.ClienteContactoID);
+
+                if (contacto == null)
                 {
-                    ModelState.AddModelError(string.Empty, "Actualización no realizada, cliente inexistente.");
-                    return View();
+                    ModelState.AddModelError(string.Empty,
+                        "Actualización no realizada, contacto inexistente.");
+                    clienteContacto.Cliente = await _getHelper
+                        .GetClienteByIdAsync(clienteContacto.ClienteID);
+
+                    return View(clienteContacto);
                 }
 
                 try
                 {
-                    clienteContacto.NombreContacto = clienteContacto.NombreContacto.Trim().ToUpper();
-                    clienteContacto.PrimerApellidoContacto = clienteContacto.PrimerApellidoContacto.Trim().ToUpper();
-                    clienteContacto.SegundoApellidoContacto = clienteContacto.SegundoApellidoContacto.Trim().ToUpper();
-                    clienteContacto.EmailContacto = clienteContacto.EmailContacto.Trim().ToLower();
+                    contacto.NombreContacto = clienteContacto.NombreContacto.Trim().ToUpper();
+                    contacto.PrimerApellidoContacto = clienteContacto.PrimerApellidoContacto.Trim().ToUpper();
+                    contacto.SegundoApellidoContacto = clienteContacto.SegundoApellidoContacto.Trim().ToUpper();
+                    contacto.EmailContacto = clienteContacto.EmailContacto.Trim().ToLower();
+                    contacto.TelefonoMovilContacto = clienteContacto.TelefonoMovilContacto;
 
-                    _context.Update(clienteContacto);
+                    _context.Update(contacto);
 
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Details), new { id = clienteContacto.ClienteID });
+                    return RedirectToAction(nameof(Details), new { id = contacto.ClienteID });
 
                 }
                 catch (Exception ex)
@@ -356,7 +361,9 @@
                 }
             }
 
-            clienteContacto.Cliente = cliente;
+            clienteContacto.Cliente = await _getHelper
+                .GetClienteByIdAsync(clienteContacto.ClienteID);
+
             return View(clienteContacto);
         }
 
