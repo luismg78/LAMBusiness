@@ -253,6 +253,7 @@ namespace LAMBusiness.Web.Migrations
                     MunicipioID = table.Column<int>(nullable: false),
                     Telefono = table.Column<string>(maxLength: 15, nullable: false),
                     Email = table.Column<string>(maxLength: 100, nullable: false),
+                    FrecuenciaVisitas = table.Column<short>(nullable: false),
                     FechaRegistro = table.Column<DateTime>(nullable: false),
                     Activo = table.Column<bool>(nullable: false)
                 },
@@ -2955,17 +2956,25 @@ namespace LAMBusiness.Web.Migrations
             migrationBuilder.InsertData(
                 table: "Colaboradores",
                 columns: new[] { "ColaboradorID", "Activo", "CURP", "CodigoPostal", "Colonia", "Domicilio", "Email", "EstadoCivilID", "EstadoNacimientoID", "FechaNacimiento", "FechaRegistro", "GeneroID", "MunicipioID", "Nombre", "PrimerApellido", "PuestoID", "SegundoApellido", "Telefono", "TelefonoMovil" },
-                values: new object[] { new Guid("61ef6c63-4fdf-4dc1-89c9-56d2ad6f9f3a"), true, "CURP781227HCSRNS00", 29000, "COLONIA", "DOMICILIO", "administrador@lambusiness.com", (short)2, (short)7, new DateTime(1978, 12, 27, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 10, 4, 9, 16, 17, 738, DateTimeKind.Local).AddTicks(1663), "M", 180, "NOMBRE", "PRIMERAPELLIDO", new Guid("d6d5973b-fa59-4b0f-837a-35f83350a63e"), "SEGUNDOAPELLIDO", "1234567890", "0123456789" });
+                values: new object[] { new Guid("4f725141-3c2d-4f61-9ac7-0a34cfb3a38f"), true, "CURP781227HCSRNS00", 29000, "COLONIA", "DOMICILIO", "administrador@lambusiness.com", (short)2, (short)7, new DateTime(1978, 12, 27, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 10, 7, 11, 23, 26, 146, DateTimeKind.Local).AddTicks(3866), "M", 180, "NOMBRE", "PRIMERAPELLIDO", new Guid("d6d5973b-fa59-4b0f-837a-35f83350a63e"), "SEGUNDOAPELLIDO", "1234567890", "0123456789" });
 
             migrationBuilder.InsertData(
                 table: "Existencias",
                 columns: new[] { "ExistenciaID", "AlmacenID", "ExistenciaEnAlmacen", "ExistenciaEnAlmacenMaxima", "ExistenciaEnAlmacenMinima", "ProductoID" },
-                values: new object[] { new Guid("426676e0-b835-440d-9b9e-c03a6251d3a7"), new Guid("8706ef28-2eba-463a-bab4-62227965f03f"), 22m, 30m, 12m, new Guid("de7c7462-69ba-4343-a328-012f48f013af") });
+                values: new object[,]
+                {
+                    { new Guid("b6864a5a-abc0-40d6-b78a-0a002228d184"), new Guid("8706ef28-2eba-463a-bab4-62227965f03f"), 22m, 30m, 12m, new Guid("de7c7462-69ba-4343-a328-012f48f013af") },
+                    { new Guid("917d9e9c-e744-4ce7-9e68-35178ab95d92"), new Guid("8706ef28-2eba-463a-bab4-62227965f03f"), 5.5m, 15m, 7m, new Guid("38abf163-90ad-4d67-9bab-e5867d2715cf") }
+                });
 
             migrationBuilder.InsertData(
-                table: "Existencias",
-                columns: new[] { "ExistenciaID", "AlmacenID", "ExistenciaEnAlmacen", "ExistenciaEnAlmacenMaxima", "ExistenciaEnAlmacenMinima", "ProductoID" },
-                values: new object[] { new Guid("f421f650-5e04-4d18-843e-2e7b4f12f4a6"), new Guid("8706ef28-2eba-463a-bab4-62227965f03f"), 5.5m, 15m, 7m, new Guid("38abf163-90ad-4d67-9bab-e5867d2715cf") });
+                table: "Paquetes",
+                columns: new[] { "ProductoID", "CantidadProductoxPaquete", "PiezaProductoID" },
+                values: new object[,]
+                {
+                    { new Guid("94c079ee-1fbe-4cae-9a16-443261dd0d60"), 12m, new Guid("de7c7462-69ba-4343-a328-012f48f013af") },
+                    { new Guid("435a7b4d-1347-4282-9b06-3792ed1a99c4"), 20m, new Guid("38abf163-90ad-4d67-9bab-e5867d2715cf") }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClienteContactos_ClienteID",

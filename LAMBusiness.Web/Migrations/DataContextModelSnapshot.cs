@@ -18043,7 +18043,7 @@ namespace LAMBusiness.Web.Migrations
                     b.HasData(
                         new
                         {
-                            ColaboradorID = new Guid("a81256ef-ba5c-4449-97eb-fdb9fd4c3516"),
+                            ColaboradorID = new Guid("4f725141-3c2d-4f61-9ac7-0a34cfb3a38f"),
                             Activo = true,
                             CURP = "CURP781227HCSRNS00",
                             CodigoPostal = 29000,
@@ -18053,7 +18053,7 @@ namespace LAMBusiness.Web.Migrations
                             EstadoCivilID = (short)2,
                             EstadoNacimientoID = (short)7,
                             FechaNacimiento = new DateTime(1978, 12, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FechaRegistro = new DateTime(2020, 10, 4, 9, 24, 24, 919, DateTimeKind.Local).AddTicks(9430),
+                            FechaRegistro = new DateTime(2020, 10, 7, 11, 23, 26, 146, DateTimeKind.Local).AddTicks(3866),
                             GeneroID = "M",
                             MunicipioID = 180,
                             Nombre = "NOMBRE",
@@ -18095,6 +18095,10 @@ namespace LAMBusiness.Web.Migrations
 
                     b.Property<DateTime>("FechaRegistro")
                         .HasColumnType("datetime2");
+
+                    b.Property<short?>("FrecuenciaVisitas")
+                        .IsRequired()
+                        .HasColumnType("smallint");
 
                     b.Property<int?>("MunicipioID")
                         .IsRequired()
@@ -18205,7 +18209,7 @@ namespace LAMBusiness.Web.Migrations
                     b.HasData(
                         new
                         {
-                            ExistenciaID = new Guid("962b837a-e817-42e1-8976-121592111ec0"),
+                            ExistenciaID = new Guid("b6864a5a-abc0-40d6-b78a-0a002228d184"),
                             AlmacenID = new Guid("8706ef28-2eba-463a-bab4-62227965f03f"),
                             ExistenciaEnAlmacen = 22m,
                             ExistenciaEnAlmacenMaxima = 30m,
@@ -18214,7 +18218,7 @@ namespace LAMBusiness.Web.Migrations
                         },
                         new
                         {
-                            ExistenciaID = new Guid("360818ed-c30d-4b93-a8a5-1a705b21373b"),
+                            ExistenciaID = new Guid("917d9e9c-e744-4ce7-9e68-35178ab95d92"),
                             AlmacenID = new Guid("8706ef28-2eba-463a-bab4-62227965f03f"),
                             ExistenciaEnAlmacen = 5.5m,
                             ExistenciaEnAlmacenMaxima = 15m,

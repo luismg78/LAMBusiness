@@ -37,7 +37,7 @@ transparencia: rgba(255,65,82,.5)*/
 
 /*Class*/
 .bg-card{box-shadow:initial;}
-    .bg-card:hover{box-shadow:0 0.25rem 0.75rem rgba(0,0,0,0.1);}
+    .bg-card:hover{box-shadow:0 0.25rem 0.75rem rgba(0,0,0,0.2);}
 .bg-disabled {z-index:9999;}
 .bg-fixed {bottom:0;position:fixed;right:0;top:0;}
 .bg-row{background-color:transparent;}
@@ -56,6 +56,13 @@ transparencia: rgba(255,65,82,.5)*/
            padding:6px 9px;text-decoration:none!important;text-align:center;}
     .btn-icon:hover, .btn-icon:focus {color:#ff4152;background-color:rgba(0, 0, 0, 0.1)!important;opacity:1;}
     .btn-icon > i{height:20px;width:20px;}
+
+.btn-lam{cursor:pointer;transform:translate(0, 0);-webkit-transform:translate(0, 0);-o-transform:translate(0, 0);-moz-transform:translate(0, 0);-ms-transform:translate(0, 0);
+         transition:transform .5s;-webkit-transition:transform .5s;-o-transition:transform .5s;-moz-transition:transform .5s;}
+    .btn-lam:hover{transform:translate(0, -20px);-webkit-transform:translate(0, -20px);-o-transform:translate(0, -20px);-moz-transform:translate(0, -20px);-ms-transform:translate(0, -20px);
+                   transition:transform .2s;-webkit-transition:transform .2s;-o-transition:transform .2s;-moz-transition:transform .2s;}
+    .btn-lam:hover .bg-card{background-color:rgba(0,0,0,0.01);padding-top:2rem!important;}
+        .btn-lam:hover .bg-card > i{font-size:4.5rem;}
 
 .card-lam-d1{text-align:left;}
     .card-header-lam-d1{align-items:flex-start;display:flex;flex:0 0 100%;max-width:100%;padding:1rem 0!important;text-align:left;}
@@ -94,6 +101,8 @@ transparencia: rgba(255,65,82,.5)*/
 .row-bordered > [class*=" col "]::after, .row-bordered > [class$=" col"]::after,
 .row-bordered > [class="col"]::after {border-left: 1px solid #dee2e6;bottom: 0;content: "";
                                       display: block;left: -1px;position: absolute;top: 0;width: 0;}
+
+.signIn{display:flex;flex-basis:100%;max-height:100vh;width:100%;}
 
 .text-deleteConfirm {margin: 1em 0;}
 .text-deleteConfirm > i{font-size:4rem;}
