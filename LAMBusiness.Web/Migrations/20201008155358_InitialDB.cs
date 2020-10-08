@@ -310,6 +310,26 @@ namespace LAMBusiness.Web.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PrimerasEntradasPrimerasSalidas",
+                columns: table => new
+                {
+                    PEPSID = table.Column<Guid>(nullable: false),
+                    Fecha = table.Column<DateTime>(nullable: false),
+                    ProductoID = table.Column<Guid>(nullable: false),
+                    Cantidad = table.Column<decimal>(type: "decimal(18,4)", nullable: true),
+                    PrecioCosto = table.Column<decimal>(type: "decimal(18,4)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PrimerasEntradasPrimerasSalidas", x => x.PEPSID);
+                    table.ForeignKey(
+                        name: "FK_PrimerasEntradasPrimerasSalidas_Productos_ProductoID",
+                        column: x => x.ProductoID,
+                        principalTable: "Productos",
+                        principalColumn: "ProductoID");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ClienteContactos",
                 columns: table => new
                 {
@@ -332,6 +352,30 @@ namespace LAMBusiness.Web.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Entradas",
+                columns: table => new
+                {
+                    EntradaID = table.Column<Guid>(nullable: false),
+                    ProveedorID = table.Column<Guid>(nullable: false),
+                    UsuarioID = table.Column<Guid>(nullable: false),
+                    Fecha = table.Column<DateTime>(nullable: false),
+                    Folio = table.Column<string>(maxLength: 10, nullable: false),
+                    Observaciones = table.Column<string>(nullable: true),
+                    Aplicado = table.Column<bool>(nullable: false),
+                    FechaCreacion = table.Column<DateTime>(nullable: false),
+                    FechaActualizacion = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Entradas", x => x.EntradaID);
+                    table.ForeignKey(
+                        name: "FK_Entradas_Proveedores_ProveedorID",
+                        column: x => x.ProveedorID,
+                        principalTable: "Proveedores",
+                        principalColumn: "ProveedorID");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProveedorContactos",
                 columns: table => new
                 {
@@ -351,6 +395,31 @@ namespace LAMBusiness.Web.Migrations
                         column: x => x.ProveedorID,
                         principalTable: "Proveedores",
                         principalColumn: "ProveedorID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EntradasDetalle",
+                columns: table => new
+                {
+                    EntradaDetalleID = table.Column<Guid>(nullable: false),
+                    EntradaID = table.Column<Guid>(nullable: false),
+                    ProductoID = table.Column<Guid>(nullable: false),
+                    Cantidad = table.Column<decimal>(type: "decimal(18,4)", nullable: true),
+                    PrecioCosto = table.Column<decimal>(type: "decimal(18,4)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EntradasDetalle", x => x.EntradaDetalleID);
+                    table.ForeignKey(
+                        name: "FK_EntradasDetalle_Entradas_EntradaID",
+                        column: x => x.EntradaID,
+                        principalTable: "Entradas",
+                        principalColumn: "EntradaID");
+                    table.ForeignKey(
+                        name: "FK_EntradasDetalle_Productos_ProductoID",
+                        column: x => x.ProductoID,
+                        principalTable: "Productos",
+                        principalColumn: "ProductoID");
                 });
 
             migrationBuilder.InsertData(
@@ -2954,15 +3023,15 @@ namespace LAMBusiness.Web.Migrations
             migrationBuilder.InsertData(
                 table: "Colaboradores",
                 columns: new[] { "ColaboradorID", "Activo", "CURP", "CodigoPostal", "Colonia", "Domicilio", "Email", "EstadoCivilID", "EstadoNacimientoID", "FechaNacimiento", "FechaRegistro", "GeneroID", "MunicipioID", "Nombre", "PrimerApellido", "PuestoID", "SegundoApellido", "Telefono", "TelefonoMovil" },
-                values: new object[] { new Guid("9a66ba26-eecc-46f0-9855-59a1585d5a1c"), true, "CURP781227HCSRNS00", 29000, "COLONIA", "DOMICILIO", "administrador@lambusiness.com", (short)2, (short)7, new DateTime(1978, 12, 27, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 10, 7, 21, 53, 29, 626, DateTimeKind.Local).AddTicks(5475), "M", 180, "NOMBRE", "PRIMERAPELLIDO", new Guid("d6d5973b-fa59-4b0f-837a-35f83350a63e"), "SEGUNDOAPELLIDO", "1234567890", "0123456789" });
+                values: new object[] { new Guid("d885a8ff-6f9c-4487-83a4-142073cb3271"), true, "CURP781227HCSRNS00", 29000, "COLONIA", "DOMICILIO", "administrador@lambusiness.com", (short)2, (short)7, new DateTime(1978, 12, 27, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2020, 10, 8, 10, 53, 57, 753, DateTimeKind.Local).AddTicks(7735), "M", 180, "NOMBRE", "PRIMERAPELLIDO", new Guid("d6d5973b-fa59-4b0f-837a-35f83350a63e"), "SEGUNDOAPELLIDO", "1234567890", "0123456789" });
 
             migrationBuilder.InsertData(
                 table: "Existencias",
                 columns: new[] { "ExistenciaID", "AlmacenID", "ExistenciaEnAlmacen", "ProductoID" },
                 values: new object[,]
                 {
-                    { new Guid("1f390971-8f4a-4803-b45e-fec53d9ee48b"), new Guid("8706ef28-2eba-463a-bab4-62227965f03f"), 0m, new Guid("de7c7462-69ba-4343-a328-012f48f013af") },
-                    { new Guid("7a433664-5513-48d7-b032-7e69e9a92016"), new Guid("8706ef28-2eba-463a-bab4-62227965f03f"), 0m, new Guid("38abf163-90ad-4d67-9bab-e5867d2715cf") }
+                    { new Guid("042aa566-2a69-4713-858a-7cb50533628e"), new Guid("8706ef28-2eba-463a-bab4-62227965f03f"), 0m, new Guid("de7c7462-69ba-4343-a328-012f48f013af") },
+                    { new Guid("d490cf9f-1792-46d2-896f-55bc18847ba9"), new Guid("8706ef28-2eba-463a-bab4-62227965f03f"), 0m, new Guid("38abf163-90ad-4d67-9bab-e5867d2715cf") }
                 });
 
             migrationBuilder.InsertData(
@@ -3022,6 +3091,21 @@ namespace LAMBusiness.Web.Migrations
                 column: "PuestoID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Entradas_ProveedorID",
+                table: "Entradas",
+                column: "ProveedorID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EntradasDetalle_EntradaID",
+                table: "EntradasDetalle",
+                column: "EntradaID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EntradasDetalle_ProductoID",
+                table: "EntradasDetalle",
+                column: "ProductoID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Estados_EstadoClave",
                 table: "Estados",
                 column: "EstadoClave",
@@ -3041,6 +3125,11 @@ namespace LAMBusiness.Web.Migrations
                 name: "IX_Municipios_EstadoID",
                 table: "Municipios",
                 column: "EstadoID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PrimerasEntradasPrimerasSalidas_ProductoID",
+                table: "PrimerasEntradasPrimerasSalidas",
+                column: "ProductoID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Productos_Codigo",
@@ -3102,6 +3191,9 @@ namespace LAMBusiness.Web.Migrations
                 name: "Colaboradores");
 
             migrationBuilder.DropTable(
+                name: "EntradasDetalle");
+
+            migrationBuilder.DropTable(
                 name: "Existencias");
 
             migrationBuilder.DropTable(
@@ -3109,6 +3201,9 @@ namespace LAMBusiness.Web.Migrations
 
             migrationBuilder.DropTable(
                 name: "Paquetes");
+
+            migrationBuilder.DropTable(
+                name: "PrimerasEntradasPrimerasSalidas");
 
             migrationBuilder.DropTable(
                 name: "ProveedorContactos");
@@ -3124,6 +3219,9 @@ namespace LAMBusiness.Web.Migrations
 
             migrationBuilder.DropTable(
                 name: "Puestos");
+
+            migrationBuilder.DropTable(
+                name: "Entradas");
 
             migrationBuilder.DropTable(
                 name: "Almacenes");

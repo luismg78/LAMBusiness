@@ -18043,7 +18043,7 @@ namespace LAMBusiness.Web.Migrations
                     b.HasData(
                         new
                         {
-                            ColaboradorID = new Guid("9a5a1084-1f5b-4a5d-9061-ea9392b61506"),
+                            ColaboradorID = new Guid("d885a8ff-6f9c-4487-83a4-142073cb3271"),
                             Activo = true,
                             CURP = "CURP781227HCSRNS00",
                             CodigoPostal = 29000,
@@ -18053,7 +18053,7 @@ namespace LAMBusiness.Web.Migrations
                             EstadoCivilID = (short)2,
                             EstadoNacimientoID = (short)7,
                             FechaNacimiento = new DateTime(1978, 12, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FechaRegistro = new DateTime(2020, 10, 7, 22, 0, 55, 896, DateTimeKind.Local).AddTicks(1226),
+                            FechaRegistro = new DateTime(2020, 10, 8, 10, 53, 57, 753, DateTimeKind.Local).AddTicks(7735),
                             GeneroID = "M",
                             MunicipioID = 180,
                             Nombre = "NOMBRE",
@@ -18269,14 +18269,14 @@ namespace LAMBusiness.Web.Migrations
                     b.HasData(
                         new
                         {
-                            ExistenciaID = new Guid("9207b250-1e63-4f2e-8fb0-2a385aec8e5d"),
+                            ExistenciaID = new Guid("042aa566-2a69-4713-858a-7cb50533628e"),
                             AlmacenID = new Guid("8706ef28-2eba-463a-bab4-62227965f03f"),
                             ExistenciaEnAlmacen = 0m,
                             ProductoID = new Guid("de7c7462-69ba-4343-a328-012f48f013af")
                         },
                         new
                         {
-                            ExistenciaID = new Guid("06327217-032e-4b4b-8971-971eaadaf39c"),
+                            ExistenciaID = new Guid("d490cf9f-1792-46d2-896f-55bc18847ba9"),
                             AlmacenID = new Guid("8706ef28-2eba-463a-bab4-62227965f03f"),
                             ExistenciaEnAlmacen = 0m,
                             ProductoID = new Guid("38abf163-90ad-4d67-9bab-e5867d2715cf")
