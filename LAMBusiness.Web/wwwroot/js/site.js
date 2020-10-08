@@ -35,6 +35,27 @@ function addProcessWithSpinner(text) {
     }
 }
 
+function addButtonWithSpinner(text, container, buttonDisabled, time = 0) {
+    if ($(container)[0] !== undefined && $('#button-with-spinner')[0] === undefined) {
+        var html = '';
+        html += '<a id="button-with-spinner" class="btn btn-secondary text-white">';
+        html += '   <div class="row align-items-center">';
+        html += '       <div class="col-1"><div class="spinner"></div></div>';
+        html += '       <div class="col-10">'+text+'</div>';
+        html += '   </div>';
+        html += '</a>';
+        $(buttonDisabled).hide();
+        $(container).append(html);
+        if (time > 0) {
+            setTimeout(function () {
+                $(buttonDisabled).show();
+                $('#button-with-spinner').remove();
+            }, time);
+        }
+        $('#button-with-spinner').focus();
+    }
+}
+
 function btnProcess(text, button, tiempo = 0) {
     if ($(".btn-process > div")[0] === undefined) {
         if (text !== '') {
@@ -62,6 +83,13 @@ function removeProcess() {
 
 function removeProcessWithSpinner() {
     $('.process-with-spinner').remove();
+}
+
+function removeButtonWithSpinner(buttonEnabled) {
+    if ($('#button-with-spinner')[0] !== undefined) {
+        $(buttonEnabled).show();
+        $('#button-with-spinner').remove();
+    }
 }
 
 function positionTopScreen(e) {

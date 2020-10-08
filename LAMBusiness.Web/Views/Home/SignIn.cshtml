@@ -19,20 +19,19 @@
                 <div class="px-md-3">
                     <div class="form-group">
                         <label asp-for="Email" class="control-label"></label>
-                        <input asp-for="Email" class="form-control" placeholder="example@correo.com" autofocus />
+                        <input asp-for="Email" class="form-control" placeholder="example@correo.com" onchange="removeButtonWithSpinner('#IniciarSesionButton');" autofocus />
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <input asp-for="Password" class="d-none" />
                         <label asp-for="Password" class="control-label"></label>
-                        <input type="password" id="Pwd" class="form-control" />
+                        <input type="password" id="Pwd" class="form-control" onchange="removeButtonWithSpinner('#IniciarSesionButton');"/>
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
                 </div>
             </div>
             <div class="modal-footer justify-content-between align-items-center">
                 <div class="btn-process px-md-3">
-                    <a class="btn btn-secondary text-white">Iniciando sesión <i class="fas fa-angle-double-right ml-2"></i></a>
                     <input id="IniciarSesionButton" type="submit" value="Iniciar Sesión" class="btn btn-base" onclick="password();" />
                 </div>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -44,6 +43,7 @@
 @section scripts{
     <script>
         function password() {
+            addButtonWithSpinner('Iniciando Sesión', '.btn-process', '#IniciarSesionButton');
             if ($('#Pwd').val() !== '') {
                 $('#Password').val((SHA512($('#Pwd').val())));
                 $('#Pwd').val('');

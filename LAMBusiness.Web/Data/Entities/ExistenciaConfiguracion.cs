@@ -20,9 +20,7 @@
             return new Existencia
             {
                 AlmacenID = Guid.Parse("8706EF28-2EBA-463A-BAB4-62227965F03F"),
-                ExistenciaEnAlmacen = 22,
-                ExistenciaEnAlmacenMaxima = 30,
-                ExistenciaEnAlmacenMinima = 12,
+                ExistenciaEnAlmacen = 0,
                 ExistenciaID = Guid.NewGuid(),
                 ProductoID = Guid.Parse("DE7C7462-69BA-4343-A328-012F48F013AF")
             };
@@ -33,9 +31,7 @@
             return new Existencia
             {
                 AlmacenID = Guid.Parse("8706EF28-2EBA-463A-BAB4-62227965F03F"),
-                ExistenciaEnAlmacen = (decimal)5.50,
-                ExistenciaEnAlmacenMaxima = 15,
-                ExistenciaEnAlmacenMinima = 7,
+                ExistenciaEnAlmacen = (decimal)0,
                 ExistenciaID = Guid.NewGuid(),
                 ProductoID = Guid.Parse("38ABF163-90AD-4D67-9BAB-E5867D2715CF")
             };

@@ -100,7 +100,7 @@
                 </div>
             </div>
             <!--Productos asignados a paquetes-->
-            <div class="col">
+            <div class="col-12">
                 <div class="my-4">
                     @if (Model.ProductosAsignadosViewModel.Count > 0)
                     {
@@ -115,7 +115,7 @@
                         <hr />
                         if (Model.ProductosAsignadosViewModel.Count > 0)
                         {
-                            <div class="row border-bottom d-none d-md-flex">
+                            <div class="row border-bottom d-none d-md-flex px-2 no-gutters">
                                 <div class="col-12 col-md-3 col-lg-2 mb-2">
                                     <span class="font-weight-bold">Código</span>
                                 </div>
@@ -131,7 +131,7 @@
                         }
                         foreach (var productoAsignado in Model.ProductosAsignadosViewModel)
                         {
-                            <div class="bg-row row align-items-center border-bottom py-2">
+                            <div class="bg-row row align-items-center border-bottom py-2 px-2 no-gutters">
                                 <div class="col-12 col-md-3 col-lg-2">
                                     <span class="font-weight-bold d-block d-md-none">Código</span>
                                     <span class="d-block">@productoAsignado.Codigo</span>
@@ -161,7 +161,38 @@
                     }
                 </div>
             </div>
-            <!--Codigo para existencia (Pendiente)-->
+            <!--Existencias-->
+            <div class="col-12">
+                <div class="my-4">
+                    @if (Model.Existencias.Count > 0)
+                    {
+                        <p class="font-weight-bold text-base">Existencia por almacén</p>
+                        <hr />
+                        <div class="row border-bottom d-none d-md-flex px-2 no-gutters">
+                            <div class="col-12 col-md-9 mb-2">
+                                <span class="font-weight-bold">Almacén</span>
+                            </div>
+                            <div class="col-12 col-md-3 mb-2 text-md-right">
+                                <span class="font-weight-bold">Existencia</span>
+                            </div>
+                        </div>
+                        foreach (var existencia in Model.Existencias.OrderBy(e => e.Almacenes.AlmacenNombre))
+                        {
+                            <div class="bg-row row align-items-center border-bottom py-2 px-2 no-gutters">
+                                <div class="col-12 col-md-9">
+                                    <span class="font-weight-bold d-block d-md-none">Almacén</span>
+                                    <span class="d-block">@existencia.Almacenes.AlmacenNombre</span>
+                                    <small class="d-block">@existencia.Almacenes.AlmacenDescripcion</small>
+                                </div>
+                                <div class="col-12 col-md-3 text-md-right">
+                                    <span class="font-weight-bold d-block d-md-none">Existencia</span>
+                                    <span class="d-block">@existencia.ExistenciaEnAlmacen</span>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -5,6 +5,7 @@
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using Shared.Catalogo;
+    using Shared.Movimiento;
 
     public class ProductoDetailsViewModel: Producto
     {

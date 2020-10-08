@@ -43,6 +43,18 @@
             return View(contacto);
         }
 
+        public IActionResult Movimiento()
+        {
+            var movimiento = new Movimiento()
+            {
+                Entradas = GetCountEntradas(),
+                Salidas = GetCountSalidas(),
+                Ventas = GetCountVentas()
+            };
+
+            return View(movimiento);
+        }
+        
         #region Category's counts
         private int GetCountGeneros()
         {
@@ -99,8 +111,24 @@
         private int GetCountProveedores()
         {
             return _context.Proveedores.Count();
-        } 
+        }
         #endregion
 
+        #region Movimiento's counts
+        private int GetCountEntradas()
+        {
+            return _context.Entradas.Count();
+        }
+
+        private int GetCountSalidas()
+        {
+            return 0;
+        }
+
+        private int GetCountVentas()
+        {
+            return 0;
+        }
+        #endregion
     }
 }

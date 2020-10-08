@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LAMBusiness.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20201007162326_InitialDB")]
-    partial class InitialDB
+    [Migration("20201008030057_AddEntradasAndPEPS")]
+    partial class AddEntradasAndPEPS
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -18045,7 +18045,7 @@ namespace LAMBusiness.Web.Migrations
                     b.HasData(
                         new
                         {
-                            ColaboradorID = new Guid("4f725141-3c2d-4f61-9ac7-0a34cfb3a38f"),
+                            ColaboradorID = new Guid("9a5a1084-1f5b-4a5d-9061-ea9392b61506"),
                             Activo = true,
                             CURP = "CURP781227HCSRNS00",
                             CodigoPostal = 29000,
@@ -18055,7 +18055,7 @@ namespace LAMBusiness.Web.Migrations
                             EstadoCivilID = (short)2,
                             EstadoNacimientoID = (short)7,
                             FechaNacimiento = new DateTime(1978, 12, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FechaRegistro = new DateTime(2020, 10, 7, 11, 23, 26, 146, DateTimeKind.Local).AddTicks(3866),
+                            FechaRegistro = new DateTime(2020, 10, 7, 22, 0, 55, 896, DateTimeKind.Local).AddTicks(1226),
                             GeneroID = "M",
                             MunicipioID = 180,
                             Nombre = "NOMBRE",
@@ -18175,6 +18175,74 @@ namespace LAMBusiness.Web.Migrations
                     b.ToTable("ProveedorContactos");
                 });
 
+            modelBuilder.Entity("LAMBusiness.Shared.Movimiento.Entrada", b =>
+                {
+                    b.Property<Guid>("EntradaID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Aplicado")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("Fecha")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaActualizacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Folio")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(10)")
+                        .HasMaxLength(10);
+
+                    b.Property<string>("Observaciones")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProveedorID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UsuarioID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("EntradaID");
+
+                    b.HasIndex("ProveedorID");
+
+                    b.ToTable("Entradas");
+                });
+
+            modelBuilder.Entity("LAMBusiness.Shared.Movimiento.EntradaDetalle", b =>
+                {
+                    b.Property<Guid>("EntradaDetalleID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("Cantidad")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<Guid>("EntradaID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("PrecioCosto")
+                        .IsRequired()
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<Guid>("ProductoID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("EntradaDetalleID");
+
+                    b.HasIndex("EntradaID");
+
+                    b.HasIndex("ProductoID");
+
+                    b.ToTable("EntradasDetalle");
+                });
+
             modelBuilder.Entity("LAMBusiness.Shared.Movimiento.Existencia", b =>
                 {
                     b.Property<Guid>("ExistenciaID")
@@ -18186,14 +18254,6 @@ namespace LAMBusiness.Web.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("ExistenciaEnAlmacen")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal?>("ExistenciaEnAlmacenMaxima")
-                        .IsRequired()
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal?>("ExistenciaEnAlmacenMinima")
-                        .IsRequired()
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<Guid?>("ProductoID")
@@ -18211,22 +18271,45 @@ namespace LAMBusiness.Web.Migrations
                     b.HasData(
                         new
                         {
-                            ExistenciaID = new Guid("b6864a5a-abc0-40d6-b78a-0a002228d184"),
+                            ExistenciaID = new Guid("9207b250-1e63-4f2e-8fb0-2a385aec8e5d"),
                             AlmacenID = new Guid("8706ef28-2eba-463a-bab4-62227965f03f"),
-                            ExistenciaEnAlmacen = 22m,
-                            ExistenciaEnAlmacenMaxima = 30m,
-                            ExistenciaEnAlmacenMinima = 12m,
+                            ExistenciaEnAlmacen = 0m,
                             ProductoID = new Guid("de7c7462-69ba-4343-a328-012f48f013af")
                         },
                         new
                         {
-                            ExistenciaID = new Guid("917d9e9c-e744-4ce7-9e68-35178ab95d92"),
+                            ExistenciaID = new Guid("06327217-032e-4b4b-8971-971eaadaf39c"),
                             AlmacenID = new Guid("8706ef28-2eba-463a-bab4-62227965f03f"),
-                            ExistenciaEnAlmacen = 5.5m,
-                            ExistenciaEnAlmacenMaxima = 15m,
-                            ExistenciaEnAlmacenMinima = 7m,
+                            ExistenciaEnAlmacen = 0m,
                             ProductoID = new Guid("38abf163-90ad-4d67-9bab-e5867d2715cf")
                         });
+                });
+
+            modelBuilder.Entity("LAMBusiness.Shared.Movimiento.PEPS", b =>
+                {
+                    b.Property<Guid>("PEPSID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("Cantidad")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<DateTime?>("Fecha")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("PrecioCosto")
+                        .IsRequired()
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<Guid>("ProductoID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("PEPSID");
+
+                    b.HasIndex("ProductoID");
+
+                    b.ToTable("PrimerasEntradasPrimerasSalidas");
                 });
 
             modelBuilder.Entity("LAMBusiness.Web.Models.Entities.Modulo", b =>
@@ -18349,6 +18432,30 @@ namespace LAMBusiness.Web.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("LAMBusiness.Shared.Movimiento.Entrada", b =>
+                {
+                    b.HasOne("LAMBusiness.Shared.Contacto.Proveedor", "Proveedores")
+                        .WithMany()
+                        .HasForeignKey("ProveedorID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("LAMBusiness.Shared.Movimiento.EntradaDetalle", b =>
+                {
+                    b.HasOne("LAMBusiness.Shared.Movimiento.Entrada", "Entradas")
+                        .WithMany()
+                        .HasForeignKey("EntradaID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("LAMBusiness.Shared.Catalogo.Producto", "Productos")
+                        .WithMany()
+                        .HasForeignKey("ProductoID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("LAMBusiness.Shared.Movimiento.Existencia", b =>
                 {
                     b.HasOne("LAMBusiness.Shared.Catalogo.Almacen", "Almacenes")
@@ -18359,6 +18466,15 @@ namespace LAMBusiness.Web.Migrations
 
                     b.HasOne("LAMBusiness.Shared.Catalogo.Producto", "Productos")
                         .WithMany("Existencias")
+                        .HasForeignKey("ProductoID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("LAMBusiness.Shared.Movimiento.PEPS", b =>
+                {
+                    b.HasOne("LAMBusiness.Shared.Catalogo.Producto", "Productos")
+                        .WithMany()
                         .HasForeignKey("ProductoID")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();

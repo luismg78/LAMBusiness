@@ -1,0 +1,58 @@
+﻿@model LAMBusiness.Shared.Dashboard.Movimiento
+
+@{
+    ViewData["Title"] = "Movimiento";
+}
+
+<div class="pb-0">
+    <div>
+        <h3 class="modal-title" id="exampleModalLabel">Movimientos</h3>
+        <ul class="breadcrumb bg-transparent p-0 small">
+            <li class="breadcrumb-item">Menú</li>
+            <li class="breadcrumb-item active">Movimiento</li>
+        </ul>
+    </div>
+</div>
+<div class="modal-body py-4">
+    <div class="row">
+
+        <!--Entradas-->
+        <div class="btn-lam col-xl-4 col-md-6">
+            <a asp-action="Index" asp-controller="Entradas" class="text-decoration-none">
+                <div class="card mb-4 text-dark">
+                    <div class="card-body bg-card text-center py-5">
+                        <i class="fas fa-arrow-alt-circle-down display-4 text-info"></i>
+                        <h4 class="mt-4"><span class="text-info">@Model.Entradas</span> Entradas</h4>
+                        <p class="mb-3">Movimiento de Entradas</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!--Salidas-->
+        <div class="btn-lam col-xl-4 col-md-6">
+            <a asp-action="Index" asp-controller="Salidas" class="text-decoration-none">
+                <div class="card mb-4 text-dark">
+                    <div class="card-body bg-card text-center py-5">
+                        <i class="fas fa-arrow-alt-circle-up display-4 text-base"></i>
+                        <h4 class="mt-4"><span class="text-base">@Model.Salidas</span> Salidas</h4>
+                        <p class="mb-3">Movimiento de salidas</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!--Ventas-->
+        <div class="btn-lam col-xl-4 col-md-6">
+            <a asp-action="Index" asp-controller="Ventas" class="text-decoration-none">
+                <div class="card mb-4 text-dark">
+                    <div class="card-body bg-card text-center py-5">
+                        <i class="fas fa-shopping-cart display-4 text-success"></i>
+                        <h4 class="mt-4"><span class="text-success">@Model.Ventas</span> Ventas</h4>
+                        <p class="mb-3">Movimiento de ventas</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>

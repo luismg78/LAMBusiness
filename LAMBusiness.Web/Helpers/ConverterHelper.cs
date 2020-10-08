@@ -252,7 +252,8 @@
                 TasasImpuestos = producto.TasasImpuestos,
                 Unidades = producto.Unidades,
                 UnidadID = producto.UnidadID,
-                Paquete = producto.Paquete
+                Paquete = producto.Paquete,
+                Existencias = producto.Existencias
             };
 
             if (productoDetailsViewModel.Paquete != null)

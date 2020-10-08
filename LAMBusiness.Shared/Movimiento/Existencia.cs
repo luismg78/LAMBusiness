@@ -1,12 +1,10 @@
 ﻿namespace LAMBusiness.Shared.Movimiento
 {
-    using LAMBusiness.Shared.Catalogo;
-    using Newtonsoft.Json;
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Text;
+    using Catalogo;
+    using Newtonsoft.Json;
 
     public class Existencia
     {
@@ -31,18 +29,7 @@
         public virtual Almacen Almacenes { get; set; }
 
         [Column(TypeName = "decimal(18,4)")]
-        [Display(Name = "Existencia Máxima")]
-        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
-        [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public decimal? ExistenciaEnAlmacenMaxima { get; set; }
-
-        [Column(TypeName = "decimal(18,4)")]
-        [Display(Name = "Existencia Mínima")]
-        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
-        [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public decimal? ExistenciaEnAlmacenMinima { get; set; }
-
-        [Column(TypeName = "decimal(18,4)")]
+        [Display(Name = "Existencia")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public decimal? ExistenciaEnAlmacen { get; set; }
     }

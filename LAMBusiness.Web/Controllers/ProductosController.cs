@@ -11,6 +11,7 @@
     using Helpers;
     using Models.ViewModels;
     using Shared.Catalogo;
+    using LAMBusiness.Shared.Movimiento;
 
     public class ProductosController : Controller
     {
@@ -96,6 +97,8 @@
                 .Include(p => p.TasasImpuestos)
                 .Include(p => p.Unidades)
                 .Include(p => p.Paquete)
+                .Include(p => p.Existencias)
+                .ThenInclude(p => p.Almacenes)
                 .FirstOrDefaultAsync(m => m.ProductoID == id);
             if (producto == null)
             {
@@ -147,6 +150,20 @@
                     if (paqueteExists)
                     {
                         _context.Remove(producto.Paquete);
+                    }
+                }
+
+                var almacen = await _context.Almacenes.ToListAsync();
+                if(almacen != null)
+                {
+                    foreach(var a in almacen)
+                    {
+                        _context.Add(new Existencia(){
+                            AlmacenID = a.AlmacenID,
+                            ExistenciaEnAlmacen = (decimal)0,
+                            ExistenciaID = Guid.NewGuid(),
+                            ProductoID = producto.ProductoID
+                        });
                     }
                 }
 
