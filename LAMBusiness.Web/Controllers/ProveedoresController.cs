@@ -12,7 +12,6 @@
     using Models.ViewModels;
     using Shared.Catalogo;
     using Shared.Contacto;
-    using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
     public class ProveedoresController : Controller
     {

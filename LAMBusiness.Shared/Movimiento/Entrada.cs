@@ -11,17 +11,18 @@
     public class Entrada
     {
         [Key]
+        [Display(Name = "Entrada")]
         public Guid EntradaID { get; set; }
 
         [ForeignKey("Proveedor")]
         [Display(Name = "Proveedor")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public Guid ProveedorID { get; set; }
+        public Guid? ProveedorID { get; set; }
 
         [JsonIgnore]
         public virtual Proveedor Proveedores { get; set; }
 
-        [ForeignKey("Usuario")]
+        //[ForeignKey("Usuario")]
         [Display(Name = "Usuario")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public Guid UsuarioID { get; set; }

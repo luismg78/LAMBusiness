@@ -5,6 +5,7 @@ body {background-color:#f7f8f9;margin-bottom:60px;}
 button.accept-policy {font-size: 1rem;line-height: inherit;}
 html {font-size:14px;min-height:100%;position:relative;}
 input[type=checkbox], input[type=radio] {cursor:pointer;height:1.5rem;width:1.4rem;}
+ul li.selected{background-color:#f8f9fa;color:#000;font-weight:bold;}
 
 /*IDs*/
 #UpButton{background-color:transparent;border:0;bottom:5rem;color:#ff4152;display:none;
@@ -74,6 +75,8 @@ transparencia: rgba(255,65,82,.5)*/
 .card-footer-lam-d1{display:block;}
 
 .footer {bottom:0;line-height:60px;position:absolute;width:100%;white-space:nowrap;}
+
+.list-registers{max-height:13.75rem;overflow-y:auto;}
 
 .mt-container{margin-top:6rem;}
 

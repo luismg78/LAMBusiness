@@ -1,7 +1,6 @@
 ﻿namespace LAMBusiness.Web.Controllers
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
@@ -19,14 +18,16 @@
             _context = context;
         }
 
-        // GET: Entradas
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var dataContext = _context.Entradas.Include(e => e.Proveedores);
-            return View(await dataContext.ToListAsync());
+            var dataContext = _context.Entradas
+                .Include(e => e.Proveedores)
+                .OrderBy(e => e.Folio)
+                .ThenBy(e => e.Proveedores.Nombre);
+
+            return View(dataContext);
         }
 
-        // GET: Entradas/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -45,7 +46,6 @@
             return View(entrada);
         }
 
-        // GET: Entradas/Create
         public IActionResult Create()
         {
             ViewData["ProveedorID"] = new SelectList(_context.Proveedores, "ProveedorID", "Colonia");

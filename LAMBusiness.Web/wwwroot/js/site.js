@@ -35,6 +35,14 @@ function addProcessWithSpinner(text) {
     }
 }
 
+function addProcessWithSpinnerInList(obj, icon) {
+    obj = "#" + obj;
+    if ($(obj)[0] !== undefined) {
+        $(obj + " > i").removeClass(icon);
+        $(obj + " > i").addClass('spinnerInList');
+    }
+}
+
 function addButtonWithSpinner(text, container, buttonDisabled, time = 0) {
     if ($(container)[0] !== undefined && $('#button-with-spinner')[0] === undefined) {
         var html = '';
@@ -83,6 +91,14 @@ function removeProcess() {
 
 function removeProcessWithSpinner() {
     $('.process-with-spinner').remove();
+}
+
+function removeProcessWithSpinnerInList(obj, icon) {
+    obj = "#" + obj;
+    if ($(obj)[0] !== undefined) {
+        $(obj + " > i").removeClass('spinnerInList');
+        $(obj + " > i").addClass(icon);
+    }
 }
 
 function removeButtonWithSpinner(buttonEnabled) {
