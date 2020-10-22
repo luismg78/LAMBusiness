@@ -1,7 +1,9 @@
 ﻿using LAMBusiness.Shared.Catalogo;
 using LAMBusiness.Shared.Contacto;
+using LAMBusiness.Shared.Movimiento;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace LAMBusiness.Web.Helpers
@@ -13,6 +15,9 @@ namespace LAMBusiness.Web.Helpers
         Task<ClienteContacto> GetContactoClienteByIdAsync(Guid id);
         Task<ProveedorContacto> GetContactoProveedorByIdAsync(Guid id);
         Task<ProveedorContacto> GetContactoProveedorByProveedorIdAsync(Guid id);
+        Task<Entrada> GetEntradaByIdAsync(Guid id);
+        Task<List<EntradaDetalle>> GetEntradaDetalleByEntadaIdAsync(Guid id);
+        Task<EntradaDetalle> GetEntradaDetalleByIdAsync(Guid id);
         Task<Estado> GetEstadosByIdAsync(short id);
         Task<Municipio> GetMunicipioByIdAsync(int id);
         Task<List<Municipio>> GetMunicipiosByEstadoIdAsync(short id);
@@ -20,7 +25,9 @@ namespace LAMBusiness.Web.Helpers
         Task<Paquete> GetPaqueteByPieceID(Guid id);
         Task<Producto> GetProductByCodeAsync(string codigo);
         Task<Producto> GetProductByIdAsync(Guid id);
+        Task<List<Producto>> GetProductosByPatternAsync(string pattern, int skip);
         Task<Proveedor> GetProveedorByIdAsync(Guid id);
+        Task<List<Proveedor>> GetProveedoresByPatternAsync(string pattern, int skip);
         Task<Unidad> GetUnidadByIdAsync(Guid id);
     }
 }

@@ -1,66 +1,250 @@
 ﻿@model LAMBusiness.Shared.Movimiento.Entrada
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Entradas";
 }
 
-<h1>Edit</h1>
-
-<h4>Entrada</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form asp-action="Edit">
+    <div class="modal-content border-0 box-shadow box-responsive mx-auto">
+        <div class="modal-header pb-0">
+            <div>
+                <h3 class="modal-title" id="exampleModalLabel">Entradas</h3>
+                <ul class="breadcrumb bg-transparent p-0 small">
+                    <li class="breadcrumb-item">Movimientos</li>
+                    <li class="breadcrumb-item">Entradas</li>
+                    <li class="breadcrumb-item active">Nuevo Registro</li>
+                </ul>
+            </div>
+            <a asp-action="Index" asp-controller="Entradas" class="close"><span>&times;</span></a>
+        </div>
+        <div class="modal-body py-4">
             <input type="hidden" asp-for="EntradaID" />
-            <div class="form-group">
-                <label asp-for="ProveedorID" class="control-label"></label>
-                <select asp-for="ProveedorID" class="form-control" asp-items="ViewBag.ProveedorID"></select>
-                <span asp-validation-for="ProveedorID" class="text-danger"></span>
+            <div class="row px-md-3">
+                <div class="col-12">
+                    <div id="ProveedorSearch" class="form-group @if (Model.Proveedores != null) {<text>d-none</text>}">
+                        <input asp-for="ProveedorID" type="hidden"/>
+                        <label asp-for="ProveedorID" class="control-label"></label>
+                        <div class="input-group">
+                            <input id="ProveedorSearchInput" type="search" class="form-control" data-toggle="focus" data-target=".list-registers" placeholder="Ingrese RFC o nombre..." autofocus autocomplete="off" />
+                            <div class="input-group-append">
+                                <span id="SpinList" class="btn btn-light border d-flex align-items-center">
+                                    <i class="fa fa-search"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <span asp-validation-for="ProveedorID" class="text-danger"></span>
+                        <div id="ProveedoresLista" class="mb-4 mt-1 list-registers" data-charging="0" data-rows-next="1">
+                        </div>
+                    </div>
+                </div>
+                <div id="ProveedorDatos" class="col-12 py-2 @if(Model.Proveedores == null){<text>d-none</text>}">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="font-weight-bold text-base">Datos del proveedor</h6>
+                            <a href="#" onclick="proveedorDeleteButton(event);"><span>&times;</span></a>
+                        </div>
+                        <hr class="my-2" />
+                        <small id="ProveedorNombre" class="d-block">
+                            @if (Model.Proveedores != null)
+                            {
+                                <text>@Model.Proveedores.Nombre</text>
+                            }
+                        </small>
+                        <small id="ProveedorRFC" class="text-muted">
+                            @if (Model.Proveedores != null)
+                            {
+                                <text>@Model.Proveedores.RFC</text>
+                            }
+                        </small>
+                        <hr />
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Folio" class="control-label"></label>
+                        <input asp-for="Folio" class="form-control" autofocus />
+                        <span asp-validation-for="Folio" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Fecha" class="control-label"></label>
+                        <input asp-for="Fecha" class="form-control"/>
+                        <span asp-validation-for="Fecha" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label asp-for="Observaciones" class="control-label"></label>
+                        <textarea asp-for="Observaciones" class="form-control"></textarea>
+                        <span asp-validation-for="Observaciones" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="UsuarioID" class="control-label"></label>
-                <input asp-for="UsuarioID" class="form-control" />
-                <span asp-validation-for="UsuarioID" class="text-danger"></span>
+        </div>
+        <div class="modal-footer justify-content-between">
+            <div class="px-md-3">
+                <input type="submit" value="Guardar" class="btn btn-base" />
+                <a asp-action="Index" class="btn btn-outline-secondary">Regresar</a>
             </div>
-            <div class="form-group">
-                <label asp-for="Fecha" class="control-label"></label>
-                <input asp-for="Fecha" class="form-control" />
-                <span asp-validation-for="Fecha" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Folio" class="control-label"></label>
-                <input asp-for="Folio" class="form-control" />
-                <span asp-validation-for="Folio" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Observaciones" class="control-label"></label>
-                <textarea asp-for="Observaciones" class="form-control"></textarea>
-                <span asp-validation-for="Observaciones" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Aplicado" /> @Html.DisplayNameFor(model => model.Aplicado)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="FechaCreacion" class="control-label"></label>
-                <input asp-for="FechaCreacion" class="form-control" />
-                <span asp-validation-for="FechaCreacion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FechaActualizacion" class="control-label"></label>
-                <input asp-for="FechaActualizacion" class="form-control" />
-                <span asp-validation-for="FechaActualizacion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        </div>
     </div>
-</div>
+</form>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
+    <script>
+        var skip = 0;
+        var timeout = null;
+
+        $(document).ready(function () {
+            $(window).on("scroll", function () {
+                if ($('#dRows')[0] !== this.undefined &&
+                    $('#dRows').attr('data-rows-next') === "1" &&
+                    $('#dRows').attr('data-charging') === "0" &&
+                    $('#dRows > div').length % 50 === 0)
+                {
+                    var scrollHeight = $(document).height();
+                    var scrollPosition = $(window).height() + $(window).scrollTop();
+                    var result = (scrollHeight - scrollPosition) / scrollHeight;
+                    if (result <= 0.0005) {
+                        skip += 50;
+                        addRowsNext(skip);
+                    }
+                }
+            });
+        });
+
+        $(document).on('keypress', '#ProveedorSearchInput', function (e) {
+            switch (e.keyCode) {
+                case 13:
+                    e.preventDefault();
+                    var obj = $('div.list-registers ul li.selected')[0];
+                    $('#ProveedorDatos').removeClass('d-none').addClass('d-block');
+                    $('#ProveedorID').val(obj.dataset.id);
+                    $('#ProveedorNombre')[0].innerText = obj.dataset.rfc;
+                    $('#ProveedorRFC')[0].innerText = obj.dataset.nombre;
+                    $('#ProveedorSearch').removeClass('d-block').addClass('d-none');
+                    $('#ProveedoresLista > div').remove();
+                    $('#Folio').focus();
+                    break;
+            }
+        });
+
+        $(document).on('keyup', '#ProveedorSearchInput', function (e) {
+            switch (e.keyCode) {
+                case 38:
+                    var $selected = $('div.list-registers ul li.selected'), $div = $('div.list-registers ul li');
+                    $selected.removeClass('selected').prev().addClass('selected');
+                    if ($selected.prev().length === 0) {
+                        $div.eq(-1).addClass('selected')
+                    }
+                    var obj = $('div.list-registers ul li.selected');
+                    $('#ProveedorSearchInput').val(obj[0].children[0].innerText);
+                    $('#ProveedorSearchInput').focus();
+                    break;
+                case 40:
+                    var $selected = $('div.list-registers ul li.selected'), $div = $('div.list-registers ul li');
+                    $selected.removeClass('selected').next().addClass('selected');
+                    if ($selected.next().length === 0) {
+                        $div.eq(0).addClass('selected')
+                    }
+                    var obj = $('div.list-registers ul li.selected');
+                    $('#ProveedorSearchInput').val(obj[0].children[0].innerText);
+                    $('#ProveedorSearchInput').focus();
+                    break;
+                default:
+                    if ($('#ProveedorSearchInput').attr('data-toggle')) {
+                        var submenu = $('#ProveedorSearchInput').attr('data-target');
+                        if ($('#ProveedorSearchInput').val() !== '') {
+                            if (timeout !== null) {
+                                clearTimeout(timeout);
+                            }
+                            skip = 0;
+                            timeout = setTimeout(
+                                function () {
+                                    search(skip, true);
+                                }, 300);
+                        }
+                        else {
+                            $(submenu).slideUp('slow');
+                        }
+                    }
+                    break;
+            }
+        });
+
+        $(document).on('mouseout', 'div.list-registers', function () {
+            $('div.list-registers ul li.selected').removeClass('selected');
+        });
+
+        $(document).on('mouseover', 'div.list-registers ul li', function (e) {
+            var $selected = $('div.list-registers ul li.selected'), $div = $(e.currentTarget);
+            $selected.removeClass('selected');
+            $div.eq(-1).addClass('selected');
+        });
+
+        function addProveedor(e) {
+            e.preventDefault();
+            $('#ProveedorDatos').removeClass('d-none').addClass('d-block');
+            $('#ProveedorID').val(e.currentTarget.dataset.id);
+            $('#ProveedorNombre')[0].innerText = e.currentTarget.dataset.rfc;
+            $('#ProveedorRFC')[0].innerText = e.currentTarget.dataset.nombre;
+            $('#ProveedorSearch').removeClass('d-block').addClass('d-none');
+            $('#ProveedoresLista > div').remove();
+            $('#Folio').focus();
+        }
+
+        function proveedorDeleteButton(e) {
+            e.preventDefault();
+            $('#ProveedorID').val('');
+            $('#ProveedorNombre')[0].innerText = '';
+            $('#ProveedorRFC')[0].innerText = '';
+            $('#ProveedorDatos').removeClass('d-block').addClass('d-none');
+            $('#ProveedorSearch').removeClass('d-none').addClass('d-block');
+            $('#ProveedoresLista > div').remove();
+            $('#ProveedorSearchInput').val('');
+            $('#ProveedorSearchInput').focus();
+        }
+
+        function search(skip, inicio = false) {
+            addProcessWithSpinnerInList('SpinList', 'fa-search');
+            $('#ProveedoresLista').attr('data-charging', "1");
+            var searchBy = $('#ProveedorSearchInput')[0] === undefined ? "" : $('#ProveedorSearchInput').val();
+            if (searchBy === '') {
+                $('#ProveedoresLista').attr('data-rows-next', "0");
+                $('#ProveedoresLista').attr('data-charging', "0");
+                removeProcessWithSpinnerInList('SpinList', 'fa-search');
+                return false;
+            }
+            $.ajax({
+                url: '@Url.Action("GetProveedores", "Entradas")',
+                method: 'POST',
+                datatype: 'text',
+                data: {
+                    pattern: searchBy,
+                    skip: skip
+                },
+                success: function (r) {
+                    if (inicio) { $('#ProveedoresLista').empty(); }
+                    if (r !== null && r.trim() !== '') {
+                        $('#ProveedoresLista').append(r);
+                        $('#ProveedoresLista').slideDown();
+                        //$('[data-toggle="tooltip"]').tooltip();
+                    } else {
+                        $('#ProveedoresLista').attr('data-rows-next', "0");
+                    }
+                    $('#ProveedoresLista').attr('data-charging', "0");
+                    removeProcessWithSpinnerInList('SpinList', 'fa-search');
+                },
+                error: function (r) {
+                    $('#ProveedoresLista').attr('data-charging', "0");
+                    removeProcessWithSpinnerInList('SpinList', 'fa-search');
+                },
+                cache: false
+            });
+        }
+    </script>
+}

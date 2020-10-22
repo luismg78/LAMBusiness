@@ -1,0 +1,20 @@
+﻿@model IEnumerable<LAMBusiness.Shared.Catalogo.Producto>
+
+@if (Model.Any())
+{
+    <div>
+        <ul class="list-group">
+            @foreach (var item in Model.OrderBy(p => p.ProductoNombre))
+            {
+                <li class="list-group-item list-group-item-action"
+                    data-id="@item.ProductoID"
+                    data-codigo="@item.Codigo"
+                    data-nombre="@item.ProductoNombre"
+                    onclick="addProducto(event);">
+                    <span class="d-block">@item.ProductoNombre</span>
+                    <small class="text-muted">@item.Codigo</small>
+                </li>
+            }
+        </ul>
+    </div>
+}

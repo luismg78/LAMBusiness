@@ -31,7 +31,7 @@
         //public virtual Usuario Usuarios { get; set; }
 
         [DataType(DataType.Date)]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
+        [DisplayFormat(ApplyFormatInEditMode = false, DataFormatString = "{0:yyyy-MM-dd}")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public DateTime? Fecha { get; set; }
 
@@ -44,9 +44,13 @@
 
         public bool Aplicado { get; set; }
 
+
+        [Display(Name = "Fecha Creación")]
         [DataType(DataType.Date)]
         public DateTime FechaCreacion { get; set; }
 
+
+        [Display(Name = "Fecha Última Actualización")]
         [DataType(DataType.Date)]
         public DateTime FechaActualizacion { get; set; }
     }

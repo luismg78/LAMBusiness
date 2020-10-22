@@ -1,0 +1,230 @@
+﻿@model LAMBusiness.Shared.Movimiento.EntradaDetalle
+
+@{
+    ViewData["Title"] = "Detalle de Entradas";
+}
+
+<form asp-action="AddDetalle">
+    <div class="modal-content border-0 box-shadow box-responsive mx-auto">
+        <div class="modal-header pb-0">
+            <div>
+                <h3 class="modal-title" id="exampleModalLabel">Detalle de Entradas</h3>
+                <ul class="breadcrumb bg-transparent p-0 small">
+                    <li class="breadcrumb-item">Movimientos</li>
+                    <li class="breadcrumb-item">Detalle de Entradas</li>
+                    <li class="breadcrumb-item active">Nuevo Registro</li>
+                </ul>
+            </div>
+            <a asp-action="Details" asp-controller="Entradas" asp-route-id="@Model.EntradaID" class="close"><span>&times;</span></a>
+        </div>
+        <div class="modal-body py-4">
+            <input type="hidden" asp-for="EntradaID" />
+            <div class="row px-md-3">
+                <div class="col-12">
+                    <div id="ProductoSearch" class="form-group">
+                        <input asp-for="ProductoID" type="hidden" />
+                        <label asp-for="ProductoID" class="control-label"></label>
+                        <div class="input-group">
+                            <input id="ProductoSearchInput" type="search" class="form-control" 
+                                   data-toggle="focus" data-target=".list-registers" 
+                                   placeholder="Ingrese código o nombre..." 
+                                   autofocus autocomplete="off" 
+                                   onkeyup="positionCursorWithArrowKey(event);"
+                                   onkeypress="getProducto(event);"/>
+                            <div class="input-group-append">
+                                <div class="input-group-append">
+                                    <button id="ProductoSearchButton" class="btn btn-light border" 
+                                            type="button" onclick="search(event);">
+                                        <span id="SpinList" class="d-flex align-items-center">
+                                            <i class="fa fa-search"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <span asp-validation-for="ProductoID" class="text-danger"></span>
+                        <div id="dRow" class="mb-4 mt-1 list-registers" data-charging="0" data-rows-next="1">
+                        </div>
+                    </div>
+                </div>
+                <div id="ProductoDatos" class="col-12 py-2 d-none">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="font-weight-bold text-base">Datos del producto</h6>
+                            <a href="#" onclick="deleteButtonProducto(event);"><span>&times;</span></a>
+                        </div>
+                        <hr class="my-2" />
+                        <small id="ProductoNombre" class="d-block"></small>
+                        <small id="ProductoCodigo" class="text-muted"></small>
+                        <hr />
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Cantidad" class="control-label"></label>
+                        <input asp-for="Cantidad" type="number" value="@Model.Cantidad" 
+                               step="0.0001" min="0.0000" class="form-control" 
+                               autofocus onkeyup="multiplyCantByPriceWhenChangeValue('PrecioCosto');" />
+                        <span asp-validation-for="Cantidad" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="PrecioCosto" class="control-label"></label>
+                        <input asp-for="PrecioCosto" type="number" value="@Model.PrecioCosto" 
+                               step="0.01" min="0.00" class="form-control"
+                               onkeyup="multiplyCantByPriceWhenChangeValue('PrecioCosto');"/>
+                        <span asp-validation-for="PrecioCosto" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="control-label">Importe</label>
+                        <h3 id="Importe" class="font-weight-bold text-dark">@Convert.ToDecimal(Model.Cantidad * Model.PrecioCosto).ToString("$#,###,##0.00")</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer justify-content-between">
+            <div class="px-md-3">
+                <input type="submit" value="Agregar Detalle" class="btn btn-base" />
+                <a asp-action="Details" asp-controller="Entradas" asp-route-id="@Model.EntradaID" class="btn btn-outline-secondary">Regresar</a>
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script>
+    var skip = 0;
+    var input = '';
+
+    $(document).ready(function () {
+        $('#dRow').on("scroll", function () {
+            if ($('#dRow')[0] !== this.undefined &&
+                $('#dRow').attr('data-rows-next') === "1" &&
+                $('#dRow').attr('data-charging') === "0" &&
+                $('#dRow > div').length % 50 === 0) {
+                var scrollHeight = $(document).height();
+                var scrollPosition = $(window).height() + $(window).scrollTop();
+                var result = (scrollHeight - scrollPosition) / scrollHeight;
+                if (result <= 0.0005) {
+                    skip += 50;
+                    addRowsNext(skip);
+                }
+            }
+        });
+    });
+
+    function addProducto(e) {
+        e.preventDefault();
+        getProducto(e.currentTarget.dataset.codigo);
+    }
+
+    function addRowsNext(skip, inicio = false) {
+        addProcessWithSpinnerInList('SpinList', 'fa-search');
+        $('#dRow').attr('data-charging', "1");
+        var searchBy = $('#ProductoSearchInput')[0] === undefined ? "" : $('#ProductoSearchInput').val();
+        if (searchBy === '') {
+            $('#dRow').attr('data-rows-next', "0");
+            $('#dRow').attr('data-charging', "0");
+            removeProcessWithSpinnerInList('SpinList', 'fa-search');
+            return false;
+        }
+        $.ajax({
+            url: '@Url.Action("GetProductos", "Entradas")',
+            method: 'POST',
+            datatype: 'text',
+            data: {
+                pattern: searchBy,
+                skip: skip
+            },
+            success: function (r) {
+                if (inicio) { $('#dRow').empty(); }
+                if (r !== null && r.trim() !== '') {
+                    $('#dRow').append(r);
+                    $('#dRow').slideDown();
+                    $('#ProductoSearchInput').focus();
+                } else {
+                    $('#dRow').attr('data-rows-next', "0");
+                }
+                $('#dRow').attr('data-charging', "0");
+                removeProcessWithSpinnerInList('SpinList', 'fa-search');
+            },
+            error: function (r) {
+                $('#dRow').attr('data-charging', "0");
+                removeProcessWithSpinnerInList('SpinList', 'fa-search');
+            },
+            cache: false
+        });
+    }
+
+    function deleteButtonProducto(e) {
+        e.preventDefault();
+        $('#ProductoID').val('');
+        $('#Cantidad').val('');
+        $('#PrecioCosto').val('');
+        $('#ProductoNombre')[0].innerText = '';
+        $('#ProductoCodigo')[0].innerText = '';
+        $('#Importe')[0].innerText = '$0.00';
+        $('#ProductoDatos').removeClass('d-block').addClass('d-none');
+        $('#ProductoSearch').removeClass('d-none').addClass('d-block');
+        $('#dRow > div').remove();
+        $('#ProductoSearchInput').val('');
+        $('#ProductoSearchInput').focus();
+    }
+
+    function getProducto(e) {
+        switch (e.keyCode) {
+            case 13:
+                e.preventDefault();
+                var codigo = e.currentTarget.value;
+                if (codigo !== '') {
+                    addProcessWithSpinnerInList('SpinList', 'fa-search');
+                    $.ajax({
+                        url: '@Url.Action("GetProducto", "Entradas")',
+                        method: 'POST',
+                        datatype: 'text',
+                        data: { code: codigo },
+                        success: function (r) {
+                            if (!r.error) {
+                                $('#ProductoDatos').removeClass('d-none').addClass('d-block');
+                                $('#ProductoID').val(r.producto.productoID);
+                                $('#ProductoNombre')[0].innerText = r.producto.productoNombre;
+                                $('#ProductoCodigo')[0].innerText = r.producto.codigo;
+                                $('#Cantidad').val('1');
+                                $('#PrecioCosto').val(r.producto.precioCosto);
+                                $('#Importe')[0].innerText = formatCurrency(r.producto.precioCosto);
+                                $('#ProductoSearch').removeClass('d-block').addClass('d-none');
+                                $('#dRow > div').remove();
+                                $('#Cantidad').focus();
+                            } else {
+                                alert(r.message);
+                            }
+                            removeProcessWithSpinnerInList('SpinList', 'fa-search');
+                        },
+                        error: function (r) {
+                            removeProcessWithSpinnerInList('SpinList', 'fa-search');
+                        },
+                        cache: false
+                    });
+                }
+                break;
+        }
+
+    }
+
+    function search(e) {
+        e.preventDefault();
+        if ($('#ProductoSearchInput').attr('data-toggle')) {
+            if ($('#ProductoSearchInput').val() !== '') {
+                skip = 0;
+                addRowsNext(skip, true);
+            }
+        }
+    }
+</script>
+}

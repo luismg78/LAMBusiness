@@ -21,7 +21,7 @@
             @*<input type="hidden" asp-for="EntradaID" />*@
             <div class="row px-md-3">
                 <div class="col-12">
-                    <div class="form-group">
+                    <div id="ProveedorSearch" class="form-group">
                         <input asp-for="ProveedorID" type="hidden" />
                         <label asp-for="ProveedorID" class="control-label"></label>
                         <div class="input-group">
@@ -33,37 +33,19 @@
                             </div>
                         </div>
                         <span asp-validation-for="ProveedorID" class="text-danger"></span>
-                        <div id="ProveedoresLista" class="mb-4 mt-1 list-registers">
-                            <ul class="list-group">
-                                <li class="list-group-item list-group-item-action">
-                                    <span class="d-block">BACC750221NF5</span>
-                                    <span class="">CARMEN JOHANNA BRAVO COELLO</span>
-                                </li>
-                                <li class="list-group-item list-group-item-action">
-                                    <span class="d-block">MAGL781227216</span>
-                                    <span class="">LUIS ALBERTO MARTINEZ GONZALEZ</span>
-                                </li>
-                                <li class="list-group-item list-group-item-action">
-                                    <span class="d-block">MASA080717MA7</span>
-                                    <span class="">ALEJANDRA MARTINEZ SANCHEZ ALDANA</span>
-                                </li>
-                                <li class="list-group-item list-group-item-action">
-                                    <span class="d-block">MASL030722HA0</span>
-                                    <span class="">LUIS ANGEL MARTINEZ SANCHEZ ALDANA</span>
-                                </li>
-                            </ul>
+                        <div id="ProveedoresLista" class="mb-4 mt-1 list-registers" data-charging="0" data-rows-next="1">                            
                         </div>
                     </div>
                 </div>
-                <div id="ProveedorDatos" class="col-12 py-2">
+                <div id="ProveedorDatos" class="col-12 py-2 d-none">
                     <div>
                         <div class="d-flex justify-content-between align-items-center">
                             <h6 class="font-weight-bold text-base">Datos del proveedor</h6>
                             <a href="#" onclick="proveedorDeleteButton(event);"><span>&times;</span></a>
                         </div>
                         <hr class="my-2" />
-                        <small class="d-block">MAGL781227216</small>
-                        <small class="text-muted">LUIS ALBERTO MARTINEZ GONZALEZ</small>
+                        <small id="ProveedorNombre" class="d-block"></small>
+                        <small id="ProveedorRFC" class="text-muted"></small>
                         <hr />
                     </div>
                 </div>
@@ -105,6 +87,7 @@
 
 <script>
         var skip = 0;
+        var timeout = null;
 
         $(document).ready(function () {
             $(window).on("scroll", function () {
@@ -124,58 +107,33 @@
             });
         });
 
-        function proveedorDeleteButton(e) {
-            e.preventDefault();
-            $('#ProveedorDatos').removeClass('d-block').addClass('d-none')
-            $('#ProveedorDatos > div').remove();
-            $('#ProveedorSearchInput').focus();
-        }
-
-        function search(e) {
-            addProcessWithSpinnerInList('SpinList', 'fa-search');
-            $('#dRows').attr('data-charging', "1");
-            var searchBy = $('#ProveedorSearchInput')[0] === undefined ? "" : $('#ProveedorSearchInput').val();
-            $.ajax({
-                url: '@Url.Action("GetProveedores","Entradas")',
-                method: 'POST',
-                datatype: 'text',
-                data: {
-                    searchby: searchBy,
-                    skip: skip
-                },
-                success: function (r) {
-                    if (inicio) { $('#dRows').empty(); }
-                    if (r !== null && r.trim() !== '') {
-                        $('#dRows').append(r);
-                        $('[data-toggle="tooltip"]').tooltip();
-                    } else {
-                        $('#dRows').attr('data-rows-next', "0");
-                    }
-                    $('#dRows').attr('data-charging', "0");
-                    removeProcessWithSpinnerInList('SpinList', 'fa-search');
-                },
-                error: function (r) {
-                    $('#dRows').attr('data-charging', "0");
-                    removeProcessWithSpinner();
-                },
-                cache: false
-            });
-        }
-
-        $(document).on('keyup', '#ProveedorSearchInput', function (e) {
+        $(document).on('keypress', '#ProveedorSearchInput', function (e) {
             switch (e.keyCode) {
                 case 13:
                     e.preventDefault();
-                    alert($('#ProveedorSearchInput').val());
+                    var obj = $('div.list-registers ul li.selected')[0];
+                    $('#ProveedorDatos').removeClass('d-none').addClass('d-block');
+                    $('#ProveedorID').val(obj.dataset.id);
+                    $('#ProveedorNombre')[0].innerText = obj.dataset.rfc;
+                    $('#ProveedorRFC')[0].innerText = obj.dataset.nombre;
+                    $('#ProveedorSearch').removeClass('d-block').addClass('d-none');
+                    $('#ProveedoresLista > div').remove();
+                    $('#Folio').focus();
                     break;
+            }
+        });
+
+        $(document).on('keyup', '#ProveedorSearchInput', function (e) {
+            switch (e.keyCode) {
                 case 38:
                     var $selected = $('div.list-registers ul li.selected'), $div = $('div.list-registers ul li');
                     $selected.removeClass('selected').prev().addClass('selected');
                     if ($selected.prev().length === 0) {
                         $div.eq(-1).addClass('selected')
                     }
-                    var obj = $('div.list-registers ul li.selected');
-                    $('#ProveedorSearchInput').val(obj[0].children[1].innerText);
+                    var obj = $('div.list-registers ul li.selected')
+                    $('#ProveedorSearchInput').val(obj[0].children[0].innerText);
+                    obj[0].scrollIntoView(false);
                     $('#ProveedorSearchInput').focus();
                     break;
                 case 40:
@@ -184,30 +142,30 @@
                     if ($selected.next().length === 0) {
                         $div.eq(0).addClass('selected')
                     }
-                    var obj = $('div.list-registers ul li.selected');
-                    $('#ProveedorSearchInput').val(obj[0].children[1].innerText);
+                    var obj = $('div.list-registers ul li.selected')
+                    $('#ProveedorSearchInput').val(obj[0].children[0].innerText);
+                    obj[0].scrollIntoView(false);
                     $('#ProveedorSearchInput').focus();
                     break;
                 default:
-                    setTimeout(function () {
-                        if ($('#ProveedorSearchInput').attr('data-toggle')) {
-                            var submenu = $('#ProveedorSearchInput').attr('data-target');
-                            if ($('#ProveedorSearchInput').val() !== '') {
-                                search();
+                    if ($('#ProveedorSearchInput').attr('data-toggle')) {
+                        var submenu = $('#ProveedorSearchInput').attr('data-target');
+                        if ($('#ProveedorSearchInput').val() !== '') {
+                            if (timeout !== null) {
+                                clearTimeout(timeout);
                             }
-                            else {
-                                $(submenu).slideUp('slow');
-                            }
+                            skip = 0;
+                            timeout = setTimeout(
+                                function () {
+                                    search(skip, true);
+                                }, 300);
                         }
-                    }, 300);
+                        else {
+                            $(submenu).slideUp('slow');
+                        }
+                    }
                     break;
             }
-        });
-
-        $(document).on('click', '.selected', function (e) {
-            var $selected = $(e.currentTarget);
-            $('#ProveedorSearchInput').val($selected[0].children[1].innerText);
-            $('#ProveedorSearchInput').focus();
         });
 
         $(document).on('mouseout', 'div.list-registers', function () {
@@ -220,5 +178,65 @@
             $div.eq(-1).addClass('selected');
         });
 
+        function addProveedor(e) {
+            e.preventDefault();
+            $('#ProveedorDatos').removeClass('d-none').addClass('d-block');
+            $('#ProveedorID').val(e.currentTarget.dataset.id);
+            $('#ProveedorNombre')[0].innerText = e.currentTarget.dataset.rfc;
+            $('#ProveedorRFC')[0].innerText = e.currentTarget.dataset.nombre;
+            $('#ProveedorSearch').removeClass('d-block').addClass('d-none');
+            $('#ProveedoresLista > div').remove();
+            $('#Folio').focus();
+        }
+
+        function proveedorDeleteButton(e) {
+            e.preventDefault();
+            $('#ProveedorID').val('');
+            $('#ProveedorNombre')[0].innerText = '';
+            $('#ProveedorRFC')[0].innerText = '';
+            $('#ProveedorDatos').removeClass('d-block').addClass('d-none');
+            $('#ProveedorSearch').removeClass('d-none').addClass('d-block');
+            $('#ProveedoresLista > div').remove();
+            $('#ProveedorSearchInput').val('');
+            $('#ProveedorSearchInput').focus();
+        }
+
+        function search(skip, inicio = false) {
+            addProcessWithSpinnerInList('SpinList', 'fa-search');
+            $('#ProveedoresLista').attr('data-charging', "1");
+            var searchBy = $('#ProveedorSearchInput')[0] === undefined ? "" : $('#ProveedorSearchInput').val();
+            if (searchBy === '') {
+                $('#ProveedoresLista').attr('data-rows-next', "0");
+                $('#ProveedoresLista').attr('data-charging', "0");
+                removeProcessWithSpinnerInList('SpinList', 'fa-search');
+                return false;
+            }
+            $.ajax({
+                url: '@Url.Action("GetProveedores", "Entradas")',
+                method: 'POST',
+                datatype: 'text',
+                data: {
+                    pattern: searchBy,
+                    skip: skip
+                },
+                success: function (r) {
+                    if (inicio) { $('#ProveedoresLista').empty(); }
+                    if (r !== null && r.trim() !== '') {
+                        $('#ProveedoresLista').append(r);
+                        $('#ProveedoresLista').slideDown();
+                        //$('[data-toggle="tooltip"]').tooltip();
+                    } else {
+                        $('#ProveedoresLista').attr('data-rows-next', "0");
+                    }
+                    $('#ProveedoresLista').attr('data-charging', "0");
+                    removeProcessWithSpinnerInList('SpinList', 'fa-search');
+                },
+                error: function (r) {
+                    $('#ProveedoresLista').attr('data-charging', "0");
+                    removeProcessWithSpinnerInList('SpinList', 'fa-search');
+                },
+                cache: false
+            });
+        }
 </script>
 }

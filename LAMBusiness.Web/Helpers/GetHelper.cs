@@ -1,4 +1,4 @@
-﻿namespace LAMBusiness.Web.Helpers
+﻿    namespace LAMBusiness.Web.Helpers
 {
     using System;
     using System.Collections.Generic;
@@ -8,6 +8,7 @@
     using Data;
     using Shared.Catalogo;
     using LAMBusiness.Shared.Contacto;
+    using LAMBusiness.Shared.Movimiento;
 
     public class GetHelper : IGetHelper
     {
@@ -92,6 +93,49 @@
             return await _context.Estados.FindAsync(id);
         }
 
+        //Entradas
+
+        /// <summary>
+        /// Obtener Entrada por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Entrada> GetEntradaByIdAsync(Guid id)
+        {
+            return await _context.Entradas
+                .Include(e => e.Proveedores)
+                .ThenInclude(e => e.Municipios)
+                .ThenInclude(e => e.Estados)
+                .FirstOrDefaultAsync(m => m.EntradaID == id);
+        }
+
+        /// <summary>
+        /// obtener detalle de entrada por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<EntradaDetalle> GetEntradaDetalleByIdAsync(Guid id)
+        {
+            return await _context.EntradasDetalle
+                .Include(e => e.Entradas)
+                .Include(e => e.Productos)
+                .FirstOrDefaultAsync(m => m.EntradaDetalleID == id);
+        }
+
+        /// <summary>
+        /// Obtener lista de detalle de entrada por EntradaID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<List<EntradaDetalle>> GetEntradaDetalleByEntadaIdAsync(Guid id)
+        {
+            return await _context.EntradasDetalle
+                .Include(e => e.Entradas)
+                .Include(e => e.Productos)
+                .Where(m => m.EntradaID == id)
+                .ToListAsync();
+        }
+
         //Municipio
 
         /// <summary>
@@ -159,6 +203,42 @@
             return await _context.Productos.FirstOrDefaultAsync(p => p.Codigo == codigo);
         }
 
+        /// <summary>
+        /// Obtener lista de productos de acuerdo al patrón solicitado
+        /// </summary>
+        /// <param name="pattern"></param>
+        /// <returns></returns>
+        public async Task<List<Producto>> GetProductosByPatternAsync(string pattern, int skip)
+        {
+            string[] patterns = pattern.Trim().Split(' ');
+            IQueryable<Producto> query = null;
+            foreach (var p in patterns)
+            {
+                string _pattern = p.Trim();
+                if (_pattern != "")
+                {
+                    if (query == null)
+                    {
+                        query = _context.Productos
+                                .Where(p => p.Codigo.Contains(_pattern) ||
+                                            p.ProductoNombre.Contains(_pattern));
+                    }
+                    else
+                    {
+                        query = query.Where(p => p.Codigo.Contains(_pattern) ||
+                                                 p.ProductoNombre.Contains(_pattern));
+                    }
+                }
+            }
+
+            if (query == null)
+            {
+                query = _context.Productos;
+            }
+
+            return await query.OrderBy(e => e.ProductoNombre).Skip(skip).Take(50).ToListAsync();
+        }
+
         //Proveedores
 
         /// <summary>
@@ -171,6 +251,42 @@
             return await _context.Proveedores
                 .Include(p => p.ProveedorContactos)
                 .FirstOrDefaultAsync(p => p.ProveedorID == id);
+        }
+
+        /// <summary>
+        /// Obtener lista de proveedores de acuerdo al patrón solicitado
+        /// </summary>
+        /// <param name="pattern"></param>
+        /// <returns></returns>
+        public async Task<List<Proveedor>> GetProveedoresByPatternAsync(string pattern, int skip)
+        {
+            string[] patterns = pattern.Trim().Split(' ');
+            IQueryable<Proveedor> query = null;
+            foreach (var p in patterns)
+            {
+                string _pattern = p.Trim();
+                if (_pattern != "")
+                {
+                    if (query == null)
+                    {
+                        query = _context.Proveedores
+                            .Where(p => p.RFC.Contains(_pattern) ||
+                                        p.Nombre.Contains(_pattern));
+                    }
+                    else
+                    {
+                        query = query.Where(p => p.RFC.Contains(_pattern) ||
+                                                 p.Nombre.Contains(_pattern));
+                    }
+                }
+            }
+
+            if (query == null)
+            {
+                query = _context.Proveedores;
+            }
+
+            return await query.OrderBy(e => e.RFC).Skip(skip).Take(50).ToListAsync();
         }
 
         //Unidad

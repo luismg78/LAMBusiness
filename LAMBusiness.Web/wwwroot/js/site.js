@@ -84,6 +84,16 @@ function btnProcess(text, button, tiempo = 0) {
     $("#inputDisabled").focus();
 }
 
+function formatCurrency(numero) {
+    var valorNegativo = false;
+    if (numero < 0) {
+        valorNegativo = true;
+        numero = Math.abs(numero);
+    }
+    return (valorNegativo ? '-$' : '$') +
+        parseFloat(numero, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,').toString();
+}
+
 function removeProcess() {
     $("#loader").addClass('d-none');
     $("#loader > div").remove();
@@ -111,4 +121,79 @@ function removeButtonWithSpinner(buttonEnabled) {
 function positionTopScreen(e) {
     $('html, body').animate({ scrollTop: 0 }, 300);
     e.preventDefault();
+}
+
+
+//cursor
+function positionCursorWithArrowKey(e) {
+    switch (e.keyCode) {
+        case 38:
+            var $div = $('div.list-registers ul li');
+            var $selected = $('div.list-registers ul li.selected');
+            $selected.removeClass('selected').prev().addClass('selected');
+            var band = true;
+            if ($selected.prev().length === 0) {
+                if ($selected.index() === 0 && $selected.prev().index() === -1) {
+                    e.currentTarget.value = input;
+                    band = false;
+                } else {
+                    $div.eq(-1).addClass('selected')
+                }
+            }
+            if (band) {
+                var obj = $('div.list-registers ul li.selected')
+                e.currentTarget.value = obj[0].dataset.codigo;
+                obj[0].scrollIntoView(false);
+                $(e.currentTarget).focus();
+            }
+            break;
+        case 40:
+            var $div = $('div.list-registers ul li');
+            var $selected = $('div.list-registers ul li.selected');
+            $selected.removeClass('selected').next().addClass('selected');
+            var band = true;
+            if ($selected.next().length === 0) {
+                if ($selected.index() === $div.length - 1 && $selected.next().index() === -1) {
+                    e.currentTarget.value = input;
+                    band = false;
+                } else {
+                    $div.eq(0).addClass('selected')
+                }
+            }
+            if (band) {
+                var obj = $('div.list-registers ul li.selected')
+                e.currentTarget.value = obj[0].dataset.codigo;
+                obj[0].scrollIntoView(false);
+                $(e.currentTarget).focus();
+            }
+            break;
+        default:
+            if (e.keyCode !== 13) {
+                input = e.currentTarget.value;
+                $('#dRow > div').remove();
+            }
+            break;
+    }
+}
+
+$(document).on('mouseout', 'div.list-registers', function () {
+    $('div.list-registers ul li.selected').removeClass('selected');
+});
+
+$(document).on('mouseover', 'div.list-registers ul li', function (e) {
+    var $selected = $('div.list-registers ul li.selected'), $div = $(e.currentTarget);
+    $selected.removeClass('selected');
+    $div.eq(-1).addClass('selected');
+});
+
+//movimiento
+
+function multiplyCantByPriceWhenChangeValue(precio) {
+    var _precio = '#' + precio;
+    var importe = parseFloat($('#Cantidad').val()) * parseFloat($(_precio).val());
+    if (importe.toString() === 'NaN') {
+        $('#Importe')[0].innerText = '$0.00';
+    } else {
+        $('#Importe')[0].innerText = formatCurrency(importe);
+    }
 }

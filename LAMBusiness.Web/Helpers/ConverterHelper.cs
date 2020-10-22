@@ -12,6 +12,7 @@
     using Models.ViewModels;
     using Shared.Catalogo;
     using Shared.Contacto;
+    using LAMBusiness.Shared.Movimiento;
 
     public class ConverterHelper : IConverterHelper
     {
@@ -147,6 +148,58 @@
             };
 
             return clienteViewModel;
+        }
+
+        //Entradas
+
+        /// <summary>
+        /// Convertir clase EntradaviewModel a Entrada.
+        /// </summary>
+        /// <param name="entradaViewModel"></param>
+        /// <param name="isNew"></param>
+        /// <returns></returns>
+        public async Task<Entrada> ToEntradaAsync(EntradaViewModel entradaViewModel, bool isNew)
+        {
+            return new Entrada()
+            {
+                Aplicado = entradaViewModel.Aplicado,
+                EntradaID = isNew ? Guid.NewGuid() : entradaViewModel.EntradaID,
+                Fecha = entradaViewModel.Fecha,
+                FechaActualizacion = DateTime.Now,
+                FechaCreacion = DateTime.Now,
+                Folio = entradaViewModel.Folio.Trim().ToUpper(),
+                Observaciones = entradaViewModel.Observaciones.Trim().ToUpper(),
+                ProveedorID = entradaViewModel.ProveedorID,
+                UsuarioID = entradaViewModel.UsuarioID,
+                Proveedores = await _getHelper.GetProveedorByIdAsync((Guid)entradaViewModel.ProveedorID)
+            };
+
+        }
+
+        /// <summary>
+        /// Convertir clase Entrada a EntradaViewModel.
+        /// </summary>
+        /// <param name="entrada"></param>
+        /// <returns></returns>
+        public async Task<EntradaViewModel> ToEntradaViewModelAsync(Entrada entrada)
+        {
+            var _entrada = await _getHelper.GetEntradaByIdAsync(entrada.EntradaID);
+
+            return new EntradaViewModel()
+            {
+                Aplicado = entrada == null ? false : entrada.Aplicado,
+                EntradaID = entrada == null ? Guid.NewGuid() : entrada.EntradaID,
+                Fecha = entrada == null ? DateTime.Now : entrada.Fecha,
+                FechaActualizacion = entrada == null ? DateTime.Now : entrada.FechaActualizacion,
+                FechaCreacion = _entrada == null ? DateTime.Now : _entrada.FechaCreacion,
+                Folio = entrada.Folio == null ? "" : entrada.Folio.Trim().ToUpper(),
+                Observaciones = entrada.Observaciones == null ? "" : entrada.Observaciones.Trim().ToUpper(),
+                ProveedorID = entrada.ProveedorID,
+                Proveedores = await _getHelper.GetProveedorByIdAsync((Guid)entrada.ProveedorID),
+                UsuarioID = entrada.UsuarioID,
+                EntradaDetalle = await _getHelper.GetEntradaDetalleByEntadaIdAsync(entrada.EntradaID)
+            };
+
         }
 
         //Productos
