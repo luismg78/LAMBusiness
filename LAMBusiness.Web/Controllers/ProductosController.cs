@@ -12,6 +12,7 @@
     using Models.ViewModels;
     using Shared.Catalogo;
     using LAMBusiness.Shared.Movimiento;
+    using Microsoft.CodeAnalysis.CSharp;
 
     public class ProductosController : Controller
     {
@@ -54,7 +55,7 @@
                     {
                         if (query == null)
                         {
-                            query = _context.Productos
+                            query = _context.Productos                                    
                                     .Where(p => p.Codigo.Contains(w) ||
                                                 p.ProductoNombre.Contains(w) ||
                                                 p.ProductoDescripcion.Contains(w));
@@ -73,7 +74,11 @@
                 query = _context.Productos;
             }
 
-            var productos = await query.OrderBy(p => p.ProductoNombre)
+            var productos = await query
+                .Include(p => p.TasasImpuestos)
+                .Include(p => p.Unidades)
+                .Include(p => p.Paquete)
+                .OrderBy(p => p.ProductoNombre)
                 .Skip(skip)
                 .Take(50)
                 .ToListAsync();
@@ -216,6 +221,11 @@
                 try
                 {
                     var producto = await _converterHelper.ToProductoAsync(productoViewModel, false);
+
+                    producto.PrecioCosto = _context.Productos
+                        .Where(p => p.ProductoID == producto.ProductoID)
+                        .Select(p => p.PrecioCosto).FirstOrDefault();
+
                     _context.Update(producto);
                     
                     var paquete = producto.Paquete;

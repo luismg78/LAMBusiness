@@ -127,13 +127,46 @@
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<List<EntradaDetalle>> GetEntradaDetalleByEntadaIdAsync(Guid id)
+        public async Task<List<EntradaDetalle>> GetEntradaDetalleByEntradaIdAsync(Guid id)
         {
             return await _context.EntradasDetalle
                 .Include(e => e.Entradas)
                 .Include(e => e.Productos)
+                .ThenInclude(e => e.Unidades)
+                .Include(e => e.Productos)
+                .ThenInclude(e => e.Paquete)
+                .Include(e => e.Productos)
+                .ThenInclude(e => e.Existencias)
                 .Where(m => m.EntradaID == id)
                 .ToListAsync();
+        }
+
+        //Existencias
+
+        /// <summary>
+        /// Obtener Existencia por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Existencia> GetExistenciaByIdAsync(Guid id)
+        {
+            return await _context.Existencias
+                .Include(e => e.Almacenes)
+                .Include(e => e.Productos)
+                .FirstOrDefaultAsync(m => m.ExistenciaID == id);
+        }
+
+        /// <summary>
+        /// Obtener existencia por ProductoID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Existencia> GetExistenciaByProductoIdAsync(Guid id)
+        {
+            return await _context.Existencias
+                .Include(e => e.Almacenes)
+                .Include(e => e.Productos)
+                .FirstOrDefaultAsync(m => m.ProductoID == id);
         }
 
         //Municipio
@@ -190,7 +223,12 @@
         /// <returns>String</returns>
         public async Task<Producto> GetProductByIdAsync(Guid id)
         {
-            return await _context.Productos.FindAsync(id);
+            return await _context.Productos
+                .Include(p => p.Existencias)
+                .Include(p => p.Paquete)
+                .Include(p => p.TasasImpuestos)
+                .Include(p => p.Unidades)
+                .FirstOrDefaultAsync(p => p.ProductoID == id);
         }
 
         /// <summary>
@@ -200,7 +238,12 @@
         /// <returns></returns>
         public async Task<Producto> GetProductByCodeAsync(string codigo)
         {
-            return await _context.Productos.FirstOrDefaultAsync(p => p.Codigo == codigo);
+            return await _context.Productos
+                .Include(p => p.Existencias)
+                .Include(p => p.Paquete)
+                .Include(p => p.TasasImpuestos)
+                .Include(p => p.Unidades)
+                .FirstOrDefaultAsync(p => p.Codigo == codigo);
         }
 
         /// <summary>
@@ -287,6 +330,19 @@
             }
 
             return await query.OrderBy(e => e.RFC).Skip(skip).Take(50).ToListAsync();
+        }
+
+        /// <summary>
+        /// Obtener proveedor por RFC.
+        /// </summary>
+        /// <param name="rfc"></param>
+        /// <returns></returns>
+        public async Task<Proveedor> GetProveedorByRFCAsync(string rfc)
+        {
+            rfc = string.IsNullOrEmpty(rfc) ? "" : rfc.Trim().ToUpper();
+
+            return await _context.Proveedores
+                .FirstOrDefaultAsync(p => p.RFC == rfc);
         }
 
         //Unidad

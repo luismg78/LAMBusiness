@@ -197,7 +197,7 @@
                 ProveedorID = entrada.ProveedorID,
                 Proveedores = await _getHelper.GetProveedorByIdAsync((Guid)entrada.ProveedorID),
                 UsuarioID = entrada.UsuarioID,
-                EntradaDetalle = await _getHelper.GetEntradaDetalleByEntadaIdAsync(entrada.EntradaID)
+                EntradaDetalle = await _getHelper.GetEntradaDetalleByEntradaIdAsync(entrada.EntradaID)
             };
 
         }
@@ -216,7 +216,7 @@
             {
                 Activo = productoViewModel.Activo,
                 Codigo = productoViewModel.Codigo.Trim().ToUpper(),
-                PrecioCosto = productoViewModel.PrecioCosto,
+                PrecioCosto = isNew ? 0 : productoViewModel.PrecioCosto,
                 PrecioVenta = productoViewModel.PrecioVenta,
                 ProductoDescripcion = productoViewModel.ProductoDescripcion.Trim().ToUpper(),
                 ProductoID = isNew ? Guid.NewGuid() : productoViewModel.ProductoID,

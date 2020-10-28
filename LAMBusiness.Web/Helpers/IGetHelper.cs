@@ -16,9 +16,11 @@ namespace LAMBusiness.Web.Helpers
         Task<ProveedorContacto> GetContactoProveedorByIdAsync(Guid id);
         Task<ProveedorContacto> GetContactoProveedorByProveedorIdAsync(Guid id);
         Task<Entrada> GetEntradaByIdAsync(Guid id);
-        Task<List<EntradaDetalle>> GetEntradaDetalleByEntadaIdAsync(Guid id);
+        Task<List<EntradaDetalle>> GetEntradaDetalleByEntradaIdAsync(Guid id);
         Task<EntradaDetalle> GetEntradaDetalleByIdAsync(Guid id);
         Task<Estado> GetEstadosByIdAsync(short id);
+        Task<Existencia> GetExistenciaByIdAsync(Guid id);
+        Task<Existencia> GetExistenciaByProductoIdAsync(Guid id);
         Task<Municipio> GetMunicipioByIdAsync(int id);
         Task<List<Municipio>> GetMunicipiosByEstadoIdAsync(short id);
         Task<Paquete> GetPaqueteByIdAsync(Guid id);
@@ -27,6 +29,7 @@ namespace LAMBusiness.Web.Helpers
         Task<Producto> GetProductByIdAsync(Guid id);
         Task<List<Producto>> GetProductosByPatternAsync(string pattern, int skip);
         Task<Proveedor> GetProveedorByIdAsync(Guid id);
+        Task<Proveedor> GetProveedorByRFCAsync(string rfc);
         Task<List<Proveedor>> GetProveedoresByPatternAsync(string pattern, int skip);
         Task<Unidad> GetUnidadByIdAsync(Guid id);
     }

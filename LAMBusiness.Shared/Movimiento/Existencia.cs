@@ -13,7 +13,7 @@
         [Display(Name = "Producto")]
         [JsonIgnore]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public Guid? ProductoID { get; set; }
+        public Guid ProductoID { get; set; }
 
         [ForeignKey("ProductoID")]
         [JsonIgnore]
@@ -31,6 +31,6 @@
         [Column(TypeName = "decimal(18,4)")]
         [Display(Name = "Existencia")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
-        public decimal? ExistenciaEnAlmacen { get; set; }
+        public decimal ExistenciaEnAlmacen { get; set; }
     }
 }

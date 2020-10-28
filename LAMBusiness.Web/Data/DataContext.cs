@@ -39,7 +39,6 @@
         public DbSet<Entrada> Entradas { get; set; }
         public DbSet<EntradaDetalle> EntradasDetalle { get; set; }
         public DbSet<Existencia> Existencias { get; set; }
-        public DbSet<PEPS> PEPS { get; set; }
         #endregion
         public DbSet<Modulo> Modulos { get; set; }
 

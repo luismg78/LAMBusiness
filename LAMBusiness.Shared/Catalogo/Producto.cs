@@ -46,9 +46,8 @@
         public virtual TasaImpuesto TasasImpuestos { get; set; }
 
         [Column(TypeName = "decimal(18,4)")]
-        [Display(Name = "Precio (Costo)")]
+        [Display(Name = "Precio (Costo Promedio)")]
         [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = false)]
-        [Required(ErrorMessage = "El campo {0} es requerido.")]
         public decimal? PrecioCosto { get; set; }
 
         [Column(TypeName = "decimal(18,4)")]

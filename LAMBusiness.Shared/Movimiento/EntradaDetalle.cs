@@ -38,5 +38,11 @@
         [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = false)]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public decimal? PrecioCosto { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        [Display(Name = "Precio (Venta)")]
+        [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = false)]
+        [Required(ErrorMessage = "El campo {0} es requerido.")]
+        public decimal? PrecioVenta { get; set; }
     }
 }

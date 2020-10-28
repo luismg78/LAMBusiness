@@ -18,22 +18,32 @@
             <a asp-action="Index" asp-controller="Entradas" class="close"><span>&times;</span></a>
         </div>
         <div class="modal-body py-4">
-            @*<input type="hidden" asp-for="EntradaID" />*@
             <div class="row px-md-3">
                 <div class="col-12">
                     <div id="ProveedorSearch" class="form-group">
                         <input asp-for="ProveedorID" type="hidden" />
                         <label asp-for="ProveedorID" class="control-label"></label>
                         <div class="input-group">
-                            <input id="ProveedorSearchInput" type="search" class="form-control" data-toggle="focus" data-target=".list-registers"  placeholder="Ingrese RFC o nombre..." autofocus autocomplete="off" />
+                            <input id="ProveedorSearchInput" type="search" class="form-control" 
+                                   data-toggle="focus" 
+                                   data-target=".list-registers"  
+                                   placeholder="Ingrese RFC o nombre..." 
+                                   autofocus autocomplete="off"
+                                   onkeyup="positionCursorWithArrowKey(event);"
+                                   onkeypress="getProveedor(event);" />
                             <div class="input-group-append">
-                                <span id="SpinList" class="btn btn-light border d-flex align-items-center">
-                                    <i class="fa fa-search"></i>
-                                </span>
+                                <div class="input-group-append">
+                                    <button id="ProveedorSearchButton" class="btn btn-light border"
+                                            type="button" onclick="search(event);">
+                                        <span id="SpinList" class="d-flex align-items-center">
+                                            <i class="fa fa-search"></i>
+                                        </span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <span asp-validation-for="ProveedorID" class="text-danger"></span>
-                        <div id="ProveedoresLista" class="mb-4 mt-1 list-registers" data-charging="0" data-rows-next="1">                            
+                        <div id="dRow" class="mb-4 mt-1 list-registers" data-charging="0" data-rows-next="1">                            
                         </div>
                     </div>
                 </div>
@@ -41,7 +51,7 @@
                     <div>
                         <div class="d-flex justify-content-between align-items-center">
                             <h6 class="font-weight-bold text-base">Datos del proveedor</h6>
-                            <a href="#" onclick="proveedorDeleteButton(event);"><span>&times;</span></a>
+                            <a href="#" onclick="deleteButtonProveedor(event);"><span>&times;</span></a>
                         </div>
                         <hr class="my-2" />
                         <small id="ProveedorNombre" class="d-block"></small>
@@ -86,157 +96,128 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
 <script>
-        var skip = 0;
-        var timeout = null;
+    var skip = 0;
+    var input = '';
 
-        $(document).ready(function () {
-            $(window).on("scroll", function () {
-                if ($('#dRows')[0] !== this.undefined &&
-                    $('#dRows').attr('data-rows-next') === "1" &&
-                    $('#dRows').attr('data-charging') === "0" &&
-                    $('#dRows > div').length % 50 === 0)
-                {
-                    var scrollHeight = $(document).height();
-                    var scrollPosition = $(window).height() + $(window).scrollTop();
-                    var result = (scrollHeight - scrollPosition) / scrollHeight;
-                    if (result <= 0.0005) {
-                        skip += 50;
-                        addRowsNext(skip);
-                    }
+    $(document).ready(function () {
+        $('#dRow').on("scroll", function () {
+            if ($('#dRow')[0] !== this.undefined &&
+                $('#dRow').attr('data-rows-next') === "1" &&
+                $('#dRow').attr('data-charging') === "0" &&
+                $('#dRow > div').length % 50 === 0) {
+                var scrollHeight = $(document).height();
+                var scrollPosition = $(window).height() + $(window).scrollTop();
+                var result = (scrollHeight - scrollPosition) / scrollHeight;
+                if (result <= 0.0005) {
+                    skip += 50;
+                    addRowsNext(skip);
                 }
-            });
-        });
-
-        $(document).on('keypress', '#ProveedorSearchInput', function (e) {
-            switch (e.keyCode) {
-                case 13:
-                    e.preventDefault();
-                    var obj = $('div.list-registers ul li.selected')[0];
-                    $('#ProveedorDatos').removeClass('d-none').addClass('d-block');
-                    $('#ProveedorID').val(obj.dataset.id);
-                    $('#ProveedorNombre')[0].innerText = obj.dataset.rfc;
-                    $('#ProveedorRFC')[0].innerText = obj.dataset.nombre;
-                    $('#ProveedorSearch').removeClass('d-block').addClass('d-none');
-                    $('#ProveedoresLista > div').remove();
-                    $('#Folio').focus();
-                    break;
             }
         });
+    });
 
-        $(document).on('keyup', '#ProveedorSearchInput', function (e) {
-            switch (e.keyCode) {
-                case 38:
-                    var $selected = $('div.list-registers ul li.selected'), $div = $('div.list-registers ul li');
-                    $selected.removeClass('selected').prev().addClass('selected');
-                    if ($selected.prev().length === 0) {
-                        $div.eq(-1).addClass('selected')
-                    }
-                    var obj = $('div.list-registers ul li.selected')
-                    $('#ProveedorSearchInput').val(obj[0].children[0].innerText);
-                    obj[0].scrollIntoView(false);
-                    $('#ProveedorSearchInput').focus();
-                    break;
-                case 40:
-                    var $selected = $('div.list-registers ul li.selected'), $div = $('div.list-registers ul li');
-                    $selected.removeClass('selected').next().addClass('selected');
-                    if ($selected.next().length === 0) {
-                        $div.eq(0).addClass('selected')
-                    }
-                    var obj = $('div.list-registers ul li.selected')
-                    $('#ProveedorSearchInput').val(obj[0].children[0].innerText);
-                    obj[0].scrollIntoView(false);
-                    $('#ProveedorSearchInput').focus();
-                    break;
-                default:
-                    if ($('#ProveedorSearchInput').attr('data-toggle')) {
-                        var submenu = $('#ProveedorSearchInput').attr('data-target');
-                        if ($('#ProveedorSearchInput').val() !== '') {
-                            if (timeout !== null) {
-                                clearTimeout(timeout);
-                            }
-                            skip = 0;
-                            timeout = setTimeout(
-                                function () {
-                                    search(skip, true);
-                                }, 300);
-                        }
-                        else {
-                            $(submenu).slideUp('slow');
-                        }
-                    }
-                    break;
-            }
-        });
+    function addProveedor(e) {
+        e.preventDefault();
+        getProveedorByRFC(e.currentTarget.dataset.search);
+    }
 
-        $(document).on('mouseout', 'div.list-registers', function () {
-            $('div.list-registers ul li.selected').removeClass('selected');
-        });
-
-        $(document).on('mouseover', 'div.list-registers ul li', function (e) {
-            var $selected = $('div.list-registers ul li.selected'), $div = $(e.currentTarget);
-            $selected.removeClass('selected');
-            $div.eq(-1).addClass('selected');
-        });
-
-        function addProveedor(e) {
-            e.preventDefault();
-            $('#ProveedorDatos').removeClass('d-none').addClass('d-block');
-            $('#ProveedorID').val(e.currentTarget.dataset.id);
-            $('#ProveedorNombre')[0].innerText = e.currentTarget.dataset.rfc;
-            $('#ProveedorRFC')[0].innerText = e.currentTarget.dataset.nombre;
-            $('#ProveedorSearch').removeClass('d-block').addClass('d-none');
-            $('#ProveedoresLista > div').remove();
-            $('#Folio').focus();
+    function addRowsNext(skip, inicio = false) {
+        addProcessWithSpinnerInList('SpinList', 'fa-search');
+        $('#dRow').attr('data-charging', "1");
+        var searchBy = $('#ProveedorSearchInput')[0] === undefined ? "" : $('#ProveedorSearchInput').val();
+        if (searchBy === '') {
+            $('#dRow').attr('data-rows-next', "0");
+            $('#dRow').attr('data-charging', "0");
+            removeProcessWithSpinnerInList('SpinList', 'fa-search');
+            return false;
         }
-
-        function proveedorDeleteButton(e) {
-            e.preventDefault();
-            $('#ProveedorID').val('');
-            $('#ProveedorNombre')[0].innerText = '';
-            $('#ProveedorRFC')[0].innerText = '';
-            $('#ProveedorDatos').removeClass('d-block').addClass('d-none');
-            $('#ProveedorSearch').removeClass('d-none').addClass('d-block');
-            $('#ProveedoresLista > div').remove();
-            $('#ProveedorSearchInput').val('');
-            $('#ProveedorSearchInput').focus();
-        }
-
-        function search(skip, inicio = false) {
-            addProcessWithSpinnerInList('SpinList', 'fa-search');
-            $('#ProveedoresLista').attr('data-charging', "1");
-            var searchBy = $('#ProveedorSearchInput')[0] === undefined ? "" : $('#ProveedorSearchInput').val();
-            if (searchBy === '') {
-                $('#ProveedoresLista').attr('data-rows-next', "0");
-                $('#ProveedoresLista').attr('data-charging', "0");
+        $.ajax({
+            url: '@Url.Action("GetProveedores", "Entradas")',
+            method: 'POST',
+            datatype: 'text',
+            data: {
+                pattern: searchBy,
+                skip: skip
+            },
+            success: function (r) {
+                if (inicio) { $('#dRow').empty(); }
+                if (r !== null && r.trim() !== '') {
+                    $('#dRow').append(r);
+                    $('#dRow').slideDown();
+                    $('#ProveedorSearchInput').focus();
+                } else {
+                    $('#dRow').attr('data-rows-next', "0");
+                }
+                $('#dRow').attr('data-charging', "0");
                 removeProcessWithSpinnerInList('SpinList', 'fa-search');
-                return false;
-            }
+            },
+            error: function (r) {
+                $('#dRow').attr('data-charging', "0");
+                removeProcessWithSpinnerInList('SpinList', 'fa-search');
+            },
+            cache: false
+        });
+    }
+
+    function deleteButtonProveedor(e) {
+        e.preventDefault();
+        $('#ProveedorID').val('');
+        $('#ProveedorNombre')[0].innerText = '';
+        $('#ProveedorRFC')[0].innerText = '';
+        $('#ProveedorDatos').removeClass('d-block').addClass('d-none');
+        $('#ProveedorSearch').removeClass('d-none').addClass('d-block');
+        $('#ProveedoresLista > div').remove();
+        $('#ProveedorSearchInput').val('');
+        $('#ProveedorSearchInput').focus();
+    }
+
+    function getProveedor(e) {
+        if (e.keyCode === 13) {
+            e.preventDefault();
+            getProveedorByRFC(e.currentTarget.value);
+        }
+
+    }
+
+    function getProveedorByRFC(rfc) {
+        if (rfc !== '') {
+            addProcessWithSpinnerInList('SpinList', 'fa-search');
             $.ajax({
-                url: '@Url.Action("GetProveedores", "Entradas")',
+                url: '@Url.Action("GetProveedor", "Entradas")',
                 method: 'POST',
                 datatype: 'text',
-                data: {
-                    pattern: searchBy,
-                    skip: skip
-                },
+                data: { rfc: rfc },
                 success: function (r) {
-                    if (inicio) { $('#ProveedoresLista').empty(); }
-                    if (r !== null && r.trim() !== '') {
-                        $('#ProveedoresLista').append(r);
-                        $('#ProveedoresLista').slideDown();
-                        //$('[data-toggle="tooltip"]').tooltip();
+                    if (!r.error) {
+                        $('#ProveedorDatos').removeClass('d-none').addClass('d-block');
+                        $('#ProveedorID').val(r.proveedorID);
+                        $('#ProveedorNombre')[0].innerText = r.nombre;
+                        $('#ProveedorRFC')[0].innerText = r.rfc;
+                        $('#ProveedorSearch').removeClass('d-block').addClass('d-none');
+                        $('#dRow > div').remove();
+                        $('#Folio').focus();
                     } else {
-                        $('#ProveedoresLista').attr('data-rows-next', "0");
+                        alert(r.message);
                     }
-                    $('#ProveedoresLista').attr('data-charging', "0");
                     removeProcessWithSpinnerInList('SpinList', 'fa-search');
                 },
                 error: function (r) {
-                    $('#ProveedoresLista').attr('data-charging', "0");
                     removeProcessWithSpinnerInList('SpinList', 'fa-search');
                 },
                 cache: false
             });
         }
+    }
+
+    function search(e) {
+        e.preventDefault();
+        if ($('#ProveedorSearchInput').attr('data-toggle')) {
+            if ($('#ProveedorSearchInput').val() !== '') {
+                skip = 0;
+                addRowsNext(skip, true);
+            }
+        }
+    }
+      
 </script>
 }

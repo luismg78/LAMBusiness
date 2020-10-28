@@ -8,14 +8,14 @@
             <div class="border-bottom col-10 col-md-9 p-3">
                 <span class="text-dark">@Html.DisplayFor(modelItem => item.ProductoNombre)</span>
                 <div class="d-block">
-                    <small class="text-muted">Código: @Html.DisplayFor(modelItem => item.Codigo)</small>
+                    <small class="text-muted mr-md-3">Código: @Html.DisplayFor(modelItem => item.Codigo)</small>
                     @if (item.Paquete == null)
                     {
-                        <small class="badge badge-light border">Pieza</small>
+                        <small class="d-block d-md-inline-block text-muted">Unidad: <span class="font-weight-bold text-info">Pieza</span></small>
                     }
                     else
                     {
-                        <small class="badge badge-secondary">Caja</small>
+                        <small class="d-block d-md-inline-block text-muted">Unidad: <span class="font-weight-bold text-danger">Caja</span></small>
                     }
                     @if (!item.Activo)
                     {

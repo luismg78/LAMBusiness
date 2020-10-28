@@ -56,7 +56,8 @@
                         </div>
                         <hr class="my-2" />
                         <small id="ProductoNombre" class="d-block">
-                            @if(Model.Productos != null){
+                            @if (Model.Productos != null)
+                            {
                                 <text>@Model.Productos.ProductoNombre</text>
                             }
                         </small>
@@ -71,25 +72,54 @@
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label asp-for="Cantidad" class="control-label"></label>
-                        <input asp-for="Cantidad" type="number" value="@Model.Cantidad"
-                               step="0.0001" min="0.0000" class="form-control"
-                               autofocus onkeyup="multiplyCantByPriceWhenChangeValue('PrecioCosto');" />
-                        <span asp-validation-for="Cantidad" class="text-danger"></span>
+                        <label asp-for="PrecioVenta" class="control-label"></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </span>
+                            </div>
+                            <input asp-for="PrecioVenta" type="number" value="@Model.PrecioVenta"
+                                   step="0.01" min="0.00" class="form-control" />
+                        </div>
+                        <span asp-validation-for="PrecioVenta" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
                         <label asp-for="PrecioCosto" class="control-label"></label>
-                        <input asp-for="PrecioCosto" type="number" value="@Model.PrecioCosto"
-                               step="0.01" min="0.00" class="form-control"
-                               onkeyup="multiplyCantByPriceWhenChangeValue('PrecioCosto');" />
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </span>
+                            </div>
+                            <input asp-for="PrecioCosto" type="number" value="@Model.PrecioCosto"
+                                   step="0.01" min="0.00" class="form-control"
+                                   onkeyup="multiplyCantByPriceWhenChangeValue('PrecioCosto');" />
+                        </div>
                         <span asp-validation-for="PrecioCosto" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="col-sm-12">
+                <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label class="control-label">Importe</label>
+                        <label asp-for="Cantidad" class="control-label"></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="fas fa-cash-register"></i>
+                                </span>
+                            </div>
+                            <input asp-for="Cantidad" type="number" value="@Model.Cantidad"
+                                   step="0.0001" min="0.0000" class="form-control"
+                                   autofocus onkeyup="multiplyCantByPriceWhenChangeValue('PrecioCosto');" />
+                        </div>                        
+                        <span asp-validation-for="Cantidad" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label class="control-label">Importe (Cant x PCosto)</label>
                         <h3 id="Importe" class="font-weight-bold text-dark">@Convert.ToDecimal(Model.Cantidad * Model.PrecioCosto).ToString("$#,###,##0.00")</h3>
                     </div>
                 </div>
@@ -131,7 +161,7 @@
 
     function addProducto(e) {
         e.preventDefault();
-        getProducto(e.currentTarget.dataset.codigo);
+        getProductoByCode(e.currentTarget.dataset.search);
     }
 
     function addRowsNext(skip, inicio = false) {
@@ -177,6 +207,7 @@
         $('#ProductoID').val('');
         $('#Cantidad').val('');
         $('#PrecioCosto').val('');
+        $('#PrecioVenta').val('');
         $('#ProductoNombre')[0].innerText = '';
         $('#ProductoCodigo')[0].innerText = '';
         $('#Importe')[0].innerText = '$0.00';
@@ -188,43 +219,45 @@
     }
 
     function getProducto(e) {
-        switch (e.keyCode) {
-            case 13:
-                e.preventDefault();
-                var codigo = e.currentTarget.value;
-                if (codigo !== '') {
-                    addProcessWithSpinnerInList('SpinList', 'fa-search');
-                    $.ajax({
-                        url: '@Url.Action("GetProducto", "Entradas")',
-                        method: 'POST',
-                        datatype: 'text',
-                        data: { code: codigo },
-                        success: function (r) {
-                            if (!r.error) {
-                                $('#ProductoDatos').removeClass('d-none').addClass('d-block');
-                                $('#ProductoID').val(r.producto.productoID);
-                                $('#ProductoNombre')[0].innerText = r.producto.productoNombre;
-                                $('#ProductoCodigo')[0].innerText = r.producto.codigo;
-                                $('#Cantidad').val('1');
-                                $('#PrecioCosto').val(r.producto.precioCosto);
-                                $('#Importe')[0].innerText = formatCurrency(r.producto.precioCosto);
-                                $('#ProductoSearch').removeClass('d-block').addClass('d-none');
-                                $('#dRow > div').remove();
-                                $('#Cantidad').focus();
-                            } else {
-                                alert(r.message);
-                            }
-                            removeProcessWithSpinnerInList('SpinList', 'fa-search');
-                        },
-                        error: function (r) {
-                            removeProcessWithSpinnerInList('SpinList', 'fa-search');
-                        },
-                        cache: false
-                    });
-                }
-                break;
+        if (e.keyCode === 13) {
+            e.preventDefault();
+            getProductoByCode(e.currentTarget.value);
         }
 
+    }
+
+    function getProductoByCode(code) {
+        if (code !== '') {
+            addProcessWithSpinnerInList('SpinList', 'fa-search');
+            $.ajax({
+                url: '@Url.Action("GetProducto", "Entradas")',
+                method: 'POST',
+                datatype: 'text',
+                data: { code: code },
+                success: function (r) {
+                    if (!r.error) {
+                        $('#ProductoDatos').removeClass('d-none').addClass('d-block');
+                        $('#ProductoID').val(r.productoID);
+                        $('#ProductoNombre')[0].innerText = r.productoNombre;
+                        $('#ProductoCodigo')[0].innerText = r.codigo;
+                        $('#Cantidad').val('1');
+                        $('#PrecioCosto').val(r.precioCosto);
+                        $('#PrecioVenta').val(r.precioVenta);
+                        $('#Importe')[0].innerText = formatCurrency(r.precioCosto);
+                        $('#ProductoSearch').removeClass('d-block').addClass('d-none');
+                        $('#dRow > div').remove();
+                        $('#PrecioCosto').focus();
+                    } else {
+                        alert(r.message);
+                    }
+                    removeProcessWithSpinnerInList('SpinList', 'fa-search');
+                },
+                error: function (r) {
+                    removeProcessWithSpinnerInList('SpinList', 'fa-search');
+                },
+                cache: false
+            });
+        }
     }
 
     function search(e) {

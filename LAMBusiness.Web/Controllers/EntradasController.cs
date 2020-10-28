@@ -13,6 +13,8 @@
     using Shared.Contacto;
     using Shared.Movimiento;
     using LAMBusiness.Shared.Catalogo;
+    using LAMBusiness.Web.Models.ViewModels;
+    using Microsoft.CodeAnalysis.Operations;
 
     public class EntradasController : Controller
     {
@@ -193,9 +195,7 @@
                 return RedirectToAction(nameof(Details), new { id });
             }
 
-            var entrada = await _context.Entradas
-                .Include(e => e.Proveedores)
-                .FirstOrDefaultAsync(m => m.EntradaID == id);
+            var entrada = await _getHelper.GetEntradaByIdAsync((Guid)id);
 
             if (entrada == null)
             {
@@ -203,9 +203,105 @@
             }
 
             entrada.Aplicado = true;
-
             _context.Update(entrada);
-            await _context.SaveChangesAsync();
+
+            var detalle = await _getHelper.GetEntradaDetalleByEntradaIdAsync(entrada.EntradaID);
+            if(detalle == null)
+            {
+                //Ingresar al menos un movimiento
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            
+            var existencias = new List<ExistenciaViewModel>();
+
+            foreach(var item in detalle)
+            {
+                Guid _productoId = (Guid)item.ProductoID;
+                decimal _cantidad = (decimal)item.Cantidad;
+                decimal _precioCosto = (decimal)item.PrecioCosto;
+
+                if(item.Productos.Unidades.Pieza)
+                {
+                    _cantidad = (int)_cantidad;
+                }
+
+                if (item.Productos.Unidades.Paquete)
+                {
+                    _productoId = item.Productos.Paquete.PiezaProductoID;
+                    _precioCosto = (decimal)item.PrecioCosto / item.Productos.Paquete.CantidadProductoxPaquete;
+                    _cantidad = item.Productos.Paquete.CantidadProductoxPaquete * _cantidad;
+                    item.Productos.PrecioCosto = (decimal)item.PrecioCosto;
+                }
+                item.Productos.PrecioVenta = (decimal)item.PrecioVenta;
+
+                var existencia = existencias.FirstOrDefault(e => e.ProductoID == _productoId);
+                if(existencia == null)
+                {
+                    existencias.Add(new ExistenciaViewModel() { 
+                        AlmacenID = Guid.Parse("8706EF28-2EBA-463A-BAB4-62227965F03F"),
+                        ExistenciaEnAlmacen = _cantidad,
+                        ExistenciaID = Guid.NewGuid(),
+                        ProductoID = _productoId,
+                        PrecioCosto = _precioCosto
+                    });
+                }
+                else
+                {
+                    existencia.PrecioCosto = (
+                        (existencia.ExistenciaEnAlmacen * existencia.PrecioCosto) + 
+                        (_cantidad * _precioCosto)
+                        ) / (existencia.ExistenciaEnAlmacen + _cantidad);
+                    existencia.ExistenciaEnAlmacen += _cantidad;
+                }
+                
+            }
+
+            foreach(var item in existencias)
+            {
+                var producto = await _getHelper.GetProductByIdAsync(item.ProductoID);
+                if(producto == null)
+                {
+                    //Producto inexistente
+                    break;
+                }
+                decimal _existencia = 0;
+                var existencia = await _getHelper.GetExistenciaByProductoIdAsync(item.ProductoID);
+                if (existencia == null)
+                {
+                    _context.Existencias.Add(new Existencia()
+                    {
+                        AlmacenID = Guid.Parse("8706EF28-2EBA-463A-BAB4-62227965F03F"),
+                        ExistenciaEnAlmacen = item.ExistenciaEnAlmacen,
+                        ExistenciaID = Guid.NewGuid(),
+                        ProductoID = item.ProductoID
+                    });
+                    producto.PrecioCosto = item.PrecioCosto;
+                }
+                else
+                {
+                    _existencia = existencia.ExistenciaEnAlmacen;
+                    existencia.ExistenciaEnAlmacen += item.ExistenciaEnAlmacen;
+                    _context.Update(existencia);
+                    producto.PrecioCosto = (
+                            (_existencia * producto.PrecioCosto) +
+                            (item.ExistenciaEnAlmacen * item.PrecioCosto)
+                            ) / (existencia.ExistenciaEnAlmacen);
+                }
+
+
+                _context.Update(producto);
+            }
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                string x = ex.Message;
+                throw;
+            }
+
             return RedirectToAction(nameof(Details), new { id });
 
         }
@@ -230,7 +326,14 @@
             var producto = await _getHelper.GetProductByCodeAsync(code.Trim().ToUpper());
             if (producto != null)
             {
-                return Json(new { producto, error = false });
+                return Json(
+                    new { 
+                        producto.ProductoID, 
+                        producto.Codigo,
+                        producto.ProductoNombre,
+                        producto.PrecioCosto,
+                        producto.PrecioVenta,
+                        error = false });
             }
 
             return Json(new { error = true, message = "Producto inexistente" });
@@ -252,6 +355,30 @@
                 ViewData = new ViewDataDictionary
                             <List<Producto>>(ViewData, productos)
             };
+        }
+
+        public async Task<IActionResult> GetProveedor(string rfc)
+        {
+            if (rfc == null || rfc == "")
+            {
+                return null;
+            }
+
+            var proveedor = await _getHelper.GetProveedorByRFCAsync(rfc);
+            if (proveedor != null)
+            {
+                return Json(
+                    new
+                    {
+                        proveedor.ProveedorID,
+                        proveedor.RFC,
+                        proveedor.Nombre,
+                        error = false
+                    });
+            }
+
+            return Json(new { error = true, message = "Proveedor inexistente" });
+
         }
 
         public async Task<IActionResult> GetProveedores(string pattern, int? skip)
@@ -290,7 +417,8 @@
             {
                 EntradaID = (Guid)id,
                 Cantidad = 0,
-                PrecioCosto = 0
+                PrecioCosto = 0,
+                PrecioVenta = 0
             });
         }
 
@@ -317,6 +445,10 @@
                 try
                 {
                     entradaDetalle.EntradaDetalleID = Guid.NewGuid();
+                    if(producto.Unidades.Pieza)
+                    {
+                        entradaDetalle.Cantidad = (int)entradaDetalle.Cantidad;
+                    }
 
                     _context.Add(entradaDetalle);
 
@@ -326,7 +458,8 @@
                     return View(new EntradaDetalle() { 
                         EntradaID = entradaDetalle.EntradaID,
                         Cantidad = 0,
-                        PrecioCosto = 0
+                        PrecioCosto = 0,
+                        PrecioVenta = 0
                     });
 
                 }
@@ -383,6 +516,11 @@
                 {
                     ModelState.AddModelError("ProductoID", "El campo producto es requerido.");
                     return View(entradaDetalle);
+                }
+
+                if (producto.Unidades.Pieza)
+                {
+                    entradaDetalle.Cantidad = (int)entradaDetalle.Cantidad;
                 }
 
                 try
