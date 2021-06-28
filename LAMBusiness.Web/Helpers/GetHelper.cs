@@ -169,6 +169,68 @@
                 .FirstOrDefaultAsync(m => m.ProductoID == id);
         }
 
+        //Marcas
+
+        /// <summary>
+        /// Obtener marca por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Marca> GetMarcaByIdAsync(Guid id)
+        {
+            return await _context.Marcas
+                .FirstOrDefaultAsync(m => m.MarcaID == id);
+        }
+
+        /// <summary>
+        /// Obtener lista de marcas de acuerdo al patrón solicitado
+        /// </summary>
+        /// <param name="pattern"></param>
+        /// <returns></returns>
+        public async Task<List<Marca>> GetMarcasByPatternAsync(string pattern, int skip)
+        {
+            string[] patterns = pattern.Trim().Split(' ');
+            IQueryable<Marca> query = null;
+            foreach (var p in patterns)
+            {
+                string _pattern = p.Trim();
+                if (_pattern != "")
+                {
+                    if (query == null)
+                    {
+                        query = _context.Marcas
+                            .Where(p => p.MarcaDescripcion.Contains(_pattern) ||
+                                        p.MarcaNombre.Contains(_pattern));
+                    }
+                    else
+                    {
+                        query = query.Where(p => p.MarcaDescripcion.Contains(_pattern) ||
+                                                 p.MarcaNombre.Contains(_pattern));
+                    }
+                }
+            }
+
+            if (query == null)
+            {
+                query = _context.Marcas;
+            }
+
+            return await query.OrderBy(m => m.MarcaNombre).Skip(skip).Take(50).ToListAsync();
+        }
+
+        /// <summary>
+        /// Obtener marca por nombre.
+        /// </summary>
+        /// <param name="marca"></param>
+        /// <returns></returns>
+        public async Task<Marca> GetMarcaByNombreAsync(string marca)
+        {
+            marca = string.IsNullOrEmpty(marca) ? "" : marca.Trim().ToUpper();
+
+            return await _context.Marcas
+                .FirstOrDefaultAsync(p => p.MarcaNombre == marca);
+        }
+
         //Municipio
 
         /// <summary>
@@ -335,7 +397,7 @@
         /// <summary>
         /// Obtener proveedor por RFC.
         /// </summary>
-        /// <param name="rfc"></param>
+        /// <param name="marca"></param>
         /// <returns></returns>
         public async Task<Proveedor> GetProveedorByRFCAsync(string rfc)
         {

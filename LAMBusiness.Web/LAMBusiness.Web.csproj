@@ -7,6 +7,16 @@
   <ItemGroup>
     <Compile Remove="Migrations\20200929233609_InitialDB.cs" />
     <Compile Remove="Migrations\20200929233609_InitialDB.Designer.cs" />
+    <Compile Remove="Migrations\20210613014950_InicioDB.cs" />
+    <Compile Remove="Migrations\20210613014950_InicioDB.Designer.cs" />
+    <Compile Remove="Migrations\20210617034756_update-products.cs" />
+    <Compile Remove="Migrations\20210617034756_update-products.Designer.cs" />
+    <Compile Remove="Migrations\20210617040008_InicioBD.cs" />
+    <Compile Remove="Migrations\20210617040008_InicioBD.Designer.cs" />
+    <Compile Remove="Migrations\20210617040230_InicioBD.cs" />
+    <Compile Remove="Migrations\20210617040230_InicioBD.Designer.cs" />
+    <Compile Remove="Migrations\20210617040619_InicioBD.cs" />
+    <Compile Remove="Migrations\20210617040619_InicioBD.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,7 +28,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
     <PackageReference Include="popper.js" Version="1.16.1" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
     <PackageReference Include="toastr" Version="2.1.1" />
@@ -29,8 +39,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
     <Folder Include="wwwroot\images\productos\" />
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

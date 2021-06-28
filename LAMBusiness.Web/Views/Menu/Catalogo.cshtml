@@ -16,6 +16,19 @@
 <div class="modal-body py-4">
     <div class="row">
 
+        <!--Almacenes-->
+        <div class="btn-lam col-xl-4 col-md-6">
+            <a asp-action="Index" asp-controller="Almacenes" class="text-decoration-none">
+                <div class="card mb-4 text-dark">
+                    <div class="card-body bg-card text-center py-5">
+                        <i class="fas fa-warehouse display-4 text-dark"></i>
+                        <h4 class="mt-4"><span class="text-dark">@Model.Almacenes</span> Almacenes</h4>
+                        <p class="mb-3">Catálogo de almacenes</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
         <!--Géneros-->
         <div class="btn-lam col-xl-4 col-md-6">
             <a asp-action="Index" asp-controller="Generos" class="text-decoration-none">
@@ -34,9 +47,9 @@
             <a asp-action="Index" asp-controller="EstadosCiviles" class="text-decoration-none">
                 <div class="card mb-4 text-dark">
                     <div class="card-body bg-card text-center py-5">
-                            <i class="fas fa-ring display-4 text-secondary"></i>
-                            <h4 class="mt-4"><span class="text-secondary">@Model.EstadosCiviles</span> Estado Civiles</h4>
-                            <p class="mb-3">Solo se permite visualizar</p>
+                        <i class="fas fa-ring display-4 text-secondary"></i>
+                        <h4 class="mt-4"><span class="text-secondary">@Model.EstadosCiviles</span> Estado Civiles</h4>
+                        <p class="mb-3">Solo se permite visualizar</p>
                     </div>
                 </div>
             </a>
@@ -50,6 +63,19 @@
                         <i class="fas fa-globe-americas display-4 text-primary"></i>
                         <h4 class="mt-4"><span class="text-primary">@Model.Estados</span> Estados</h4>
                         <p class="mb-3">Solo se permiten ediciones</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!--Marcas-->
+        <div class="btn-lam col-xl-4 col-md-6">
+            <a asp-action="Index" asp-controller="Marcas" class="text-decoration-none">
+                <div class="card mb-4 text-dark">
+                    <div class="card-body bg-card text-center py-5">
+                        <i class="fas fa-copyright display-4 text-success"></i>
+                        <h4 class="mt-4"><span class="text-success">@Model.Marcas</span> Marcas</h4>
+                        <p class="mb-3">Catálogo de marcas de productos</p>
                     </div>
                 </div>
             </a>

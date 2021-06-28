@@ -1,16 +1,16 @@
-﻿@model IEnumerable<LAMBusiness.Shared.Catalogo.Producto>
+﻿@model IEnumerable<LAMBusiness.Shared.Catalogo.Marca>
 
 @{
-    ViewData["Title"] = "Productos";
+    ViewData["Title"] = "Marcas";
 }
 
 <div class="modal-content border-0 box-shadow">
     <div class="modal-header pb-0">
         <div>
-            <h3 class="modal-title" id="exampleModalLabel">Productos</h3>
+            <h3 class="modal-title" id="exampleModalLabel">Marcas</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
                 <li class="breadcrumb-item">Catálogo</li>
-                <li class="breadcrumb-item">Productos</li>
+                <li class="breadcrumb-item">Marcas</li>
                 <li class="breadcrumb-item active">@Model.Count() Registro(s)</li>
             </ul>
         </div>
@@ -33,7 +33,7 @@
         <div>
             <div class="row px-md-3 font-weight-bold text-uppercase">
                 <div class="border-bottom col-12 px-3 py-2">
-                    @Html.DisplayNameFor(model => model.ProductoDescripcion)
+                    @Html.DisplayNameFor(model => model.MarcaNombre)
                 </div>
             </div>
             <div class="px-md-3" id="dRows" data-charging="0" data-rows-next="1">
@@ -41,37 +41,21 @@
                 {
                     <div class="row bg-row">
                         <div class="border-bottom col-10 col-md-9 p-3">
-                            <span class="text-dark">@Html.DisplayFor(modelItem => item.ProductoNombre)</span>
-                            <div class="d-block">
-                                <small class="text-muted mr-md-3">Código: @Html.DisplayFor(modelItem => item.Codigo)</small>
-                                <small class="d-block d-md-inline-block mr-md-3 text-muted">Marca: @Html.DisplayFor(modelItem => item.Marcas.MarcaNombre)</small>
-                                @if (item.Paquete == null)
-                                {
-                                    <small class="d-block d-md-inline-block text-muted">Unidad: <span class="font-weight-bold text-info">Pieza</span></small>
-                                }
-                                else
-                                {
-                                    <small class="d-block d-md-inline-block text-muted">Unidad: <span class="font-weight-bold text-danger">Caja</span></small>
-                                }
-                                @if (!item.Activo)
-                                {
-                                    <small class="badge badge-danger">No Disponible</small>
-                                }
-                            </div>
-                            <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.ProductoDescripcion)</small>
+                            <span class="text-dark">@Html.DisplayFor(modelItem => item.MarcaNombre)</span>
+                            <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.MarcaDescripcion)</small>
                         </div>
                         <div class="border-bottom col-2 col-md-3 px-3 py-2 text-right">
-                            <a asp-action="Details" asp-route-id="@item.ProductoID" class="d-block d-md-inline text-decoration-none">
+                            @*<a asp-action="Details" asp-route-id="@item.MarcaID" class="d-block d-md-inline text-decoration-none">
                                 <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="ver detalle">
                                     <i class="fa fa-file-alt"></i>
                                 </div>
-                            </a>
-                            <a asp-action="Edit" asp-route-id="@item.ProductoID" class="d-block d-md-inline text-decoration-none">
+                            </a>*@
+                            <a asp-action="Edit" asp-route-id="@item.MarcaID" class="d-block d-md-inline text-decoration-none">
                                 <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
                                     <i class="fa fa-edit"></i>
                                 </div>
                             </a>
-                            <a href="#" data-id="@item.ProductoID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
+                            <a href="#" data-id="@item.MarcaID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
                                 <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
                                     <i class="fa fa-trash"></i>
                                 </div>
@@ -115,16 +99,16 @@
             });
 
             $("#DeleteYesButton").click((e) => {
-                window.location.href = '@Url.Action("Delete", "Productos")' + '/' + itemToDelete;
+                window.location.href = '@Url.Action("Delete", "Marcas")' + '/' + itemToDelete;
             });
         });
 
         function addRowsNext(skip, inicio = false) {
-            addProcessWithSpinner('Cargando Productos...');
+            addProcessWithSpinner('Cargando Marcas...');
             $('#dRows').attr('data-charging', "1");
             var searchBy = $('#SearchInput')[0] === undefined ? "" : $('#SearchInput').val();
             $.ajax({
-                url: '@Url.Action("_AddRowsNext","Productos")',
+                url: '@Url.Action("_AddRowsNext","Marcas")',
                 method: 'POST',
                 datatype: 'text',
                 data: {

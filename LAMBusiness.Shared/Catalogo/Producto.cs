@@ -27,6 +27,15 @@
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public string ProductoDescripcion { get; set; }
 
+        [Display(Name = "Marca")]
+        [JsonIgnore]
+        [Required(ErrorMessage = "El campo {0} es requerido.")]
+        public Guid? MarcaID { get; set; }
+
+        [ForeignKey("MarcaID")]
+        [JsonIgnore]
+        public virtual Marca Marcas { get; set; }
+
         [Display(Name = "Unidad")]
         [JsonIgnore]
         [Required(ErrorMessage = "El campo {0} es requerido.")]

@@ -40,13 +40,13 @@
                     ModelState.AddModelError(string.Empty, "Credenciales Incorrectas, verifique");
                     return View(inicioSesionViewModel);
                 }
-                return View(nameof(Privacy));
+                return View(nameof(Index));
             }
             ModelState.AddModelError(string.Empty, "Credenciales Incorrectas");
             return View(inicioSesionViewModel);
         }
 
-        public IActionResult Privacy()
+        public IActionResult PaginaEnConstruccion()
         {
             return View();
         }

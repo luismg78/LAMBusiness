@@ -11,8 +11,7 @@
     using Helpers;
     using Models.ViewModels;
     using Shared.Catalogo;
-    using LAMBusiness.Shared.Movimiento;
-    using Microsoft.CodeAnalysis.CSharp;
+    using Shared.Movimiento;
 
     public class ProductosController : Controller
     {
@@ -35,6 +34,7 @@
         public IActionResult Index()
         {
             var dataContext = _context.Productos
+                .Include(p => p.Marcas)
                 .Include(p => p.TasasImpuestos)
                 .Include(p => p.Unidades)
                 .Include(p => p.Paquete)
@@ -75,6 +75,7 @@
             }
 
             var productos = await query
+                .Include(p => p.Marcas)
                 .Include(p => p.TasasImpuestos)
                 .Include(p => p.Unidades)
                 .Include(p => p.Paquete)
@@ -99,6 +100,7 @@
             }
 
             var producto = await _context.Productos
+                .Include(p => p.Marcas)
                 .Include(p => p.TasasImpuestos)
                 .Include(p => p.Unidades)
                 .Include(p => p.Paquete)
@@ -194,7 +196,10 @@
                 return NotFound();
             }
 
-            var producto = await _context.Productos.FindAsync(id);
+            var producto = await _context.Productos
+                .Include(p => p.Marcas)
+                .FirstOrDefaultAsync(p => p.ProductoID == id);
+
             if (producto == null)
             {
                 return NotFound();
@@ -304,9 +309,11 @@
             }
 
             var producto = await _context.Productos
+                .Include(p => p.Marcas)
                 .Include(p => p.Unidades)
                 .Include(p => p.Existencias)
                 .FirstOrDefaultAsync(p => p.ProductoID == id);
+
             if (producto == null)
             {
                 return NotFound();
@@ -331,13 +338,64 @@
 
             if(producto.Existencias.Count > 0)
             {
-                ModelState.AddModelError(string.Empty, $"El producto no se puede eliminar, porque tiene {producto.Existencias.Count} en existencia(s).");
-                return RedirectToAction(nameof(Index));
+                foreach (var existencia in producto.Existencias)
+                {
+                    if (existencia.ExistenciaEnAlmacen > 0)
+                    {
+                        ModelState.AddModelError(string.Empty, $"El producto no se puede eliminar, porque tiene {producto.Existencias.Count} en existencia(s).");
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+                foreach (var existencia in producto.Existencias)
+                {
+                    _context.Existencias.Remove(existencia);
+                }
             }
 
             _context.Productos.Remove(producto);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> GetMarca(string nombreMarca)
+        {
+            if (nombreMarca == null || nombreMarca == "")
+            {
+                return null;
+            }
+
+            var marca = await _getHelper.GetMarcaByNombreAsync(nombreMarca);
+            if (marca != null)
+            {
+                return Json(
+                    new
+                    {
+                        marca.MarcaID,
+                        marca.MarcaNombre,
+                        marca.MarcaDescripcion,
+                        error = false
+                    });
+            }
+
+            return Json(new { error = true, message = "Marca inexistente" });
+
+        }
+
+        public async Task<IActionResult> GetMarcas(string pattern, int? skip)
+        {
+            if (pattern == null || pattern == "" || skip == null)
+            {
+                return null;
+            }
+
+            var marcas = await _getHelper.GetMarcasByPatternAsync(pattern, (int)skip);
+
+            return new PartialViewResult
+            {
+                ViewName = "_GetMarcas",
+                ViewData = new ViewDataDictionary
+                            <List<Marca>>(ViewData, marcas)
+            };
         }
 
         private bool PaqueteExists(Guid id)

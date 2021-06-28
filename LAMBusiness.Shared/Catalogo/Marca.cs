@@ -1,26 +1,21 @@
 ﻿namespace LAMBusiness.Shared.Catalogo
 {
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using Movimiento;
     using Newtonsoft.Json;
 
-    public class Almacen
+    public class Marca
     {
         [Key]
-        public Guid AlmacenID { get; set; }
+        public Guid MarcaID { get; set; }
 
-        [Display(Name = "Almacén")]
+        [Display(Name = "Marca")]
         [MaxLength(50, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public string AlmacenNombre { get; set; }
+        public string MarcaNombre { get; set; }
 
         [Display(Name = "Descripción")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public string AlmacenDescripcion { get; set; }
-
-        [JsonIgnore]
-        public virtual ICollection<Existencia> Existencias { get; set; }
+        public string MarcaDescripcion { get; set; }
     }
 }

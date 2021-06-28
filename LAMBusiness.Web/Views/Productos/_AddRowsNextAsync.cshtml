@@ -9,6 +9,7 @@
                 <span class="text-dark">@Html.DisplayFor(modelItem => item.ProductoNombre)</span>
                 <div class="d-block">
                     <small class="text-muted mr-md-3">Código: @Html.DisplayFor(modelItem => item.Codigo)</small>
+                    <small class="d-block d-md-inline-block mr-md-3 text-muted">Marca: @Html.DisplayFor(modelItem => item.Marcas.MarcaNombre)</small>
                     @if (item.Paquete == null)
                     {
                         <small class="d-block d-md-inline-block text-muted">Unidad: <span class="font-weight-bold text-info">Pieza</span></small>

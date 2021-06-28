@@ -292,7 +292,7 @@
                     clienteContacto.ClienteContactoID = Guid.NewGuid();
                     clienteContacto.NombreContacto = clienteContacto.NombreContacto.Trim().ToUpper();
                     clienteContacto.PrimerApellidoContacto = clienteContacto.PrimerApellidoContacto.Trim().ToUpper();
-                    clienteContacto.SegundoApellidoContacto = clienteContacto.SegundoApellidoContacto.Trim().ToUpper();
+                    clienteContacto.SegundoApellidoContacto = clienteContacto.SegundoApellidoContacto == null ? "" : clienteContacto.SegundoApellidoContacto.Trim().ToUpper();
                     clienteContacto.EmailContacto = clienteContacto.EmailContacto.Trim().ToLower();
 
                     _context.Add(clienteContacto);

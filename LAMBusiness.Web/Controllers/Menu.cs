@@ -19,9 +19,11 @@
         {
             var catalogo = new Catalogo()
             {
+                Almacenes = GetCountAlmacenes(),
                 Generos = GetCountGeneros(),
                 EstadosCiviles = GetCountEstadosCiviles(),
                 Estados = GetCountEstados(),
+                Marcas = GetCountMarcas(),
                 Municipios = GetCountMunicipios(),
                 Productos = GetCountProductos(),
                 Puestos = GetCountPuestos(),
@@ -30,7 +32,7 @@
             };
             return View(catalogo);
         }
-        
+
         public IActionResult Contacto()
         {
             var contacto = new Contacto()
@@ -54,16 +56,35 @@
 
             return View(movimiento);
         }
-        
+
         #region Category's counts
+        private int GetCountAlmacenes()
+        {
+            return _context.Almacenes.Count();
+        }
+
         private int GetCountGeneros()
         {
             return _context.Generos.Count();
+        }
+        private int GetCountEstados()
+        {
+            return _context.Estados.Count();
         }
 
         private int GetCountEstadosCiviles()
         {
             return _context.EstadosCiviles.Count();
+        }
+        
+        private int GetCountMarcas()
+        {
+            return _context.Marcas.Count();
+        }
+
+        private int GetCountMunicipios()
+        {
+            return _context.Municipios.Count();
         }
 
         private int GetCountProductos()
@@ -74,16 +95,6 @@
         private int GetCountPuestos()
         {
             return _context.Puestos.Count();
-        }
-
-        private int GetCountEstados()
-        {
-            return _context.Estados.Count();
-        }
-
-        private int GetCountMunicipios()
-        {
-            return _context.Municipios.Count();
         }
 
         private int GetCountTasasImpuestos()

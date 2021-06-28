@@ -19,6 +19,7 @@
         public DbSet<Estado> Estados { get; set; }
         public DbSet<EstadoCivil> EstadosCiviles { get; set; }
         public DbSet<Genero> Generos { get; set; }
+        public DbSet<Marca> Marcas { get; set; }
         public DbSet<Municipio> Municipios { get; set; }
         public DbSet<Paquete> Paquetes { get; set; }
         public DbSet<Producto> Productos { get; set; }
@@ -58,6 +59,10 @@
                 .HasIndex(p => new { p.Codigo })
                 .IsUnique(true);
 
+            modelBuilder.Entity<Marca>()
+                .HasIndex(m => new { m.MarcaNombre })
+                .IsUnique(true);
+
             modelBuilder.Entity<Puesto>()
                 .HasIndex(p => new { p.PuestoNombre })
                 .IsUnique(true);
@@ -89,6 +94,7 @@
             modelBuilder.ApplyConfiguration(new EstadoConfiguracion());
             modelBuilder.ApplyConfiguration(new EstadoCivilConfiguracion());
             modelBuilder.ApplyConfiguration(new GeneroConfiguracion());
+            modelBuilder.ApplyConfiguration(new MarcaConfiguracion());
             modelBuilder.ApplyConfiguration(new MunicipioConfiguracion());
             modelBuilder.ApplyConfiguration(new UnidadConfiguracion());
             modelBuilder.ApplyConfiguration(new PuestoConfiguracion());

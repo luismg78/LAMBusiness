@@ -21,6 +21,9 @@ namespace LAMBusiness.Web.Helpers
         Task<Estado> GetEstadosByIdAsync(short id);
         Task<Existencia> GetExistenciaByIdAsync(Guid id);
         Task<Existencia> GetExistenciaByProductoIdAsync(Guid id);
+        Task<Marca> GetMarcaByIdAsync(Guid id);
+        Task<Marca> GetMarcaByNombreAsync(string marca);
+        Task<List<Marca>> GetMarcasByPatternAsync(string pattern, int skip);
         Task<Municipio> GetMunicipioByIdAsync(int id);
         Task<List<Municipio>> GetMunicipiosByEstadoIdAsync(short id);
         Task<Paquete> GetPaqueteByIdAsync(Guid id);

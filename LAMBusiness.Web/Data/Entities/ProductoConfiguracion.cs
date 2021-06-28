@@ -24,6 +24,7 @@
             {
                 Activo = true,
                 Codigo = "PIEZA",
+                MarcaID = Guid.Parse("620ceb37-d6a5-4649-9c6e-39581858efd2"),
                 PrecioCosto = 10,
                 PrecioVenta = 15,
                 ProductoDescripcion = "INFORMACIÓN DE APOYO (MODIFICAR INFORMACIÓN).",
@@ -39,6 +40,7 @@
             {
                 Activo = true,
                 Codigo = "PAQUETE",
+                MarcaID = Guid.Parse("620ceb37-d6a5-4649-9c6e-39581858efd2"),
                 PrecioCosto = 90,
                 PrecioVenta = 120,
                 ProductoDescripcion = "INFORMACIÓN DE APOYO (MODIFICAR INFORMACIÓN).",
@@ -56,6 +58,7 @@
             {
                 Activo = true,
                 Codigo = "PIEZAKG",
+                MarcaID = Guid.Parse("620ceb37-d6a5-4649-9c6e-39581858efd2"),
                 PrecioCosto = (decimal)17.99,
                 PrecioVenta = (decimal)22.99,
                 ProductoDescripcion = "INFORMACIÓN DE APOYO (MODIFICAR INFORMACIÓN).",
@@ -71,6 +74,7 @@
             {
                 Activo = true,
                 Codigo = "PAQUETEKG",
+                MarcaID = Guid.Parse("620ceb37-d6a5-4649-9c6e-39581858efd2"),
                 PrecioCosto = (decimal)149.99,
                 PrecioVenta = (decimal)199.99,
                 ProductoDescripcion = "INFORMACIÓN DE APOYO (MODIFICAR INFORMACIÓN).",

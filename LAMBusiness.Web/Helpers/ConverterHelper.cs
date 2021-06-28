@@ -216,6 +216,7 @@
             {
                 Activo = productoViewModel.Activo,
                 Codigo = productoViewModel.Codigo.Trim().ToUpper(),
+                MarcaID = productoViewModel.MarcaID,
                 PrecioCosto = isNew ? 0 : productoViewModel.PrecioCosto,
                 PrecioVenta = productoViewModel.PrecioVenta,
                 ProductoDescripcion = productoViewModel.ProductoDescripcion.Trim().ToUpper(),
@@ -256,6 +257,8 @@
             {
                 Activo = producto.Activo,
                 Codigo = producto.Codigo,
+                MarcaID = producto.MarcaID,
+                Marcas = producto.Marcas,
                 PrecioCosto = producto.PrecioCosto,
                 PrecioVenta = producto.PrecioVenta,
                 ProductoDescripcion = producto.ProductoDescripcion,
@@ -296,6 +299,8 @@
             {
                 Activo = producto.Activo,
                 Codigo = producto.Codigo,
+                MarcaID = producto.MarcaID,
+                Marcas = producto.Marcas,
                 PrecioCosto = producto.PrecioCosto,
                 PrecioVenta = producto.PrecioVenta,
                 ProductoDescripcion = producto.ProductoDescripcion,
