@@ -19,6 +19,68 @@
             _context = context;
         }
 
+        //Almacenes
+
+        /// <summary>
+        /// Obtener almacén por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>String</returns>
+        public async Task<Almacen> GetAlmacenByIdAsync(Guid id)
+        {
+            return await _context.Almacenes
+                .FirstOrDefaultAsync(p => p.AlmacenID == id);
+        }
+
+        /// <summary>
+        /// Obtener almacen por nombre.
+        /// </summary>
+        /// <param name="almacen"></param>
+        /// <returns></returns>
+        public async Task<Almacen> GetAlmacenByNombreAsync(string almacen)
+        {
+            almacen = string.IsNullOrEmpty(almacen) ? "" : almacen.Trim().ToUpper();
+
+            return await _context.Almacenes
+                .FirstOrDefaultAsync(p => p.AlmacenNombre == almacen);
+        }
+
+        /// <summary>
+        /// Obtener lista de almacenes de acuerdo al patrón solicitado
+        /// </summary>
+        /// <param name="pattern"></param>
+        /// <returns></returns>
+        public async Task<List<Almacen>> GetAlmacenesByPatternAsync(string pattern, int skip)
+        {
+            string[] patterns = pattern.Trim().Split(' ');
+            IQueryable<Almacen> query = null;
+            foreach (var p in patterns)
+            {
+                string _pattern = p.Trim();
+                if (_pattern != "")
+                {
+                    if (query == null)
+                    {
+                        query = _context.Almacenes
+                                .Where(p => p.AlmacenNombre.Contains(_pattern) ||
+                                            p.AlmacenDescripcion.Contains(_pattern));
+                    }
+                    else
+                    {
+                        query = query.Where(p => p.AlmacenNombre.Contains(_pattern) ||
+                                                 p.AlmacenDescripcion.Contains(_pattern));
+                    }
+                }
+            }
+
+            if (query == null)
+            {
+                query = _context.Almacenes;
+            }
+
+            return await query.OrderBy(e => e.AlmacenNombre).Skip(skip).Take(50).ToListAsync();
+        }
+
         //Clientes
 
         /// <summary>
@@ -117,6 +179,7 @@
         public async Task<EntradaDetalle> GetEntradaDetalleByIdAsync(Guid id)
         {
             return await _context.EntradasDetalle
+                .Include(e => e.Almacenes)
                 .Include(e => e.Entradas)
                 .Include(e => e.Productos)
                 .FirstOrDefaultAsync(m => m.EntradaDetalleID == id);
@@ -131,6 +194,7 @@
         {
             return await _context.EntradasDetalle
                 .Include(e => e.Entradas)
+                .Include(e => e.Almacenes)
                 .Include(e => e.Productos)
                 .ThenInclude(e => e.Unidades)
                 .Include(e => e.Productos)
@@ -138,6 +202,8 @@
                 .Include(e => e.Productos)
                 .ThenInclude(e => e.Existencias)
                 .Where(m => m.EntradaID == id)
+                .OrderBy(m => m.Productos.ProductoNombre)
+                .ThenBy(m => m.Almacenes.AlmacenNombre)
                 .ToListAsync();
         }
 
@@ -159,14 +225,14 @@
         /// <summary>
         /// Obtener existencia por ProductoID.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="productoId"></param>
         /// <returns></returns>
-        public async Task<Existencia> GetExistenciaByProductoIdAsync(Guid id)
+        public async Task<Existencia> GetExistenciaByProductoIdAndAlmacenIdAsync(Guid productoId, Guid almacenId)
         {
             return await _context.Existencias
                 .Include(e => e.Almacenes)
                 .Include(e => e.Productos)
-                .FirstOrDefaultAsync(m => m.ProductoID == id);
+                .FirstOrDefaultAsync(m => m.ProductoID == productoId && m.AlmacenID == almacenId);
         }
 
         //Marcas

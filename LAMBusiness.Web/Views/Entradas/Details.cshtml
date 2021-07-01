@@ -124,15 +124,18 @@
                 <div class="my-4">
                     @if (!Model.Aplicado)
                     {
-                        <a asp-action="AddDetalle" asp-controller="Entradas" asp-route-id="@Model.EntradaID" class="badge badge-info p-2 float-right"><i class="fas fa-plus"></i> Ingresar Detalle</a>
+                        <a asp-action="AddDetails" asp-controller="Entradas" asp-route-id="@Model.EntradaID" class="badge badge-info p-2 float-right"><i class="fas fa-plus"></i> Ingresar Detalle</a>
                     }
                     @if (Model.EntradaDetalle.Count > 0)
                     {
                         <p class="font-weight-bold text-base">Detalle</p>
                         <hr class="mb-0" />
                         <div class="row no-gutters py-1 d-none d-md-flex border-bottom">
-                            <div class="@if (Model.Aplicado) {<text>col-md-8</text>} else {<text>col-md-6</text>}">
-                               <span class="font-weight-bold d-block">Producto</span>
+                            <div class="@if (Model.Aplicado) {<text>col-md-6</text>} else {<text>col-md-4</text>}">
+                                <span class="font-weight-bold d-block">Producto</span>
+                            </div>
+                            <div class="col-md-2">
+                                <span class="font-weight-bold d-block">Almacén</span>
                             </div>
                             <div class="col-md-2 text-md-right">
                                 <span class="font-weight-bold d-block">Cantidad x Precio</span>
@@ -148,10 +151,14 @@
                         foreach (var item in Model.EntradaDetalle)
                         {
                             <div class="bg-row row align-items-center border-bottom py-2 px-2 no-gutters">
-                                <div class="col-12 @if(Model.Aplicado) {<text>col-md-8</text>} else {<text>col-md-6</text>}">
+                                <div class="col-12 @if(Model.Aplicado) {<text>col-md-6</text>} else {<text>col-md-4</text>}">
                                     <span class="font-weight-bold d-block d-md-none">Producto</span>
                                     <span class="d-block">@item.Productos.ProductoNombre</span>
                                     <small class="d-block">@item.Productos.Codigo</small>
+                                </div>
+                                <div class="col-12 col-md-2">
+                                    <span class="font-weight-bold d-block d-md-none">Almacén</span>
+                                    <span class="d-block">@item.Almacenes.AlmacenNombre</span>
                                 </div>
                                 <div class="col-12 col-md-2 text-md-right">
                                     <span class="font-weight-bold d-block d-md-none">Cantidad x Precio</span>
@@ -165,7 +172,7 @@
                                 @if (!item.Entradas.Aplicado)
                                 {
                                     <div class="col-12 col-md-2 text-right">
-                                        <a asp-action="EditDetalle" asp-route-id="@item.EntradaDetalleID" class="text-decoration-none">
+                                        <a asp-action="EditDetails" asp-route-id="@item.EntradaDetalleID" class="text-decoration-none">
                                             <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
                                                 <i class="fa fa-edit"></i>
                                             </div>
@@ -224,7 +231,7 @@
             });
 
             $("#DeleteYesButton").click((e) => {
-                window.location.href = '@Url.Action("DeleteDetalle", "Entradas")' + '/' + itemToDelete;
+                window.location.href = '@Url.Action("DeleteDetails", "Entradas")' + '/' + itemToDelete;
             });            
         });
 </script>

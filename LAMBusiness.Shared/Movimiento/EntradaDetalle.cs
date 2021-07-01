@@ -27,6 +27,14 @@
         [JsonIgnore]
         public virtual Producto Productos { get; set; }
 
+        [ForeignKey("Almacen")]
+        [Display(Name = "Almacén")]
+        [Required(ErrorMessage = "El campo {0} es requerido.")]
+        public Guid? AlmacenID { get; set; }
+
+        [JsonIgnore]
+        public virtual Almacen Almacenes { get; set; }
+
         [Column(TypeName = "decimal(18,4)")]
         [Display(Name = "Cantidad")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]

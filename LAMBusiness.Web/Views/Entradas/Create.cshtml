@@ -19,15 +19,16 @@
         </div>
         <div class="modal-body py-4">
             <div class="row px-md-3">
+                <!-- Proveedor -->
                 <div class="col-12">
                     <div id="ProveedorSearch" class="form-group">
                         <input asp-for="ProveedorID" type="hidden" />
                         <label asp-for="ProveedorID" class="control-label"></label>
                         <div class="input-group">
-                            <input id="ProveedorSearchInput" type="search" class="form-control" 
-                                   data-toggle="focus" 
-                                   data-target=".list-registers"  
-                                   placeholder="Ingrese RFC o nombre..." 
+                            <input id="ProveedorSearchInput" type="search" class="form-control"
+                                   data-toggle="focus"
+                                   data-target=".list-registers"
+                                   placeholder="Ingrese RFC o nombre..."
                                    autofocus autocomplete="off"
                                    onkeyup="positionCursorWithArrowKey(event);"
                                    onkeypress="getProveedor(event);" />
@@ -43,7 +44,7 @@
                             </div>
                         </div>
                         <span asp-validation-for="ProveedorID" class="text-danger"></span>
-                        <div id="dRow" class="mb-4 mt-1 list-registers" data-charging="0" data-rows-next="1">                            
+                        <div id="dRow" class="mb-4 mt-1 list-registers" data-charging="0" data-rows-next="1">
                         </div>
                     </div>
                 </div>
@@ -59,6 +60,7 @@
                         <hr />
                     </div>
                 </div>
+                <!-- Folio -->
                 <div class="col-12 col-md-6">
                     <div class="form-group">
                         <label asp-for="Folio" class="control-label"></label>
@@ -66,6 +68,7 @@
                         <span asp-validation-for="Folio" class="text-danger"></span>
                     </div>
                 </div>
+                <!-- Fecha -->
                 <div class="col-12 col-md-6">
                     <div class="form-group">
                         <label asp-for="Fecha" class="control-label"></label>
@@ -73,6 +76,7 @@
                         <span asp-validation-for="Fecha" class="text-danger"></span>
                     </div>
                 </div>
+                <!-- Observaciones -->
                 <div class="col-sm-12">
                     <div class="form-group">
                         <label asp-for="Observaciones" class="control-label"></label>

@@ -10,6 +10,9 @@ namespace LAMBusiness.Web.Helpers
 {
     public interface IGetHelper
     {
+        Task<Almacen> GetAlmacenByIdAsync(Guid id);
+        Task<Almacen> GetAlmacenByNombreAsync(string almacen);
+        Task<List<Almacen>> GetAlmacenesByPatternAsync(string pattern, int skip);
         Task<Cliente> GetClienteByIdAsync(Guid id);
         Task<ClienteContacto> GetContactoClienteByClienteIdAsync(Guid id);
         Task<ClienteContacto> GetContactoClienteByIdAsync(Guid id);
@@ -20,7 +23,7 @@ namespace LAMBusiness.Web.Helpers
         Task<EntradaDetalle> GetEntradaDetalleByIdAsync(Guid id);
         Task<Estado> GetEstadosByIdAsync(short id);
         Task<Existencia> GetExistenciaByIdAsync(Guid id);
-        Task<Existencia> GetExistenciaByProductoIdAsync(Guid id);
+        Task<Existencia> GetExistenciaByProductoIdAndAlmacenIdAsync(Guid productoId, Guid almacenId);
         Task<Marca> GetMarcaByIdAsync(Guid id);
         Task<Marca> GetMarcaByNombreAsync(string marca);
         Task<List<Marca>> GetMarcasByPatternAsync(string pattern, int skip);

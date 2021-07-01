@@ -216,6 +216,7 @@
 
             foreach(var item in detalle)
             {
+                Guid _almacenId = (Guid)item.AlmacenID;
                 Guid _productoId = (Guid)item.ProductoID;
                 decimal _cantidad = (decimal)item.Cantidad;
                 decimal _precioCosto = (decimal)item.PrecioCosto;
@@ -234,11 +235,13 @@
                 }
                 item.Productos.PrecioVenta = (decimal)item.PrecioVenta;
 
-                var existencia = existencias.FirstOrDefault(e => e.ProductoID == _productoId);
+                var existencia = existencias
+                    .FirstOrDefault(e => e.ProductoID == _productoId && e.AlmacenID == _almacenId);
+
                 if(existencia == null)
                 {
                     existencias.Add(new ExistenciaViewModel() { 
-                        AlmacenID = Guid.Parse("8706EF28-2EBA-463A-BAB4-62227965F03F"),
+                        AlmacenID = _almacenId,
                         ExistenciaEnAlmacen = _cantidad,
                         ExistenciaID = Guid.NewGuid(),
                         ProductoID = _productoId,
@@ -258,6 +261,7 @@
 
             foreach(var item in existencias)
             {
+                Guid _almacenId = (Guid)item.AlmacenID;
                 var producto = await _getHelper.GetProductByIdAsync(item.ProductoID);
                 if(producto == null)
                 {
@@ -265,12 +269,13 @@
                     break;
                 }
                 decimal _existencia = 0;
-                var existencia = await _getHelper.GetExistenciaByProductoIdAsync(item.ProductoID);
+                var existencia = await _getHelper
+                    .GetExistenciaByProductoIdAndAlmacenIdAsync(item.ProductoID, _almacenId);
                 if (existencia == null)
                 {
                     _context.Existencias.Add(new Existencia()
                     {
-                        AlmacenID = Guid.Parse("8706EF28-2EBA-463A-BAB4-62227965F03F"),
+                        AlmacenID = _almacenId,
                         ExistenciaEnAlmacen = item.ExistenciaEnAlmacen,
                         ExistenciaID = Guid.NewGuid(),
                         ProductoID = item.ProductoID
@@ -287,7 +292,6 @@
                             (item.ExistenciaEnAlmacen * item.PrecioCosto)
                             ) / (existencia.ExistenciaEnAlmacen);
                 }
-
 
                 _context.Update(producto);
             }
@@ -314,6 +318,47 @@
         private bool EntradaAplicada(Guid id)
         {
             return _context.Entradas.Any(e => e.EntradaID == id && e.Aplicado == true);
+        }
+
+        public async Task<IActionResult> GetAlmacen(string almacenNombre)
+        {
+            if (almacenNombre == null || almacenNombre == "")
+            {
+                return null;
+            }
+
+            var almacen = await _getHelper.GetAlmacenByNombreAsync(almacenNombre.Trim().ToUpper());
+            if (almacen != null)
+            {
+                return Json(
+                    new
+                    {
+                        almacen.AlmacenID,
+                        almacen.AlmacenNombre,
+                        almacen.AlmacenDescripcion,
+                        error = false
+                    });
+            }
+
+            return Json(new { error = true, message = "Almacén inexistente" });
+
+        }
+
+        public async Task<IActionResult> GetAlmacenes(string pattern, int? skip)
+        {
+            if (pattern == null || pattern == "" || skip == null)
+            {
+                return null;
+            }
+
+            var almacenes = await _getHelper.GetAlmacenesByPatternAsync(pattern, (int)skip);
+
+            return new PartialViewResult
+            {
+                ViewName = "_GetAlmacenes",
+                ViewData = new ViewDataDictionary
+                            <List<Almacen>>(ViewData, almacenes)
+            };
         }
 
         public async Task<IActionResult> GetProducto(string code)
@@ -400,7 +445,7 @@
 
         //Detalle de movimientos
 
-        public IActionResult AddDetalle(Guid? id)
+        public IActionResult AddDetails(Guid? id)
         {
             if (id == null)
             {
@@ -424,7 +469,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddDetalle(EntradaDetalle entradaDetalle)
+        public async Task<IActionResult> AddDetails(EntradaDetalle entradaDetalle)
         {
             if (EntradaAplicada(entradaDetalle.EntradaID))
             {
@@ -432,10 +477,17 @@
                 return RedirectToAction(nameof(Details), new { id = entradaDetalle.EntradaID });
             }
 
+            var almacen = await _getHelper.GetAlmacenByIdAsync((Guid)entradaDetalle.AlmacenID);
             var producto = await _getHelper.GetProductByIdAsync((Guid)entradaDetalle.ProductoID);
 
             if (ModelState.IsValid)
             {
+                if (almacen == null)
+                {
+                    ModelState.AddModelError("AlmacenID", "El campo almacén es requerido.");
+                    return View(entradaDetalle);
+                }
+
                 if (producto == null)
                 {
                     ModelState.AddModelError("ProductoID", "El campo producto es requerido.");
@@ -445,6 +497,7 @@
                 try
                 {
                     entradaDetalle.EntradaDetalleID = Guid.NewGuid();
+
                     if(producto.Unidades.Pieza)
                     {
                         entradaDetalle.Cantidad = (int)entradaDetalle.Cantidad;
@@ -456,6 +509,8 @@
 
                     ModelState.AddModelError(string.Empty, "Registro almacenado.");
                     return View(new EntradaDetalle() { 
+                        AlmacenID = entradaDetalle.AlmacenID,
+                        Almacenes = almacen,
                         EntradaID = entradaDetalle.EntradaID,
                         Cantidad = 0,
                         PrecioCosto = 0,
@@ -473,7 +528,7 @@
             return View(entradaDetalle);
         }
 
-        public async Task<IActionResult> EditDetalle(Guid? id)
+        public async Task<IActionResult> EditDetails(Guid? id)
         {
             if (id == null)
             {
@@ -493,12 +548,18 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditDetalle(EntradaDetalle entradaDetalle)
+        public async Task<IActionResult> EditDetails(EntradaDetalle entradaDetalle)
         {
             if (EntradaAplicada(entradaDetalle.EntradaID))
             {
                 //Entrada aplicada no se permiten cambios.
                 return RedirectToAction(nameof(Details), new { id = entradaDetalle.EntradaID });
+            }
+
+            if (entradaDetalle.AlmacenID == null)
+            {
+                ModelState.AddModelError("AlmacenID", "El campo almacén es requerido.");
+                return View(entradaDetalle);
             }
 
             if (entradaDetalle.ProductoID == null)
@@ -507,10 +568,16 @@
                 return View(entradaDetalle);
             }
 
+            var almacen = await _getHelper.GetAlmacenByIdAsync((Guid)entradaDetalle.AlmacenID);
             var producto = await _getHelper.GetProductByIdAsync((Guid)entradaDetalle.ProductoID);
 
             if (ModelState.IsValid)
             {
+                if (almacen == null)
+                {
+                    ModelState.AddModelError("AlmacenID", "El campo almacén es requerido.");
+                    return View(entradaDetalle);
+                }
 
                 if (producto == null)
                 {
@@ -542,7 +609,7 @@
             return View(entradaDetalle);
         }
 
-        public async Task<IActionResult> DeleteDetalle(Guid? id)
+        public async Task<IActionResult> DeleteDetails(Guid? id)
         {
             if (id == null)
             {
