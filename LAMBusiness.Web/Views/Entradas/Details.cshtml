@@ -9,8 +9,8 @@
         <div>
             <h3 class="modal-title" id="exampleModalLabel">Entradas</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
-                <li class="breadcrumb-item">Movimientos</li>
-                <li class="breadcrumb-item">Entradas</li>
+                <li class="breadcrumb-item"><a asp-action="Movimiento" asp-controller="Menu">Movimientos</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Entradas">Entradas</a></li>
                 <li class="breadcrumb-item active">Detalle</li>
             </ul>
         </div>
@@ -24,7 +24,7 @@
                     <div class="col-12">
                         <div class="row no-gutters">
                             <div class="col-12 col-md-8">
-                                <p class="font-weight-bold m-0 pt-2 pt-md-0 title">@Html.DisplayFor(model => model.Proveedores.Nombre)</p>
+                                <p class="font-weight-bold m-0 pt-2 pt-md-0 title text-muted">@Html.DisplayFor(model => model.Proveedores.Nombre)</p>
                                 <span class="d-block subtitle text-muted">@Html.DisplayFor(model => model.Proveedores.RFC)</span>
                                 <span class="d-block subtitle text-muted mb-2">
                                     @Html.DisplayFor(model => model.Proveedores.Domicilio),
@@ -41,7 +41,10 @@
                             <div class="col-12">
                                 @if (!Model.Aplicado)
                                 {
-                                    <a asp-action="Edit" asp-route-id="@Model.EntradaID" class="badge badge-base px-3 py-2">Editar</a>
+                                    @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@Model.EntradaID" class="badge badge-base px-3 py-2">Editar</a>
+                                    }
                                 }
                                 <a asp-action="Index" class="badge badge-light border px-3 py-2">Regresar</a>
                             </div>
@@ -124,7 +127,10 @@
                 <div class="my-4">
                     @if (!Model.Aplicado)
                     {
-                        <a asp-action="AddDetails" asp-controller="Entradas" asp-route-id="@Model.EntradaID" class="badge badge-info p-2 float-right"><i class="fas fa-plus"></i> Ingresar Detalle</a>
+                        @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                        {
+                            <a asp-action="AddDetails" asp-controller="Entradas" asp-route-id="@Model.EntradaID" class="badge badge-info p-2 float-right"><i class="fas fa-plus"></i> Ingresar Detalle</a>
+                        }
                     }
                     @if (Model.EntradaDetalle.Count > 0)
                     {
@@ -145,7 +151,10 @@
                             </div>
                             @if (!Model.Aplicado)
                             {
-                                <div class="col-md-2"></div>
+                                @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                                {
+                                    <div class="col-md-2"></div>
+                                }
                             }
                         </div>
                         foreach (var item in Model.EntradaDetalle)
@@ -171,18 +180,21 @@
                                 </div>
                                 @if (!item.Entradas.Aplicado)
                                 {
-                                    <div class="col-12 col-md-2 text-right">
-                                        <a asp-action="EditDetails" asp-route-id="@item.EntradaDetalleID" class="text-decoration-none">
-                                            <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
-                                                <i class="fa fa-edit"></i>
-                                            </div>
-                                        </a>
-                                        <a href="#" data-id="@item.EntradaDetalleID" class="deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
-                                            <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
-                                                <i class="fa fa-trash"></i>
-                                            </div>
-                                        </a>
-                                    </div>
+                                    @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                                    {
+                                        <div class="col-12 col-md-2 text-right">
+                                            <a asp-action="EditDetails" asp-route-id="@item.EntradaDetalleID" class="text-decoration-none">
+                                                <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
+                                                    <i class="fa fa-edit"></i>
+                                                </div>
+                                            </a>
+                                            <a href="#" data-id="@item.EntradaDetalleID" class="deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
+                                                <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
+                                                    <i class="fa fa-trash"></i>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    }
                                 }
                             </div>
                         }
@@ -190,13 +202,17 @@
                             <div class="col-12 col-md-6 order-2 text-center text-md-left pt-3 pt-md-0 order-md-1">
                                 @if (!Model.Aplicado)
                                 {
+                                    @*@if (Convert.ToBoolean(ViewBag.PermisoEscritura)) cambiar por permiso para aplicar
+                                        {*@
                                     <a href="#" data-id="@Model.EntradaID" class="applyConfirm col-12 col-md-7 col-lg-5 btn btn-base text-decoration-none" data-toggle="modal" data-target="#applyConfirm">Aplicar Movimiento</a>
+                                    //}
                                 }
+                                <a asp-action="Index" class="btn btn-outline-secondary text-decoration-none">Regresar</a>
                             </div>
                             <div class="col-12 col-md-6 order-1 order-md-2 text-center text-md-right">
                                 <h3 class="font-weight-bold">Total @Convert.ToDecimal(Model.EntradaDetalle.Sum(e => e.Cantidad * e.PrecioCosto)).ToString("$#,###,##0.00")</h3>
                             </div>
-                        </div>                        
+                        </div>
                     }
                     else
                     {
@@ -208,13 +224,16 @@
     </div>
 </div>
 
-<partial name="_DeleteConfirmDialog" />
-<partial name="_ApplyConfirmDialog" />
+@if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+{
+    <partial name="_DeleteConfirmDialog" />
+    <partial name="_ApplyConfirmDialog" />
+}
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-<script>
+    <script>
         var itemToDelete, itemToApply;
 
         $(document).ready(function () {
@@ -232,7 +251,7 @@
 
             $("#DeleteYesButton").click((e) => {
                 window.location.href = '@Url.Action("DeleteDetails", "Entradas")' + '/' + itemToDelete;
-            });            
+            });
         });
-</script>
+    </script>
 }

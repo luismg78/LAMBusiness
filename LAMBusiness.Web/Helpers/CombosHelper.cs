@@ -17,6 +17,37 @@
             _context = context;
         }
 
+        //Administradores
+        public async Task<IEnumerable<SelectListItem>> GetComboAdministradoresAsync(Guid usuarioId)
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+
+            var usuario = await _context.Usuarios.FindAsync(usuarioId);
+            if (usuario != null)
+            {
+                List<string> administradorTipo = new List<string>();
+                administradorTipo.Add("SA");
+                if (usuario.AdministradorID == "NA")
+                    administradorTipo.Add("GA");
+
+                list = await _context.Administradores
+                    .Where(a => !administradorTipo.Contains(a.AdministradorID))
+                    .Select(a => new SelectListItem()
+                    {
+                        Text = a.AdministradorNombre,
+                        Value = a.AdministradorID.ToString()
+                    }).OrderBy(e => e.Text).ToListAsync();
+            }
+
+            list.Insert(0, new SelectListItem()
+            {
+                Text = "[Seleccionar Tipo Administrador]",
+                Value = ""
+            });
+
+            return list;
+        }
+
         //Estados
         public async Task<IEnumerable<SelectListItem>> GetComboEstadosAsync()
         {
@@ -29,6 +60,62 @@
             list.Insert(0, new SelectListItem()
             {
                 Text = "[Seleccionar Estado]",
+                Value = "0"
+            });
+
+            return list;
+        }
+
+        //Estados Civiles
+        public async Task<IEnumerable<SelectListItem>> GetComboEstadosCivilesAsync()
+        {
+            var list = await _context.EstadosCiviles.Select(e => new SelectListItem()
+            {
+                Text = e.EstadoCivilDescripcion,
+                Value = e.EstadoCivilID.ToString()
+            }).OrderBy(e => e.Text).ToListAsync();
+
+            list.Insert(0, new SelectListItem()
+            {
+                Text = "[Seleccionar Estado Civil]",
+                Value = "0"
+            });
+
+            return list;
+        }
+
+        //Géneros
+        public async Task<IEnumerable<SelectListItem>> GetComboGenerosAsync()
+        {
+            var list = await _context.Generos.Select(e => new SelectListItem()
+            {
+                Text = e.GeneroDescripcion,
+                Value = e.GeneroID.ToString()
+            }).OrderBy(e => e.Text).ToListAsync();
+
+            list.Insert(0, new SelectListItem()
+            {
+                Text = "[Seleccionar Género]",
+                Value = ""
+            });
+
+            return list;
+        }
+
+        //Módulos (Padres)
+        public async Task<IEnumerable<SelectListItem>> GetComboModulosAsync()
+        {
+            var list = await _context.Modulos
+                .Where(m => m.Activo == true && m.ModuloPadreID == Guid.Empty)
+                .Select(m => new SelectListItem()
+            {
+                Text = m.Descripcion,
+                Value = m.ModuloID.ToString()
+            }).OrderBy(e => e.Text).ToListAsync();
+
+            list.Insert(0, new SelectListItem()
+            {
+                Text = "[Seleccionar Módulo Padre]",
                 Value = "0"
             });
 
@@ -49,6 +136,42 @@
             list.Insert(0, new SelectListItem()
             {
                 Text = "[Seleccionar Municipio]",
+                Value = "0"
+            });
+
+            return list;
+        }
+
+        //Puestos
+        public async Task<IEnumerable<SelectListItem>> GetComboPuestosAsync()
+        {
+            var list = await _context.Puestos.Select(e => new SelectListItem()
+            {
+                Text = e.PuestoNombre,
+                Value = e.PuestoID.ToString()
+            }).OrderBy(e => e.Text).ToListAsync();
+
+            list.Insert(0, new SelectListItem()
+            {
+                Text = "[Seleccionar Puesto]",
+                Value = ""
+            });
+
+            return list;
+        }
+
+        //Salidas
+        public async Task<IEnumerable<SelectListItem>> GetComboSalidasTipoAsync()
+        {
+            var list = await _context.SalidasTipo.Select(e => new SelectListItem()
+            {
+                Text = e.SalidaTipoDescripcion,
+                Value = e.SalidaTipoID.ToString()
+            }).OrderBy(e => e.Text).ToListAsync();
+
+            list.Insert(0, new SelectListItem()
+            {
+                Text = "[Seleccionar Tipo de salida]",
                 Value = "0"
             });
 

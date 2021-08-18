@@ -1,0 +1,24 @@
+﻿@model IEnumerable<LAMBusiness.Shared.Contacto.Colaborador>
+
+@if (Model.Any())
+{
+    <div>
+        <ul class="list-group">
+            @foreach (var item in Model.OrderBy(p => p.CURP))
+            {
+                <li class="list-group-item list-group-item-action"
+                    data-id="@item.ColaboradorID"
+                    data-search="@item.CURP"
+                    data-nombre="@item.Nombre @item.PrimerApellido @item.SegundoApellido"
+                    onclick="addColaborador(event);">
+                    <span class="d-block">
+                        @item.PrimerApellido
+                        @item.SegundoApellido
+                        @item.Nombre
+                    </span>
+                    <small class="text-muted">@item.CURP</small>
+                </li>
+            }
+        </ul>
+    </div>
+}

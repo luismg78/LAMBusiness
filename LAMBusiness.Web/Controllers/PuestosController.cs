@@ -7,25 +7,52 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
     using Data;
+    using Helpers;
     using Shared.Catalogo;
 
-    public class PuestosController : Controller
+    public class PuestosController : GlobalController
     {
         private readonly DataContext _context;
+        private readonly IConfiguration _configuration;
+        private readonly IGetHelper _getHelper;
+        private Guid moduloId = Guid.Parse("81AC4F4F-1886-4EDF-BA65-C711E96A6E74");
 
-        public PuestosController(DataContext context)
+        public PuestosController(DataContext context, IConfiguration configuration, IGetHelper getHelper)
         {
             _context = context;
+            _configuration = configuration;
+            _getHelper = getHelper;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+            {
+                return RedirectToAction("Inicio", "Menu");
+            }
+
+            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
+
             return View(_context.Puestos.Include(p => p.Colaboradores));
         }
 
         public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return null; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+            {
+                return null;
+            }
+
+            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
+
             IQueryable<Puesto> query = null;
             if (searchby != null && searchby != "")
             {
@@ -67,8 +94,16 @@
 
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             return View();
         }
 
@@ -76,6 +111,14 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("PuestoID,PuestoNombre,PuestoDescripcion")] Puesto puesto)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (ModelState.IsValid)
             {
                 puesto.PuestoID = Guid.NewGuid();
@@ -88,6 +131,14 @@
 
         public async Task<IActionResult> Edit(Guid? id)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -105,6 +156,14 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("PuestoID,PuestoNombre,PuestoDescripcion")] Puesto puesto)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (id != puesto.PuestoID)
             {
                 return NotFound();
@@ -135,6 +194,14 @@
 
         public async Task<IActionResult> Delete(Guid? id)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -164,5 +231,6 @@
         {
             return _context.Puestos.Any(e => e.PuestoID == id);
         }
+
     }
 }

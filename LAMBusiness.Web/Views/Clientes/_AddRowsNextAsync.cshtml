@@ -28,7 +28,10 @@
                     <div>
                         @if (!string.IsNullOrEmpty(item.Telefono))
                         {
-                            <small class="d-block font-weight-normal text-muted text-left text-md-right"><i class="fa fa-phone mr-2"></i>@Html.DisplayFor(modelItem => item.Telefono)</small>
+                            <small class="d-block font-weight-normal text-muted text-left text-md-right">
+                                <i class="fa fa-phone mr-2"></i>
+                                <a href="tel:@Html.DisplayFor(modelItem => item.Telefono)">@Html.DisplayFor(modelItem => item.Telefono)</a>
+                            </small>
                         }
                         <small class="d-block font-weight-normal text-muted text-left text-md-right"><i class="fa fa-envelope mr-2"></i>@Html.DisplayFor(modelItem => item.Email)</small>
                         <small class="d-block font-weight-normal text-muted text-left text-md-right" title="Fecha de registro"><i class="fa fa-calendar mr-2"></i>@item.FechaRegistro.ToString("dd MMMM, yyyy")</small>
@@ -39,16 +42,19 @@
                                 <i class="fa fa-file-alt"></i>
                             </div>
                         </a>
-                        <a asp-action="Edit" asp-route-id="@item.ClienteID" class="d-inline-block text-decoration-none">
-                            <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
-                                <i class="fa fa-edit"></i>
-                            </div>
-                        </a>
-                        <a href="#" data-id="@item.ClienteID" class="d-inline-block deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
-                            <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
-                                <i class="fa fa-trash"></i>
-                            </div>
-                        </a>
+                        @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.ClienteID" class="d-inline-block text-decoration-none">
+                                <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
+                                    <i class="fa fa-edit"></i>
+                                </div>
+                            </a>
+                            <a href="#" data-id="@item.ClienteID" class="d-inline-block deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
+                                <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
+                                    <i class="fa fa-trash"></i>
+                                </div>
+                            </a>
+                        }
                     </div>
                 </div>
             </div>

@@ -1,39 +1,56 @@
-﻿@model LAMBusiness.Web.Models.Entities.Modulo
+﻿@model LAMBusiness.Web.Models.ViewModels.ModuloViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Módulos";
 }
 
-<h1>Edit</h1>
-
-<h4>Modulo</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form asp-action="Edit">
+    <div class="modal-content border-0 box-shadow">
+        <div class="modal-header pb-0">
+            <div>
+                <h3 class="modal-title" id="exampleModalLabel">Módulos</h3>
+                <ul class="breadcrumb bg-transparent p-0 small">
+                    <li class="breadcrumb-item">Contacto</li>
+                    <li class="breadcrumb-item">Módulos</li>
+                    <li class="breadcrumb-item active">Editar Registro</li>
+                </ul>
+            </div>
+            <a asp-action="Index" asp-controller="Modulos" class="close"><span>&times;</span></a>
+        </div>
+        <div class="modal-body py-4">
             <input type="hidden" asp-for="ModuloID" />
-            <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
-                <input asp-for="Descripcion" class="form-control" />
-                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            <div class="row px-md-3">
+                <!--Descripción-->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Descripcion" class="control-label"></label>
+                        <input asp-for="Descripcion" class="form-control" autofocus />
+                        <span asp-validation-for="Descripcion" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Módulos (padre)-->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="ModuloPadreID" class="control-label"></label>
+                        <select asp-for="ModuloPadreID" class="form-control" asp-items="Model.ModulosPadresDDL"></select>
+                        <span asp-validation-for="ModuloPadreID" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Activo-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Activo" class="control-label"></label>
+                        <input class="d-block" asp-for="Activo" />
+                    </div>
+                </div>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Activo" /> @Html.DisplayNameFor(model => model.Activo)
-                </label>
+        </div>
+        <div class="modal-footer justify-content-between">
+            <div class="px-md-3">
+                <input type="submit" value="Actualizar" class="btn btn-base" />
+                <a asp-action="Index" class="btn btn-outline-secondary">Regresar</a>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+</form>

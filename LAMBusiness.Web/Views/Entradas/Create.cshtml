@@ -10,8 +10,8 @@
             <div>
                 <h3 class="modal-title" id="exampleModalLabel">Entradas</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
-                    <li class="breadcrumb-item">Movimientos</li>
-                    <li class="breadcrumb-item">Entradas</li>
+                    <li class="breadcrumb-item"><a asp-action="Movimiento" asp-controller="Menu">Movimientos</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Entradas">Entradas</a></li>
                     <li class="breadcrumb-item active">Nuevo Registro</li>
                 </ul>
             </div>
@@ -72,7 +72,7 @@
                 <div class="col-12 col-md-6">
                     <div class="form-group">
                         <label asp-for="Fecha" class="control-label"></label>
-                        <input asp-for="Fecha" class="form-control" />
+                        <input asp-for="Fecha" class="form-control" max="@DateTime.Now.ToString("yyyy-MM-dd")"/>
                         <span asp-validation-for="Fecha" class="text-danger"></span>
                     </div>
                 </div>

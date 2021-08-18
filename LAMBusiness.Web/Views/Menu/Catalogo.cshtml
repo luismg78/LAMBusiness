@@ -17,133 +17,179 @@
     <div class="row">
 
         <!--Almacenes-->
-        <div class="btn-lam col-xl-4 col-md-6">
-            <a asp-action="Index" asp-controller="Almacenes" class="text-decoration-none">
-                <div class="card mb-4 text-dark">
-                    <div class="card-body bg-card text-center py-5">
-                        <i class="fas fa-warehouse display-4 text-dark"></i>
-                        <h4 class="mt-4"><span class="text-dark">@Model.Almacenes</span> Almacenes</h4>
-                        <p class="mb-3">Catálogo de almacenes</p>
+        @if (Model.ModulosMenu.Contains(Guid.Parse("da183d55-101e-4a06-9ec3-a1ed5729f0cb")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="Index" asp-controller="Almacenes" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-warehouse display-4 text-dark"></i>
+                            <h4 class="mt-4"><span class="text-dark">@Model.Almacenes</span> Almacenes</h4>
+                            <p class="mb-3">Catálogo de almacenes</p>
+                        </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
+        }
 
         <!--Géneros-->
-        <div class="btn-lam col-xl-4 col-md-6">
-            <a asp-action="Index" asp-controller="Generos" class="text-decoration-none">
-                <div class="card mb-4 text-dark">
-                    <div class="card-body bg-card text-center py-5">
-                        <i class="fas fa-restroom display-4 text-base"></i>
-                        <h4 class="mt-4"><span class="text-base">@Model.Generos</span> Géneros</h4>
-                        <p class="mb-3">Solo se permiten ediciones</p>
+        @if (Model.ModulosMenu.Contains(Guid.Parse("10acc48b-ad98-4500-bda5-d6a76e3e9dc9")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="Index" asp-controller="Generos" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-restroom display-4 text-base"></i>
+                            <h4 class="mt-4"><span class="text-base">@Model.Generos</span> Géneros</h4>
+                            <p class="mb-3">Solo se permiten ediciones</p>
+                        </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
+        }
 
         <!--Estados Civiles-->
-        <div class="btn-lam col-xl-4 col-md-6">
-            <a asp-action="Index" asp-controller="EstadosCiviles" class="text-decoration-none">
-                <div class="card mb-4 text-dark">
-                    <div class="card-body bg-card text-center py-5">
-                        <i class="fas fa-ring display-4 text-secondary"></i>
-                        <h4 class="mt-4"><span class="text-secondary">@Model.EstadosCiviles</span> Estado Civiles</h4>
-                        <p class="mb-3">Solo se permite visualizar</p>
+        @if (Model.ModulosMenu.Contains(Guid.Parse("08f4e254-ebbe-46eb-b005-9c6815d7f803")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="Index" asp-controller="EstadosCiviles" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-ring display-4 text-secondary"></i>
+                            <h4 class="mt-4"><span class="text-secondary">@Model.EstadosCiviles</span> Estado Civiles</h4>
+                            <p class="mb-3">Solo se permite visualizar</p>
+                        </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
+        }
 
         <!--Estados-->
-        <div class="btn-lam col-xl-4 col-md-6">
-            <a asp-action="Index" asp-controller="Estados" class="text-decoration-none">
-                <div class="card mb-4 text-dark">
-                    <div class="card-body bg-card text-center py-5">
-                        <i class="fas fa-globe-americas display-4 text-primary"></i>
-                        <h4 class="mt-4"><span class="text-primary">@Model.Estados</span> Estados</h4>
-                        <p class="mb-3">Solo se permiten ediciones</p>
+        @if (Model.ModulosMenu.Contains(Guid.Parse("f2c4db86-8c15-46bd-b8de-fb64de3bfcff")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="Index" asp-controller="Estados" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-globe-americas display-4 text-primary"></i>
+                            <h4 class="mt-4"><span class="text-primary">@Model.Estados</span> Estados</h4>
+                            <p class="mb-3">Solo se permiten ediciones</p>
+                        </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
+        }
 
         <!--Marcas-->
-        <div class="btn-lam col-xl-4 col-md-6">
-            <a asp-action="Index" asp-controller="Marcas" class="text-decoration-none">
-                <div class="card mb-4 text-dark">
-                    <div class="card-body bg-card text-center py-5">
-                        <i class="fas fa-copyright display-4 text-success"></i>
-                        <h4 class="mt-4"><span class="text-success">@Model.Marcas</span> Marcas</h4>
-                        <p class="mb-3">Catálogo de marcas de productos</p>
+        @if (Model.ModulosMenu.Contains(Guid.Parse("7fcf442e-5377-47e0-b5f5-1c6a5067609c")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="Index" asp-controller="Marcas" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-copyright display-4 text-success"></i>
+                            <h4 class="mt-4"><span class="text-success">@Model.Marcas</span> Marcas</h4>
+                            <p class="mb-3">Catálogo de marcas de productos</p>
+                        </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
+        }
 
         <!--Municipios-->
-        <div class="btn-lam col-xl-4 col-md-6">
-            <a asp-action="Index" asp-controller="Municipios" class="text-decoration-none">
-                <div class="card mb-4 text-dark">
-                    <div class="card-body bg-card text-center py-5">
-                        <i class="fas fa-globe-americas display-4 text-info"></i>
-                        <h4 class="mt-4"><span class="text-info">@Model.Municipios</span> Municipios</h4>
-                        <p class="mb-3">Solo se permiten ediciones</p>
+        @if (Model.ModulosMenu.Contains(Guid.Parse("46fdcc81-6ac7-4be4-84f3-4abae3a40ebb")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="Index" asp-controller="Municipios" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-globe-americas display-4 text-info"></i>
+                            <h4 class="mt-4"><span class="text-info">@Model.Municipios</span> Municipios</h4>
+                            <p class="mb-3">Solo se permiten ediciones</p>
+                        </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
+        }
 
         <!--Productos-->
-        <div class="btn-lam col-xl-4 col-md-6">
-            <a asp-action="Index" asp-controller="Productos" class="text-decoration-none">
-                <div class="card mb-4 text-dark">
-                    <div class="card-body bg-card text-center py-5">
-                        <i class="fab fa-product-hunt display-4 text-success"></i>
-                        <h4 class="mt-4"><span class="text-success">@Model.Productos</span> Productos</h4>
-                        <p class="mb-3">Catálogo de productos</p>
+        @if (Model.ModulosMenu.Contains(Guid.Parse("a549419c-89bd-49ce-ba93-4d73afba37ce")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="Index" asp-controller="Productos" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fab fa-product-hunt display-4 text-success"></i>
+                            <h4 class="mt-4"><span class="text-success">@Model.Productos</span> Productos</h4>
+                            <p class="mb-3">Catálogo de productos</p>
+                        </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
+        }
 
         <!--Puestos-->
-        <div class="btn-lam col-xl-4 col-md-6">
-            <a asp-action="Index" asp-controller="Puestos" class="text-decoration-none">
-                <div class="card mb-4 text-dark">
-                    <div class="card-body bg-card text-center py-5">
-                        <i class="fas fa-user-cog display-4 text-warning"></i>
-                        <h4 class="mt-4"><span class="text-warning">@Model.Puestos</span> Puestos</h4>
-                        <p class="mb-3">Puestos de los colaboradores</p>
+        @if (Model.ModulosMenu.Contains(Guid.Parse("81ac4f4f-1886-4edf-ba65-c711e96a6e74")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="Index" asp-controller="Puestos" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-user-cog display-4 text-warning"></i>
+                            <h4 class="mt-4"><span class="text-warning">@Model.Puestos</span> Puestos</h4>
+                            <p class="mb-3">Puestos de los colaboradores</p>
+                        </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
+        }
 
         <!--Tasas de Impuestos-->
-        <div class="btn-lam col-xl-4 col-md-6">
-            <a asp-action="Index" asp-controller="TasasImpuestos" class="text-decoration-none">
-                <div class="card mb-4 text-dark">
-                    <div class="card-body bg-card text-center py-5">
-                        <i class="fas fa-percentage display-4 text-base"></i>
-                        <h4 class="mt-4"><span class="text-base">@Model.TasasImpuestos</span> Tasas de Impuestos</h4>
-                        <p class="mb-3">Aplica solo en el país de origen</p>
+        @if (Model.ModulosMenu.Contains(Guid.Parse("1b7183e2-e51b-4091-a99a-9bb38d462d81")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="Index" asp-controller="TasasImpuestos" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-percentage display-4 text-base"></i>
+                            <h4 class="mt-4"><span class="text-base">@Model.TasasImpuestos</span> Tasas de Impuestos</h4>
+                            <p class="mb-3">Aplica solo en el país de origen</p>
+                        </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
+        }
+
+        <!--Tipos de Salida-->
+        @if (Model.ModulosMenu.Contains(Guid.Parse("06239203-aced-4600-9f70-784bf73281ec")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="Index" asp-controller="SalidasTipo" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-arrow-alt-circle-up display-4 text-base"></i>
+                            <h4 class="mt-4"><span class="text-base">@Model.SalidasTipo</span> Tipos de Salida</h4>
+                            <p class="mb-3">Catálogo de tipos de salida</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
 
         <!--Unidades-->
-        <div class="btn-lam col-xl-4 col-md-6">
-            <a asp-action="Index" asp-controller="Unidades" class="text-decoration-none">
-                <div class="card mb-4 text-dark">
-                    <div class="card-body bg-card text-center py-5">
-                        <i class="fab fa-uniregistry display-4 text-secondary"></i>
-                        <h4 class="mt-4"><span class="text-secondary">@Model.Unidades</span> Unidades</h4>
-                        <p class="mb-3">Solo se permite visualizar</p>
+        @if (Model.ModulosMenu.Contains(Guid.Parse("a01ed3a4-101e-4d64-b57e-ddb8f94f8680")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="Index" asp-controller="Unidades" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fab fa-uniregistry display-4 text-secondary"></i>
+                            <h4 class="mt-4"><span class="text-secondary">@Model.Unidades</span> Unidades</h4>
+                            <p class="mb-3">Solo se permite visualizar</p>
+                        </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
+        }
     </div>
 </div>

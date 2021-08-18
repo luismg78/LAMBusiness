@@ -92,6 +92,7 @@
         [Display(Name = "Telefono (Móvil)")]
         [MaxLength(15, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [RegularExpression(@"^[0-9]+$", ErrorMessage = "Formato Incorrecto.")]
+        [Required(ErrorMessage = "El campo {0} es requerido.")]
         public string TelefonoMovil { get; set; }
 
         [DataType(DataType.EmailAddress)]
@@ -102,8 +103,11 @@
 
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0,dd/MM/yyyy}")]
-        [Required(ErrorMessage = "El campo {0} es requerido.")]
         public DateTime FechaRegistro { get; set; }
+
+        [DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0,dd/MM/yyyy}")]
+        public DateTime FechaActualizacion { get; set; }
 
         public bool Activo { get; set; }
     }

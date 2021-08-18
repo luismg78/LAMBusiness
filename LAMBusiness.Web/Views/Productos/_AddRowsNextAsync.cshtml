@@ -31,16 +31,19 @@
                         <i class="fa fa-file-alt"></i>
                     </div>
                 </a>
-                <a asp-action="Edit" asp-route-id="@item.ProductoID" class="d-block d-md-inline text-decoration-none">
-                    <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
-                        <i class="fa fa-edit"></i>
-                    </div>
-                </a>
-                <a href="#" data-id="@item.ProductoID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
-                    <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
-                        <i class="fa fa-trash"></i>
-                    </div>
-                </a>
+                @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                {
+                    <a asp-action="Edit" asp-route-id="@item.ProductoID" class="d-block d-md-inline text-decoration-none">
+                        <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
+                            <i class="fa fa-edit"></i>
+                        </div>
+                    </a>
+                    <a href="#" data-id="@item.ProductoID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
+                        <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
+                            <i class="fa fa-trash"></i>
+                        </div>
+                    </a>
+                }
             </div>
         </div>
     }

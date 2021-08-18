@@ -9,9 +9,9 @@
         <div>
             <h3 class="modal-title" id="exampleModalLabel">Entradas</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
-                <li class="breadcrumb-item">Movimientos</li>
-                <li class="breadcrumb-item">Entradas</li>
-                <li class="breadcrumb-item active">@Model.Count() Registro(s)</li>
+                <li class="breadcrumb-item"><a asp-action="Movimiento" asp-controller="Menu">Movimientos</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Entradas">Entradas</a></li>
+                <li class="breadcrumb-item active text-base">@Model.Count() Registro(s)</li>
             </ul>
         </div>
         <a asp-action="Movimiento" asp-controller="Menu" class="close"><span>&times;</span></a>
@@ -27,7 +27,10 @@
                 </div>
             </div>
             <div class="col-3 col-md-4 text-right">
-                <p><a asp-action="Create" class="btn btn-base"><i class="fas fa-plus"></i><span class="d-none d-md-inline-block ml-2">Nuevo Registro</span></a></p>
+                @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                {
+                    <p><a asp-action="Create" class="btn btn-base"><i class="fas fa-plus"></i><span class="d-none d-md-inline-block ml-2">Nuevo Registro</span></a></p>
+                }
             </div>
         </div>
         <div>
@@ -48,7 +51,7 @@
                             </a>
                             <div class="d-block">
                                 <small class="text-muted mr-md-3">
-                                        Folio: @Html.DisplayFor(modelItem => item.Folio)
+                                    Folio: @Html.DisplayFor(modelItem => item.Folio)
                                 </small>
                                 <small class="text-muted mr-md-3 d-block d-md-inline-block">
                                     Fecha: @Convert.ToDateTime(item.Fecha).ToString("dd MMMM, yyyy")
@@ -66,18 +69,21 @@
                                     <i class="fa fa-file-alt"></i>
                                 </div>
                             </a>
-                            @if(!item.Aplicado)
+                            @if (!item.Aplicado)
                             {
-                                <a asp-action="Edit" asp-route-id="@item.EntradaID" class="d-block d-md-inline text-decoration-none">
-                                    <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
-                                        <i class="fa fa-edit"></i>
-                                    </div>
-                                </a>
-                                <a href="#" data-id="@item.EntradaID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
-                                    <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
-                                        <i class="fa fa-trash"></i>
-                                    </div>
-                                </a>
+                                @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.EntradaID" class="d-block d-md-inline text-decoration-none">
+                                        <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
+                                            <i class="fa fa-edit"></i>
+                                        </div>
+                                    </a>
+                                    <a href="#" data-id="@item.EntradaID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
+                                        <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
+                                            <i class="fa fa-trash"></i>
+                                        </div>
+                                    </a>
+                                }
                             }
                         </div>
                     </div>
@@ -87,7 +93,10 @@
     </div>
 </div>
 
-<partial name="_DeleteConfirmDialog" />
+@if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+{
+    <partial name="_DeleteConfirmDialog" />
+}
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

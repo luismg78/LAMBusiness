@@ -7,32 +7,47 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
     using Data;
     using Helpers;
     using Models.ViewModels;
     using Shared.Catalogo;
     using Shared.Movimiento;
 
-    public class ProductosController : Controller
+    public class ProductosController : GlobalController
     {
         private readonly DataContext _context;
         private readonly ICombosHelper _combosHelper;
         private readonly IConverterHelper _converterHelper;
         private readonly IGetHelper _getHelper;
+        private readonly IConfiguration _configuration;
+        private Guid moduloId = Guid.Parse("A549419C-89BD-49CE-BA93-4D73AFBA37CE");
 
         public ProductosController(DataContext context, 
             ICombosHelper combosHelper,
             IConverterHelper converterHelper,
-            IGetHelper getHelper)
+            IGetHelper getHelper,
+            IConfiguration configuration)
         {
             _context = context;
             _combosHelper = combosHelper;
             _converterHelper = converterHelper;
             _getHelper = getHelper;
+            _configuration = configuration;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+            {
+                return RedirectToAction("Inicio", "Menu");
+            }
+
+            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
+
             var dataContext = _context.Productos
                 .Include(p => p.Marcas)
                 .Include(p => p.TasasImpuestos)
@@ -45,6 +60,16 @@
 
         public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return null; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+            {
+                return null;
+            }
+
+            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
+
             IQueryable<Producto> query = null;
             if (searchby != null && searchby != "")
             {
@@ -94,6 +119,16 @@
 
         public async Task<IActionResult> Details(Guid? id)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
+
             if (id == null)
             {
                 return NotFound();
@@ -119,6 +154,14 @@
 
         public async Task<IActionResult> Create()
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             var productoViewModel = new ProductoViewModel() {
                 UnidadesDDL = await _combosHelper.GetComboUnidadesAsync(),
                 TasasImpuestosDDL = await _combosHelper.GetComboTasaImpuestosAsync()
@@ -137,6 +180,14 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductoViewModel productoViewModel)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             await ValidateFieldsAsync(productoViewModel);
             if (ModelState.IsValid)
             {
@@ -191,6 +242,14 @@
 
         public async Task<IActionResult> Edit(Guid? id)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -208,12 +267,20 @@
             var productoViewModel = await _converterHelper.ToProductosViewModelAsync(producto);
 
             return View(productoViewModel);
-        }
+        }   
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, ProductoViewModel productoViewModel)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (id != productoViewModel.ProductoID)
             {
                 return NotFound();
@@ -303,6 +370,14 @@
 
         public async Task<IActionResult> Delete(Guid? id)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -359,6 +434,14 @@
 
         public async Task<IActionResult> GetMarca(string nombreMarca)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return null; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return null;
+            }
+
             if (nombreMarca == null || nombreMarca == "")
             {
                 return null;
@@ -383,6 +466,14 @@
 
         public async Task<IActionResult> GetMarcas(string pattern, int? skip)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return null; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return null;
+            }
+
             if (pattern == null || pattern == "" || skip == null)
             {
                 return null;
@@ -414,71 +505,76 @@
             //validate if register exist with that value
             var codeexist = await _context.Productos
                 .Include(p => p.Unidades)
-                .FirstOrDefaultAsync(p => p.Codigo == productoViewModel.Codigo && 
+                .FirstOrDefaultAsync(p => p.Codigo == productoViewModel.Codigo &&
                                      p.ProductoID != productoViewModel.ProductoID);
             if (codeexist != null)
             {
                 ModelState.AddModelError("Codigo", "Ya existe un producto con este código.");
             }
             //validate field Tasa de Impuesto 
-            if (productoViewModel.TasaID == Guid.Empty)
+            if (productoViewModel.TasaID == null || productoViewModel.TasaID == Guid.Empty)
             {
                 ModelState.AddModelError("TasaID", "El campo Tasa de Impuesto es requerido");
             }
             //validate field Unidad
-            if (productoViewModel.UnidadID == Guid.Empty)
+            if (productoViewModel.UnidadID == null || productoViewModel.UnidadID == Guid.Empty)
             {
                 ModelState.AddModelError("UnidadID", "El campo Unidad es requerido");
             }
-            //if field unidad have value, then, validate fields CodigoPieza and Cantidad
-            if (productoViewModel.Unidades.Paquete)
+            else
             {
-                if (string.IsNullOrEmpty(productoViewModel.CodigoPieza))
+                //if field unidad have value, then, validate fields CodigoPieza and Cantidad
+                if (productoViewModel.Unidades.Paquete)
                 {
-                    ModelState.AddModelError("CodigoPieza", "El campo Unidad es requerido");
-                }
-                //if field CodigoPieza have value, then, validate if product exist
-                var codepieceexist = await _context.Productos
-                    .Include(p => p.Unidades)
-                    .FirstOrDefaultAsync(p => p.Codigo == productoViewModel.CodigoPieza);
-                if (codepieceexist == null)
-                {
-                    ModelState.AddModelError("CodigoPieza", "Código de producto inexistente.");
-                }
-                else if(!codepieceexist.Activo){
-                    ModelState.AddModelError("CodigoPieza", "Producto no disponible (ver detalle).");
-                }
-                else {
-                    //validate that producto be piece
-                    if (codepieceexist.Unidades.Paquete)
+                    if (string.IsNullOrEmpty(productoViewModel.CodigoPieza))
                     {
-                        ModelState.AddModelError("CodigoPieza", "El producto no puede ser caja.");
+                        ModelState.AddModelError("CodigoPieza", "El campo Unidad es requerido");
+                    }
+                    //if field CodigoPieza have value, then, validate if product exist
+                    var codepieceexist = await _context.Productos
+                        .Include(p => p.Unidades)
+                        .FirstOrDefaultAsync(p => p.Codigo == productoViewModel.CodigoPieza);
+                    if (codepieceexist == null)
+                    {
+                        ModelState.AddModelError("CodigoPieza", "Código de producto inexistente.");
+                    }
+                    else if (!codepieceexist.Activo)
+                    {
+                        ModelState.AddModelError("CodigoPieza", "Producto no disponible (ver detalle).");
                     }
                     else
                     {
-                        //validate package and piece be whole pieces
-                        if (productoViewModel.Unidades.Pieza)
+                        //validate that producto be piece
+                        if (codepieceexist.Unidades.Paquete)
                         {
-                            if (!codepieceexist.Unidades.Pieza)
-                            {
-                                ModelState.AddModelError("CodigoPieza", "No coincide con la unidad del paquete.");
-                            }
+                            ModelState.AddModelError("CodigoPieza", "El producto no puede ser caja.");
                         }
-                        //validate package and piece be bulk pieces
-                        else if (!productoViewModel.Unidades.Pieza)
+                        else
                         {
-                            if (codepieceexist.Unidades.Pieza)
+                            //validate package and piece be whole pieces
+                            if (productoViewModel.Unidades.Pieza)
                             {
-                                ModelState.AddModelError("CodigoPieza", "No coincide con la unidad del paquete.");
+                                if (!codepieceexist.Unidades.Pieza)
+                                {
+                                    ModelState.AddModelError("CodigoPieza", "No coincide con la unidad del paquete.");
+                                }
+                            }
+                            //validate package and piece be bulk pieces
+                            else if (!productoViewModel.Unidades.Pieza)
+                            {
+                                if (codepieceexist.Unidades.Pieza)
+                                {
+                                    ModelState.AddModelError("CodigoPieza", "No coincide con la unidad del paquete.");
+                                }
                             }
                         }
                     }
-                }
 
-                if (productoViewModel.CantidadProductoxPaquete == null ||
-                    productoViewModel.CantidadProductoxPaquete <= 0)
-                {
-                    ModelState.AddModelError("CantidadProductoxPaquete", "El campo Unidad es requerido");
+                    if (productoViewModel.CantidadProductoxPaquete == null ||
+                        productoViewModel.CantidadProductoxPaquete <= 0)
+                    {
+                        ModelState.AddModelError("CantidadProductoxPaquete", "El campo Unidad es requerido");
+                    }
                 }
             }
         }

@@ -1,0 +1,13 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutInitial.cshtml";
+    ViewData["Title"] = "Error de conexión";
+}
+
+<div class="modal-body py-4">
+    <div class="card mb-4 text-dark">
+        <div class="card-body bg-card text-center py-5">
+            <i class="fas fa-wifi display-4 text-danger"></i>
+            <h3 class="mt-4">@(TempData == null ? "" : !TempData.ContainsKey("toast") ? "Verifique su conexión a la red" : TempData["toast"].ToString())</h3>
+        </div>
+    </div>
+</div>

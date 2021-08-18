@@ -1,139 +1,209 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using LAMBusiness.Web.Data;
-using LAMBusiness.Web.Models.Entities;
-
-namespace LAMBusiness.Web.Controllers
+﻿namespace LAMBusiness.Web.Controllers
 {
-    public class ModulosController : Controller
+    using System;
+    using System.Linq;  
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+    using Data;
+    using Helpers;
+    using Models.ViewModels;
+    using Shared.Aplicacion;
+
+    public class ModulosController : GlobalController
     {
         private readonly DataContext _context;
+        private readonly IGetHelper _getHelper;
+        private readonly ICombosHelper _combosHelper;
+        private readonly IConverterHelper _converterHelper;
+        private readonly IConfiguration _configuration;
 
-        public ModulosController(DataContext context)
+        public ModulosController(DataContext context,
+            IGetHelper getHelper,
+            ICombosHelper combosHelper,
+            IConverterHelper converterHelper,
+            IConfiguration configuration)
         {
             _context = context;
+            _getHelper = getHelper;
+            _combosHelper = combosHelper;
+            _converterHelper = converterHelper;
+            _configuration = configuration;
         }
 
-        // GET: Modulos
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Modulos.ToListAsync());
-        }
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return validateToken; }
 
-        // GET: Modulos/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
+            if (token.Administrador != "SA") {
+                TempData["toast"] = "No tiene privilegios de acceso en el módulo";
+                return RedirectToAction("Inicio", "Menu"); 
             }
 
-            var modulo = await _context.Modulos
-                .FirstOrDefaultAsync(m => m.ModuloID == id);
-            if (modulo == null)
+            return View(await _context.Modulos.OrderBy(m => m.Descripcion).ToListAsync());
+        }
+
+        public async Task<IActionResult> Create()
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return validateToken; }
+
+            if (token.Administrador != "SA")
             {
-                return NotFound();
+                TempData["toast"] = "No tiene privilegios de acceso en el módulo";
+                return RedirectToAction("Inicio", "Menu");
             }
 
-            return View(modulo);
+            var moduloViewModel = new ModuloViewModel()
+            {
+                ModulosPadresDDL = await _combosHelper.GetComboModulosAsync()
+            };
+
+            return View(moduloViewModel);
         }
 
-        // GET: Modulos/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Modulos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ModuloID,Descripcion,Activo")] Modulo modulo)
+        public async Task<IActionResult> Create(ModuloViewModel moduloViewModel)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return validateToken; }
+
+            if (token.Administrador != "SA")
+            {
+                TempData["toast"] = "No tiene privilegios de acceso en el módulo";
+                return RedirectToAction("Inicio", "Menu");
+            }
+
             if (ModelState.IsValid)
             {
-                modulo.ModuloID = Guid.NewGuid();
+                var modulo = _converterHelper.ToModulo(moduloViewModel, true);
                 _context.Add(modulo);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    TempData["toast"] = "Los datos del módulo fueron almacenados correctamente.";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception)
+                {
+                    TempData["toast"] = "[Error] Los datos del cliente no fueron almacenados.";
+                }
             }
-            return View(modulo);
+
+            moduloViewModel.ModulosPadresDDL = await _combosHelper.GetComboModulosAsync();
+            TempData["toast"] = "Falta información en algún campo, verifique.";
+
+            return View(moduloViewModel);
         }
 
-        // GET: Modulos/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return validateToken; }
+
+            if (token.Administrador != "SA")
+            {
+                TempData["toast"] = "No tiene privilegios de acceso en el módulo";
+                return RedirectToAction("Inicio", "Menu");
+            }
+
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificador incorrecto.";
+                return RedirectToAction(nameof(Index));
             }
 
             var modulo = await _context.Modulos.FindAsync(id);
             if (modulo == null)
             {
-                return NotFound();
+                TempData["toast"] = "Módulo inexistente (identificador incorrecto).";
+                return RedirectToAction(nameof(Index));
             }
-            return View(modulo);
+
+            var moduloViewModel = await _converterHelper.ToModuloViewModelAsync(modulo);
+
+            return View(moduloViewModel);
         }
 
-        // POST: Modulos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("ModuloID,Descripcion,Activo")] Modulo modulo)
+        public async Task<IActionResult> Edit(Guid id, ModuloViewModel moduloViewModel)
         {
-            if (id != modulo.ModuloID)
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return validateToken; }
+
+            if (token.Administrador != "SA")
             {
-                return NotFound();
+                TempData["toast"] = "No tiene privilegios de acceso en el módulo";
+                return RedirectToAction("Inicio", "Menu");
+            }
+
+            if (id != moduloViewModel.ModuloID)
+            {
+                TempData["toast"] = "Identificador incorrecto.";
+                return RedirectToAction(nameof(Index));
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var modulo = _converterHelper.ToModulo(moduloViewModel, false);
                     _context.Update(modulo);
+
                     await _context.SaveChangesAsync();
+                    TempData["toast"] = "Los datos del módulo fueron actualizados correctamente.";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ModuloExists(modulo.ModuloID))
+                    if (!ModuloExists(moduloViewModel.ModuloID))
                     {
-                        return NotFound();
+                        TempData["toast"] = "Módulo inexistente (identificador incorrecto).";
                     }
                     else
                     {
-                        throw;
+                        TempData["toast"] = "[Error] Los datos del módulo no fueron actualizados.";
                     }
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(modulo);
+
+            TempData["toast"] = "Falta información en algún campo.";
+            return View(moduloViewModel);
         }
 
-        // GET: Modulos/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null)
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return validateToken; }
+
+            if (token.Administrador != "SA")
             {
-                return NotFound();
+                TempData["toast"] = "No tiene privilegios de acceso en el módulo";
+                return RedirectToAction("Inicio", "Menu");
             }
 
-            var modulo = await _context.Modulos
-                .FirstOrDefaultAsync(m => m.ModuloID == id);
+            if (id == null)
+            {
+                TempData["toast"] = "Identificador incorrecto.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var modulo = await _getHelper.GetModuloByIdAsync((Guid)id);
             if (modulo == null)
             {
-                return NotFound();
+                TempData["toast"] = "Módulo inexistente (identificador incorrecto).";
+                return RedirectToAction(nameof(Index));
             }
 
             _context.Modulos.Remove(modulo);
             await _context.SaveChangesAsync();
+
+            TempData["toast"] = "Los datos del módulo fueron eliminados correctamente.";
             return RedirectToAction(nameof(Index));
 
         }

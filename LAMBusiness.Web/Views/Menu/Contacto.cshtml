@@ -16,43 +16,68 @@
 <div class="modal-body py-4">
     <div class="row">
 
-        <!--Clientes-->
-        <div class="btn-lam col-xl-4 col-md-6">
-            <a asp-action="Index" asp-controller="Clientes" class="text-decoration-none">
-                <div class="card mb-4 text-dark">
-                    <div class="card-body bg-card text-center py-5">
-                        <i class="fas fa-user-friends display-4 text-info"></i>
-                        <h4 class="mt-4"><span class="text-info">@Model.Clientes</span> Clientes</h4>
-                        <p class="mb-3">Catálogos de clientes</p>
+        <!--Usuarios-->
+        @if (Model.ModulosMenu.Contains(Guid.Parse("0C36B7F4-02DF-459A-9606-CAEEB137D9B1")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="Index" asp-controller="Usuarios" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-user display-4 text-primary"></i>
+                            <h4 class="mt-4"><span class="text-primary">@Model.Usuarios</span> Usuarios</h4>
+                            <p class="mb-3">Catálogo de usuarios del sistema</p>
+                        </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
+        }
 
         <!--Colaboradores-->
-        <div class="btn-lam col-xl-4 col-md-6">
-            <a asp-action="Index" asp-controller="Colaboradores" class="text-decoration-none">
-                <div class="card mb-4 text-dark">
-                    <div class="card-body bg-card text-center py-5">
-                        <i class="fas fa-users-cog display-4 text-base"></i>
-                        <h4 class="mt-4"><span class="text-base">@Model.Colaboradores</span> Colaboradores</h4>
-                        <p class="mb-3">Catálogo de colaboradores</p>
+        @if (Model.ModulosMenu.Contains(Guid.Parse("F2839E65-FC0F-4E75-894C-85259A583E13")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="Index" asp-controller="Colaboradores" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-users-cog display-4 text-base"></i>
+                            <h4 class="mt-4"><span class="text-base">@Model.Colaboradores</span> Colaboradores</h4>
+                            <p class="mb-3">Catálogo de colaboradores</p>
+                        </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
+        }
+
+        <!--Clientes-->
+        @if (Model.ModulosMenu.Contains(Guid.Parse("9B4E6E0C-6F34-4513-AACF-4A9A516CEDF6")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="Index" asp-controller="Clientes" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-user-friends display-4 text-info"></i>
+                            <h4 class="mt-4"><span class="text-info">@Model.Clientes</span> Clientes</h4>
+                            <p class="mb-3">Catálogos de clientes</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
 
         <!--Proveedores-->
-        <div class="btn-lam col-xl-4 col-md-6">
-            <a asp-action="Index" asp-controller="Proveedores" class="text-decoration-none">
-                <div class="card mb-4 text-dark">
-                    <div class="card-body bg-card text-center py-5">
-                        <i class="fas fa-people-carry display-4 text-success"></i>
-                        <h4 class="mt-4"><span class="text-success">@Model.Proveedores</span> Proveedores</h4>
-                        <p class="mb-3">Catálogo de productos</p>
+        @if (Model.ModulosMenu.Contains(Guid.Parse("76BE358D-AA92-48E2-AB1A-5EE557441067")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="Index" asp-controller="Proveedores" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-people-carry display-4 text-success"></i>
+                            <h4 class="mt-4"><span class="text-success">@Model.Proveedores</span> Proveedores</h4>
+                            <p class="mb-3">Catálogo de productos</p>
+                        </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
+        }
     </div>
 </div>

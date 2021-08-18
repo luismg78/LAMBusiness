@@ -5,22 +5,39 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
-    using Data;
-    using Shared.Catalogo;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
+    using Microsoft.Extensions.Configuration;
+    using Data;
+    using Helpers;
+    using Shared.Catalogo;
 
-    public class AlmacenesController : Controller
+    public class AlmacenesController : GlobalController
     {
         private readonly DataContext _context;
+        private readonly IConfiguration _configuration;
+        private readonly IGetHelper _getHelper;
+        private Guid moduloId = Guid.Parse("DA183D55-101E-4A06-9EC3-A1ED5729F0CB");
 
-        public AlmacenesController(DataContext context)
+        public AlmacenesController(DataContext context, IConfiguration configuration, IGetHelper getHelper)
         {
             _context = context;
+            _configuration = configuration;
+            _getHelper = getHelper;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+            {
+                return RedirectToAction("Inicio", "Menu");
+            }
+
+            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
+
             var dataContext = _context.Almacenes
                 .OrderBy(p => p.AlmacenNombre);
 
@@ -29,6 +46,16 @@
 
         public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return null; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+            {
+                return null;
+            }
+            
+            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
+
             IQueryable<Almacen> query = null;
             if (searchby != null && searchby != "")
             {
@@ -69,8 +96,16 @@
             };
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             return View();
         }
 
@@ -78,27 +113,47 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("AlmacenID,AlmacenNombre,AlmacenDescripcion")] Almacen almacen)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (ModelState.IsValid)
             {
                 almacen.AlmacenID = Guid.NewGuid();
                 _context.Add(almacen);
                 await _context.SaveChangesAsync();
+                TempData["toast"] = "Los datos del almacén fueron almacenados correctamente.";
                 return RedirectToAction(nameof(Index));
             }
+            TempData["toast"] = "Falta información en algún campo.";
             return View(almacen);
         }
 
         public async Task<IActionResult> Edit(Guid? id)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var almacen = await _context.Almacenes.FindAsync(id);
             if (almacen == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
             return View(almacen);
         }
@@ -107,9 +162,18 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("AlmacenID,AlmacenNombre,AlmacenDescripcion")] Almacen almacen)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (id != almacen.AlmacenID)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             if (ModelState.IsValid)
@@ -118,28 +182,40 @@
                 {
                     _context.Update(almacen);
                     await _context.SaveChangesAsync();
+                    TempData["toast"] = "Los datos del almacén fueron actualizados correctamente.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!AlmacenExists(almacen.AlmacenID))
                     {
-                        return NotFound();
+                        TempData["toast"] = "Registro inexistente.";
                     }
                     else
                     {
-                        throw;
+                        TempData["toast"] = "Error al actualizar la información.";
                     }
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            TempData["toast"] = "Falta información en algún campo, verifique.";
             return View(almacen);
         }
 
         public async Task<IActionResult> Delete(Guid? id)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var almacen = await _context.Almacenes
@@ -147,7 +223,8 @@
 
             if (almacen == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             if (almacen.Existencias != null)
@@ -163,6 +240,7 @@
 
             _context.Almacenes.Remove(almacen);
             await _context.SaveChangesAsync();
+            TempData["toast"] = "Los datos del almacén fueron eliminados correctamente.";
             return RedirectToAction(nameof(Index));
         }
 

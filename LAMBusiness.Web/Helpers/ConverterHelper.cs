@@ -10,9 +10,10 @@
     using Microsoft.EntityFrameworkCore;
     using Data;
     using Models.ViewModels;
+    using Shared.Aplicacion;
     using Shared.Catalogo;
     using Shared.Contacto;
-    using LAMBusiness.Shared.Movimiento;
+    using Shared.Movimiento;
 
     public class ConverterHelper : IConverterHelper
     {
@@ -150,6 +151,167 @@
             return clienteViewModel;
         }
 
+        //Colaboradores
+
+        /// <summary>
+        /// Convertir clase colaboradorViewModel a colaborador
+        /// </summary>
+        /// <param name="colaboradorViewModel"></param>
+        /// <param name="isNew"></param>
+        /// <returns>Colaborador(class)</returns>
+        public async Task<Resultado<Colaborador>> ToColaboradorAsync(ColaboradorViewModel colaboradorViewModel, bool isNew)
+        {
+            Resultado<Colaborador> resultado = new Resultado<Colaborador>() {
+                Contenido = null,
+                Error = true,
+                Mensaje = ""
+            };
+
+            if (!string.IsNullOrEmpty(colaboradorViewModel.CURP))
+            {
+                colaboradorViewModel.CURP = colaboradorViewModel.CURP.Trim().ToUpper();
+                
+                //Validar fecha de nacimiento
+                var fechaNacimiento = $"{colaboradorViewModel.CURP.Substring(8, 2)}-{colaboradorViewModel.CURP.Substring(6, 2)}-{colaboradorViewModel.CURP.Substring(4, 2)}";
+                colaboradorViewModel.FechaNacimiento = Convert.ToDateTime(fechaNacimiento);
+
+                //validar género
+                colaboradorViewModel.GeneroID = colaboradorViewModel.CURP.Substring(10, 1);
+                switch (colaboradorViewModel.GeneroID)
+                {
+                    case "H":
+                        colaboradorViewModel.GeneroID = "M";
+                        break;
+                    case "M":
+                        colaboradorViewModel.GeneroID = "F";
+                        break;
+                    default:
+                        resultado.Mensaje = "Error en el valor del género [CURP]";
+                        return resultado;
+                }
+                
+                //validar Estado de nacimiento
+                colaboradorViewModel.EstadoNacimientoID = 0;
+                var estadoNacimiento = colaboradorViewModel.CURP.Substring(11, 2);
+                var estado = await _context.Estados.FirstOrDefaultAsync(e => e.EstadoClave == estadoNacimiento);
+                if (estado == null)
+                {
+                    resultado.Mensaje = "Error en el valor del estado de nacimiento [CURP].";
+                    return resultado;
+                }
+                    
+                colaboradorViewModel.EstadoNacimientoID = estado.EstadoID;
+            }
+            
+            var fechaActualizacion = DateTime.Now;
+            if (isNew)
+            {
+                resultado.Error = false;
+                resultado.Contenido = new Colaborador()
+                {
+                    Activo = colaboradorViewModel.Activo,
+                    ColaboradorID = Guid.NewGuid(),
+                    CodigoPostal = colaboradorViewModel.CodigoPostal,
+                    Colonia = colaboradorViewModel.Colonia.Trim().ToUpper(),
+                    CURP = colaboradorViewModel.CURP,
+                    Domicilio = colaboradorViewModel.Domicilio.Trim().ToUpper(),
+                    Email = colaboradorViewModel.Email.Trim().ToLower(),
+                    EstadoCivilID = colaboradorViewModel.EstadoCivilID,
+                    EstadoNacimientoID = colaboradorViewModel.EstadoNacimientoID,
+                    FechaActualizacion = fechaActualizacion,
+                    FechaNacimiento = colaboradorViewModel.FechaNacimiento,
+                    FechaRegistro = fechaActualizacion,
+                    GeneroID = colaboradorViewModel.GeneroID,
+                    MunicipioID = colaboradorViewModel.MunicipioID,
+                    Municipios = await _getHelper.GetMunicipioByIdAsync((int)colaboradorViewModel.MunicipioID),
+                    Nombre = colaboradorViewModel.Nombre.Trim().ToUpper(),
+                    PrimerApellido = colaboradorViewModel.PrimerApellido.Trim().ToUpper(),
+                    PuestoID = colaboradorViewModel.PuestoID,
+                    SegundoApellido = colaboradorViewModel.SegundoApellido == null ? "" : colaboradorViewModel.SegundoApellido.Trim().ToUpper(),
+                    Telefono = colaboradorViewModel.Telefono,
+                    TelefonoMovil = colaboradorViewModel.TelefonoMovil
+                };
+            }
+            else
+            {
+                var employee = await _context.Colaboradores.FindAsync(colaboradorViewModel.ColaboradorID);
+                if (employee != null)
+                {
+                    employee.Activo = colaboradorViewModel.Activo;
+                    employee.CodigoPostal = colaboradorViewModel.CodigoPostal;
+                    employee.Colonia = colaboradorViewModel.Colonia.Trim().ToUpper();
+                    employee.CURP = colaboradorViewModel.CURP;
+                    employee.Domicilio = colaboradorViewModel.Domicilio.Trim().ToUpper();
+                    employee.Email = colaboradorViewModel.Email.Trim().ToLower();
+                    employee.EstadoCivilID = colaboradorViewModel.EstadoCivilID;
+                    employee.EstadoNacimientoID = colaboradorViewModel.EstadoNacimientoID;
+                    employee.FechaActualizacion = fechaActualizacion;
+                    employee.FechaNacimiento = colaboradorViewModel.FechaNacimiento;
+                    employee.GeneroID = colaboradorViewModel.GeneroID;
+                    employee.MunicipioID = colaboradorViewModel.MunicipioID;
+                    employee.Municipios = await _getHelper.GetMunicipioByIdAsync((int)colaboradorViewModel.MunicipioID);
+                    employee.Nombre = colaboradorViewModel.Nombre.Trim().ToUpper();
+                    employee.PrimerApellido = colaboradorViewModel.PrimerApellido.Trim().ToUpper();
+                    employee.PuestoID = colaboradorViewModel.PuestoID;
+                    employee.SegundoApellido = colaboradorViewModel.SegundoApellido == null ? "" : colaboradorViewModel.SegundoApellido.Trim().ToUpper();
+                    employee.Telefono = colaboradorViewModel.Telefono;
+                    employee.TelefonoMovil = colaboradorViewModel.TelefonoMovil;
+
+                    resultado.Contenido = employee;
+                    resultado.Error = false;
+                }
+                else
+                {
+                    resultado.Mensaje = "Identificador del colaborador incorrecto";
+                }
+            }
+
+            return resultado;
+        }
+
+        /// <summary>
+        /// Convertir clase colaborador a colaboradorViewModel.
+        /// </summary>
+        /// <param name="colaborador"></param>
+        /// <returns>ColaboradorViewModel(class)</returns>
+        public async Task<ColaboradorViewModel> ToColaboradorViewModelAsync(Colaborador colaborador)
+        {
+            var _colaborador = await _context.Colaboradores.FindAsync(colaborador.ColaboradorID);
+
+            var colaboradorViewModel = new ColaboradorViewModel()
+            {
+                Activo = colaborador.Activo,
+                ColaboradorID = colaborador.ColaboradorID,
+                CodigoPostal = colaborador.CodigoPostal,
+                Colonia = colaborador.Colonia.Trim().ToUpper(),
+                CURP = colaborador.CURP.Trim().ToUpper(),
+                Domicilio = colaborador.Domicilio.Trim().ToUpper(),
+                Email = colaborador.Email.Trim().ToLower(),
+                EstadoID = colaborador.Municipios.EstadoID,
+                EstadosDDL = await _combosHelper.GetComboEstadosAsync(),
+                EstadoCivilID = colaborador.EstadoCivilID,
+                EstadosCivilesDDL = await _combosHelper.GetComboEstadosCivilesAsync(),
+                EstadoNacimientoID = colaborador.EstadoNacimientoID,
+                EstadosNacimientoDDL = await _combosHelper.GetComboEstadosAsync(),
+                FechaNacimiento = colaborador.FechaNacimiento,
+                GeneroID = colaborador.GeneroID,
+                GenerosDDL = await _combosHelper.GetComboGenerosAsync(),
+                FechaRegistro = _colaborador == null ? DateTime.Now : _colaborador.FechaRegistro,
+                MunicipioID = colaborador.MunicipioID,
+                Municipios = colaborador.Municipios,
+                MunicipiosDDL = await _combosHelper.GetComboMunicipiosAsync(colaborador.Municipios.EstadoID),
+                Nombre = colaborador.Nombre.Trim().ToUpper(),
+                PrimerApellido = colaborador.PrimerApellido.Trim().ToUpper(),
+                PuestoID = colaborador.PuestoID,
+                PuestosDDL = await _combosHelper.GetComboPuestosAsync(),
+                SegundoApellido = colaborador.SegundoApellido == null ? "" : colaborador.SegundoApellido.Trim().ToUpper(),
+                Telefono = colaborador.Telefono,
+                TelefonoMovil = colaborador.TelefonoMovil
+            };
+
+            return colaboradorViewModel;
+        }
+
         //Entradas
 
         /// <summary>
@@ -166,7 +328,7 @@
                 EntradaID = isNew ? Guid.NewGuid() : entradaViewModel.EntradaID,
                 Fecha = entradaViewModel.Fecha,
                 FechaActualizacion = DateTime.Now,
-                FechaCreacion = DateTime.Now,
+                FechaCreacion = isNew ? DateTime.Now : entradaViewModel.FechaCreacion,
                 Folio = entradaViewModel.Folio.Trim().ToUpper(),
                 Observaciones = entradaViewModel.Observaciones.Trim().ToUpper(),
                 ProveedorID = entradaViewModel.ProveedorID,
@@ -200,6 +362,48 @@
                 EntradaDetalle = await _getHelper.GetEntradaDetalleByEntradaIdAsync(entrada.EntradaID)
             };
 
+        }
+
+        //Módulos
+
+        /// <summary>
+        /// Convertir clase moduloViewModel a modulo
+        /// </summary>
+        /// <param name="moduloViewModel"></param>
+        /// <param name="isNew"></param>
+        /// <returns>Cliente(class)</returns>
+        public Modulo ToModulo(ModuloViewModel moduloViewModel, bool isNew)
+        {
+            var modulo = new Modulo()
+            {
+                Activo = moduloViewModel.Activo,
+                Descripcion = moduloViewModel.Descripcion.Trim().ToUpper(),
+                ModuloID = isNew ? Guid.NewGuid() : moduloViewModel.ModuloID,
+                ModuloPadreID = moduloViewModel.ModuloPadreID,
+            };
+
+            return modulo;
+        }
+
+        /// <summary>
+        /// Convertir clase cliente a clienteViewModel.
+        /// </summary>
+        /// <param name="cliente"></param>
+        /// <returns>ClienteViewModel(class)</returns>
+        public async Task<ModuloViewModel> ToModuloViewModelAsync(Modulo modulo)
+        {
+            var _modulo = await _context.Modulos.FindAsync(modulo.ModuloID);
+
+            var moduloViewModel = new ModuloViewModel()
+            {
+                Activo = modulo.Activo,
+                Descripcion = modulo.Descripcion.Trim().ToUpper(),
+                ModuloID = modulo.ModuloID,
+                ModuloPadreID = modulo.ModuloPadreID,
+                ModulosPadresDDL = await _combosHelper.GetComboModulosAsync()
+            };
+
+            return moduloViewModel;
         }
 
         //Productos
@@ -411,8 +615,109 @@
             };
 
             return proveedorViewModel;
-        } 
-        #endregion
+        }
 
+        //Salidas
+
+        /// <summary>
+        /// Convertir clase SalidaViewModel a Salida.
+        /// </summary>
+        /// <param name="salidaViewModel"></param>
+        /// <param name="isNew"></param>
+        /// <returns></returns>
+        public async Task<Salida> ToSalidaAsync(SalidaViewModel salidaViewModel, bool isNew)
+        {
+            var fechaCreacion = await _context.Salidas
+                .Where(s => s.SalidaID == salidaViewModel.SalidaID)
+                .Select(s => s.FechaCreacion).FirstOrDefaultAsync();
+
+            if (fechaCreacion == null)
+            {
+                return null;
+            }
+
+            return new Salida()
+            {
+                Aplicado = salidaViewModel.Aplicado,
+                SalidaID = isNew ? Guid.NewGuid() : salidaViewModel.SalidaID,
+                Fecha = salidaViewModel.Fecha,
+                FechaActualizacion = DateTime.Now,
+                FechaCreacion = isNew ? DateTime.Now: fechaCreacion,
+                Folio = salidaViewModel.Folio.Trim().ToUpper(),
+                Observaciones = salidaViewModel.Observaciones == null ? "" : salidaViewModel.Observaciones.Trim().ToUpper(),
+                SalidaTipoID = salidaViewModel.SalidaTipoID,
+                SalidaTipo = await _getHelper.GetSalidaTipoByIdAsync((Guid)salidaViewModel.SalidaTipoID),
+                UsuarioID = salidaViewModel.UsuarioID
+            };
+
+        }
+
+        /// <summary>
+        /// Convertir clase Salida a SalidaViewModel.
+        /// </summary>
+        /// <param name="salida"></param>
+        /// <returns></returns>
+        public async Task<SalidaViewModel> ToSalidaViewModelAsync(Salida salida)
+        {
+            var _salida = await _getHelper.GetSalidaByIdAsync(salida.SalidaID);
+
+            return new SalidaViewModel()
+            {
+                Aplicado = salida == null ? false : salida.Aplicado,
+                Fecha = salida == null ? DateTime.Now : salida.Fecha,
+                FechaActualizacion = salida == null ? DateTime.Now : salida.FechaActualizacion,
+                FechaCreacion = _salida == null ? DateTime.Now : _salida.FechaCreacion,
+                Folio = salida.Folio == null ? "" : salida.Folio.Trim().ToUpper(),
+                Observaciones = salida.Observaciones == null ? "" : salida.Observaciones.Trim().ToUpper(),
+                SalidaID = salida == null ? Guid.NewGuid() : salida.SalidaID,
+                SalidaTipoID = salida.SalidaTipoID,
+                SalidaTipo = await _getHelper.GetSalidaTipoByIdAsync((Guid)salida.SalidaTipoID),
+                SalidaTipoDDL = await _combosHelper.GetComboSalidasTipoAsync(),
+                UsuarioID = salida.UsuarioID,
+                SalidaDetalle = await _getHelper.GetSalidaDetalleBySalidaIdAsync(salida.SalidaID)
+            };
+
+        }
+
+        //Usuarios
+        /// <summary>
+        /// Convertir clase usuarioViewModel a usuario
+        /// </summary>
+        /// <param name="usuarioViewModel"></param>
+        /// <param name="isNew"></param>
+        /// <returns>Producto(class)</returns>
+        public async Task<Usuario> ToUsuarioAsync(UsuarioViewModel usuarioViewModel, bool isNew)
+        {
+            if (isNew)
+            {
+                return new Usuario()
+                {
+                    Activo = usuarioViewModel.Activo,
+                    AdministradorID = usuarioViewModel.AdministradorID,
+                    ColaboradorID = usuarioViewModel.ColaboradorID,
+                    FechaInicio = usuarioViewModel.FechaInicio.AddHours(0).AddMinutes(0).AddSeconds(0),
+                    FechaTermino = usuarioViewModel.FechaTermino.AddHours(23).AddMinutes(59).AddSeconds(59),
+                    FechaUltimoAcceso = usuarioViewModel.FechaUltimoAcceso,
+                    Password = "",
+                    UsuarioID = Guid.NewGuid()
+                };
+            }
+            else
+            {
+                var usuario = await _context.Usuarios.FindAsync(usuarioViewModel.UsuarioID);
+                if (usuario == null)
+                    return null;
+
+                usuario.Activo = usuarioViewModel.Activo;
+                usuario.AdministradorID = usuarioViewModel.AdministradorID;
+                usuario.FechaInicio = usuarioViewModel.FechaInicio.AddHours(0).AddMinutes(0).AddSeconds(0);
+                usuario.FechaTermino = usuarioViewModel.FechaTermino.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+                return usuario;
+            }
+
+        }
+
+        #endregion
     }
 }

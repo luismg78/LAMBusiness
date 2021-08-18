@@ -1,0 +1,186 @@
+﻿@model LAMBusiness.Web.Models.ViewModels.ColaboradorViewModel
+
+@{
+    ViewData["Title"] = "Colaboradores";
+}
+
+<form asp-action="Edit">
+    <div class="modal-content border-0 box-shadow">
+        <div class="modal-header pb-0">
+            <div>
+                <h3 class="modal-title" id="exampleModalLabel">Colaboradores</h3>
+                <ul class="breadcrumb bg-transparent p-0 small">
+                    <li class="breadcrumb-item"><a asp-action="Contacto" asp-controller="Menu">Contactos</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Colaboradores">Colaboradores</a></li>
+                    <li class="breadcrumb-item active">Editar Registro</li>
+                </ul>
+            </div>
+            <a asp-action="Index" asp-controller="Colaboradores" class="close"><span>&times;</span></a>
+        </div>
+        <div class="modal-body py-4">
+            <input type="hidden" asp-for="ColaboradorID" />
+            <div class="row px-md-3">
+                <!--CURP-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="CURP" class="control-label"></label>
+                        <input asp-for="CURP" class="form-control" autofocus />
+                        <span asp-validation-for="CURP" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row px-md-3">
+                <!--Nombre-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Nombre" class="control-label"></label>
+                        <input asp-for="Nombre" class="form-control" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Primer Apellido-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="PrimerApellido" class="control-label"></label>
+                        <input asp-for="PrimerApellido" class="form-control" />
+                        <span asp-validation-for="PrimerApellido" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Segundo Apellido-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="SegundoApellido" class="control-label"></label>
+                        <input asp-for="SegundoApellido" class="form-control" />
+                        <span asp-validation-for="SegundoApellido" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Puesto-->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="PuestoID" class="control-label"></label>
+                        <select asp-for="PuestoID" class="form-control" asp-items="Model.PuestosDDL"></select>
+                        <span asp-validation-for="PuestoID" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Estado Civil-->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="EstadoCivilID" class="control-label"></label>
+                        <select asp-for="EstadoCivilID" class="form-control" asp-items="Model.EstadosCivilesDDL"></select>
+                        <span asp-validation-for="EstadoCivilID" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Domicilio-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Domicilio" class="control-label"></label>
+                        <input asp-for="Domicilio" class="form-control" />
+                        <span asp-validation-for="Domicilio" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Colonia-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Colonia" class="control-label"></label>
+                        <input asp-for="Colonia" class="form-control" />
+                        <span asp-validation-for="Colonia" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Código Postal-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="CodigoPostal" class="control-label"></label>
+                        <input asp-for="CodigoPostal" class="form-control" />
+                        <span asp-validation-for="CodigoPostal" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Estados-->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="EstadoID" class="control-label"></label>
+                        <select asp-for="EstadoID" class="form-control" asp-items="Model.EstadosDDL"></select>
+                        <span asp-validation-for="EstadoID" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Municipios-->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="MunicipioID" class="control-label"></label>
+                        <select asp-for="MunicipioID" class="form-control" asp-items="Model.MunicipiosDDL"></select>
+                        <span asp-validation-for="MunicipioID" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Teléfono Fijo-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Telefono" class="control-label"></label>
+                        <input asp-for="Telefono" class="form-control" />
+                        <span asp-validation-for="Telefono" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Teléfono Móvil-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="TelefonoMovil" class="control-label"></label>
+                        <input asp-for="TelefonoMovil" class="form-control" />
+                        <span asp-validation-for="TelefonoMovil" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Correo Electrónico-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Activo-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Activo" class="control-label"></label>
+                        <input class="d-block" asp-for="Activo" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer justify-content-between">
+            <div class="px-md-3">
+                <input type="submit" value="Actualizar" class="btn btn-base" />
+                <a asp-action="Index" class="btn btn-outline-secondary">Regresar</a>
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+    $('#EstadoID').change(function () {
+        StateChange();
+    });
+
+    function StateChange() {
+        addProcessWithSpinner('Cargando municipios...');
+        $.ajax({
+            url: '@Url.Action("AddMunicipios", "Colaboradores")',
+            method: 'POST',
+            datatype: 'text',
+            data: {
+                id: $('#EstadoID').val()
+            },
+            success: function (r) {
+                $('#MunicipioID').empty();
+                if (r !== null && r.trim() !== '') {
+                    $('#MunicipioID').append(r);
+                }
+                removeProcessWithSpinner();
+            },
+            error: function (r) {
+                removeProcessWithSpinner();
+            },
+            cache: false
+        });
+    }
+    </script>
+}

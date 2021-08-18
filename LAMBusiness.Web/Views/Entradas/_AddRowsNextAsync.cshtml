@@ -1,0 +1,53 @@
+﻿@model IEnumerable<LAMBusiness.Shared.Movimiento.Entrada>
+
+@if (Model.Any())
+{
+    foreach (var item in Model)
+    {
+        <div class="row bg-row">
+            <div class="border-bottom col-10 col-md-9 p-3">
+                <a asp-action="Details" asp-controller="Proveedores" asp-route-id="@item.ProveedorID" class="text-muted">
+                    <span class="text-dark font-weight-bold">
+                        @Html.DisplayFor(modelItem => item.Proveedores.Nombre)
+                    </span>
+                </a>
+                <div class="d-block">
+                    <small class="text-muted mr-md-3">
+                        Folio: @Html.DisplayFor(modelItem => item.Folio)
+                    </small>
+                    <small class="text-muted mr-md-3 d-block d-md-inline-block">
+                        Fecha: @Convert.ToDateTime(item.Fecha).ToString("dd MMMM, yyyy")
+                    </small>
+                    @if (!item.Aplicado)
+                    {
+                        <small class="d-md-inline-block badge badge-danger font-weight-normal">No Aplicado</small>
+                    }
+                    <small class="text-muted d-block">@Html.DisplayFor(modelItem => item.Observaciones)</small>
+                </div>
+            </div>
+            <div class="border-bottom col-2 col-md-3 px-3 py-2 text-right">
+                <a asp-action="Details" asp-route-id="@item.EntradaID" class="d-block d-md-inline text-decoration-none">
+                    <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="ver detalle">
+                        <i class="fa fa-file-alt"></i>
+                    </div>
+                </a>
+                @if (!item.Aplicado)
+                {
+                    @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.EntradaID" class="d-block d-md-inline text-decoration-none">
+                            <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
+                                <i class="fa fa-edit"></i>
+                            </div>
+                        </a>
+                        <a href="#" data-id="@item.EntradaID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
+                            <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
+                                <i class="fa fa-trash"></i>
+                            </div>
+                        </a>
+                    }
+                }
+            </div>
+        </div>
+    }
+}

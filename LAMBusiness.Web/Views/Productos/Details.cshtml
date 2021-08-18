@@ -9,8 +9,8 @@
         <div>
             <h3 class="modal-title" id="exampleModalLabel">Productos</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
-                <li class="breadcrumb-item">Catálogo</li>
-                <li class="breadcrumb-item">Productos</li>
+                <li class="breadcrumb-item"><a asp-action="Catalogo" asp-controller="Menu">Catálogos</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Productos">Productos</a></li>
                 <li class="breadcrumb-item active">Detalle</li>
             </ul>
         </div>
@@ -25,7 +25,10 @@
                     <div class="ml-md-4">
                         <p class="font-weight-bold m-0 pt-2 pt-md-0 title">@Html.DisplayFor(model => model.ProductoNombre)</p>
                         <span class="d-block mb-3 subtitle text-muted">@Html.DisplayFor(model => model.ProductoDescripcion)</span>
-                        <a asp-action="Edit" asp-route-id="@Model.ProductoID" class="badge badge-base px-3 py-2">Editar</a>
+                        @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                        {
+                            <a asp-action="Edit" asp-route-id="@Model.ProductoID" class="badge badge-base px-3 py-2">Editar</a>
+                        }
                         <a asp-action="Index" class="badge badge-light border px-3 py-2">Regresar</a>
                     </div>
                 </div>
@@ -154,16 +157,19 @@
                                     <span class="d-block">@productoAsignado.Cantidad</span>
                                 </div>
                                 <div class="col-12 col-md-1 col-lg-2 text-right">
-                                    <a asp-action="Edit" asp-route-id="@productoAsignado.ProductoID" class="text-decoration-none">
-                                        <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar producto">
-                                            <i class="fa fa-edit"></i>
-                                        </div>
-                                    </a>
-                                    <a href="#" data-id="@productoAsignado.ProductoID" class="deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
-                                        <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar producto">
-                                            <i class="fa fa-trash"></i>
-                                        </div>
-                                    </a>
+                                    @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@productoAsignado.ProductoID" class="text-decoration-none">
+                                            <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar producto">
+                                                <i class="fa fa-edit"></i>
+                                            </div>
+                                        </a>
+                                        <a href="#" data-id="@productoAsignado.ProductoID" class="deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
+                                            <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar producto">
+                                                <i class="fa fa-trash"></i>
+                                            </div>
+                                        </a>
+                                    }
                                 </div>
                             </div>
                         }
@@ -206,7 +212,10 @@
     </div>
 </div>
 
-<partial name="_DeleteConfirmDialog" />
+@if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+{
+    <partial name="_DeleteConfirmDialog" />
+}
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

@@ -15,44 +15,101 @@
 </div>
 <div class="modal-body py-4">
     <div class="row">
+        <!--Ventas-->
+        @if (Model.ModulosMenu.Contains(Guid.Parse("a0ca4d51-b518-4a65-b1e3-f0a03b1caff8")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="PaginaEnConstruccion" asp-controller="Home" class="text-decoration-none">
+                    @*<a asp-action="Index" asp-controller="Ventas" class="text-decoration-none">*@
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-shopping-cart display-4 text-success"></i>
+                            <h4 class="mt-4"><span class="text-success">@Model.Ventas</span> Ventas</h4>
+                            <p class="mb-3">Movimiento de ventas</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+
+        <!--Retiro de caja-->
+        @if (Model.ModulosMenu.Contains(Guid.Parse("aa3e3482-0ec5-40b8-8c48-7e567da135f6")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="PaginaEnConstruccion" asp-controller="Home" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-cash-register display-4 text-secondary"></i>
+                            <h4 class="mt-4">Retiro de caja</h4>
+                            <p class="mb-3">Retiro de efectivo parcial</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+
+        <!--Corte de caja-->
+        @if (Model.ModulosMenu.Contains(Guid.Parse("7b848778-36f0-4254-b2a1-b822c9ab87b3")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="PaginaEnConstruccion" asp-controller="Home" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-file-invoice-dollar display-4 text-primary"></i>
+                            <h4 class="mt-4">Corte de caja</h4>
+                            <p class="mb-3">Finaliza y reinicia las ventas del día</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
 
         <!--Entradas-->
-        <div class="btn-lam col-xl-4 col-md-6">
-            <a asp-action="Index" asp-controller="Entradas" class="text-decoration-none">
-                <div class="card mb-4 text-dark">
-                    <div class="card-body bg-card text-center py-5">
-                        <i class="fas fa-arrow-alt-circle-down display-4 text-info"></i>
-                        <h4 class="mt-4"><span class="text-info">@Model.Entradas</span> Entradas</h4>
-                        <p class="mb-3">Movimiento de Entradas</p>
+        @if (Model.ModulosMenu.Contains(Guid.Parse("b019ebf0-5a25-4cc3-bd72-34fda134e5c1")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="Index" asp-controller="Entradas" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-arrow-alt-circle-down display-4 text-info"></i>
+                            <h4 class="mt-4"><span class="text-info">@Model.Entradas</span> Entradas</h4>
+                            <p class="mb-3">Movimiento de entradas</p>
+                        </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
+        }
 
         <!--Salidas-->
-        <div class="btn-lam col-xl-4 col-md-6">
-            <a asp-action="Index" asp-controller="Salidas" class="text-decoration-none">
-                <div class="card mb-4 text-dark">
-                    <div class="card-body bg-card text-center py-5">
-                        <i class="fas fa-arrow-alt-circle-up display-4 text-base"></i>
-                        <h4 class="mt-4"><span class="text-base">@Model.Salidas</span> Salidas</h4>
-                        <p class="mb-3">Movimiento de salidas</p>
+        @if (Model.ModulosMenu.Contains(Guid.Parse("d6dc97d9-c3de-4920-a0b1-b63d7685bb6a")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="Index" asp-controller="Salidas" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-arrow-alt-circle-up display-4 text-base"></i>
+                            <h4 class="mt-4"><span class="text-base">@Model.Salidas</span> Salidas</h4>
+                            <p class="mb-3">Movimiento de salidas</p>
+                        </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
+        }
 
-        <!--Ventas-->
-        <div class="btn-lam col-xl-4 col-md-6">
-            <a asp-action="Index" asp-controller="Ventas" class="text-decoration-none">
-                <div class="card mb-4 text-dark">
-                    <div class="card-body bg-card text-center py-5">
-                        <i class="fas fa-shopping-cart display-4 text-success"></i>
-                        <h4 class="mt-4"><span class="text-success">@Model.Ventas</span> Ventas</h4>
-                        <p class="mb-3">Movimiento de ventas</p>
+        <!--Devoluciones-->
+        @if (Model.ModulosMenu.Contains(Guid.Parse("1d1048a7-44fe-44b5-abc8-cf0a4dfc0aff")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="PaginaEnConstruccion" asp-controller="Home" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-exchange-alt display-4 text-warning"></i>
+                            <h4 class="mt-4"><span class="text-warning">@Model.Devoluciones</span> Devoluciones</h4>
+                            <p class="mb-3">Devoluciones de productos</p>
+                        </div>
                     </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
+        }
     </div>
 </div>

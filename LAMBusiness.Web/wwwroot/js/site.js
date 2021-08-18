@@ -123,6 +123,10 @@ function positionTopScreen(e) {
     e.preventDefault();
 }
 
+function toast(message) {
+    $('#toastMessage')[0].innerHTML = message;
+    $('.toast').toast("show");
+}
 
 //cursor
 function positionCursorWithArrowKey(e) {
@@ -197,3 +201,24 @@ function multiplyCantByPriceWhenChangeValue(precio) {
         $('#Importe')[0].innerText = formatCurrency(importe);
     }
 }
+
+//expandir pantalla
+function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
+}
+
+//function launchFullScreen(element) {
+//    if (element.requestFullScreen) {
+//        element.requestFullScreen();
+//    } else if (element.mozRequestFullScreen) {
+//        element.mozRequestFullScreen();
+//    } else if (element.webkitRequestFullScreen) {
+//        element.webkitRequestFullScreen();
+//    }
+//}

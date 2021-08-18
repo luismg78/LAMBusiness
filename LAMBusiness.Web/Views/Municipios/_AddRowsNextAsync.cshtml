@@ -10,11 +10,14 @@
                 <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.Estados.EstadoDescripcion)</small>
             </div>
             <div class="border-bottom col-3 px-3 py-2 text-right">
-                <a asp-action="Edit" asp-route-id="@item.MunicipioID" class="text-decoration-none">
-                    <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
-                        <i class="fa fa-edit"></i>
-                    </div>
-                </a>
+                @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                {
+                    <a asp-action="Edit" asp-route-id="@item.MunicipioID" class="text-decoration-none">
+                        <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
+                            <i class="fa fa-edit"></i>
+                        </div>
+                    </a>
+                }
             </div>
         </div>
     }

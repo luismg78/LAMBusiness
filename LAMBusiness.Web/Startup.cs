@@ -7,7 +7,8 @@ namespace LAMBusiness.Web
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Data;
-    using LAMBusiness.Web.Helpers;
+    using Helpers;
+    using System;
 
     public class Startup
     {
@@ -24,6 +25,15 @@ namespace LAMBusiness.Web
             services.AddDbContext<DataContext>( config =>
             {
                 config.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            services.AddHttpContextAccessor();
+            
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(60);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
             });
 
             services.AddScoped<ICombosHelper, CombosHelper>();
@@ -53,6 +63,8 @@ namespace LAMBusiness.Web
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

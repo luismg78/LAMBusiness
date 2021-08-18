@@ -1,0 +1,61 @@
+﻿@model LAMBusiness.Web.Models.ViewModels.UsuarioViewModel
+
+@{
+    ViewData["Title"] = "Usuarios";
+}
+
+<form asp-action="Edit">
+    <div class="modal-content border-0 box-shadow">
+        <div class="modal-header pb-0">
+            <div>
+                <h3 class="modal-title" id="exampleModalLabel">Usuarios</h3>
+                <ul class="breadcrumb bg-transparent p-0 small">
+                    <li class="breadcrumb-item"><a asp-action="Contacto" asp-controller="Menu">Contactos</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Usuarios">Usuarios</a></li>
+                    <li class="breadcrumb-item active">Editar Registro</li>
+                </ul>
+            </div>
+            <a asp-action="Index" asp-controller="Usuarios" class="close"><span>&times;</span></a>
+        </div>
+        <div class="modal-body py-4">
+            <div class="row px-md-3">
+                <input asp-for="UsuarioID" type="hidden" />
+                <input asp-for="ColaboradorID" type="hidden" />
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="form-group">
+                        <label asp-for="FechaInicio" class="control-label"></label>
+                        <input asp-for="FechaInicio" class="form-control" autofocus />
+                        <span asp-validation-for="FechaInicio" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="form-group">
+                        <label asp-for="FechaTermino" class="control-label"></label>
+                        <input asp-for="FechaTermino" class="form-control" autofocus />
+                        <span asp-validation-for="FechaTermino" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <div class="form-group">
+                        <label asp-for="AdministradorID" class="control-label"></label>
+                        <select asp-for="AdministradorID" class="form-control" asp-items="Model.AdministradoresDDL"></select>
+                        <span asp-validation-for="AdministradorID" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Activo" class="control-label"></label>
+                        <input class="d-block" asp-for="Activo" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer justify-content-between">
+            <div class="px-md-3">
+                <input type="submit" value="Actualizar" class="btn btn-base" />
+                <a asp-action="Index" class="btn btn-outline-secondary">Regresar</a>
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        </div>
+    </div>
+</form>

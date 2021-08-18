@@ -7,32 +7,47 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
     using Data;
     using Helpers;
     using Models.ViewModels;
     using Shared.Catalogo;
     using Shared.Contacto;
 
-    public class ProveedoresController : Controller
+    public class ProveedoresController : GlobalController
     {
         private readonly DataContext _context;
         private readonly ICombosHelper _combosHelper;
         private readonly IConverterHelper _converterHelper;
         private readonly IGetHelper _getHelper;
+        private readonly IConfiguration _configuration;
+        private Guid moduloId = Guid.Parse("76BE358D-AA92-48E2-AB1A-5EE557441067");
 
         public ProveedoresController(DataContext context,
             ICombosHelper combosHelper,
             IConverterHelper converterHelper,
-            IGetHelper getHelper)
+            IGetHelper getHelper,
+            IConfiguration configuration)
         {
             _context = context;
             _combosHelper = combosHelper;
             _converterHelper = converterHelper;
             _getHelper = getHelper;
+            _configuration = configuration;
         }
 
         public async Task<IActionResult> Index()
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+            {
+                return RedirectToAction("Inicio", "Menu");
+            }
+
+            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
+
             var dataContext = _context.Proveedores
                 .Include(c => c.ProveedorContactos)
                 .Include(c => c.Municipios)
@@ -42,6 +57,16 @@
 
         public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return null; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+            {
+                return null;
+            }
+
+            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
+
             IQueryable<Proveedor> query = null;
             if (searchby != null && searchby != "")
             {
@@ -98,6 +123,16 @@
 
         public async Task<IActionResult> Details(Guid? id)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
+
             if (id == null)
             {
                 return NotFound();
@@ -118,6 +153,14 @@
 
         public async Task<IActionResult> Create()
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             var proveedorViewModel = new ProveedorViewModel()
             {
                 EstadosDDL = await _combosHelper.GetComboEstadosAsync(),
@@ -131,6 +174,14 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProveedorViewModel proveedorViewModel)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (ModelState.IsValid)
             {
                 var proveedor = await _converterHelper.ToProveedorAsync(proveedorViewModel, true);
@@ -155,6 +206,14 @@
 
         public async Task<IActionResult> Edit(Guid? id)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -177,6 +236,14 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, ProveedorViewModel proveedorViewModel)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (id != proveedorViewModel.ProveedorID)
             {
                 return NotFound();
@@ -211,6 +278,14 @@
 
         public async Task<IActionResult> Delete(Guid? id)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -235,6 +310,14 @@
 
         public async Task<IActionResult> AddMunicipios(short? id)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return null; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return null;
+            }
+
             if (id == null)
             {
                 return null;
@@ -259,6 +342,14 @@
 
         public async Task<IActionResult> AddContacto(Guid? id)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -277,6 +368,14 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddContacto(ProveedorContacto proveedorContacto)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             var proveedor = await _getHelper.GetProveedorByIdAsync(proveedorContacto.ProveedorID);
 
             if (ModelState.IsValid)
@@ -313,6 +412,14 @@
 
         public async Task<IActionResult> EditContacto(Guid? id)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -327,6 +434,14 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditContacto(ProveedorContacto proveedorContacto)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (ModelState.IsValid)
             {
                 var contacto = await _getHelper.GetContactoProveedorByIdAsync(proveedorContacto.ProveedorContactoID);
@@ -369,6 +484,14 @@
 
         public async Task<IActionResult> DeleteContacto(Guid? id)
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (id == null)
             {
                 return NotFound();

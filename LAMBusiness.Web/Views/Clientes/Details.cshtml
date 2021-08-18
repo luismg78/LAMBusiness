@@ -9,8 +9,8 @@
         <div>
             <h3 class="modal-title" id="exampleModalLabel">Clientes</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
-                <li class="breadcrumb-item">Contacto</li>
-                <li class="breadcrumb-item">Clientes</li>
+                <li class="breadcrumb-item"><a asp-action="Contacto" asp-controller="Menu">Contactos</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Clientes">Clientes</a></li>
                 <li class="breadcrumb-item active">Detalle</li>
             </ul>
         </div>
@@ -31,7 +31,10 @@
                             @Html.DisplayFor(model => model.Municipios.MunicipioDescripcion),
                             @Html.DisplayFor(model => model.Municipios.Estados.EstadoDescripcion).
                         </span>
-                        <a asp-action="Edit" asp-route-id="@Model.ClienteID" class="badge badge-base px-3 py-2">Editar</a>
+                        @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                        {
+                            <a asp-action="Edit" asp-route-id="@Model.ClienteID" class="badge badge-base px-3 py-2">Editar</a>
+                        }
                         <a asp-action="Index" class="badge badge-light border px-3 py-2">Regresar</a>
                     </div>
                 </div>
@@ -51,7 +54,9 @@
                                 <i class="fas fa-phone display-4 text-secondary"></i>
                                 <div class="ml-3">
                                     <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.Telefono)</div>
-                                    <h5>@Html.DisplayFor(model => model.Telefono)</h5>
+                                    <h5>
+                                        <a href="tel:@Html.DisplayFor(model => model.Telefono)">@Html.DisplayFor(model => model.Telefono)</a>
+                                    </h5>
                                 </div>
                             </div>
                         </div>
@@ -101,7 +106,10 @@
         </div>
         <div class="col">
             <div class="my-4">
-                <a asp-action="AddContacto" asp-controller="Clientes" asp-route-id="@Model.ClienteID" class="badge badge-info p-2 float-right"><i class="fas fa-plus"></i> Ingresar contacto</a>
+                @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                {
+                    <a asp-action="AddContacto" asp-controller="Clientes" asp-route-id="@Model.ClienteID" class="badge badge-info p-2 float-right"><i class="fas fa-plus"></i> Ingresar contacto</a>
+                }
                 @if (Model.ClienteContactos.Count > 0)
                 {
                     <p class="font-weight-bold text-base">Contactos</p>
@@ -119,21 +127,30 @@
                                 </p>
                                 @if (!string.IsNullOrEmpty(contacto.TelefonoMovilContacto))
                                 {
-                                    <small class="d-block text-muted"><i class="fas fa-mobile mr-2"></i>@contacto.TelefonoMovilContacto</small>
+                                    <small class="d-block text-muted">
+                                        <i class="fas fa-mobile mr-2"></i>
+                                        <a href="tel:@contacto.TelefonoMovilContacto">@contacto.TelefonoMovilContacto</a>
+                                    </small>
                                 }
-                                <small class="text-muted"><i class="fas fa-envelope mr-2"></i>@contacto.EmailContacto</small>
+                                <small class="text-muted">
+                                    <i class="fas fa-envelope mr-2"></i>
+                                    <a href="mailto:@contacto.EmailContacto">@contacto.EmailContacto</a>                                    
+                                </small>
                             </div>
                             <div class="col-2 text-right">
-                                <a asp-action="EditContacto" asp-route-id="@contacto.ClienteContactoID" class="d-block d-md-inline text-decoration-none">
-                                    <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar contacto">
-                                        <i class="fa fa-edit"></i>
-                                    </div>
-                                </a>
-                                <a href="#" data-id="@contacto.ClienteContactoID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
-                                    <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar contacto">
-                                        <i class="fa fa-trash"></i>
-                                    </div>
-                                </a>
+                                @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                                {
+                                    <a asp-action="EditContacto" asp-route-id="@contacto.ClienteContactoID" class="d-block d-md-inline text-decoration-none">
+                                        <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar contacto">
+                                            <i class="fa fa-edit"></i>
+                                        </div>
+                                    </a>
+                                    <a href="#" data-id="@contacto.ClienteContactoID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
+                                        <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar contacto">
+                                            <i class="fa fa-trash"></i>
+                                        </div>
+                                    </a>
+                                }
                             </div>
                         </div>
                     }

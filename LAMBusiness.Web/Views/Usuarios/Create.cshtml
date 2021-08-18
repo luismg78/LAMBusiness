@@ -1,0 +1,204 @@
+﻿@model LAMBusiness.Web.Models.ViewModels.UsuarioViewModel
+
+@{
+    ViewData["Title"] = "Usuarios";
+}
+
+<form asp-action="Create">
+    <div class="modal-content border-0 box-shadow">
+        <div class="modal-header pb-0">
+            <div>
+                <h3 class="modal-title" id="exampleModalLabel">Usuarios</h3>
+                <ul class="breadcrumb bg-transparent p-0 small">
+                    <li class="breadcrumb-item"><a asp-action="Contacto" asp-controller="Menu">Contactos</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Usuarios">Usuarios</a></li>
+                    <li class="breadcrumb-item active">Nuevo Registro</li>
+                </ul>
+            </div>
+            <a asp-action="Index" asp-controller="Usuarios" class="close"><span>&times;</span></a>
+        </div>
+        <div class="modal-body py-4">
+            <div class="row px-md-3">
+                <div class="col-12">
+                    <div id="ColaboradorSearch" class="form-group">
+                        <input asp-for="ColaboradorID" type="hidden" />
+                        <label asp-for="ColaboradorID" class="control-label"></label>
+                        <div class="input-group">
+                            <input id="ColaboradorSearchInput" type="search" class="form-control"
+                                   data-toggle="focus"
+                                   data-target=".list-registers"
+                                   placeholder="Ingrese nombre, primer o segundo apellido del colaborador..."
+                                   autofocus autocomplete="off"
+                                   onkeyup="positionCursorWithArrowKey(event);"
+                                   onkeypress="getColaborador(event);" />
+                            <div class="input-group-append">
+                                <div class="input-group-append">
+                                    <button id="ColaboradorSearchButton" class="btn btn-light border"
+                                            type="button" onclick="search(event);">
+                                        <span id="SpinList" class="d-flex align-items-center">
+                                            <i class="fa fa-search"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <span asp-validation-for="ColaboradorID" class="text-danger"></span>
+                        <div id="dRow" class="mb-4 mt-1 list-registers" data-charging="0" data-rows-next="1">
+                        </div>
+                    </div>
+                </div>
+                <div id="ColaboradorDatos" class="col-12 py-2 d-none">
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="font-weight-bold text-base">Datos del colaborador</h6>
+                            <a href="#" onclick="deleteButtonColaborador(event);"><span>&times;</span></a>
+                        </div>
+                        <hr class="my-2" />
+                        <small id="ColaboradorNombre" class="d-block"></small>
+                        <hr />
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="form-group">
+                        <label asp-for="FechaInicio" class="control-label"></label>
+                        <input asp-for="FechaInicio" class="form-control" autofocus />
+                        <span asp-validation-for="FechaInicio" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="form-group">
+                        <label asp-for="FechaTermino" class="control-label"></label>
+                        <input asp-for="FechaTermino" class="form-control" autofocus />
+                        <span asp-validation-for="FechaTermino" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <div class="form-group">
+                        <label asp-for="AdministradorID" class="control-label"></label>
+                        <select asp-for="AdministradorID" class="form-control" asp-items="Model.AdministradoresDDL"></select>
+                        <span asp-validation-for="AdministradorID" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Activo" class="control-label"></label>
+                        <input class="d-block" asp-for="Activo" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer justify-content-between">
+            <div class="px-md-3">
+                <input type="submit" value="Guardar" class="btn btn-base" />
+                <a asp-action="Index" class="btn btn-outline-secondary">Regresar</a>
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script>
+    function addColaborador(e) {
+        e.preventDefault();
+        getColaboradorByCURP(e.currentTarget.dataset.search);
+    }
+
+    function addRowsNext(skip, inicio = false) {
+        addProcessWithSpinnerInList('SpinList', 'fa-search');
+        $('#dRow').attr('data-charging', "1");
+        var searchBy = $('#ColaboradorSearchInput')[0] === undefined ? "" : $('#ColaboradorSearchInput').val();
+        if (searchBy === '') {
+            $('#dRow').attr('data-rows-next', "0");
+            $('#dRow').attr('data-charging', "0");
+            removeProcessWithSpinnerInList('SpinList', 'fa-search');
+            return false;
+        }
+        $.ajax({
+            url: '@Url.Action("GetColaboradores", "Usuarios")',
+            method: 'POST',
+            datatype: 'text',
+            data: {
+                pattern: searchBy,
+                skip: skip
+            },
+            success: function (r) {
+                if (inicio) { $('#dRow').empty(); }
+                if (r !== null && r.trim() !== '') {
+                    $('#dRow').append(r);
+                    $('#dRow').slideDown();
+                    $('#ColaboradorSearchInput').focus();
+                } else {
+                    toast('No se encontró información con ese patrón de búsqueda.');
+                    $('#dRow').attr('data-rows-next', "0");
+                }
+                $('#dRow').attr('data-charging', "0");
+                removeProcessWithSpinnerInList('SpinList', 'fa-search');
+            },
+            error: function (r) {
+                $('#dRow').attr('data-charging', "0");
+                removeProcessWithSpinnerInList('SpinList', 'fa-search');
+            },
+            cache: false
+        });
+    }
+
+    function deleteButtonColaborador(e) {
+        e.preventDefault();
+        $('#ColaboradorID').val('');
+        $('#ColaboradorNombre')[0].innerText = '';
+        $('#ColaboradorDatos').removeClass('d-block').addClass('d-none');
+        $('#ColaboradorSearch').removeClass('d-none').addClass('d-block');
+        $('#ColaboradorsLista > div').remove();
+        $('#ColaboradorSearchInput').val('');
+        $('#ColaboradorSearchInput').focus();
+    }
+
+    function getColaborador(e) {
+        if (e.keyCode === 13) {
+            e.preventDefault();
+            getColaboradorByCURP(e.currentTarget.value);
+        }
+    }
+
+    function getColaboradorByCURP(curp) {
+        if (curp !== '') {
+            addProcessWithSpinnerInList('SpinList', 'fa-search');
+            $.ajax({
+                url: '@Url.Action("GetColaborador", "Usuarios")',
+                method: 'POST',
+                datatype: 'text',
+                data: { curp: curp },
+                success: function (r) {
+                    if (!r.error) {
+                        $('#ColaboradorDatos').removeClass('d-none').addClass('d-block');
+                        $('#ColaboradorID').val(r.colaboradorID);
+                        $('#ColaboradorNombre')[0].innerText = r.primerApellido + ' ' + r.segundoApellido + ' ' + r.nombre;
+                        $('#ColaboradorSearch').removeClass('d-block').addClass('d-none');
+                        $('#dRow > div').remove();
+                        $('#Activo').focus();
+                    } else {
+                        alert(r.message);
+                    }
+                    removeProcessWithSpinnerInList('SpinList', 'fa-search');
+                },
+                error: function (r) {
+                    removeProcessWithSpinnerInList('SpinList', 'fa-search');
+                },
+                cache: false
+            });
+        }
+    }
+
+    function search(e) {
+        e.preventDefault();
+        if ($('#ColaboradorSearchInput').attr('data-toggle')) {
+            if ($('#ColaboradorSearchInput').val() !== '') {
+                skip = 0;
+                addRowsNext(skip, true);
+            }
+        }
+    }
+</script>
+}

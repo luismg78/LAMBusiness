@@ -1,0 +1,126 @@
+﻿@model LAMBusiness.Web.Models.ViewModels.UsuarioDetailsViewModelUsuario
+
+@{
+    ViewData["Title"] = "Permisos";
+}
+
+<form asp-action="EditPermissions">
+    <div class="modal-content border-0 box-shadow">
+        <div class="modal-header pb-0">
+            <div>
+                <h3 class="modal-title" id="exampleModalLabel">Permisos a módulos</h3>
+                <ul class="breadcrumb bg-transparent p-0 small">
+                    <li class="breadcrumb-item"><a asp-action="Contacto" asp-controller="Menu">Contactos</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Usuarios">Usuarios</a></li>
+                    <li class="breadcrumb-item">
+                        <a asp-action="Details" asp-controller="Usuarios" asp-route-id="@Model.UsuarioID" class="text-capitalize">
+                            @Model.Colaborador.Nombre.Trim().ToLower()
+                            @Model.Colaborador.PrimerApellido.Trim().ToLower()
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">Permisos</li>
+                </ul>
+            </div>
+            <a asp-action="Details" asp-controller="Usuarios" class="close"><span>&times;</span></a>
+        </div>
+        <div class="modal-body py-4">
+            @Html.HiddenFor(model => model.UsuarioID)
+            <div class="row px-md-3">
+                @if (Model.UsuarioModulos != null)
+                {
+                    int cont = 0;
+                    <div class="list-group col-12">
+                        <div class="list-group-item list-group-item-light font-weight-bold text-base">
+                            <div class="row no-gutters">
+                                <div class="col-12 col-md-6">Módulo</div>
+                                <div class="col-2 d-none d-md-block">
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <input type="checkbox" class="checkbox-select" onchange="seleccionarLectura(event);" />
+                                        <span class="ml-2">Lectura</span>
+                                    </div>
+                                </div>
+                                <div class="col-2 d-none d-md-block">
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <input type="checkbox" class="checkbox-select" onchange="seleccionarEscribir(event);" />
+                                        <span class="ml-2">Escritura</span>
+                                    </div>
+                                </div>
+                                <div class="col-2 d-none d-md-block">
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <input type="checkbox" class="checkbox-select" onchange="seleccionarImprimir(event);" />
+                                        <span class="ml-2">Imprimir</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @foreach (var item in Model.UsuarioModulos)
+                        {
+                            <div class="list-group-item list-group-item-action">
+                                <div>
+                                    @Html.HiddenFor(model => model.UsuarioModulos[cont].UsuarioModuloID)
+                                    @Html.HiddenFor(model => model.UsuarioModulos[cont].ModuloID)
+                                    @Html.HiddenFor(model => model.UsuarioModulos[cont].Modulo.Descripcion)
+                                </div>
+                                <div class="row no-gutters">
+                                    <div class="col-12 col-md-6 mb-2 mb-md-0">@item.Modulo.Descripcion</div>
+                                    <div class="col-12 col-md-2 text-md-center">
+                                        <div class="d-flex d-md-block mb-2 mb-md-0">
+                                            @Html.CheckBoxFor(model => model.UsuarioModulos[cont].PermisoLectura, new { @class = "check-leer" })
+                                            <span class="d-md-none ml-2 text-muted">PERMISO DE LECTURA</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-2 text-md-center">
+                                        <div class="d-flex d-md-block mb-2 mb-md-0">
+                                            @Html.CheckBoxFor(model => model.UsuarioModulos[cont].PermisoEscritura, new { @class = "check-escribir" })
+                                            <span class="d-md-none ml-2 text-muted">PERMISO DE ESCRITURA</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-2 text-md-center">
+                                        <div class="d-flex d-md-block mb-2 mb-md-0">
+                                            @Html.CheckBoxFor(model => model.UsuarioModulos[cont].PermisoImprimir, new { @class = "check-imprimir" })
+                                            <span class="d-md-none ml-2 text-muted">PERMISO DE IMPRESIÓN</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            cont++;
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="modal-footer justify-content-between">
+            <div class="px-md-3">
+                <input type="submit" value="Guardar" class="btn btn-base" />
+                <a asp-action="Details" asp-route-id="@Model.UsuarioID" class="btn btn-outline-secondary">Regresar</a>
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        </div>
+    </div>
+</form>
+
+@section scripts{
+    <script>
+        function seleccionarLectura(e) {
+            e.preventDefault();
+            var check = e.currentTarget.checked;
+            $('div > .check-leer').each(function () {
+                $(this).prop('checked', check);
+            });
+        }
+        function seleccionarEscribir(e) {
+            e.preventDefault();
+            var check = e.currentTarget.checked;
+            $('div > .check-escribir').each(function () {
+                $(this).prop('checked', check);
+            });
+        }
+        function seleccionarImprimir(e) {
+            e.preventDefault();
+            var check = e.currentTarget.checked;
+            $('div > .check-imprimir').each(function () {
+                $(this).prop('checked', check);
+            });
+        }
+    </script>
+}

@@ -9,9 +9,9 @@
         <div>
             <h3 class="modal-title" id="exampleModalLabel">Géneros</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
-                <li class="breadcrumb-item">Catálogo</li>
-                <li class="breadcrumb-item">Géneros</li>
-                <li class="breadcrumb-item active">@Model.Count() Registro(s)</li>
+                <li class="breadcrumb-item"><a asp-action="Catalogo" asp-controller="Menu">Catálogos</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Generos">Géneros</a></li>
+                <li class="breadcrumb-item active text-info">@Model.Count() Registro(s)</li>
             </ul>
         </div>
         <a asp-action="Catalogo" asp-controller="Menu" class="close"><span>&times;</span></a>
@@ -31,11 +31,14 @@
                             <span class="text-dark">@Html.DisplayFor(modelItem => item.GeneroDescripcion)</span>
                         </div>
                         <div class="border-bottom col-3 px-3 py-2 text-right">
-                            <a asp-action="Edit" asp-route-id="@item.GeneroID" class="text-decoration-none">
-                                <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
-                                    <i class="fa fa-edit"></i>
-                                </div>
-                            </a>
+                            @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.GeneroID" class="text-decoration-none">
+                                    <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
+                                        <i class="fa fa-edit"></i>
+                                    </div>
+                                </a>
+                            }
                         </div>
                     </div>
                 }

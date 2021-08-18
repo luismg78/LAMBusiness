@@ -1,12 +1,10 @@
 ﻿namespace LAMBusiness.Shared.Movimiento
 {
-    using LAMBusiness.Shared.Contacto;
-    using Newtonsoft.Json;
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Text;
+    using Newtonsoft.Json;
+    using Contacto;
 
     public class Entrada
     {

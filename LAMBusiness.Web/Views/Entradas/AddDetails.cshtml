@@ -10,8 +10,9 @@
             <div>
                 <h3 class="modal-title" id="exampleModalLabel">Detalle de Entradas</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
-                    <li class="breadcrumb-item">Movimientos</li>
-                    <li class="breadcrumb-item">Detalle de Entradas</li>
+                    <li class="breadcrumb-item"><a asp-action="Movimiento" asp-controller="Menu">Movimientos</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Entradas">Entradas</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Details" asp-controller="Entradas" asp-route-id="@Model.EntradaID">Detalle de Entrada</a></li>
                     <li class="breadcrumb-item active">Nuevo Registro</li>
                 </ul>
             </div>
@@ -230,6 +231,7 @@
     function addRowsNextAlmacen(skip, inicio = false) {
         addProcessWithSpinnerInList('SpinListAlmacen', 'fa-search');
         $('#dRowAlmacen').attr('data-charging', "1");
+        $('[data-valmsg-for = "AlmacenID"]')[0].textContent = '';
         var searchBy = $('#AlmacenSearchInput')[0] === undefined ? "" : $('#AlmacenSearchInput').val();
         if (searchBy === '') {
             $('#dRowAlmacen').attr('data-rows-next', "0");
@@ -268,6 +270,7 @@
     function addRowsNext(skip, inicio = false) {
         addProcessWithSpinnerInList('SpinList', 'fa-search');
         $('#dRow').attr('data-charging', "1");
+        $('[data-valmsg-for = "ProductoID"]')[0].textContent = '';
         var searchBy = $('#ProductoSearchInput')[0] === undefined ? "" : $('#ProductoSearchInput').val();
         if (searchBy === '') {
             $('#dRow').attr('data-rows-next', "0");
@@ -383,6 +386,7 @@
     function getProductoByCode(code) {
         if (code !== '') {
             addProcessWithSpinnerInList('SpinList', 'fa-search');
+            $('[data-valmsg-for = "ProductoID"]')[0].textContent = '';
             $.ajax({
                 url: '@Url.Action("GetProducto", "Entradas")',
                 method: 'POST',

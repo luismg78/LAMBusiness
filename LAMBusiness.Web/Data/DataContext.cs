@@ -3,7 +3,7 @@
     using System.Linq;
     using Microsoft.EntityFrameworkCore;
     using Data.Entities;
-    using Models.Entities;
+    using Shared.Aplicacion;
     using Shared.Catalogo;
     using Shared.Contacto;
     using Shared.Movimiento;
@@ -14,7 +14,12 @@
         {
         }
 
+        #region Aplicación
+        public DbSet<Modulo> Modulos { get; set; }
+        public DbSet<Sesion> Sesiones { get; set; }
+        #endregion
         #region Catálogo
+        public DbSet<Administrador> Administradores { get; set; }
         public DbSet<Almacen> Almacenes { get; set; }
         public DbSet<Estado> Estados { get; set; }
         public DbSet<EstadoCivil> EstadosCiviles { get; set; }
@@ -34,14 +39,18 @@
         public DbSet<Colaborador> Colaboradores { get; set; }
         public DbSet<Proveedor> Proveedores { get; set; }
         public DbSet<ProveedorContacto> ProveedorContactos { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<UsuarioModulo> UsuariosModulos { get; set; }
 
         #endregion
         #region Movimiento
         public DbSet<Entrada> Entradas { get; set; }
         public DbSet<EntradaDetalle> EntradasDetalle { get; set; }
         public DbSet<Existencia> Existencias { get; set; }
+        public DbSet<Salida> Salidas { get; set; }
+        public DbSet<SalidaDetalle> SalidasDetalle { get; set; }
+        public DbSet<SalidaTipo> SalidasTipo { get; set; }
         #endregion
-        public DbSet<Modulo> Modulos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

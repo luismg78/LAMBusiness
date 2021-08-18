@@ -1,0 +1,65 @@
+﻿@model LAMBusiness.Web.Models.ViewModels.SalidaViewModel
+
+@{
+    ViewData["Title"] = "Salidas";
+}
+
+<form asp-action="Edit">
+    <div class="modal-content border-0 box-shadow box-responsive mx-auto">
+        <div class="modal-header pb-0">
+            <div>
+                <h3 class="modal-title" id="exampleModalLabel">Salidas</h3>
+                <ul class="breadcrumb bg-transparent p-0 small">
+                    <li class="breadcrumb-item"><a asp-action="Movimiento" asp-controller="Menu">Movimientos</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Salidas">Salidas</a></li>
+                    <li class="breadcrumb-item active">Editar Registro</li>
+                </ul>
+            </div>
+            <a asp-action="Index" asp-controller="Salidas" class="close"><span>&times;</span></a>
+        </div>
+        <div class="modal-body py-4">
+            <input type="hidden" asp-for="SalidaID" />
+            <div class="row px-md-3">
+                <!-- Tipo de salida -->
+                <div class="col-12">
+                    <div class="form-group">
+                        <label asp-for="SalidaTipoID" class="control-label"></label>
+                        <select asp-for="SalidaTipoID" asp-items="@Model.SalidaTipoDDL" class="form-control" autofocus></select>
+                        <span asp-validation-for="SalidaTipoID" class="text-danger"></span>
+                    </div>
+                </div>
+                <!-- Folio -->
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Folio" class="control-label"></label>
+                        <input asp-for="Folio" class="form-control" autofocus />
+                        <span asp-validation-for="Folio" class="text-danger"></span>
+                    </div>
+                </div>
+                <!-- Fecha -->
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Fecha" class="control-label"></label>
+                        <input asp-for="Fecha" class="form-control" max="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+                        <span asp-validation-for="Fecha" class="text-danger"></span>
+                    </div>
+                </div>
+                <!-- Observaciones -->
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label asp-for="Observaciones" class="control-label"></label>
+                        <textarea asp-for="Observaciones" class="form-control"></textarea>
+                        <span asp-validation-for="Observaciones" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer justify-content-between">
+            <div class="px-md-3">
+                <input type="submit" value="Guardar" class="btn btn-base" />
+                <a asp-action="Index" class="btn btn-outline-secondary">Regresar</a>
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        </div>
+    </div>
+</form>

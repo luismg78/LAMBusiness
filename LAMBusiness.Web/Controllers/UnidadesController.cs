@@ -1,26 +1,37 @@
 ﻿namespace LAMBusiness.Web.Controllers
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.EntityFrameworkCore;
-    using LAMBusiness.Shared.Catalogo;
-    using LAMBusiness.Web.Data;
+    using Microsoft.Extensions.Configuration;
+    using Data;
+    using Helpers;
 
-    public class UnidadesController : Controller
+    public class UnidadesController : GlobalController
     {
         private readonly DataContext _context;
+        private readonly IConfiguration _configuration;
+        private readonly IGetHelper _getHelper;
+        private Guid moduloId = Guid.Parse("A01ED3A4-101E-4D64-B57E-DDB8F94F8680");
 
-        public UnidadesController(DataContext context)
+        public UnidadesController(DataContext context, IConfiguration configuration, IGetHelper getHelper)
         {
             _context = context;
+            _configuration = configuration;
+            _getHelper = getHelper;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+            {
+                return RedirectToAction("Inicio", "Menu");
+            }
+
             var unidad = _context.Unidades
                 .Include(u => u.Productos);
 

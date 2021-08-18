@@ -9,9 +9,9 @@
         <div>
             <h3 class="modal-title" id="exampleModalLabel">Unidades</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
-                <li class="breadcrumb-item">Catálogo</li>
-                <li class="breadcrumb-item">Unidades</li>
-                <li class="breadcrumb-item active">@Model.Count() Registro(s)</li>
+                <li class="breadcrumb-item"><a asp-action="Catalogo" asp-controller="Menu">Catálogos</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Unidades">Unidades</a></li>
+                <li class="breadcrumb-item active text-base">@Model.Count() Registro(s)</li>
             </ul>
         </div>
         <a asp-action="Catalogo" asp-controller="Menu" class="close"><span>&times;</span></a>

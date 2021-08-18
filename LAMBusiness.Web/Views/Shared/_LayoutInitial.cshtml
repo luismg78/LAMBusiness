@@ -10,6 +10,13 @@
     <link href="~/css/fontAwesome.css" rel="stylesheet" />
 </head>
 <body>
+    @{
+        string menu = "";
+        if (TempData.ContainsKey("menu") == true)
+        {
+            menu = TempData["menu"].ToString().ToLower();
+        }
+    }
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
@@ -18,16 +25,19 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                @*<div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+                            <a class="nav-link @if (menu == "home") {<text>font-weight-bold text-base</text>} else {<text>text-dark</text>} "
+                               asp-area="" asp-controller="Menu" asp-action="Inicio">Inicio</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Menu" asp-action="Catalogo">Privacy</a>
-                        </li>
+                    </ul>
+                </div>*@
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <ul class="navbar-nav flex-grow-1 justify-content-end">
                         <li class="nav-item float-right">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="SignIn">Sign In</a>
+                            <a class="nav-link font-weight-bold text-uppercase @if (menu == "signin") {<text>text-base</text>} else {<text>text-primary</text>} "
+                               asp-area="" asp-controller="Menu" asp-action="Inicio">Inicio de Sesión</a>
                         </li>
                     </ul>
                 </div>
@@ -43,11 +53,11 @@
     <!--loader-->
     <div id="loader" class="d-none">
         <input type="text" id="inputDisabled" class="d-none" />
-    </div>    
+    </div>
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            LAMBusiness &copy; 2020 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            LAMBusiness &copy; 2020 - <a asp-area="" asp-controller="Menu" asp-action="inicio">Inicio de Sesión</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -1,0 +1,81 @@
+﻿@model LAMBusiness.Shared.Aplicacion.Token
+
+@{
+    string menu = "";
+    if (TempData.ContainsKey("menu") == true)
+    {
+        menu = TempData["menu"].ToString().ToLower();
+    }
+}
+
+<div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+    <ul class="navbar-nav flex-grow-1">
+        <!-- menú inicio -->
+        <li class="nav-item">
+            <a class="nav-link @if (menu == "home") {<text>font-weight-bold text-base</text>} else {<text>text-dark</text>} "
+               asp-area="" asp-controller="Menu" asp-action="Inicio">
+                <div class="d-md-none btn-icon rounded-circle d-inline-block">
+                    <i class="fa fa-store"></i>
+                </div>
+                <span class="ml-2 ml-md-0">Inicio</span>
+            </a>
+        </li>
+
+        @if (Model != null)
+        {
+            <!-- menú catálogo -->
+            @if (Model.Administrador == "SA" || Model.Administrador == "GA" ||
+                 Model.UsuariosModulos.Contains(Guid.Parse("50B65B8C-1CBA-47E4-8327-5F1A34375394")))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @if (menu == "catalogo")
+                {<text>font-weight-bold text-base</text>}
+                else
+                {<text>text-dark</text>} "
+                       asp-area="" asp-controller="Menu" asp-action="Catalogo">
+                        <div class="d-md-none btn-icon rounded-circle d-inline-block">
+                            <i class="fa fa-th"></i>
+                        </div>
+                        <span class="ml-2 ml-md-0">Catálogos</span>
+                    </a>
+                </li>
+            }
+
+            <!-- menú contacto -->
+            @if (Model.Administrador == "SA" || Model.Administrador == "GA" ||
+                 Model.UsuariosModulos.Contains(Guid.Parse("25C76712-5552-44C5-93A1-298590F337FA")))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @if (menu == "contacto")
+                {<text>font-weight-bold text-base</text>}
+                else
+                {<text>text-dark</text>} "
+                       asp-area="" asp-controller="Menu" asp-action="Contacto">
+                        <div class="d-md-none btn-icon rounded-circle d-inline-block">
+                            <i class="fa fa-users"></i>
+                        </div>
+                        <span class="ml-2 ml-md-0">Contactos</span>
+                    </a>
+                </li>
+            }
+
+            <!-- menú movimiento-->
+            @if (Model.Administrador == "SA" || Model.Administrador == "GA" ||
+                 Model.UsuariosModulos.Contains(Guid.Parse("4BA5D993-8BEB-48AF-A45F-4813825A658F")))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @if (menu == "movimiento")
+                {<text>font-weight-bold text-base</text>}
+                else
+                {<text>text-dark</text>} "
+                       asp-area="" asp-controller="Menu" asp-action="Movimiento">
+                        <div class="d-md-none btn-icon rounded-circle d-inline-block">
+                            <i class="fa fa-shopping-cart"></i>
+                        </div>
+                        <span class="ml-2 ml-md-0">Movimientos</span>
+                    </a>
+                </li>
+            }
+        }
+    </ul>
+</div>

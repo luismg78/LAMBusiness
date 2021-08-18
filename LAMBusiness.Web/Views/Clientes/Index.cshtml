@@ -9,9 +9,9 @@
         <div>
             <h3 class="modal-title" id="exampleModalLabel">Clientes</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
-                <li class="breadcrumb-item">Catálogo</li>
-                <li class="breadcrumb-item">Clientes</li>
-                <li class="breadcrumb-item active">@Model.Count() Registro(s)</li>
+                <li class="breadcrumb-item"><a asp-action="Contacto" asp-controller="Menu">Contactos</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Clientes">Clientes</a></li>
+                <li class="breadcrumb-item active text-base">@Model.Count() Registro(s)</li>
             </ul>
         </div>
         <a asp-action="Contacto" asp-controller="Menu" class="close"><span>&times;</span></a>
@@ -27,7 +27,10 @@
                 </div>
             </div>
             <div class="col-3 col-md-4 text-right">
-                <p><a asp-action="Create" class="btn btn-base"><i class="fas fa-plus"></i><span class="d-none d-md-inline-block ml-2">Nuevo Registro</span></a></p>
+                @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                {
+                    <p><a asp-action="Create" class="btn btn-base"><i class="fas fa-plus"></i><span class="d-none d-md-inline-block ml-2">Nuevo Registro</span></a></p>
+                }
             </div>
         </div>
         <div>
@@ -39,56 +42,62 @@
             <div class="row px-md-3" id="dRows" data-charging="0" data-rows-next="1">
                 @foreach (var item in Model.Take(50))
                 {
-                <div class="col-12 border-bottom">
-                    <div class="row">
-                        <div class="col-md-6 p-3">
-                            <span class="font-weight-bold text-dark">@Html.DisplayFor(modelItem => item.Nombre)</span>
-                            <div class="d-block">
-                                <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.RFC)</small>
-                                <small class="d-block text-muted">
-                                    @Html.DisplayFor(modelItem => item.Domicilio),
-                                    @Html.DisplayFor(modelItem => item.Colonia)&nbsp;
-                                    @Html.DisplayFor(modelItem => item.CodigoPostal),
-                                    @Html.DisplayFor(modelItem => item.Municipios.MunicipioDescripcion),
-                                    @Html.DisplayFor(modelItem => item.Municipios.Estados.EstadoDescripcion)
-                                </small>
-                                <small class="d-block text-muted">Contactos: @item.ClienteContactos.Count</small>
-                                @if (!item.Activo)
-                                {
-                                    <small class="badge border border-danger text-danger font-weight-normal">No Disponible</small>
-                                }
+                    <div class="col-12 border-bottom">
+                        <div class="row">
+                            <div class="col-md-6 p-3">
+                                <span class="font-weight-bold text-dark">@Html.DisplayFor(modelItem => item.Nombre)</span>
+                                <div class="d-block">
+                                    <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.RFC)</small>
+                                    <small class="d-block text-muted">
+                                        @Html.DisplayFor(modelItem => item.Domicilio),
+                                        @Html.DisplayFor(modelItem => item.Colonia)&nbsp;
+                                        @Html.DisplayFor(modelItem => item.CodigoPostal),
+                                        @Html.DisplayFor(modelItem => item.Municipios.MunicipioDescripcion),
+                                        @Html.DisplayFor(modelItem => item.Municipios.Estados.EstadoDescripcion)
+                                    </small>
+                                    <small class="d-block text-muted">Contactos: @item.ClienteContactos.Count</small>
+                                    @if (!item.Activo)
+                                    {
+                                        <small class="badge border border-danger text-danger font-weight-normal">No Disponible</small>
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-md-6 px-3 py-2 text-right">
+                                <div>
+                                    @if (!string.IsNullOrEmpty(item.Telefono))
+                                    {
+                                        <small class="d-block font-weight-normal text-muted text-left text-md-right">
+                                            <i class="fa fa-phone mr-2"></i>
+                                            <a href="tel:@Html.DisplayFor(modelItem => item.Telefono)">@Html.DisplayFor(modelItem => item.Telefono)</a>
+                                        </small>
+                                    }
+                                    <small class="d-block font-weight-normal text-muted text-left text-md-right"><i class="fa fa-envelope mr-2"></i>@Html.DisplayFor(modelItem => item.Email)</small>
+                                    <small class="d-block font-weight-normal text-muted text-left text-md-right" title="Fecha de registro"><i class="fa fa-calendar mr-2"></i>@item.FechaRegistro.ToString("dd MMMM, yyyy")</small>
+                                </div>
+                                <div class="mt-md-2">
+                                    <a asp-action="Details" asp-route-id="@item.ClienteID" class="d-inline-block text-decoration-none">
+                                        <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="ver detalle">
+                                            <i class="fa fa-file-alt"></i>
+                                        </div>
+                                    </a>
+                                    @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@item.ClienteID" class="d-inline-block text-decoration-none">
+                                            <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
+                                                <i class="fa fa-edit"></i>
+                                            </div>
+                                        </a>
+                                        <a href="#" data-id="@item.ClienteID" class="d-inline-block deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
+                                            <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
+                                                <i class="fa fa-trash"></i>
+                                            </div>
+                                        </a>
+                                    }
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-6 px-3 py-2 text-right">
-                            <div>
-                                @if (!string.IsNullOrEmpty(item.Telefono))
-                                {
-                                    <small class="d-block font-weight-normal text-muted text-left text-md-right"><i class="fa fa-phone mr-2"></i>@Html.DisplayFor(modelItem => item.Telefono)</small>
-                                }
-                                <small class="d-block font-weight-normal text-muted text-left text-md-right"><i class="fa fa-envelope mr-2"></i>@Html.DisplayFor(modelItem => item.Email)</small>
-                                <small class="d-block font-weight-normal text-muted text-left text-md-right" title="Fecha de registro"><i class="fa fa-calendar mr-2"></i>@item.FechaRegistro.ToString("dd MMMM, yyyy")</small>
-                            </div>
-                            <div class="mt-md-2">
-                                <a asp-action="Details" asp-route-id="@item.ClienteID" class="d-inline-block text-decoration-none">
-                                    <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="ver detalle">
-                                        <i class="fa fa-file-alt"></i>
-                                    </div>
-                                </a>
-                                <a asp-action="Edit" asp-route-id="@item.ClienteID" class="d-inline-block text-decoration-none">
-                                    <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
-                                        <i class="fa fa-edit"></i>
-                                    </div>
-                                </a>
-                                <a href="#" data-id="@item.ClienteID" class="d-inline-block deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
-                                    <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
-                                        <i class="fa fa-trash"></i>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
 
-                </div>
+                    </div>
                 }
             </div>
         </div>

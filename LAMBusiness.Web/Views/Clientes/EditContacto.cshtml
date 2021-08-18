@@ -10,9 +10,9 @@
             <div>
                 <h3 class="modal-title" id="exampleModalLabel">Contacto</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
-                    <li class="breadcrumb-item">Cliente</li>
-                    <li class="breadcrumb-item">@Model.Cliente.RFC</li>
-                    <li class="breadcrumb-item text-base">@Model.Cliente.Nombre</li>
+                    <li class="breadcrumb-item"><a asp-action="Contacto" asp-controller="Menu">Contactos</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Clientes">Clientes</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Details" asp-controller="Clientes" asp-route-id="@Model.ClienteID">@Model.Cliente.RFC</a></li>
                     <li class="breadcrumb-item active">Editar Registro</li>
                 </ul>
             </div>

@@ -10,8 +10,9 @@
             <div>
                 <h3 class="modal-title" id="exampleModalLabel">Detalle de Entradas</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
-                    <li class="breadcrumb-item">Movimientos</li>
-                    <li class="breadcrumb-item">Detalle de Entradas</li>
+                    <li class="breadcrumb-item"><a asp-action="Movimiento" asp-controller="Menu">Movimientos</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Entradas">Entradas</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Details" asp-controller="Entradas" asp-route-id="@Model.EntradaID" >Detalle de Entrada</a></li>
                     <li class="breadcrumb-item active">Editar Registro</li>
                 </ul>
             </div>
