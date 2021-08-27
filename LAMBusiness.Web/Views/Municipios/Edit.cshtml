@@ -6,7 +6,7 @@
 
 <form asp-action="Edit">
     <div class="modal-content border-0 box-shadow box-responsive m-auto">
-        <div class="modal-header pb-0">
+        <div class="modal-header pb-0 align-items-baseline">
             <div>
                 <h3 class="modal-title" id="exampleModalLabel">Municipios</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
@@ -15,7 +15,7 @@
                     <li class="breadcrumb-item active">Editar Registro</li>
                 </ul>
             </div>
-            <a asp-action="Index" asp-controller="Municipios" class="close"><span>&times;</span></a>
+            <a asp-action="Index" asp-controller="Municipios" class="btn-close me-md-1" aria-label="Close"></a>
         </div>
         <div class="modal-body py-4">
             <div class="row px-md-3">
@@ -48,7 +48,7 @@
 
 @*<form asp-action="Create">
         <div class="modal-content border-0 box-shadow box-responsive m-auto">
-            <div class="modal-header pb-0">
+            <div class="modal-header pb-0 align-items-baseline">
                 <div>
                     <h3 class="modal-title" id="exampleModalLabel">Municipios</h3>
                     <ul class="breadcrumb bg-transparent p-0 small">
@@ -57,7 +57,7 @@
                         <li class="breadcrumb-item active">Nuevo Registro</li>
                     </ul>
                 </div>
-                <a asp-action="Index" asp-controller="Municipios" class="close"><span>&times;</span></a>
+                <a asp-action="Index" asp-controller="Municipios" class="btn-close me-md-1" aria-label="Close"></a>
             </div>
             <div class="modal-body py-4">
                 <div class="row">

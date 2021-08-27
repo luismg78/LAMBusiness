@@ -1,18 +1,20 @@
 ﻿namespace LAMBusiness.Web.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
+    using Data;
+    using Helpers;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
-    using Data;
-    using Helpers;
     using Models.ViewModels;
     using Shared.Catalogo;
     using Shared.Movimiento;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public class ProductosController : GlobalController
     {
@@ -21,19 +23,23 @@
         private readonly IConverterHelper _converterHelper;
         private readonly IGetHelper _getHelper;
         private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
         private Guid moduloId = Guid.Parse("A549419C-89BD-49CE-BA93-4D73AFBA37CE");
 
         public ProductosController(DataContext context, 
             ICombosHelper combosHelper,
             IConverterHelper converterHelper,
             IGetHelper getHelper,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _combosHelper = combosHelper;
             _converterHelper = converterHelper;
             _getHelper = getHelper;
             _configuration = configuration;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public async Task<IActionResult> Index()
@@ -148,6 +154,22 @@
             }
 
             var productoDetailsViewModel = await _converterHelper.ToProductosDetailsViewModelAsync(producto);
+            
+            string directorio = _configuration.GetValue<string>("DirectorioImagenProducto");
+            string directorioProducto = Path.Combine(directorio, producto.ProductoID.ToString(), "md");
+
+            if(Directory.Exists(directorioProducto))
+            { 
+                DirectoryInfo directory = new DirectoryInfo(directorioProducto);
+                string _file = "";
+                List<Guid> images = new List<Guid>();
+                foreach(var file in directory.GetFiles())
+                {
+                    _file = Path.GetFileNameWithoutExtension(file.ToString());
+                    images.Add(Guid.Parse(_file));
+                }
+                productoDetailsViewModel.ProductoImages = images;
+            }
             
             return View(productoDetailsViewModel);
         }
@@ -427,8 +449,25 @@
                 }
             }
 
-            _context.Productos.Remove(producto);
-            await _context.SaveChangesAsync();
+            try
+            {
+                string directorio = _configuration.GetValue<string>("DirectorioImagenProducto");
+                string directorioProducto = Path.Combine(directorio, producto.ProductoID.ToString());
+                if (Directory.Exists(directorioProducto))
+                {
+                    Directory.Delete(directorioProducto, true);
+                }
+
+                _context.Productos.Remove(producto);
+                await _context.SaveChangesAsync();
+                TempData["toast"] = "El producto ha sido eliminado satisfactoriamente.";
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -487,6 +526,23 @@
                 ViewData = new ViewDataDictionary
                             <List<Marca>>(ViewData, marcas)
             };
+        }
+
+        public async Task<FileContentResult> GetProductImages(Guid productoId, Guid imageId, string tipo)
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "home");
+            if (validateToken != null) { return null; }
+
+            string directoryProduct = _configuration.GetValue<string>("DirectorioImagenProducto");
+            string directoryProductImage = Path.Combine(directoryProduct, productoId.ToString());
+            string ruta = Path.Combine(directoryProductImage, tipo, $"{imageId}.png");
+
+            if (!System.IO.File.Exists(ruta))
+            {
+                ruta = Path.Combine(_webHostEnvironment.WebRootPath, "images", "productos", tipo, "ShoppingCart.png");
+            }
+
+            return _converterHelper.ToImageBase64(ruta);
         }
 
         private bool PaqueteExists(Guid id)
@@ -577,6 +633,241 @@
                     }
                 }
             }
+        }
+
+        //Images products
+
+        public async Task<IActionResult> AddProductImage(Guid id)
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var producto = await _context.Productos.FindAsync(id);
+            if(producto == null)
+            {
+                TempData["toast"] = "Identificador del producto inexistente";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(producto);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> AddProductImage(Guid id, string img)
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return null; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return Json(new { Estatus = "Lo sentimos, no tiene privilegios para crear imágenes.", Error = true });
+            }
+
+            var producto = await _context.Productos.FindAsync(id);
+            if (producto == null)
+            {
+                return Json(new { Estatus = "Error: Identificador del producto inexistente", Error = true });
+            }
+
+            string path = "";
+            int tamaño = 0;
+
+            string productoId = $"{Guid.NewGuid()}.png";
+            string directorioImagenProducto = _configuration.GetValue<string>("DirectorioImagenProducto");
+            string directorioImagenProductoID = $"{directorioImagenProducto}//{producto.ProductoID}//";
+
+            if (!Directory.Exists(directorioImagenProducto))
+            {
+                Directory.CreateDirectory(directorioImagenProducto);
+            }
+            if (!Directory.Exists(directorioImagenProductoID))
+            {
+                Directory.CreateDirectory(directorioImagenProductoID);
+            }
+            if (!Directory.Exists($"{directorioImagenProductoID}//sm//"))
+            {
+                Directory.CreateDirectory($"{directorioImagenProductoID}//sm//");
+            }
+            if (!Directory.Exists($"{directorioImagenProductoID}//md//"))
+            {
+                Directory.CreateDirectory($"{directorioImagenProductoID}//md//");
+            }
+            if (!Directory.Exists($"{directorioImagenProductoID}//lg//"))
+            {
+                Directory.CreateDirectory($"{directorioImagenProductoID}//lg//");
+            }
+
+            if(!System.IO.File.Exists($"{directorioImagenProductoID}//lg//{producto.ProductoID}.png"))
+            {
+                productoId = $"{producto.ProductoID}.png";
+            }
+
+            try
+            {
+                var index = img.IndexOf(',') + 1;
+                img = img.Substring(index);
+
+                for (byte x = 1; x <= 3; x++)
+                {
+                    switch (x)
+                    {
+                        case 1:
+                            path = Path.Combine($"{directorioImagenProductoID}//sm//", productoId);
+                            tamaño = 95;
+                            break;
+                        case 2:
+                            path = Path.Combine($"{directorioImagenProductoID}//md//", productoId);
+                            tamaño = 380;
+                            break;
+                        case 3:
+                            path = Path.Combine($"{directorioImagenProductoID}//lg//", productoId);
+                            tamaño = 760;
+                            break;
+                    }
+
+                    byte[] bi = _converterHelper.UploadImageBase64(img, tamaño);
+                    using (var fs = new FileStream(path, FileMode.Create, FileAccess.Write))
+                    {
+                        fs.Write(bi, 0, bi.Length);
+                    }
+                }
+                TempData["toast"] = "Imagen del producto creada";
+                return Json(new { Error = false });
+            }
+            catch (Exception)
+            {
+                return Json(new { Estatus = "Error: Imagen del producto no creada" + "[" + path + "]", Error = true });
+            }
+        }
+
+        public async Task<IActionResult> DeleteProductImage(Guid productoId, Guid imageId)
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Details), new { id = productoId });
+            }
+
+            string directorioImagenProducto = _configuration.GetValue<string>("DirectorioImagenProducto");
+            string directorioImagenProductoID = $"{directorioImagenProducto}//{productoId}//";
+
+            if (Directory.Exists(directorioImagenProducto))
+            {
+                if (Directory.Exists(directorioImagenProductoID))
+                {
+                    if (Directory.Exists($"{directorioImagenProductoID}//sm//"))
+                    {
+                        if(System.IO.File.Exists($"{directorioImagenProductoID}//sm//{imageId}.png"))
+                        {
+                            System.IO.File.Delete($"{directorioImagenProductoID}//sm//{imageId}.png");
+                        }
+                    }
+                    if (Directory.Exists($"{directorioImagenProductoID}//md//"))
+                    {
+                        if (System.IO.File.Exists($"{directorioImagenProductoID}//md//{imageId}.png"))
+                        {
+                            System.IO.File.Delete($"{directorioImagenProductoID}//md//{imageId}.png");
+                        }
+                    }
+                    if (Directory.Exists($"{directorioImagenProductoID}//lg//"))
+                    {
+                        if (System.IO.File.Exists($"{directorioImagenProductoID}//lg//{imageId}.png"))
+                        {
+                            System.IO.File.Delete($"{directorioImagenProductoID}//lg//{imageId}.png");
+                        }
+                    }
+                }
+            }
+
+            if(productoId == imageId)
+            {
+                DirectoryInfo directoryInfo = new DirectoryInfo($"{directorioImagenProductoID}//lg//");
+                string _file = "";
+                foreach(var file in directoryInfo.GetFiles())
+                {
+                    _file = file.Name;
+                    break;
+                }
+                if (System.IO.File.Exists($"{directorioImagenProductoID}//sm//{_file}"))
+                {
+                    System.IO.File.Move($"{directorioImagenProductoID}//sm//{_file}", $"{directorioImagenProductoID}//sm//{productoId}.png");
+                }
+                if (System.IO.File.Exists($"{directorioImagenProductoID}//md//{_file}"))
+                {
+                    System.IO.File.Move($"{directorioImagenProductoID}//md//{_file}", $"{directorioImagenProductoID}//md//{productoId}.png");
+                }
+                if (System.IO.File.Exists($"{directorioImagenProductoID}//lg//{_file}"))
+                {
+                    System.IO.File.Move($"{directorioImagenProductoID}//lg//{_file}", $"{directorioImagenProductoID}//lg//{productoId}.png");
+                }
+            }
+
+            TempData["toast"] = "La imagen del producto ha sido eliminada.";
+            return RedirectToAction(nameof(Details), new { id = productoId });
+
+        }
+
+        public async Task<IActionResult> MainProductImage(Guid productoId, Guid imageId)
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Details), new { id = productoId });
+            }
+
+            if (productoId == imageId)
+            {
+                TempData["toast"] = "La imagen del producto ha sido asignada como principal.";
+                return RedirectToAction(nameof(Details), new { id = productoId });
+            }
+
+            string directorioImagenProducto = _configuration.GetValue<string>("DirectorioImagenProducto");
+            string directorioImagenProductoID = $"{directorioImagenProducto}//{productoId}//";
+            Guid idNew = Guid.NewGuid();
+
+            if (Directory.Exists(directorioImagenProducto))
+            {
+                if (Directory.Exists(directorioImagenProductoID))
+                {
+                    if (Directory.Exists($"{directorioImagenProductoID}//sm//"))
+                    {
+                        if (System.IO.File.Exists($"{directorioImagenProductoID}//sm//{productoId}.png"))
+                        {
+                            System.IO.File.Move($"{directorioImagenProductoID}//sm//{productoId}.png", $"{directorioImagenProductoID}//sm//{idNew}.png");
+                        }
+                        System.IO.File.Move($"{directorioImagenProductoID}//sm//{imageId}.png", $"{directorioImagenProductoID}//sm//{productoId}.png");
+                    }
+                    if (Directory.Exists($"{directorioImagenProductoID}//md//"))
+                    {
+                        if (System.IO.File.Exists($"{directorioImagenProductoID}//md//{productoId}.png"))
+                        {
+                            System.IO.File.Move($"{directorioImagenProductoID}//md//{productoId}.png", $"{directorioImagenProductoID}//md//{idNew}.png");
+                        }
+                        System.IO.File.Move($"{directorioImagenProductoID}//md//{imageId}.png", $"{directorioImagenProductoID}//md//{productoId}.png");
+                    }
+                    if (Directory.Exists($"{directorioImagenProductoID}//lg//"))
+                    {
+                        if (System.IO.File.Exists($"{directorioImagenProductoID}//lg//{productoId}.png"))
+                        {
+                            System.IO.File.Move($"{directorioImagenProductoID}//lg//{productoId}.png", $"{directorioImagenProductoID}//lg//{idNew}.png");
+                        }
+                        System.IO.File.Move($"{directorioImagenProductoID}//lg//{imageId}.png", $"{directorioImagenProductoID}//lg//{productoId}.png");
+                    }
+                }
+            }
+
+            TempData["toast"] = "La imagen del producto ha sido asignada como principal.";
+            return RedirectToAction(nameof(Details), new { id = productoId });
+
         }
     }
 }

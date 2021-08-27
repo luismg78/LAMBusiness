@@ -93,7 +93,7 @@
                     return View(inicioSesionViewModel);
                 }
 
-                TempData["toast"] = "Bienvenido(a)";
+                TempData["toast"] = "¡Qué gusto tenerte de vuelta!";
                 return RedirectToAction("Inicio", "menu");
             }
 

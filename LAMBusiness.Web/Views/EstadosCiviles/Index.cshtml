@@ -5,20 +5,20 @@
 }
 
 <div class="modal-content border-0 box-shadow">
-    <div class="modal-header pb-0">
+    <div class="modal-header pb-0 align-items-baseline">
         <div>
             <h3 class="modal-title" id="exampleModalLabel">Estado Civil</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
                 <li class="breadcrumb-item"><a asp-action="Catalogo" asp-controller="Menu">Catálogos</a></li>
                 <li class="breadcrumb-item"><a asp-action="Index" asp-controller="EstadosCiviles">Estado Civil</a></li>
-                <li class="breadcrumb-item active text-info">@Model.Count() Registro(s)</li>
+                <li class="breadcrumb-item active text-base">@Model.Count() Registro(s)</li>
             </ul>
         </div>
-        <a asp-action="Catalogo" asp-controller="Menu" class="close"><span>&times;</span></a>
+        <a asp-action="Catalogo" asp-controller="Menu" class="btn-close me-md-1" aria-label="Close"></a>
     </div>
     <div class="modal-body pt-4">
         <div>
-            <div class="row px-md-3 font-weight-bold text-uppercase">
+            <div class="row px-md-3 fw-bold text-uppercase">
                 <div class="border-bottom col-12 px-3 py-2">
                     @Html.DisplayNameFor(model => model.EstadoCivilDescripcion)
                 </div>

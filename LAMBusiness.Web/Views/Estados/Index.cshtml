@@ -5,7 +5,7 @@
 }
 
 <div class="modal-content border-0 box-shadow">
-    <div class="modal-header pb-0">
+    <div class="modal-header pb-0 align-items-baseline">
         <div>
             <h3 class="modal-title" id="exampleModalLabel">Estados</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
@@ -14,21 +14,19 @@
                 <li class="breadcrumb-item active text-base">@Model.Count() Registro(s)</li>
             </ul>
         </div>
-        <a asp-action="Catalogo" asp-controller="Menu" class="close"><span>&times;</span></a>
+        <a asp-action="Catalogo" asp-controller="Menu" class="btn-close me-md-1" aria-label="Close"></a>
     </div>
     <div class="modal-body pt-4">
         <div class="row px-md-3">
             <div class="col-9 col-md-8 pr-0 pr-md-3">
                 <div class="input-group mb-3">
                     <input type="search" id="SearchInput" class="form-control" placeholder="Buscar..." onkeypress="search(event);">
-                    <div class="input-group-append">
-                        <button class="btn btn-light border" type="button" onclick="search(event);"><i class="fa fa-search"></i></button>
-                    </div>
+                    <button class="btn btn-light border" type="button" onclick="search(event);"><i class="fa fa-search"></i></button>
                 </div>
             </div>
         </div>
         <div>
-            <div class="row px-md-3 font-weight-bold text-uppercase">
+            <div class="row px-md-3 fw-bold text-uppercase">
                 <div class="border-bottom col-12 px-3 py-2">
                     @Html.DisplayNameFor(model => model.EstadoDescripcion)
                 </div>
@@ -40,15 +38,15 @@
                         <div class="border-bottom col-9 px-3 py-2 text-truncate">
                             <span class="text-dark">@Html.DisplayFor(modelItem => item.EstadoDescripcion)</span>
                             <div class="d-block">
-                                <small class="d-block d-md-inline-block text-muted mr-md-2">Clave: @Html.DisplayFor(modelItem => item.EstadoClave)</small>
+                                <small class="d-block d-md-inline-block text-muted me-md-2">Clave: @Html.DisplayFor(modelItem => item.EstadoClave)</small>
                                 <small class="d-block d-md-inline-block text-muted">Municipios: @Html.DisplayFor(modelItem => item.Municipios.Count)</small>
                             </div>
                         </div>
-                        <div class="border-bottom col-3 px-3 py-2 text-right">
+                        <div class="border-bottom col-3 px-3 py-2 text-end">
                             @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
                             {
                                 <a asp-action="Edit" asp-route-id="@item.EstadoID" class="text-decoration-none">
-                                    <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
+                                    <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar registro">
                                         <i class="fa fa-edit"></i>
                                     </div>
                                 </a>
@@ -102,7 +100,7 @@
                     if (inicio) { $('#dRows').empty(); }
                     if (r !== null && r.trim() !== '') {
                         $('#dRows').append(r);
-                        $('[data-toggle="tooltip"]').tooltip();
+                        $('[data-bs-toggle="tooltip"]').tooltip();
                     } else {
                         $('#dRows').attr('data-rows-next', "0");
                     }

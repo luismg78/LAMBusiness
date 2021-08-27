@@ -5,7 +5,7 @@
 }
 
 <div class="modal-content border-0 box-shadow">
-    <div class="modal-header pb-0">
+    <div class="modal-header pb-0 align-items-baseline">
         <div>
             <h3 class="modal-title" id="exampleModalLabel">Tipos de salida</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
@@ -14,27 +14,25 @@
                 <li class="breadcrumb-item active text-base">@Model.Count() Registro(s)</li>
             </ul>
         </div>
-        <a asp-action="Catalogo" asp-controller="Menu" class="close"><span>&times;</span></a>
+        <a asp-action="Catalogo" asp-controller="Menu" class="btn-close me-md-1" aria-label="Close"></a>
     </div>
     <div class="modal-body pt-4">
         <div class="row px-md-3">
             <div class="col-9 col-md-8 pr-0 pr-md-3">
                 <div class="input-group mb-3">
                     <input type="search" id="SearchInput" class="form-control" placeholder="Buscar..." onkeypress="search(event);">
-                    <div class="input-group-append">
-                        <button class="btn btn-light border" type="button" onclick="search(event);"><i class="fa fa-search"></i></button>
-                    </div>
+                    <button class="btn btn-light border" type="button" onclick="search(event);"><i class="fa fa-search"></i></button>
                 </div>
             </div>
-            <div class="col-3 col-md-4 text-right">
+            <div class="col-3 col-md-4 text-end">
                 @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
                 {
-                    <p><a asp-action="Create" class="btn btn-base"><i class="fas fa-plus"></i><span class="d-none d-md-inline-block ml-2">Nuevo Registro</span></a></p>
+                    <p><a asp-action="Create" class="btn btn-base"><i class="fas fa-plus"></i><span class="d-none d-md-inline-block ms-2">Nuevo Registro</span></a></p>
                 }
             </div>
         </div>
         <div>
-            <div class="row px-md-3 font-weight-bold text-uppercase">
+            <div class="row px-md-3 fw-bold text-uppercase">
                 <div class="border-bottom col-12 px-3 py-2">
                     @Html.DisplayNameFor(model => model.SalidaTipoDescripcion)
                 </div>
@@ -46,16 +44,16 @@
                         <div class="border-bottom col-10 col-md-9 p-3">
                             <span class="text-dark">@Html.DisplayFor(modelItem => item.SalidaTipoDescripcion)</span>
                         </div>
-                        <div class="border-bottom col-2 col-md-3 px-3 py-2 text-right">
+                        <div class="border-bottom col-2 col-md-3 px-3 py-2 text-end">
                             @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
                             {
                                 <a asp-action="Edit" asp-route-id="@item.SalidaTipoID" class="d-block d-md-inline text-decoration-none">
-                                    <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
+                                    <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar registro">
                                         <i class="fa fa-edit"></i>
                                     </div>
                                 </a>
-                                <a href="#" data-id="@item.SalidaTipoID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
-                                    <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
+                                <a href="#" data-id="@item.SalidaTipoID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteConfirm">
+                                    <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="eliminar registro">
                                         <i class="fa fa-trash"></i>
                                     </div>
                                 </a>
@@ -122,7 +120,7 @@
                     if (inicio) { $('#dRows').empty(); }
                     if (r !== null && r.trim() !== '') {
                         $('#dRows').append(r);
-                        $('[data-toggle="tooltip"]').tooltip();
+                        $('[data-bs-toggle="tooltip"]').tooltip();
                     } else {
                         $('#dRows').attr('data-rows-next', "0");
                     }

@@ -8,38 +8,38 @@
             <div class="border-bottom col-10 col-md-9 p-3">
                 <span class="text-dark">@Html.DisplayFor(modelItem => item.ProductoNombre)</span>
                 <div class="d-block">
-                    <small class="text-muted mr-md-3">Código: @Html.DisplayFor(modelItem => item.Codigo)</small>
-                    <small class="d-block d-md-inline-block mr-md-3 text-muted">Marca: @Html.DisplayFor(modelItem => item.Marcas.MarcaNombre)</small>
+                    <small class="text-muted me-md-3">Código: @Html.DisplayFor(modelItem => item.Codigo)</small>
+                    <small class="d-block d-md-inline-block me-md-3 text-muted">Marca: @Html.DisplayFor(modelItem => item.Marcas.MarcaNombre)</small>
                     @if (item.Paquete == null)
                     {
-                        <small class="d-block d-md-inline-block text-muted">Unidad: <span class="font-weight-bold text-info">Pieza</span></small>
+                        <small class="d-block d-md-inline-block text-muted">Unidad: <span class="fw-bold text-info">Pieza</span></small>
                     }
                     else
                     {
-                        <small class="d-block d-md-inline-block text-muted">Unidad: <span class="font-weight-bold text-danger">Caja</span></small>
+                        <small class="d-block d-md-inline-block text-muted">Unidad: <span class="fw-bold text-danger">Caja</span></small>
                     }
                     @if (!item.Activo)
                     {
-                        <small class="badge badge-danger">No Disponible</small>
+                        <small class="badge bg-danger">No Disponible</small>
                     }
                 </div>
                 <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.ProductoDescripcion)</small>
             </div>
-            <div class="border-bottom col-2 col-md-3 px-3 py-2 text-right">
+            <div class="border-bottom col-2 col-md-3 px-3 py-2 text-end">
                 <a asp-action="Details" asp-route-id="@item.ProductoID" class="d-block d-md-inline text-decoration-none">
-                    <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="ver detalle">
+                    <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="ver detalle">
                         <i class="fa fa-file-alt"></i>
                     </div>
                 </a>
                 @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
                 {
                     <a asp-action="Edit" asp-route-id="@item.ProductoID" class="d-block d-md-inline text-decoration-none">
-                        <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
+                        <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar registro">
                             <i class="fa fa-edit"></i>
                         </div>
                     </a>
-                    <a href="#" data-id="@item.ProductoID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
-                        <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
+                    <a href="#" data-id="@item.ProductoID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteConfirm">
+                        <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="eliminar registro">
                             <i class="fa fa-trash"></i>
                         </div>
                     </a>

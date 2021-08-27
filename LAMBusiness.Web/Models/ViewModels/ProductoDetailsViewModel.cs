@@ -9,6 +9,7 @@
     public class ProductoDetailsViewModel: Producto
     {
         public ICollection<ProductoAsignadoViewModel> ProductosAsignadosViewModel { get; set; }
+        public ICollection<Guid> ProductoImages { get; set; }
     }
 
     public class ProductoAsignadoViewModel

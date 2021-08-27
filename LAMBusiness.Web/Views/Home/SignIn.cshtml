@@ -13,20 +13,18 @@
                 <div>
                     <h2 class="modal-title py-2 text-secondary" id="exampleModalLabel">Inicio de <span class="text-base">Sesión</span></h2>
                 </div>
-                <a asp-action="Index" asp-controller="Home" class="close"><span>&times;</span></a>
+                <a asp-action="Index" asp-controller="Home" class="btn-close me-1 me-md-2" disabled aria-label="Close"></a>
             </div>
             <div class="modal-body py-4">
                 <div class="px-md-3">
-                    <div class="form-group">
-                        <label asp-for="Email" class="control-label"></label>
-                        <input asp-for="Email" class="form-control" placeholder="example@correo.com" onchange="removeButtonWithSpinner('#IniciarSesionButton');" autofocus />
-                        <span asp-validation-for="Email" class="text-danger"></span>
+                    <div class="form-floating mb-3">
+                        <input id="EmailInput" type="email" asp-for="Email" class="form-control" placeholder="example@correo.com" onchange="removeButtonWithSpinner('#IniciarSesionButton');" autofocus />
+                        <label for="EmailInput">Correo Electrónico</label>
                     </div>
-                    <div class="form-group">
+                    <div class="form-floating">
                         <input asp-for="Password" class="d-none" />
-                        <label asp-for="Password" class="control-label"></label>
-                        <input type="password" id="Pwd" class="form-control" onchange="removeButtonWithSpinner('#IniciarSesionButton');"/>
-                        <span asp-validation-for="Password" class="text-danger"></span>
+                        <input type="password" id="Pwd" class="form-control" placeholder="Password" onchange="removeButtonWithSpinner('#IniciarSesionButton');"/>
+                        <label for="Pwd">Contraseña</label>
                     </div>
                 </div>
             </div>

@@ -4,7 +4,20 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - LAMBusiness</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    @*<link href="/favicon.ico" rel="icon">*@
+    <meta name="description" content="Software punto de venta">
+    <meta name="keywords" content="Business, Negocios, Punto de venta, Ventas, Compras, Pedidos, Clientes, Proveedores">
+    <meta name="author" content="Ing. Luis Martínez">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="LAMBusiness">
+    <meta property="og:description" content="software punto de venta">
+    <meta property="og:url" content="http://www.lambusiness.com/">
+    <meta property="og:site_name" content="LAMBusiness">
+    <meta property="og:image" content="http://www.lambusiness.com/Imagen/icono.png">
+    @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />*@
+    <link href="~/lib/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link href="~/css/helper.css" rel="stylesheet" />
     <link href="~/css/fontAwesome.css" rel="stylesheet" />
@@ -21,22 +34,22 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand text-base" asp-area="" asp-controller="Home" asp-action="Index">LAMBusiness</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 @*<div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link @if (menu == "home") {<text>font-weight-bold text-base</text>} else {<text>text-dark</text>} "
+                            <a class="nav-link @if (menu == "home") {<text>fw-bold text-base</text>} else {<text>text-dark</text>} "
                                asp-area="" asp-controller="Menu" asp-action="Inicio">Inicio</a>
                         </li>
                     </ul>
                 </div>*@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1 justify-content-end">
-                        <li class="nav-item float-right">
-                            <a class="nav-link font-weight-bold text-uppercase @if (menu == "signin") {<text>text-base</text>} else {<text>text-primary</text>} "
+                        <li class="nav-item float-end">
+                            <a class="nav-link fw-bold text-uppercase @if (menu == "signin") {<text>text-base</text>} else {<text>text-primary</text>} "
                                asp-area="" asp-controller="Menu" asp-action="Inicio">Inicio de Sesión</a>
                         </li>
                     </ul>
@@ -57,11 +70,12 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            LAMBusiness &copy; 2020 - <a asp-area="" asp-controller="Menu" asp-action="inicio">Inicio de Sesión</a>
+            LAMBusiness &copy; 2020 - <a asp-area="" asp-controller="Menu" asp-action="inicio" class="text-decoration-none">Inicio de Sesión</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @*<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
+    <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>

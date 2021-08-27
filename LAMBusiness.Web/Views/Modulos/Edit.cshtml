@@ -6,7 +6,7 @@
 
 <form asp-action="Edit">
     <div class="modal-content border-0 box-shadow">
-        <div class="modal-header pb-0">
+        <div class="modal-header pb-0 align-items-baseline">
             <div>
                 <h3 class="modal-title" id="exampleModalLabel">Módulos</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
@@ -15,7 +15,7 @@
                     <li class="breadcrumb-item active">Editar Registro</li>
                 </ul>
             </div>
-            <a asp-action="Index" asp-controller="Modulos" class="close"><span>&times;</span></a>
+            <a asp-action="Index" asp-controller="Modulos" class="btn-close me-md-1" aria-label="Close"></a>
         </div>
         <div class="modal-body py-4">
             <input type="hidden" asp-for="ModuloID" />
@@ -32,7 +32,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="ModuloPadreID" class="control-label"></label>
-                        <select asp-for="ModuloPadreID" class="form-control" asp-items="Model.ModulosPadresDDL"></select>
+                        <select asp-for="ModuloPadreID" class="form-select" asp-items="Model.ModulosPadresDDL"></select>
                         <span asp-validation-for="ModuloPadreID" class="text-danger"></span>
                     </div>
                 </div>

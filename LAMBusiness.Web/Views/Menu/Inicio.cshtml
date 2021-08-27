@@ -9,9 +9,9 @@
         <div class="card-body py-5">
             <div class="row align-items-center">
                 <div class="col-2 text-center">
-                    <img src="@Url.Action("GetProfilePicture", "Sesion", new { id = ViewBag.Id, tipo = "median" })" class="rounded-circle" style="width:7rem;" />
+                    <img src="@Url.Action("GetProfilePicture", "Sesion", new { id = ViewBag.Id, tipo = "median" })" class="rounded-circle" style="width:7rem;" alt="Image Profile" />
                 </div>
-                <div class="col text-left">
+                <div class="col text-start">
                     <h2 class="m-0">
                         ¡Hola,
                         <span class="text-capitalize">
@@ -19,22 +19,22 @@
                             @Model.PrimerApellido.ToLower()
                         </span>!
                     </h2>
-                    <p class="text-muted ml-2">
+                    <p class="text-muted ms-2">
                         Tienes 2 mensajes sin leer...
                     </p>
                 </div>
             </div>
         </div>
     </div>
-    @*<div class="text-right px-4">
+    @*<div class="text-end px-4">
         <button class="btn btn-light active border rounded-pill">Estadísticas</button>
         <button class="btn btn-light border rounded-pill">Compañeros</button>
     </div>*@
     <div class="">
-        <div class="row no-gutters">
+        <div class="row g-0">
             <div class="col-3">
                 <div class="bg-white border rounded-lam-lg p-3 m-2">
-                    <div class="font-weight-bold text-dark">Entradas</div>
+                    <div class="fw-bold text-dark">Entradas</div>
                     <div class="text-center my-4">
                         <h1 class="text-primary">27</h1>
                         <small class="text-muted">Agosto 2021</small>
@@ -44,7 +44,7 @@
             </div>
             <div class="col-3">
                 <div class="bg-white border rounded-lam-lg p-3 m-2">
-                    <div class="font-weight-bold text-dark">Salidas</div>
+                    <div class="fw-bold text-dark">Salidas</div>
                     <div class="text-center my-4">
                         <h1 class="text-danger">22</h1>
                         <small class="text-muted">Agosto 2021</small>
@@ -54,7 +54,7 @@
             </div>
             <div class="col-3">
                 <div class="bg-white border rounded-lam-lg p-3 m-2">
-                    <div class="font-weight-bold text-dark">Ventas</div>
+                    <div class="fw-bold text-dark">Ventas</div>
                     <div class="text-center my-4">
                         <h1 class="text-sucess">17</h1>
                         <small class="text-muted">Agosto 2021</small>
@@ -64,7 +64,7 @@
             </div>
             <div class="col-3">
                 <div class="bg-white border rounded-lam-lg p-3 m-2">
-                    <div class="font-weight-bold text-dark">Devoluciones</div>
+                    <div class="fw-bold text-dark">Devoluciones</div>
                     <div class="text-center my-4">
                         <h1 class="text-warning">12</h1>
                         <small class="text-muted">Agosto 2021</small>
@@ -73,21 +73,33 @@
                 </div>
             </div>
         </div>
-        <div class="row no-gutters">
+        <div class="row g-0">
             <div class="col-3">
                 <div class="bg-white bg-card border box-shadow-lam mx-2 rounded-lam-lg">
                     <div class="py-3 px-2 mb-3">
                         <div class="text-center my-4">
-                            <img class="rounded-circle" style="width:7rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = Guid.Parse("ac9b54e6-293d-4802-bb8e-1d5f329d0a5b"), tipo = "median" })" />
+                            <img class="rounded-circle" style="width:7rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = Guid.Parse("ac9b54e6-293d-4802-bb8e-1d5f329d0a5b"), tipo = "median" })" alt="Image Profile" />
                         </div>
                         <div class="text-center">
-                            <span class="font-weight-bold">Alejandra Martínez</span>
-                            <span class="font-weight-light text-muted">Administradora</span>
+                            <span class="fw-bold">Alejandra Martínez</span>
+                            <span class="fw-light text-muted">Administradora</span>
                         </div>
                     </div>
-                    <div class="row row-bordered no-gutters text-center border-top">
-                        <div class="col-6"><a class="d-block text-muted px-2 py-3" href="mailto:luismg78@gmail.com"><i class="fa fa-envelope mr-3"></i>Email</a></div>
-                        <div class="col-6"><a class="d-block text-muted px-2 py-3" href="tel:9611774769">Llamar<i class="fa fa-phone ml-3"></i></a></div>
+                    <div class="row row-bordered g-0 text-center border-top">
+                        <div class="col-6">
+                            <a class="d-block px-2 py-3 btn-outline-base rounded-lam-lg-bottom-start text-muted text-decoration-none" 
+                               href="mailto:luismg78@gmail.com">
+                                <i class="fa fa-envelope small me-2"></i>
+                                Email
+                                </a>
+                        </div>
+                        <div class="col-6">
+                            <a class="d-block px-2 py-3 btn-outline-base rounded-lam-lg-bottom-end text-muted text-decoration-none" 
+                               href="tel:9611774769">
+                                Llamar
+                                <i class="fa fa-phone small ms-2"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -95,16 +107,28 @@
                 <div class="bg-white bg-card border box-shadow-lam mx-2 rounded-lam-lg">
                     <div class="py-3 px-2 mb-3">
                         <div class="text-center my-4">
-                            <img class="rounded-circle" style="width:7rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = Guid.Parse("7E102AAE-6F87-49DF-A886-CBBB15437671"), tipo = "median" })" />
+                            <img class="rounded-circle" style="width:7rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = Guid.Parse("7E102AAE-6F87-49DF-A886-CBBB15437671"), tipo = "median" })" alt="Image Profile" />
                         </div>
                         <div class="text-center">
-                            <span class="font-weight-bold">Alejandra Martínez</span>
-                            <span class="font-weight-light text-muted">Administradora</span>
+                            <span class="fw-bold">Luis Ángel Martínez</span>
+                            <span class="fw-light text-muted">Administrador</span>
                         </div>
                     </div>
-                    <div class="row row-bordered no-gutters text-center border-top">
-                        <div class="col-6"><a class="d-block px-2 py-3 text-muted" href="mailto:luismg78@gmail.com"><i class="fa fa-envelope mr-3"></i>Email</a></div>
-                        <div class="col-6"><a class="d-block px-2 py-3 text-muted" href="tel:9611774769">Llamar<i class="fa fa-phone ml-3"></i></a></div>
+                    <div class="row row-bordered g-0 text-center border-top">
+                        <div class="col-6">
+                            <a class="d-block px-2 py-3 btn-outline-base rounded-lam-lg-bottom-start text-muted text-decoration-none"
+                               href="mailto:luismg78@gmail.com">
+                                <i class="fa fa-envelope small me-2"></i>
+                                Email
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a class="d-block px-2 py-3 btn-outline-base rounded-lam-lg-bottom-end text-muted text-decoration-none"
+                               href="tel:9611774769">
+                                Llamar
+                                <i class="fa fa-phone small ms-2"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -112,16 +136,28 @@
                 <div class="bg-white bg-card border box-shadow-lam mx-2 rounded-lam-lg">
                     <div class="py-3 px-2 mb-3">
                         <div class="text-center my-4">
-                            <img class="rounded-circle" style="width:7rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = Guid.Parse("ac9b54e6-293d-4802-bb8e-1d5f329d0a5b"), tipo = "median" })" />
+                            <img class="rounded-circle" style="width:7rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = Guid.Parse("ac9b54e6-293d-4802-bb8e-1d5f329d0a5b"), tipo = "median" })" alt="Image Profile" />
                         </div>
                         <div class="text-center">
-                            <span class="font-weight-bold">Alejandra Martínez</span>
-                            <span class="font-weight-light text-muted">Administradora</span>
+                            <span class="fw-bold">Alejandra Martínez</span>
+                            <span class="fw-light text-muted">Administradora</span>
                         </div>
                     </div>
-                    <div class="row row-bordered no-gutters text-center border-top">
-                        <div class="col-6"><a class="d-block px-2 py-3 text-muted" href="mailto:luismg78@gmail.com"><i class="fa fa-envelope mr-3"></i>Email</a></div>
-                        <div class="col-6"><a class="d-block px-2 py-3 text-muted" href="tel:9611774769">Llamar<i class="fa fa-phone ml-3"></i></a></div>
+                    <div class="row row-bordered g-0 text-center border-top">
+                        <div class="col-6">
+                            <a class="d-block px-2 py-3 btn-outline-base rounded-lam-lg-bottom-start text-muted text-decoration-none"
+                               href="mailto:luismg78@gmail.com">
+                                <i class="fa fa-envelope small me-2"></i>
+                                Email
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a class="d-block px-2 py-3 btn-outline-base rounded-lam-lg-bottom-end text-muted text-decoration-none"
+                               href="tel:9611774769">
+                                Llamar
+                                <i class="fa fa-phone small ms-2"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -129,16 +165,28 @@
                 <div class="bg-white bg-card border box-shadow-lam mx-2 rounded-lam-lg">
                     <div class="py-3 px-2 mb-3">
                         <div class="text-center my-4">
-                            <img class="rounded-circle" style="width:7rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = Guid.Parse("7E102AAE-6F87-49DF-A886-CBBB15437671"), tipo = "median" })" />
+                            <img class="rounded-circle" style="width:7rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = Guid.Parse("7E102AAE-6F87-49DF-A886-CBBB15437671"), tipo = "median" })" alt="Image Profile" />
                         </div>
                         <div class="text-center">
-                            <span class="font-weight-bold">Alejandra Martínez</span>
-                            <span class="font-weight-light text-muted">Administradora</span>
+                            <span class="fw-bold">Luis Ángel Martínez</span>
+                            <span class="fw-light text-muted">Administrador</span>
                         </div>
                     </div>
-                    <div class="row row-bordered no-gutters text-center border-top">
-                        <div class="col-6"><a class="d-block px-2 py-3 text-muted" href="mailto:luismg78@gmail.com"><i class="fa fa-envelope mr-3"></i>Email</a></div>
-                        <div class="col-6"><a class="d-block px-2 py-3 text-muted" href="tel:9611774769">Llamar<i class="fa fa-phone ml-3"></i></a></div>
+                    <div class="row row-bordered g-0 text-center border-top">
+                        <div class="col-6">
+                            <a class="d-block px-2 py-3 btn-outline-base rounded-lam-lg-bottom-start text-muted text-decoration-none"
+                               href="mailto:luismg78@gmail.com">
+                                <i class="fa fa-envelope small me-2"></i>
+                                Email
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a class="d-block px-2 py-3 btn-outline-base rounded-lam-lg-bottom-end text-muted text-decoration-none"
+                               href="tel:9611774769">
+                                Llamar
+                                <i class="fa fa-phone small ms-2"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

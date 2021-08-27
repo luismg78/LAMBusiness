@@ -1,10 +1,18 @@
-﻿/*Html*/
-a {color: #0366d6;}
+﻿@charset "UTF-8";
+/*!
+ * Ing. Luis Martínez
+ * 2020 - 2021 LAMBusiness
+ */
+
+/*Html*/
+a {color: #0366d6; text-decoration:none;}
     a.navbar-brand {text-align:center;white-space:normal;word-break:break-all;}
 body {background-color:#eaedef;margin-bottom:60px;}
 button.accept-policy {font-size: 1rem;line-height: inherit;}
 html {font-size:14px;min-height:100%;position:relative;}
 input[type=checkbox], input[type=radio] {cursor:pointer;height:1.5rem;width:1.4rem;}
+input.form-control, select.form-select, textarea.form-control{font-weight:500;}
+label.control-label{color:#6c757d!important;margin-bottom:.25rem;margin-top:.25rem;}
 ul li.selected{background-color:#f8f9fa;color:#000;font-weight:bold;}
 
 /*IDs*/
@@ -16,9 +24,9 @@ ul li.selected{background-color:#f8f9fa;color:#000;font-weight:bold;}
 color base: #ff4152;
 border: #fe1b30;
 transparencia: rgba(255,65,82,.5)*/
-.badge-base {color:#fff;background-color:#ff4152;}
-    a.badge-base.focus, a.badge-base:focus {outline:0;box-shadow:0 0 0 0.2rem rgba(255,65,82,.5);}
-    a.badge-base:focus, a.badge-base:hover {color:#fff;background-color:#fe1b30;}
+.bg-base {color:#fff;background-color:#ff4152;}
+    a.bg-base.focus, a.bg-base:focus {outline:0;box-shadow:0 0 0 0.2rem rgba(255,65,82,.5);}
+    a.bg-base:focus, a.bg-base:hover {color:#fff;background-color:#fe1b30;}
 
 .btn-base {color:#fff;background-color:#ff4152;border-color:#fe1b30;}
     .btn-base.focus, .btn-base:focus {box-shadow:0 0 0 0.2rem rgba(255,65,82,.5);}
@@ -28,7 +36,7 @@ transparencia: rgba(255,65,82,.5)*/
     .show > .btn-base.dropdown-toggle {color:#fff;background-color:#ff4152;border-color:#fe1b30;}
 
 .btn-outline-base {color:#ff4152;border-color:#ff4152;}
-    .btn-outline-base:hover {color:#fff;background-color:#ff4152;border-color:#ff4152;}
+    .btn-outline-base:hover {color:#fff!important;background-color:#ff4152;border-color:#ff4152;}
     .btn-outline-base.focus, .btn-outline-base:focus {box-shadow:0 0 0 0.2rem rgba(255,65,82,.5);}
     .btn-outline-base:not(:disabled):not(.disabled).active, 
     .btn-outline-base:not(:disabled):not(.disabled):active, 
@@ -40,16 +48,15 @@ transparencia: rgba(255,65,82,.5)*/
 .bg-card{box-shadow:initial;}
     .bg-card:hover{box-shadow:0 0.25rem 0.75rem rgba(0,0,0,0.2);}
 .bg-disabled {z-index:9999;}
-.bg-fixed {bottom:0;position:fixed;right:0;top:0;}
+.bg-fixed {bottom:0;left:0;position:fixed;right:0;top:0;}
+.bg-absolute {bottom:0;opacity:0;left:0;position:absolute;right:0;top:0;}
+    .bg-absolute:hover {opacity:1;}
 .bg-row{background-color:transparent;}
     .bg-row:hover{background-color:rgba(0,0,0,0.03);}
 .bg-selected {background-color:#fffecb!important;}
 .bg-transparent-dark {background-color:rgba(0, 0, 0, 0.5)!important}
 .bg-transparent-white {background-color:rgba(255, 255, 255, 0.5)!important}
 .bg-transparent-white-ligth {background-color:rgba(255, 255, 255, 0.03)!important}
-
-.border-top {border-top:1px solid #e5e5e5;}
-.border-bottom {border-bottom: 1px solid #e5e5e5;}
 
 .box-shadow {box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);}
 
@@ -79,7 +86,6 @@ transparencia: rgba(255,65,82,.5)*/
 
 .checkbox-select {cursor:pointer;height:1rem!important;width:1rem!important;}
 
-
 .footer {bottom:0;line-height:60px;position:absolute;width:100%;white-space:nowrap;}
 
 .list-registers{max-height:13.75rem;overflow-y:auto;}
@@ -93,6 +99,12 @@ transparencia: rgba(255,65,82,.5)*/
                        padding:1rem;position:fixed;right:3px;z-index:999;}
 
 .rounded-lam-lg { border-radius: 1rem !important; }
+.rounded-lam-lg-bottom { border-bottom-left-radius: 1rem !important; border-bottom-right-radius: 1rem !important;}
+    .rounded-lam-lg-bottom-start { border-bottom-left-radius: 1rem !important;}
+    .rounded-lam-lg-bottom-end { border-bottom-right-radius: 1rem !important;}
+.rounded-lam-lg-top { border-top-left-radius: 1rem !important; border-top-right-radius: 1rem !important;}
+    .rounded-lam-lg-top-start { border-top-left-radius: 1rem !important;}
+    .rounded-lam-lg-top-end { border-top-right-radius: 1rem !important;}
 
 .row-bordered {overflow: hidden;}
 
@@ -124,14 +136,25 @@ transparencia: rgba(255,65,82,.5)*/
 
 /*Css bootstrap replace values*/
 .tooltip-inner {background-color:#ff4152;}
-.bs-tooltip-top .arrow::before, 
-.bs-tooltip-auto[x-placement^="top"] .arrow::before {border-top-color:#ff4152;}
-.bs-tooltip-right .arrow::before, 
-.bs-tooltip-auto[x-placement^="right"] .arrow::before {border-right-color:#ff4152;}
-.bs-tooltip-bottom .arrow::before, 
-.bs-tooltip-auto[x-placement^="bottom"] .arrow::before {border-bottom-color:#ff4152;}
-.bs-tooltip-left .arrow::before, 
-.bs-tooltip-auto[x-placement^="left"] .arrow::before {border-left-color:#ff4152;}
+
+.bs-tooltip-top .tooltip-arrow::before, 
+.bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before {
+    border-top-color: #ff4152;
+}
+
+.bs-tooltip-end .tooltip-arrow::before, 
+.bs-tooltip-auto[data-popper-placement^=right] .tooltip-arrow::before {
+    border-right-color: #ff4152;
+}
+
+.bs-tooltip-bottom .tooltip-arrow::before, 
+.bs-tooltip-auto[data-popper-placement^=bottom] .tooltip-arrow::before {
+    border-bottom-color: #ff4152;
+}
+.bs-tooltip-start .tooltip-arrow::before, 
+.bs-tooltip-auto[data-popper-placement^=left] .tooltip-arrow::before {
+    border-left-color: #ff4152;
+}
 
 /*Render*/
 @media screen and (min-width: 1024px) {

@@ -5,7 +5,7 @@
 }
 
 <div class="modal-content border-0 box-shadow">
-    <div class="modal-header pb-0">
+    <div class="modal-header pb-0 align-items-baseline">
         <div>
             <h3 class="modal-title" id="exampleModalLabel">Proveedores</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
@@ -14,14 +14,14 @@
                 <li class="breadcrumb-item active">Detalle</li>
             </ul>
         </div>
-        <a asp-action="Index" asp-controller="Proveedores" class="close"><span>&times;</span></a>
+        <a asp-action="Index" asp-controller="Proveedores" class="btn-close me-md-1" aria-label="Close"></a>
     </div>
     <div class="modal-body py-4">
         <div class="row px-md-3">
             <div class="card-lam-d1 col-12">
                 <div class="card-header-lam-d1">
                     <div>
-                        <p class="font-weight-bold m-0 pt-2 pt-md-0 title">@Html.DisplayFor(model => model.Nombre)</p>
+                        <p class="fw-bold m-0 pt-2 pt-md-0 title">@Html.DisplayFor(model => model.Nombre)</p>
                         <span class="d-block subtitle text-muted">
                             @Html.DisplayFor(model => model.Domicilio),
                             @Html.DisplayFor(model => model.Colonia)&nbsp;
@@ -33,17 +33,17 @@
                         </span>
                         @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
                         {
-                            <a asp-action="Edit" asp-route-id="@Model.ProveedorID" class="badge badge-base px-3 py-2">Editar</a>
+                            <a asp-action="Edit" asp-route-id="@Model.ProveedorID" class="btn btn-base btn-sm rounded">Editar</a>
                         }
-                        <a asp-action="Index" class="badge badge-light border px-3 py-2">Regresar</a>
+                        <a asp-action="Index" class="btn btn-sm btn-outline-secondary border">Regresar</a>
                     </div>
                 </div>
                 <div class="card-body-lam-d1 mt-2">
-                    <div class="row no-gutters row-bordered border">
+                    <div class="row g-0 row-bordered border">
                         <div class="d-flex col-lg-4 col-lg align-items-center">
                             <div class="card-body bg-row d-flex align-items-center">
                                 <i class="fas fa-user-tag display-4 text-secondary"></i>
-                                <div class="ml-3">
+                                <div class="ms-3">
                                     <div class="text-muted small">@Html.DisplayNameFor(model => model.RFC)</div>
                                     <h5>@Html.DisplayFor(model => model.RFC)</h5>
                                 </div>
@@ -52,7 +52,7 @@
                         <div class="d-flex col-lg-4 col-lg align-items-center">
                             <div class="card-body bg-row d-flex align-items-center">
                                 <i class="fas fa-phone display-4 text-secondary"></i>
-                                <div class="ml-3">
+                                <div class="ms-3">
                                     <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.Telefono)</div>
                                     <h5>
                                         <a href="tel:@Html.DisplayFor(model => model.Telefono)">@Html.DisplayFor(model => model.Telefono)</a>
@@ -65,7 +65,7 @@
                                 @if (Model.Activo)
                                 {
                                     <i class="far fa-check-circle display-4 text-success"></i>
-                                    <div class="ml-3">
+                                    <div class="ms-3">
                                         <div class="text-muted small line-height-1">Estatus</div>
                                         <h5 class="text-success">Disponible</h5>
                                     </div>
@@ -73,7 +73,7 @@
                                 else
                                 {
                                     <i class="fas fa-ban display-4 text-danger"></i>
-                                    <div class="ml-4">
+                                    <div class="ms-4">
                                         <div class="text-muted small line-height-1">Estatus</div>
                                         <h5 class="text-danger">No Disponible</h5>
                                     </div>
@@ -81,11 +81,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row no-gutters row-bordered border border-top-0">
+                    <div class="row g-0 row-bordered border border-top-0">
                         <div class="d-flex col-lg-4 col-lg align-items-center">
                             <div class="card-body bg-row d-flex align-items-center">
                                 <i class="fas fa-truck-moving display-4 text-secondary"></i>
-                                <div class="ml-3">
+                                <div class="ms-3">
                                     <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.FrecuenciaVisitas)</div>
                                     <h5>@Model.FrecuenciaVisitas</h5>
                                 </div>
@@ -94,7 +94,7 @@
                         <div class="d-flex col-lg-4 col-lg align-items-center">
                             <div class="card-body bg-row d-flex align-items-center">
                                 <i class="fas fa-calendar display-4 text-secondary"></i>
-                                <div class="ml-3">
+                                <div class="ms-3">
                                     <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.FechaRegistro)</div>
                                     <h5>@Model.FechaRegistro.ToString("dd MMMM, yyyy")</h5>
                                 </div>
@@ -103,7 +103,7 @@
                         <div class="d-flex col-lg-4 col-lg align-items-center">
                             <div class="card-body bg-row d-flex align-items-center">
                                 <i class="fas fa-envelope display-4 text-secondary"></i>
-                                <div class="ml-3">
+                                <div class="ms-3">
                                     <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.Email)</div>
                                     <h5 class="text-break">@Html.DisplayFor(model => model.Email)</h5>
                                 </div>
@@ -117,11 +117,11 @@
             <div class="my-4">
                 @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
                 {
-                    <a asp-action="AddContacto" asp-controller="Proveedores" asp-route-id="@Model.ProveedorID" class="badge badge-info p-2 float-right"><i class="fas fa-plus"></i> Ingresar contacto</a>
+                    <a asp-action="AddContacto" asp-controller="Proveedores" asp-route-id="@Model.ProveedorID" class="btn btn-sm btn-base float-end"><i class="fas fa-plus"></i> Ingresar contacto</a>
                 }
                 @if (Model.ProveedorContactos.Count > 0)
                 {
-                    <p class="font-weight-bold text-base">Contactos</p>
+                    <p class="fw-bold text-base">Contactos</p>
                     <hr class="mb-0" />
                     foreach (var contacto in Model.ProveedorContactos
                         .OrderBy(c => c.PrimerApellidoContacto)
@@ -129,7 +129,7 @@
                     {
                         <div class="row border-bottom py-2">
                             <div class="col-10">
-                                <p class="font-weight-bold m-0">
+                                <p class="fw-bold m-0">
                                     @contacto.PrimerApellidoContacto
                                     @contacto.SegundoApellidoContacto
                                     @contacto.NombreContacto
@@ -137,25 +137,25 @@
                                 @if (!string.IsNullOrEmpty(contacto.TelefonoMovilContacto))
                                 {
                                     <small class="d-block text-muted">
-                                        <i class="fas fa-mobile mr-2"></i>
+                                        <i class="fas fa-mobile me-2"></i>
                                         <a href="tel:@contacto.TelefonoMovilContacto">@contacto.TelefonoMovilContacto</a>
                                     </small>
                                 }
                                 <small class="text-muted">
-                                    <i class="fas fa-envelope mr-2"></i>
+                                    <i class="fas fa-envelope me-2"></i>
                                     <a href="mailto:@contacto.EmailContacto">@contacto.EmailContacto</a>
                                 </small>
                             </div>
-                            <div class="col-2 text-right">
+                            <div class="col-2 text-end">
                                 @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
                                 {
                                     <a asp-action="EditContacto" asp-route-id="@contacto.ProveedorContactoID" class="d-block d-md-inline text-decoration-none">
-                                        <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar contacto">
+                                        <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar contacto">
                                             <i class="fa fa-edit"></i>
                                         </div>
                                     </a>
-                                    <a href="#" data-id="@contacto.ProveedorContactoID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
-                                        <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar contacto">
+                                    <a href="#" data-id="@contacto.ProveedorContactoID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteConfirm">
+                                        <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="eliminar contacto">
                                             <i class="fa fa-trash"></i>
                                         </div>
                                     </a>
@@ -166,7 +166,7 @@
                 }
                 else
                 {
-                    <p class="font-weight-bold text-base">Sin registro de contactos</p>
+                    <p class="fw-bold text-base">Sin registro de contactos</p>
                 }
             </div>
         </div>

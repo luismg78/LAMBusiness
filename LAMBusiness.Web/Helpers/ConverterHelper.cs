@@ -498,7 +498,6 @@
         /// <returns>ProductViewModel(class)</returns>
         public async Task<ProductoDetailsViewModel> ToProductosDetailsViewModelAsync(Producto producto)
         {
-
             var productoDetailsViewModel = new ProductoDetailsViewModel()
             {
                 Activo = producto.Activo,

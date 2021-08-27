@@ -5,7 +5,7 @@
 }
 
 <div class="modal-content border-0 box-shadow">
-    <div class="modal-header pb-0">
+    <div class="modal-header pb-0 align-items-baseline">
         <div>
             <h3 class="modal-title" id="exampleModalLabel">Usuarios</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
@@ -14,27 +14,25 @@
                 <li class="breadcrumb-item active text-base">@Model.Count() Registro(s)</li>
             </ul>
         </div>
-        <a asp-action="Contacto" asp-controller="Menu" class="close"><span>&times;</span></a>
+        <a asp-action="Contacto" asp-controller="Menu" class="btn-close me-md-1" aria-label="Close"></a>
     </div>
     <div class="modal-body pt-4">
         <div class="row px-md-3">
             <div class="col-9 col-md-8 pr-0 pr-md-3">
                 <div class="input-group mb-3">
                     <input type="search" id="SearchInput" class="form-control" placeholder="Buscar..." onkeypress="search(event);">
-                    <div class="input-group-append">
-                        <button class="btn btn-light border" type="button" onclick="search(event);"><i class="fa fa-search"></i></button>
-                    </div>
+                    <button class="btn btn-light border" type="button" onclick="search(event);"><i class="fa fa-search"></i></button>
                 </div>
             </div>
-            <div class="col-3 col-md-4 text-right">
+            <div class="col-3 col-md-4 text-end">
                 @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
                 {
-                    <p><a asp-action="Create" class="btn btn-base"><i class="fas fa-plus"></i><span class="d-none d-md-inline-block ml-2">Nuevo Registro</span></a></p>
+                    <p><a asp-action="Create" class="btn btn-base"><i class="fas fa-plus"></i><span class="d-none d-md-inline-block ms-2">Nuevo Registro</span></a></p>
                 }
             </div>
         </div>
         <div>
-            <div class="row px-md-3 font-weight-bold text-uppercase">
+            <div class="row px-md-3 fw-bold text-uppercase">
                 <div class="border-bottom col-12 px-3 py-2">
                     @Html.DisplayNameFor(model => model.Colaborador.Nombre)
                 </div>
@@ -44,7 +42,7 @@
                 {
                     <div class="row bg-row">
                         <div class="border-bottom col-2 col-lg-1 py-3 px-0 text-center">
-                            <img class="rounded-circle" style="width:3rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = item.ColaboradorID, tipo = "profile" })" />
+                            <img class="rounded-circle" style="width:3rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = item.ColaboradorID, tipo = "profile" })" alt="Image Profile" />
                         </div>
                         <div class="border-bottom col-10 col-md-7 col-lg-8 py-3 px-2 px-lg-1">
                             <span class="text-dark">
@@ -53,28 +51,28 @@
                                 @Html.DisplayFor(modelItem => item.Colaborador.Nombre)
                             </span>
                             <div class="d-block">
-                                <small class="text-muted mr-md-3">@Html.DisplayFor(modelItem => item.Colaborador.CURP)</small>
+                                <small class="text-muted me-md-3">@Html.DisplayFor(modelItem => item.Colaborador.CURP)</small>
                                 @if (!item.Activo)
                                 {
-                                    <small class="badge badge-danger">No Disponible</small>
+                                    <small class="badge bg-danger">No Disponible</small>
                                 }
                             </div>
                         </div>
-                        <div class="border-bottom col-12 col-md-3 py-2 p-md-3 text-right">
+                        <div class="border-bottom col-12 col-md-3 py-2 p-md-3 text-end">
                             <a asp-action="Details" asp-route-id="@item.UsuarioID" class="text-decoration-none">
-                                <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="ver detalle">
+                                <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="ver detalle">
                                     <i class="fa fa-file-alt"></i>
                                 </div>
                             </a>
                             @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
                             {
                                 <a asp-action="Edit" asp-route-id="@item.UsuarioID" class="text-decoration-none">
-                                    <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
+                                    <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar registro">
                                         <i class="fa fa-edit"></i>
                                     </div>
                                 </a>
-                                <a href="#" data-id="@item.UsuarioID" class="deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
-                                    <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
+                                <a href="#" data-id="@item.UsuarioID" class="deleteConfirm text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteConfirm">
+                                    <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="eliminar registro">
                                         <i class="fa fa-trash"></i>
                                     </div>
                                 </a>
@@ -143,7 +141,7 @@
                     if (inicio) { $('#dRows').empty(); }
                     if (r !== null && r.trim() !== '') {
                         $('#dRows').append(r);
-                        $('[data-toggle="tooltip"]').tooltip();
+                        $('[data-bs-toggle="tooltip"]').tooltip();
                     } else {
                         $('#dRows').attr('data-rows-next', "0");
                     }

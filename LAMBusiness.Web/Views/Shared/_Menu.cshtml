@@ -12,12 +12,12 @@
     <ul class="navbar-nav flex-grow-1">
         <!-- menú inicio -->
         <li class="nav-item">
-            <a class="nav-link @if (menu == "home") {<text>font-weight-bold text-base</text>} else {<text>text-dark</text>} "
+            <a class="nav-link @if (menu == "home") {<text>fw-bold text-base</text>} else {<text>text-dark</text>} "
                asp-area="" asp-controller="Menu" asp-action="Inicio">
                 <div class="d-md-none btn-icon rounded-circle d-inline-block">
                     <i class="fa fa-store"></i>
                 </div>
-                <span class="ml-2 ml-md-0">Inicio</span>
+                <span class="ms-2 ms-md-0">Inicio</span>
             </a>
         </li>
 
@@ -29,14 +29,14 @@
             {
                 <li class="nav-item">
                     <a class="nav-link @if (menu == "catalogo")
-                {<text>font-weight-bold text-base</text>}
+                {<text>fw-bold text-base</text>}
                 else
                 {<text>text-dark</text>} "
                        asp-area="" asp-controller="Menu" asp-action="Catalogo">
                         <div class="d-md-none btn-icon rounded-circle d-inline-block">
                             <i class="fa fa-th"></i>
                         </div>
-                        <span class="ml-2 ml-md-0">Catálogos</span>
+                        <span class="ms-2 ms-md-0">Catálogos</span>
                     </a>
                 </li>
             }
@@ -47,14 +47,14 @@
             {
                 <li class="nav-item">
                     <a class="nav-link @if (menu == "contacto")
-                {<text>font-weight-bold text-base</text>}
+                {<text>fw-bold text-base</text>}
                 else
                 {<text>text-dark</text>} "
                        asp-area="" asp-controller="Menu" asp-action="Contacto">
                         <div class="d-md-none btn-icon rounded-circle d-inline-block">
                             <i class="fa fa-users"></i>
                         </div>
-                        <span class="ml-2 ml-md-0">Contactos</span>
+                        <span class="ms-2 ms-md-0">Contactos</span>
                     </a>
                 </li>
             }
@@ -65,14 +65,14 @@
             {
                 <li class="nav-item">
                     <a class="nav-link @if (menu == "movimiento")
-                {<text>font-weight-bold text-base</text>}
+                {<text>fw-bold text-base</text>}
                 else
                 {<text>text-dark</text>} "
                        asp-area="" asp-controller="Menu" asp-action="Movimiento">
                         <div class="d-md-none btn-icon rounded-circle d-inline-block">
                             <i class="fa fa-shopping-cart"></i>
                         </div>
-                        <span class="ml-2 ml-md-0">Movimientos</span>
+                        <span class="ms-2 ms-md-0">Movimientos</span>
                     </a>
                 </li>
             }

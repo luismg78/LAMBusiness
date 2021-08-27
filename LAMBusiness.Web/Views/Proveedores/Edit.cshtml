@@ -6,7 +6,7 @@
 
 <form asp-action="Edit">
     <div class="modal-content border-0 box-shadow">
-        <div class="modal-header pb-0">
+        <div class="modal-header pb-0 align-items-baseline">
             <div>
                 <h3 class="modal-title" id="exampleModalLabel">Proveedores</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
@@ -15,7 +15,7 @@
                     <li class="breadcrumb-item active">Nuevo Registro</li>
                 </ul>
             </div>
-            <a asp-action="Index" asp-controller="Proveedores" class="close"><span>&times;</span></a>
+            <a asp-action="Index" asp-controller="Proveedores" class="btn-close me-md-1" aria-label="Close"></a>
         </div>
         <div class="modal-body py-4">
             <input type="hidden" asp-for="ProveedorID" />           
@@ -64,7 +64,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="EstadoID" class="control-label"></label>
-                        <select asp-for="EstadoID" class="form-control" asp-items="Model.EstadosDDL"></select>
+                        <select asp-for="EstadoID" class="form-select" asp-items="Model.EstadosDDL"></select>
                         <span asp-validation-for="EstadoID" class="text-danger"></span>
                     </div>
                 </div>
@@ -72,7 +72,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="MunicipioID" class="control-label"></label>
-                        <select asp-for="MunicipioID" class="form-control" asp-items="Model.MunicipiosDDL"></select>
+                        <select asp-for="MunicipioID" class="form-select" asp-items="Model.MunicipiosDDL"></select>
                         <span asp-validation-for="MunicipioID" class="text-danger"></span>
                     </div>
                 </div>

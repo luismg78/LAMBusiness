@@ -5,7 +5,7 @@
 }
 
 <div class="modal-content border-0 box-shadow">
-    <div class="modal-header pb-0">
+    <div class="modal-header pb-0 align-items-baseline">
         <div>
             <h3 class="modal-title" id="exampleModalLabel">Clientes</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
@@ -14,7 +14,7 @@
                 <li class="breadcrumb-item active text-base">@Model.Count() Registro(s)</li>
             </ul>
         </div>
-        <a asp-action="Contacto" asp-controller="Menu" class="close"><span>&times;</span></a>
+        <a asp-action="Contacto" asp-controller="Menu" class="btn-close me-md-1" aria-label="Close"></a>
     </div>
     <div class="modal-body pt-4">
         <div class="row px-md-3">
@@ -26,15 +26,15 @@
                     </div>
                 </div>
             </div>
-            <div class="col-3 col-md-4 text-right">
+            <div class="col-3 col-md-4 text-end">
                 @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
                 {
-                    <p><a asp-action="Create" class="btn btn-base"><i class="fas fa-plus"></i><span class="d-none d-md-inline-block ml-2">Nuevo Registro</span></a></p>
+                    <p><a asp-action="Create" class="btn btn-base"><i class="fas fa-plus"></i><span class="d-none d-md-inline-block ms-2">Nuevo Registro</span></a></p>
                 }
             </div>
         </div>
         <div>
-            <div class="row px-md-3 font-weight-bold text-uppercase">
+            <div class="row px-md-3 fw-bold text-uppercase">
                 <div class="border-bottom col-12 px-3 py-2">
                     @Html.DisplayNameFor(model => model.ClienteID)
                 </div>
@@ -45,7 +45,7 @@
                     <div class="col-12 border-bottom">
                         <div class="row">
                             <div class="col-md-6 p-3">
-                                <span class="font-weight-bold text-dark">@Html.DisplayFor(modelItem => item.Nombre)</span>
+                                <span class="fw-bold text-dark">@Html.DisplayFor(modelItem => item.Nombre)</span>
                                 <div class="d-block">
                                     <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.RFC)</small>
                                     <small class="d-block text-muted">
@@ -58,21 +58,21 @@
                                     <small class="d-block text-muted">Contactos: @item.ClienteContactos.Count</small>
                                     @if (!item.Activo)
                                     {
-                                        <small class="badge border border-danger text-danger font-weight-normal">No Disponible</small>
+                                        <small class="border border-danger text-danger fw-normal">No Disponible</small>
                                     }
                                 </div>
                             </div>
-                            <div class="col-md-6 px-3 py-2 text-right">
+                            <div class="col-md-6 px-3 py-2 text-end">
                                 <div>
                                     @if (!string.IsNullOrEmpty(item.Telefono))
                                     {
-                                        <small class="d-block font-weight-normal text-muted text-left text-md-right">
-                                            <i class="fa fa-phone mr-2"></i>
+                                        <small class="d-block fw-normal text-muted text-start text-md-end">
+                                            <i class="fa fa-phone me-2"></i>
                                             <a href="tel:@Html.DisplayFor(modelItem => item.Telefono)">@Html.DisplayFor(modelItem => item.Telefono)</a>
                                         </small>
                                     }
-                                    <small class="d-block font-weight-normal text-muted text-left text-md-right"><i class="fa fa-envelope mr-2"></i>@Html.DisplayFor(modelItem => item.Email)</small>
-                                    <small class="d-block font-weight-normal text-muted text-left text-md-right" title="Fecha de registro"><i class="fa fa-calendar mr-2"></i>@item.FechaRegistro.ToString("dd MMMM, yyyy")</small>
+                                    <small class="d-block fw-normal text-muted text-start text-md-end"><i class="fa fa-envelope me-2"></i>@Html.DisplayFor(modelItem => item.Email)</small>
+                                    <small class="d-block fw-normal text-muted text-start text-md-end" title="Fecha de registro"><i class="fa fa-calendar me-2"></i>@item.FechaRegistro.ToString("dd MMMM, yyyy")</small>
                                 </div>
                                 <div class="mt-md-2">
                                     <a asp-action="Details" asp-route-id="@item.ClienteID" class="d-inline-block text-decoration-none">

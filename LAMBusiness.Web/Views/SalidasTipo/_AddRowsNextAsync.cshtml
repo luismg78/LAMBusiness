@@ -8,16 +8,16 @@
             <div class="border-bottom col-10 col-md-9 p-3">
                 <span class="text-dark">@Html.DisplayFor(modelItem => item.SalidaTipoDescripcion)</span>
             </div>
-            <div class="border-bottom col-2 col-md-3 px-3 py-2 text-right">
+            <div class="border-bottom col-2 col-md-3 px-3 py-2 text-end">
                 @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
                 {
                     <a asp-action="Edit" asp-route-id="@item.SalidaTipoID" class="d-block d-md-inline text-decoration-none">
-                        <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="editar registro">
+                        <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar registro">
                             <i class="fa fa-edit"></i>
                         </div>
                     </a>
-                    <a href="#" data-id="@item.SalidaTipoID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-toggle="modal" data-target="#deleteConfirm">
-                        <div class="btn-icon rounded-circle" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="eliminar registro">
+                    <a href="#" data-id="@item.SalidaTipoID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteConfirm">
+                        <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="eliminar registro">
                             <i class="fa fa-trash"></i>
                         </div>
                     </a>

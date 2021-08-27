@@ -23,7 +23,8 @@
         public string ProductoNombre { get; set; }
 
         [Display(Name = "Descripción")]
-        [MaxLength(75, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
+        [DataType(DataType.MultilineText)]
+        [MaxLength(500, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public string ProductoDescripcion { get; set; }
 

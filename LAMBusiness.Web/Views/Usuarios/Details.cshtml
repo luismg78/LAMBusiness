@@ -5,7 +5,7 @@
 }
 
 <div class="modal-content border-0 box-shadow">
-    <div class="modal-header pb-0">
+    <div class="modal-header pb-0 align-items-baseline">
         <div>
             <h3 class="modal-title" id="exampleModalLabel">Usuarios</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
@@ -14,36 +14,36 @@
                 <li class="breadcrumb-item active">Detalle</li>
             </ul>
         </div>
-        <a asp-action="Index" asp-controller="Usuarios" class="close"><span>&times;</span></a>
+        <a asp-action="Index" asp-controller="Usuarios" class="btn-close me-md-1" aria-label="Close"></a>
     </div>
     <div class="modal-body py-4">
         <div class="row px-md-3">
             <div class="card-lam-d1 col-12">
                 <div class="card-header-lam-d1">
-                    <div class="d-block d-md-flex align-items-center row no-gutters">
+                    <div class="d-block d-md-flex align-items-center row g-0">
                         <div class="col-12 col-md-auto">
-                            <img class="rounded-circle mr-4 ml-2" style="width:5rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = Model.ColaboradorID, tipo = "median" })" />
+                            <img class="rounded-circle me-4 ms-2" style="width:5rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = Model.ColaboradorID, tipo = "median" })" alt="Image Profile" />
                         </div>
                         <div class="col-12 col-md-auto">
-                            <p class="font-weight-bold m-0 py-2 pt-md-0 title">
+                            <p class="fw-bold m-0 py-2 pt-md-0 title">
                                 @Html.DisplayFor(model => model.Colaborador.PrimerApellido)
                                 @Html.DisplayFor(model => model.Colaborador.SegundoApellido)
                                 @Html.DisplayFor(model => model.Colaborador.Nombre)
                             </p>
                             @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
                             {
-                                <a asp-action="Edit" asp-route-id="@Model.UsuarioID" class="badge badge-base px-3 py-2">Editar</a>
+                                <a asp-action="Edit" asp-route-id="@Model.UsuarioID" class="btn btn-base btn-sm rounded">Editar</a>
                             }
-                            <a asp-action="Index" class="badge badge-light border px-3 py-2">Regresar</a>
+                            <a asp-action="Index" class="btn btn-sm btn-outline-secondary border">Regresar</a>
                         </div>
                     </div>
                 </div>
                 <div class="card-body-lam-d1 mt-2">
-                    <div class="row no-gutters row-bordered border">
+                    <div class="row g-0 row-bordered border">
                         <div class="bg-row d-flex col-lg align-items-center">
                             <div class="card-body d-flex align-items-center">
                                 <i class="fas fa-user-tag display-4 text-secondary"></i>
-                                <div class="ml-3">
+                                <div class="ms-3">
                                     <div class="text-muted small">@Html.DisplayNameFor(model => model.Colaborador.CURP)</div>
                                     <h5>@Html.DisplayFor(model => model.Colaborador.CURP)</h5>
                                 </div>
@@ -54,7 +54,7 @@
                             <div class="bg-row d-flex col-lg-4 col-lg align-items-center">
                                 <div class="card-body d-flex align-items-center">
                                     <i class="fas fa-user-cog display-4 text-secondary"></i>
-                                    <div class="ml-3">
+                                    <div class="ms-3">
                                         <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.Administrador.AdministradorNombre)</div>
                                         <h5 class="text-capitalize">@Html.DisplayFor(model => model.Administrador.AdministradorNombre)</h5>
                                     </div>
@@ -66,7 +66,7 @@
                                 @if (Model.Activo)
                                 {
                                     <i class="far fa-check-circle display-4 text-success"></i>
-                                    <div class="ml-3">
+                                    <div class="ms-3">
                                         <div class="text-muted small line-height-1">Estatus</div>
                                         <h5 class="text-success">Disponible</h5>
                                     </div>
@@ -74,7 +74,7 @@
                                 else
                                 {
                                     <i class="fas fa-ban display-4 text-danger"></i>
-                                    <div class="ml-4">
+                                    <div class="ms-4">
                                         <div class="text-muted small line-height-1">Estatus</div>
                                         <h5 class="text-danger">No Disponible</h5>
                                     </div>
@@ -82,15 +82,15 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row no-gutters row-bordered border border-top-0">
+                    <div class="row g-0 row-bordered border border-top-0">
                         <div class="bg-row d-flex col-lg-4 col-lg align-items-center">
                             <div class="card-body d-flex align-items-center">
                                 <i class="fas fa-calendar display-4 text-secondary"></i>
-                                <div class="ml-3">
+                                <div class="ms-3">
                                     <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.FechaInicio)</div>
                                     <h5>
                                         @Model.FechaInicio.ToString("dd MMMM, yyyy")
-                                        <small class="ml-1 text-muted">@Model.FechaInicio.ToString("HH:mm")</small>
+                                        <small class="ms-1 text-muted">@Model.FechaInicio.ToString("HH:mm")</small>
                                     </h5>
                                 </div>
                             </div>
@@ -98,11 +98,11 @@
                         <div class="bg-row d-flex col-lg-4 col-lg align-items-center">
                             <div class="card-body d-flex align-items-center">
                                 <i class="fas fa-calendar display-4 text-secondary"></i>
-                                <div class="ml-3">
+                                <div class="ms-3">
                                     <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.FechaTermino)</div>
                                     <h5>
                                         @Model.FechaTermino.ToString("dd MMMM, yyyy")
-                                        <small class="ml-1 text-muted">@Model.FechaTermino.ToString("HH:mm")</small>
+                                        <small class="ms-1 text-muted">@Model.FechaTermino.ToString("HH:mm")</small>
                                     </h5>
                                 </div>
                             </div>
@@ -110,11 +110,11 @@
                         <div class="bg-row d-flex col-lg-4 col-lg align-items-center">
                             <div class="card-body d-flex align-items-center">
                                 <i class="fas fa-calendar display-4 text-secondary"></i>
-                                <div class="ml-3">
+                                <div class="ms-3">
                                     <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.FechaUltimoAcceso)</div>
                                     <h5>
                                         @Model.FechaUltimoAcceso.ToString("dd MMMM, yyyy")
-                                        <small class="ml-1 text-muted">@Model.FechaUltimoAcceso.ToString("HH:mm")</small>
+                                        <small class="ms-1 text-muted">@Model.FechaUltimoAcceso.ToString("HH:mm")</small>
                                     </h5>
                                 </div>
                             </div>
@@ -124,31 +124,31 @@
                 <div class="card-footer-lam-d1 mt-4">
                     @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
                     {
-                        <a asp-action="EditPermissions" asp-controller="Usuarios" asp-route-id="@Model.UsuarioID" class="badge badge-info p-2 float-right"><i class="fas fa-edit"></i> Editar Permisos</a>
+                        <a asp-action="EditPermissions" asp-controller="Usuarios" asp-route-id="@Model.UsuarioID" class="btn btn-sm btn-base float-end"><i class="fas fa-edit"></i> Editar Permisos</a>
                     }
                     @if (Model.UsuarioModulos != null)
                     {
-                        <p class="font-weight-bold text-base">Permisos asignados al usuario</p>
+                        <p class="fw-bold text-base">Permisos asignados al usuario</p>
                         <hr class="mb-0" />
-                        <div class="row no-gutters py-1 d-none d-md-flex border-bottom">
+                        <div class="row g-0 py-1 d-none d-md-flex border-bottom">
                             <div class="col-md-6">
-                                <span class="font-weight-bold d-block">Módulo</span>
+                                <span class="fw-bold d-block">Módulo</span>
                             </div>
                             <div class="col-md-2 text-md-center">
-                                <span class="font-weight-bold d-block">Lectura</span>
+                                <span class="fw-bold d-block">Lectura</span>
                             </div>
                             <div class="col-md-2 text-md-center">
-                                <span class="font-weight-bold d-block">Escritura</span>
+                                <span class="fw-bold d-block">Escritura</span>
                             </div>
                             <div class="col-md-2 text-md-center">
-                                <span class="font-weight-bold d-block">Imprimir</span>
+                                <span class="fw-bold d-block">Imprimir</span>
                             </div>
                         </div>
                         foreach (var item in Model.UsuarioModulos)
                         {
-                            <div class="bg-row row align-items-center border-bottom py-2 px-2 no-gutters">
+                            <div class="bg-row row align-items-center border-bottom py-2 px-2 g-0">
                                 <div class="col-12 col-md-6">
-                                    @*<span class="font-weight-bold d-block d-md-none">Módulo</span>*@
+                                    @*<span class="fw-bold d-block d-md-none">Módulo</span>*@
                                     <span class="d-block">@item.Modulo.Descripcion</span>
                                 </div>
                                 <div class="col-4 col-md-2 text-center">
@@ -192,15 +192,15 @@
                                 </div>
                             </div>
                         }
-                        <div class="row no-gutters pt-4">
-                            <div class="col-12 col-md-6 order-2 text-center text-md-left pt-3 pt-md-0 order-md-1">
+                        <div class="row g-0 pt-4">
+                            <div class="col-12 col-md-6 order-2 text-center text-md-start pt-3 pt-md-0 order-md-1">
                                 <a asp-action="Index" class="btn btn-outline-secondary text-decoration-none">Regresar</a>
                             </div>
                         </div>
                     }
                     else
                     {
-                        <p class="font-weight-bold text-base">Sin registro de permisos asignados al usuario.</p>
+                        <p class="fw-bold text-base">Sin registro de permisos asignados al usuario.</p>
                     }
                 </div>
             </div>
