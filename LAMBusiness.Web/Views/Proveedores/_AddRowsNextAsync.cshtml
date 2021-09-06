@@ -1,63 +1,79 @@
-﻿@model IEnumerable<LAMBusiness.Shared.Contacto.Proveedor>
+﻿@model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Shared.Contacto.Proveedor>>
 
-@if (Model.Any())
+@if (Model != null)
 {
-    @foreach (var item in Model)
-    {
-        <div class="col-12 border-bottom">
-            <div class="row">
-                <div class="col-md-6 p-3">
-                    <span class="fw-bold text-dark">@Html.DisplayFor(modelItem => item.Nombre)</span>
-                    <div class="d-block">
-                        <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.RFC)</small>
-                        <small class="d-block text-muted">
-                            @Html.DisplayFor(modelItem => item.Domicilio),
-                            @Html.DisplayFor(modelItem => item.Colonia)&nbsp;
-                            @Html.DisplayFor(modelItem => item.CodigoPostal),
-                            @Html.DisplayFor(modelItem => item.Municipios.MunicipioDescripcion),
-                            @Html.DisplayFor(modelItem => item.Municipios.Estados.EstadoDescripcion)
-                        </small>
-                        <small class="d-block text-muted">Contactos: @item.ProveedorContactos.Count</small>
-                        @if (!item.Activo)
-                        {
-                            <small class="badge border border-danger text-danger fw-normal">No Disponible</small>
-                        }
-                    </div>
+    <div id="dRows" data-charging="0" data-rows-next="1">
+        @if (Model.Skip == 0)
+        {
+            <div class="row px-md-3">
+                <div class="border-bottom col-8 p-3">
+                    <div class="fw-bold text-uppercase">Proveedores</div>
                 </div>
-                <div class="col-md-6 px-3 py-2 text-end">
-                    <div>
-                        @if (!string.IsNullOrEmpty(item.Telefono))
-                        {
-                            <small class="d-block fw-normal text-muted text-start text-md-end">
-                                <i class="fa fa-phone me-2"></i>
-                                <a href="tel:@Html.DisplayFor(modelItem => item.Telefono)">@Html.DisplayFor(modelItem => item.Telefono)</a>
-                            </small>
-                        }
-                        <small class="d-block fw-normal text-muted text-start text-md-end"><i class="fa fa-envelope me-2"></i>@Html.DisplayFor(modelItem => item.Email)</small>
-                        <small class="d-block fw-normal text-muted text-start text-md-end" title="Fecha de registro"><i class="fa fa-calendar me-2"></i>@item.FechaRegistro.ToString("dd MMMM, yyyy")</small>
-                    </div>
-                    <div class="mt-md-2">
-                        <a asp-action="Details" asp-route-id="@item.ProveedorID" class="d-inline-block text-decoration-none">
-                            <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="ver detalle">
-                                <i class="fa fa-file-alt"></i>
-                            </div>
-                        </a>
-                        @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
-                        {
-                            <a asp-action="Edit" asp-route-id="@item.ProveedorID" class="d-inline-block text-decoration-none">
-                                <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar registro">
-                                    <i class="fa fa-edit"></i>
-                                </div>
-                            </a>
-                            <a href="#" data-id="@item.ProveedorID" class="d-inline-block deleteConfirm text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteConfirm">
-                                <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="eliminar registro">
-                                    <i class="fa fa-trash"></i>
-                                </div>
-                            </a>
-                        }
-                    </div>
-                </div>
+                <small class="border-bottom col-4 p-3 text-muted text-end">
+                    @Model.Registros.ToString("#,###,##0") Registro(s).
+                </small>
             </div>
+        }
+        <div class="px-md-3">
+            @foreach (var item in Model.Datos)
+            {
+                <div class="col-12 border-bottom">
+                    <div class="row">
+                        <div class="col-md-6 p-3">
+                            <span class="fw-bold text-dark">@Html.DisplayFor(modelItem => item.Nombre)</span>
+                            <div class="d-block">
+                                <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.RFC)</small>
+                                <small class="d-block text-muted">
+                                    @Html.DisplayFor(modelItem => item.Domicilio),
+                                    @Html.DisplayFor(modelItem => item.Colonia)&nbsp;
+                                    @Html.DisplayFor(modelItem => item.CodigoPostal),
+                                    @Html.DisplayFor(modelItem => item.Municipios.MunicipioDescripcion),
+                                    @Html.DisplayFor(modelItem => item.Municipios.Estados.EstadoDescripcion)
+                                </small>
+                                <small class="d-block text-muted">Contactos: @item.ProveedorContactos.Count</small>
+                                @if (!item.Activo)
+                                {
+                                    <small class="badge border border-danger text-danger fw-normal">No Disponible</small>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-6 px-3 py-2 text-end">
+                            <div>
+                                @if (!string.IsNullOrEmpty(item.Telefono))
+                                {
+                                    <small class="d-block fw-normal text-muted text-start text-md-end">
+                                        <i class="fa fa-phone me-2"></i>
+                                        <a href="tel:@Html.DisplayFor(modelItem => item.Telefono)">@Html.DisplayFor(modelItem => item.Telefono)</a>
+                                    </small>
+                                }
+                                <small class="d-block fw-normal text-muted text-start text-md-end"><i class="fa fa-envelope me-2"></i>@Html.DisplayFor(modelItem => item.Email)</small>
+                                <small class="d-block fw-normal text-muted text-start text-md-end" title="Fecha de registro"><i class="fa fa-calendar me-2"></i>@item.FechaRegistro.ToString("dd MMMM, yyyy")</small>
+                            </div>
+                            <div class="mt-md-2">
+                                <a asp-action="Details" asp-route-id="@item.ProveedorID" class="d-inline-block text-decoration-none">
+                                    <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="ver detalle">
+                                        <i class="fa fa-file-alt"></i>
+                                    </div>
+                                </a>
+                                @if (Model.PermisoEscritura)
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.ProveedorID" class="d-inline-block text-decoration-none">
+                                        <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar registro">
+                                            <i class="fa fa-edit"></i>
+                                        </div>
+                                    </a>
+                                    <a href="#" data-id="@item.ProveedorID" class="d-inline-block deleteConfirm text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteConfirm">
+                                        <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="eliminar registro">
+                                            <i class="fa fa-trash"></i>
+                                        </div>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            }
         </div>
-    }
+    </div>
 }

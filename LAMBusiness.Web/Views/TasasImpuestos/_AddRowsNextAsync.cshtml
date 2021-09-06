@@ -1,33 +1,48 @@
-﻿@model IEnumerable<LAMBusiness.Shared.Catalogo.TasaImpuesto>
+﻿@model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Shared.Catalogo.TasaImpuesto>>
 
-@if (Model.Any())
+@if (Model != null)
 {
-    foreach (var item in Model)
-    {
-        <div class="row bg-row">
-            <div class="border-bottom col-8 px-3 py-2">
-                <span class="text-dark">@Html.DisplayFor(modelItem => item.Tasa)</span>
-                <div class="d-block">
-                    <small class="d-block d-md-inline-block text-muted me-md-2">Porcentaje: @Html.DisplayFor(modelItem => item.Porcentaje)%</small>
-                    <small class="d-block d-md-inline-block text-muted">Productos asignados: @Html.DisplayFor(modelItem => item.Productos.Count)</small>
+    <div id="dRows" data-charging="0" data-rows-next="1">
+        @if (Model.Skip == 0)
+        {
+            <div class="row px-md-3">
+                <div class="border-bottom col-8 p-3">
+                    <div class="fw-bold text-uppercase">Tasas de Impuestos</div>
                 </div>
-                <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.TasaDescripcion)</small>
+                <small class="border-bottom col-4 p-3 text-muted text-end">
+                    @Model.Registros.ToString("#,###,##0") Registro(s).
+                </small>
             </div>
-            <div class="border-bottom col-4 px-3 py-2 text-end">
-                @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
-                {
-                    <a asp-action="Edit" asp-route-id="@item.TasaID" class="text-decoration-none">
-                        <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar registro">
-                            <i class="fa fa-edit"></i>
+        }
+        <div class="px-md-3">
+            @foreach (var item in Model.Datos)
+            {
+                <div class="row bg-row">
+                    <div class="border-bottom col-8 px-3 py-2">
+                        <span class="text-dark">@Html.DisplayFor(modelItem => item.Tasa)</span>
+                        <div class="d-block">
+                            <small class="d-block d-md-inline-block text-muted me-md-2">Porcentaje: @Html.DisplayFor(modelItem => item.Porcentaje)%</small>
+                            <small class="d-block d-md-inline-block text-muted">Productos asignados: @Html.DisplayFor(modelItem => item.Productos.Count)</small>
                         </div>
-                    </a>
-                    <a href="#" data-id="@item.TasaID" class="deleteConfirm text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteConfirm">
-                        <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="eliminar registro">
-                            <i class="fa fa-trash"></i>
-                        </div>
-                    </a>
-                }
-            </div>
+                        <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.TasaDescripcion)</small>
+                    </div>
+                    <div class="border-bottom col-4 px-3 py-2 text-end">
+                        @if (Model.PermisoEscritura)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.TasaID" class="text-decoration-none">
+                                <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar registro">
+                                    <i class="fa fa-edit"></i>
+                                </div>
+                            </a>
+                            <a href="#" data-id="@item.TasaID" class="deleteConfirm text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteConfirm">
+                                <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="eliminar registro">
+                                    <i class="fa fa-trash"></i>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
         </div>
-    }
+    </div>
 }

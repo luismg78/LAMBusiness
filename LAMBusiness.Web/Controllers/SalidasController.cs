@@ -11,6 +11,7 @@
     using Data;
     using Helpers;
     using Models.ViewModels;
+    using Shared.Aplicacion;
     using Shared.Catalogo;
     using Shared.Movimiento;
 
@@ -46,16 +47,25 @@
                 return RedirectToAction("Inicio", "Menu");
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
-            var dataContext = _context.Salidas
+            var salidas = _context.Salidas
                 .Include(e => e.SalidaTipo)
                 .OrderBy(e => e.Folio);
 
-            return View(dataContext);
+            var filtro = new Filtro<List<Salida>>()
+            {
+                Datos = await salidas.Take(50).ToListAsync(),
+                Patron = "",
+                PermisoEscritura = permisosModulo.PermisoEscritura,
+                PermisoImprimir = permisosModulo.PermisoImprimir,
+                PermisoLectura = permisosModulo.PermisoLectura,
+                Registros = await salidas.CountAsync(),
+                Skip = 0
+            };
+
+            return View(filtro);
         }
 
-        public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
+        public async Task<IActionResult> _AddRowsNextAsync(Filtro<List<Salida>> filtro)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
             if (validateToken != null) { return null; }
@@ -65,12 +75,10 @@
                 return null;
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
             IQueryable<Salida> query = null;
-            if (searchby != null && searchby != "")
+            if (filtro.Patron != null && filtro.Patron != "")
             {
-                var words = searchby.Trim().ToUpper().Split(' ');
+                var words = filtro.Patron.Trim().ToUpper().Split(' ');
                 foreach (var w in words)
                 {
                     if (w.Trim() != "")
@@ -97,16 +105,22 @@
                 query = _context.Salidas.Include(e => e.SalidaTipo);
             }
 
-            var salidas = await query.OrderByDescending(m => m.FechaActualizacion)
-                .Skip(skip)
+            filtro.Registros = await query.CountAsync();
+
+            filtro.Datos = await query.OrderByDescending(m => m.FechaActualizacion)
+                .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
+
+            filtro.PermisoEscritura = permisosModulo.PermisoEscritura;
+            filtro.PermisoImprimir = permisosModulo.PermisoImprimir;
+            filtro.PermisoLectura = permisosModulo.PermisoLectura;
 
             return new PartialViewResult
             {
                 ViewName = "_AddRowsNextAsync",
                 ViewData = new ViewDataDictionary
-                            <List<Salida>>(ViewData, salidas)
+                            <Filtro<List<Salida>>>(ViewData, filtro)
             };
         }
 
@@ -120,22 +134,23 @@
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
-            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
-            {
-                return null;
-            }
-
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificador incorrecto.";
+                return RedirectToAction(nameof(Index));
             }
+
             var salida = await _getHelper.GetSalidaByIdAsync((Guid)id);
 
+            if (salida == null)
+            {
+                TempData["toast"] = "Identificador de la salida inexistente.";
+                return RedirectToAction(nameof(Index));
+            }
+
             var salidaViewModel = await _converterHelper.ToSalidaViewModelAsync(salida);
+            
+            salidaViewModel.PermisoEscritura = permisosModulo.PermisoEscritura;
 
             return View(salidaViewModel);
         }
@@ -144,6 +159,11 @@
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
             if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
             var salidaViewModel = new SalidaViewModel()
             {
@@ -160,22 +180,38 @@
             var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
             if (validateToken != null) { return validateToken; }
 
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (SalidaAplicada(salidaViewModel.SalidaID))
+            {
+                TempData["toast"] = "Salida aplicada no se permiten cambios.";
+                return RedirectToAction(nameof(Details), new { id = salidaViewModel.SalidaID });
+            }
+
+            TempData["toast"] = "Falta información en algún campo.";
             ValidateFieldsAsync(salidaViewModel.SalidaTipoID);
 
             if (ModelState.IsValid)
             {
+                salidaViewModel.UsuarioID = token.UsuarioID;
                 var salida = await _converterHelper.ToSalidaAsync(salidaViewModel, true);
-                _context.Add(salida);
 
                 try
                 {
                     _context.Add(salida);
                     await _context.SaveChangesAsync();
+                    TempData["toast"] = "Los datos de la salida se almacenaron correctamente.";
+                    await BitacoraAsync("Alta", salida);
                     return RedirectToAction(nameof(Details), new { id = salida.SalidaID });
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    TempData["toast"] = "Error al guardar salida, verifique bitácora de errores.";
+                    await BitacoraAsync("Alta", salida, excepcion);
                 }
             }
 
@@ -191,12 +227,13 @@
 
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificador incorrecto.";
+                return RedirectToAction(nameof(Index));
             }
 
             if (SalidaAplicada((Guid)id))
             {
-                //Salida aplicada no se permiten cambios.
+                TempData["toast"] = "Salida aplicada no se permiten cambios.";
                 return RedirectToAction(nameof(Details), new { id });
             }
 
@@ -206,7 +243,8 @@
 
             if (salida == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificador de la entrada inexistente.";
+                return RedirectToAction(nameof(Index));
             }
 
             SalidaViewModel salidaViewModel = await _converterHelper.ToSalidaViewModelAsync(salida);
@@ -221,11 +259,23 @@
             var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
             if (validateToken != null) { return validateToken; }
 
-            if (id != salidaViewModel.SalidaID)
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
+            if (id != salidaViewModel.SalidaID)
+            {
+                TempData["toast"] = "Identificador de la entrada inexistente.";
+                return RedirectToAction(nameof(Index));
+            }
+            if (SalidaAplicada((Guid)id))
+            {
+                TempData["toast"] = "Salida aplicada no se permiten cambios.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            TempData["toast"] = "Falta información en algún campo.";
             ValidateFieldsAsync(salidaViewModel.SalidaTipoID);
 
             if (ModelState.IsValid)
@@ -233,7 +283,7 @@
                 var salida = await _converterHelper.ToSalidaAsync(salidaViewModel, false);
                 if(salida == null)
                 {
-                    ModelState.AddModelError("ModelOnly", "Identificador incorrecto.");
+                    TempData["toast"] = "Identificador incorrecto.";
                     salidaViewModel.SalidaTipoDDL = await _combosHelper.GetComboSalidasTipoAsync();
                     return View(salidaViewModel);
                 }
@@ -242,16 +292,21 @@
                 {
                     _context.Update(salida);
                     await _context.SaveChangesAsync();
+                    TempData["toast"] = "Los datos de la salida se actualizaron correctamente.";
+                    await BitacoraAsync("Actualizar", salida);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", salida, excepcion);
                     if (!SalidaExists(salidaViewModel.SalidaID))
                     {
-                        return NotFound();
+                        TempData["toast"] = "Identificador de la salida inexistente.";
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
-                        throw;
+                        TempData["toast"] = "[Error] Los datos de la salida no fueron actualizados.";
                     }
                 }
                 return RedirectToAction(nameof(Details), new { id = salidaViewModel.SalidaID });
@@ -267,15 +322,15 @@
             var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
             if (validateToken != null) { return validateToken; }
 
-            if (id == null)
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
             {
-                return RedirectToAction(nameof(Details), new { id });
+                return RedirectToAction(nameof(Index));
             }
 
-            if (SalidaAplicada((Guid)id))
+            if (id == null)
             {
-                //Salida aplicada no se permiten cambios.
-                return RedirectToAction(nameof(Details), new { id });
+                TempData["toast"] = "Identificador incorrecto.";
+                return RedirectToAction(nameof(Index));
             }
 
             var salida = await _context.Salidas
@@ -284,7 +339,14 @@
 
             if (salida == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificador incorrecto, entrada inexistente.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (SalidaAplicada((Guid)id))
+            {
+                TempData["toast"] = "Salida aplicada no se permiten cambios.";
+                return RedirectToAction(nameof(Details), new { id });
             }
 
             var salidaDetalle = await _context.SalidasDetalle
@@ -303,11 +365,14 @@
             try
             {
                 await _context.SaveChangesAsync();
-                TempData["toast"] = "El registro ha sido eliminado correctamente.";
+                TempData["toast"] = "Los datos de la salida fueron eliminados correctamente.";
+                await BitacoraAsync("Baja", salida);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                TempData["toast"] = "El registro no ha sido eliminado, verifique bitácora de errores.";
+                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                TempData["toast"] = "[Error] Los datos de la salida no fueron eliminados.";
+                await BitacoraAsync("Baja", salida);
             }
 
             return RedirectToAction(nameof(Index));
@@ -319,14 +384,21 @@
             var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
             if (validateToken != null) { return validateToken; }
 
+            //cambiar por permiso para aplicar que se debe agregar como acción.
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificador incorrecto.";
+                return RedirectToAction(nameof(Index));
             }
 
             if (SalidaAplicada((Guid)id))
             {
-                //Salida aplicada no se permiten cambios.
+                TempData["toast"] = "Salida aplicada no se permiten cambios.";
                 return RedirectToAction(nameof(Details), new { id });
             }
 
@@ -334,7 +406,8 @@
 
             if (salida == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificador de la entrada inexistente.";
+                return RedirectToAction(nameof(Index));
             }
 
             salida.Aplicado = true;
@@ -343,7 +416,7 @@
             var detalle = await _getHelper.GetSalidaDetalleBySalidaIdAsync(salida.SalidaID);
             if (detalle == null)
             {
-                //Ingresar al menos un movimiento
+                TempData["toast"] = "Por favor, ingrese al menos un movimiento.";
                 return RedirectToAction(nameof(Details), new { id });
             }
 
@@ -366,8 +439,9 @@
                     _cantidad = item.Productos.Paquete.CantidadProductoxPaquete * _cantidad;
                 }
 
-                var _salidaDetalle = _salidasDetalle.FirstOrDefault(s => s.ProductoID == item.ProductoID &&
-                                                                         s.AlmacenID == item.AlmacenID);
+                var _salidaDetalle = _salidasDetalle
+                    .FirstOrDefault(s => s.ProductoID == item.ProductoID &&
+                                         s.AlmacenID == item.AlmacenID);
                 if(_salidaDetalle == null)
                 {
                     _salidasDetalle.Add(new SalidaDetalle()
@@ -416,11 +490,14 @@
             try
             {
                 await _context.SaveChangesAsync();
+                TempData["toast"] = "La salida ha sido aplicada, no podrá realizar cambios en la información.";
+                await BitacoraAsync("Aplicar", salida);
             }
             catch (Exception ex)
             {
-                string x = ex.Message;
-                throw;
+                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                TempData["toast"] = "Error al aplicar el movimieno, verifique bitácora de errores.";
+                await BitacoraAsync("Aplicar", salida, excepcion);
             }
 
             return RedirectToAction(nameof(Details), new { id });
@@ -542,12 +619,13 @@
 
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificador incorrecto.";
+                return RedirectToAction(nameof(Index));
             }
 
             if (SalidaAplicada((Guid)id))
             {
-                //Salida aplicada no se permiten cambios.
+                TempData["toast"] = "Salida aplicada no se permiten cambios.";
                 return RedirectToAction(nameof(Details), new { id });
             }
 
@@ -566,20 +644,33 @@
             var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
             if (validateToken != null) { return validateToken; }
 
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (salidaDetalle == null)
+            {
+                TempData["toast"] = "Identificador incorrecto.";
+                return RedirectToAction(nameof(Index));
+            }
+
             if (SalidaAplicada(salidaDetalle.SalidaID))
             {
-                //Salida aplicada no se permiten cambios.
+                TempData["toast"] = "Salida aplicada no se permiten cambios.";
                 return RedirectToAction(nameof(Details), new { id = salidaDetalle.SalidaID });
             }
 
             if (salidaDetalle.AlmacenID == null)
             {
+                TempData["toast"] = "El campo almacén es requerido.";
                 ModelState.AddModelError("AlmacenID", "El campo almacén es requerido.");
                 return View(salidaDetalle);
             }
 
             if (salidaDetalle.ProductoID == null)
             {
+                TempData["toast"] = "El campo producto es requerido.";
                 ModelState.AddModelError("ProductoID", "El campo producto es requerido.");
                 return View(salidaDetalle);
             }
@@ -587,16 +678,19 @@
             var almacen = await _getHelper.GetAlmacenByIdAsync((Guid)salidaDetalle.AlmacenID);
             var producto = await _getHelper.GetProductByIdAsync((Guid)salidaDetalle.ProductoID);
 
+            TempData["toast"] = "Falta información en algún campo.";
             if (ModelState.IsValid)
             {
                 if (almacen == null)
                 {
+                    TempData["toast"] = "El campo almacén es requerido.";
                     ModelState.AddModelError("AlmacenID", "El campo almacén es requerido.");
                     return View(salidaDetalle);
                 }
 
                 if (producto == null)
                 {
+                    TempData["toast"] = "El campo producto es requerido.";
                     ModelState.AddModelError("ProductoID", "El campo producto es requerido.");
                     return View(salidaDetalle);
                 }
@@ -636,7 +730,8 @@
 
                     await _context.SaveChangesAsync();
 
-                    ModelState.AddModelError(string.Empty, "Registro almacenado.");
+                    TempData["toast"] = "Los datos del producto fueron almacenados correctamente.";
+                    await BitacoraAsync("Alta", salidaDetalle, salidaDetalle.SalidaID);
                     return View(new SalidaDetalle()
                     {
                         AlmacenID = salidaDetalle.AlmacenID,
@@ -649,7 +744,10 @@
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    TempData["toast"] = "[Error] Los datos del producto no fueron almacenados.";
+                    ModelState.AddModelError(string.Empty, "Error al guardar registro");
+                    await BitacoraAsync("Alta", salidaDetalle, salidaDetalle.SalidaID, excepcion);
                 }
             }
 
@@ -663,16 +761,22 @@
             var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
             if (validateToken != null) { return validateToken; }
 
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificador incorrecto.";
+                return RedirectToAction(nameof(Index));
             }
 
             var detalle = await _getHelper.GetSalidaDetalleByIdAsync((Guid)id);
 
             if (SalidaAplicada(detalle.SalidaID))
             {
-                //Salida aplicada no se permiten cambios.
+                TempData["toast"] = "Salida aplicada no se permiten cambios.";
                 return RedirectToAction(nameof(Details), new { id = detalle.SalidaID });
             }
 
@@ -686,9 +790,20 @@
             var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
             if (validateToken != null) { return validateToken; }
 
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (salidaDetalle == null)
+            {
+                TempData["toast"] = "Identificador incorrecto.";
+                return RedirectToAction(nameof(Index));
+            }
+
             if (SalidaAplicada(salidaDetalle.SalidaID))
             {
-                //Salida aplicada no se permiten cambios.
+                TempData["toast"] = "Salida aplicada no se permiten cambios.";
                 return RedirectToAction(nameof(Details), new { id = salidaDetalle.SalidaID });
             }
 
@@ -707,6 +822,7 @@
             var almacen = await _getHelper.GetAlmacenByIdAsync((Guid)salidaDetalle.AlmacenID);
             var producto = await _getHelper.GetProductByIdAsync((Guid)salidaDetalle.ProductoID);
 
+            TempData["toast"] = "Información incompleta, verifique los campos.";
             if (ModelState.IsValid)
             {
                 if (almacen == null)
@@ -748,12 +864,17 @@
                     _context.Update(salidaDetalle);
 
                     await _context.SaveChangesAsync();
+                    TempData["toast"] = "Los datos del producto fueron actualizados correctamente.";
+                    await BitacoraAsync("Actualizar", salidaDetalle, salidaDetalle.SalidaID);
+
                     return RedirectToAction(nameof(Details), new { id = salidaDetalle.SalidaID });
 
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    TempData["toast"] = "[Error] Los datos del producto no fueron actualizados.";
+                    await BitacoraAsync("Actualizar", salidaDetalle, salidaDetalle.SalidaID, excepcion);
                 }
             }
 
@@ -767,26 +888,45 @@
             var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
             if (validateToken != null) { return validateToken; }
 
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificador incorrecto.";
+                return RedirectToAction(nameof(Index));
             }
 
             var detalle = await _getHelper.GetSalidaDetalleByIdAsync((Guid)id);
 
             if (detalle == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificador de la entrada inexistente.";
+                return RedirectToAction(nameof(Index));
             }
 
             if (SalidaAplicada(detalle.SalidaID))
             {
-                //Salida aplicada no se permiten cambios.
+                TempData["toast"] = "Salida aplicada no se permiten cambios.";
                 return RedirectToAction(nameof(Details), new { id = detalle.SalidaID });
             }
 
             _context.SalidasDetalle.Remove(detalle);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+                TempData["toast"] = "Los datos del producto fueron eliminados correctamente.";
+                await BitacoraAsync("Baja", detalle, detalle.SalidaID);
+            }
+            catch (Exception ex)
+            {
+                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                TempData["toast"] = "[Error] Los datos del producto no fueron eliminados.";
+                await BitacoraAsync("Baja", detalle, detalle.SalidaID, excepcion);
+            }
+            
             return RedirectToAction(nameof(Details), new { id = detalle.SalidaID });
         }
 
@@ -797,6 +937,21 @@
                 ModelState.Clear();
                 ModelState.AddModelError("SalidaTipoID", "El campo Tipo de Salida es requerido");
             }
+        }
+
+        private async Task BitacoraAsync(string accion, Salida salida, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                salida, salida.SalidaID.ToString(), directorioBitacora, excepcion);
+        }
+        private async Task BitacoraAsync(string accion, SalidaDetalle salidaDetalle, Guid salidaId, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                salidaDetalle, salidaId.ToString(), directorioBitacora, excepcion);
         }
     }
 }

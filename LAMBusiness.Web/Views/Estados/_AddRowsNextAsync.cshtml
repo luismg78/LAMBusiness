@@ -1,27 +1,42 @@
-﻿@model IEnumerable<LAMBusiness.Shared.Catalogo.Estado>
+﻿@model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Shared.Catalogo.Estado>>
 
-@if (Model.Any())
+@if (Model != null)
 {
-    foreach (var item in Model)
-    {
-        <div class="row bg-row">
-            <div class="border-bottom col-9 px-3 py-2 text-truncate">
-                <span class="text-dark">@Html.DisplayFor(modelItem => item.EstadoDescripcion)</span>
-                <div class="d-block">
-                    <small class="d-block d-md-inline-block text-muted me-md-2">Clave: @Html.DisplayFor(modelItem => item.EstadoClave)</small>
-                    <small class="d-block d-md-inline-block text-muted">Municipios: @Html.DisplayFor(modelItem => item.Municipios.Count)</small>
+    <div id="dRows" data-charging="0" data-rows-next="1">
+        @if (Model.Skip == 0)
+        {
+            <div class="row px-md-3">
+                <div class="border-bottom col-8 p-3">
+                    <div class="fw-bold text-uppercase">Estados</div>
                 </div>
+                <small class="border-bottom col-4 p-3 text-muted text-end">
+                    @Model.Registros.ToString("#,###,##0") Registro(s).
+                </small>
             </div>
-            <div class="border-bottom col-3 px-3 py-2 text-end">
-                @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
-                {
-                    <a asp-action="Edit" asp-route-id="@item.EstadoID" class="text-decoration-none">
-                        <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar registro">
-                            <i class="fa fa-edit"></i>
+        }
+        <div class="px-md-3">
+            @foreach (var item in Model.Datos)
+            {
+                <div class="row bg-row">
+                    <div class="border-bottom col-9 px-3 py-2 text-truncate">
+                        <span class="text-dark">@Html.DisplayFor(modelItem => item.EstadoDescripcion)</span>
+                        <div class="d-block">
+                            <small class="d-block d-md-inline-block text-muted me-md-2">Clave: @Html.DisplayFor(modelItem => item.EstadoClave)</small>
+                            <small class="d-block d-md-inline-block text-muted">Municipios: @Html.DisplayFor(modelItem => item.Municipios.Count)</small>
                         </div>
-                    </a>
-                }
-            </div>
+                    </div>
+                    <div class="border-bottom col-3 px-3 py-2 text-end">
+                        @if (Model.PermisoEscritura)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.EstadoID" class="text-decoration-none">
+                                <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar registro">
+                                    <i class="fa fa-edit"></i>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
         </div>
-    }
+    </div>
 }

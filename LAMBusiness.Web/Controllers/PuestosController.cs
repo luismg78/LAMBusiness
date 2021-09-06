@@ -10,6 +10,7 @@
     using Microsoft.Extensions.Configuration;
     using Data;
     using Helpers;
+    using Shared.Aplicacion;
     using Shared.Catalogo;
 
     public class PuestosController : GlobalController
@@ -36,12 +37,23 @@
                 return RedirectToAction("Inicio", "Menu");
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
+            var puestos = _context.Puestos.Include(p => p.Colaboradores);
 
-            return View(_context.Puestos.Include(p => p.Colaboradores));
+            var filtro = new Filtro<List<Puesto>>()
+            {
+                Datos = await puestos.Take(50).ToListAsync(),
+                Patron = "",
+                PermisoEscritura = permisosModulo.PermisoEscritura,
+                PermisoImprimir = permisosModulo.PermisoImprimir,
+                PermisoLectura = permisosModulo.PermisoLectura,
+                Registros = await puestos.CountAsync(),
+                Skip = 0
+            };
+
+            return View(filtro);
         }
 
-        public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
+        public async Task<IActionResult> _AddRowsNextAsync(Filtro<List<Puesto>> filtro)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return null; }
@@ -51,12 +63,10 @@
                 return null;
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
             IQueryable<Puesto> query = null;
-            if (searchby != null && searchby != "")
+            if (filtro.Patron != null && filtro.Patron != "")
             {
-                var words = searchby.Trim().ToUpper().Split(' ');
+                var words = filtro.Patron.Trim().ToUpper().Split(' ');
                 foreach (var w in words)
                 {
                     if (w.Trim() != "")
@@ -80,18 +90,23 @@
                 query = _context.Puestos.Include(m => m.Colaboradores);
             }
 
-            var puestos = await query.OrderBy(m => m.PuestoNombre)
-                .Skip(skip)
+            filtro.Registros = await query.CountAsync();
+
+            filtro.Datos = await query.OrderBy(m => m.PuestoNombre)
+                .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
+
+            filtro.PermisoEscritura = permisosModulo.PermisoEscritura;
+            filtro.PermisoImprimir = permisosModulo.PermisoImprimir;
+            filtro.PermisoLectura = permisosModulo.PermisoLectura;
 
             return new PartialViewResult
             {
                 ViewName = "_AddRowsNextAsync",
                 ViewData = new ViewDataDictionary
-                            <List<Puesto>>(ViewData, puestos)
+                            <Filtro<List<Puesto>>>(ViewData, filtro)
             };
-
         }
 
         public async Task<IActionResult> Create()
@@ -119,6 +134,7 @@
                 return RedirectToAction(nameof(Index));
             }
 
+            TempData["toast"] = "Falta información en algún campo, verifique.";
             if (ModelState.IsValid)
             {
                 puesto.PuestoID = Guid.NewGuid();
@@ -126,6 +142,7 @@
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(puesto);
         }
 
@@ -141,14 +158,17 @@
 
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var puesto = await _context.Puestos.FindAsync(id);
             if (puesto == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
+
             return View(puesto);
         }
 
@@ -166,29 +186,42 @@
 
             if (id != puesto.PuestoID)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
+            TempData["toast"] = "Falta información en algún campo, verifique.";
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(puesto);
                     await _context.SaveChangesAsync();
+                    TempData["toast"] = "Los datos del puesto fueron actualizados correctamente.";
+                    await BitacoraAsync("Actualizar", puesto);
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
                     if (!PuestoExists(puesto.PuestoID))
                     {
-                        return NotFound();
+                        TempData["toast"] = "Registro inexistente.";
                     }
                     else
                     {
-                        throw;
+                        TempData["toast"] = "[Error] Los datos del puesto no fueron actualizados.";
                     }
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", puesto, excepcion);
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    TempData["toast"] = "[Error] Los datos del puesto no fueron actualizados.";
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", puesto, excepcion);
+                }
             }
+
             return View(puesto);
         }
 
@@ -204,7 +237,8 @@
 
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var puesto = await _context.Puestos
@@ -213,7 +247,8 @@
 
             if (puesto == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             if(puesto.Colaboradores.Count > 0)
@@ -222,8 +257,20 @@
                 return RedirectToAction(nameof(Index));
             }
 
-            _context.Puestos.Remove(puesto);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Puestos.Remove(puesto);
+                await _context.SaveChangesAsync();
+                await BitacoraAsync("Baja", puesto);
+                TempData["toast"] = "Los datos del puesto fueron eliminados correctamente.";
+            }
+            catch (Exception ex)
+            {
+                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                TempData["toast"] = "[Error] Los datos del puesto no fueron eliminados.";
+                await BitacoraAsync("Baja", puesto, excepcion);
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -232,5 +279,12 @@
             return _context.Puestos.Any(e => e.PuestoID == id);
         }
 
+        private async Task BitacoraAsync(string accion, Puesto puesto, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                puesto, puesto.PuestoID.ToString(), directorioBitacora, excepcion);
+        }
     }
 }

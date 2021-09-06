@@ -17,6 +17,11 @@
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public decimal? CantidadProductoxPaquete { get; set; }
 
+        [Column(TypeName = "decimal(18,4)")]
+        [Display(Name = "Cantidad")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public decimal? CantidadProducto { get; set; }
+
         public IEnumerable<SelectListItem> TasasImpuestosDDL { get; set; }
 
         public IEnumerable<SelectListItem> UnidadesDDL { get; set; }        

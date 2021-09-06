@@ -56,7 +56,7 @@
                 </label>
             </div>
             <div class="btn-group btn-group-crop">
-                <button type="button" class="btn btn-success" data-method="getCroppedCanvas" data-option="{ &quot;maxWidth&quot;: 4096, &quot;maxHeight&quot;: 4096 }">
+                <button type="button" class="btn btn-success" data-method="getCroppedCanvas" data-option="{ &quot;maxWidth&quot;: 4096, &quot;maxHeight&quot;: 4096 }" data-bs-toggle="modal" data-bs-target="#getCroppedCanvasModal">
                     <span class="docs-tooltip" data-bs-toggle="tooltip" title="Actualizar imagen">
                         <span class="fa fa-save"></span>
                     </span>
@@ -80,31 +80,33 @@
 </div>
 
 <!-- Show the cropped image in modal -->
-<div class="modal fade docs-cropped" id="getCroppedCanvasModal" role="dialog" aria-hidden="true" aria-labelledby="getCroppedCanvasTitle" tabindex="-1">
-    <div class="modal-dialog">
+<div class="modal fade docs-cropped" id="getCroppedCanvasModal" tabindex="-1" role="dialog" aria-labelledby="getCroppedCanvasTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="getCroppedCanvasTitle">Imagen de perfil</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-light border" data-bs-dismiss="modal" autofocus>Cancelar</button>
                 <a class="btn btn-info" id="download" href="javascript:void(0);" onclick="cambiarImagenPerfil(event);">Cambiar imagen</a>
-                @*<a class="btn btn-info" id="download" href="javascript:void(0);" download="cropped.jpg">Cambiar imagen</a>*@
             </div>
         </div>
     </div>
-</div><!-- /.modal -->
+</div>
+<!-- /.modal -->
 
 @section scripts{
     <script src="~/js/cropper.js"></script>
     <script src="~/js/main.js"></script>
 
     <script>
+        $(document).ready(function () {
+            $('#ModalHelp').remove();
+        });
+
         function cambiarImagenPerfil(e) {
             e.preventDefault();
             addProcess("Actualizando imagen de perfil");

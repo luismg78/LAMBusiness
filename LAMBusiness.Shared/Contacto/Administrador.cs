@@ -1,7 +1,9 @@
-﻿namespace LAMBusiness.Shared.Catalogo
+﻿namespace LAMBusiness.Shared.Contacto
 {
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
+    [Table("Administradores", Schema = "Contacto")]
     public class Administrador
     {
         [Key]

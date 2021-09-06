@@ -16,7 +16,12 @@
                     <li class="breadcrumb-item active">Editar Registro</li>
                 </ul>
             </div>
-            <a asp-action="Details" asp-controller="Salidas" asp-route-id="@Model.SalidaID" class="btn-close me-md-1" aria-label="Close"></a>
+            <div class="d-flex align-items-center">
+                <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewEdit', event);">
+                    <i class="fa fa-question-circle"></i>
+                </a>
+                <a asp-action="Details" asp-controller="Salidas" asp-route-id="@Model.SalidaID" class="btn-close me-md-1" aria-label="Close"></a>
+            </div>
         </div>
         <div class="modal-body py-4">
             <input type="hidden" asp-for="SalidaDetalleID" />
@@ -27,7 +32,7 @@
                     <div id="AlmacenSearch" class="form-group @if (Model.Almacenes != null) {<text>d-none</text>}">
                         <input asp-for="AlmacenID" type="hidden" />
                         <label asp-for="AlmacenID" class="control-label"></label>
-                        <div class="input-group">
+                        <div class="input-group search-0">
                             <input id="AlmacenSearchInput" type="search" class="form-control"
                                    data-bs-toggle="focus" data-bs-target=".list-registers"
                                    placeholder="Ingrese nombre del almacén..."
@@ -73,7 +78,7 @@
                     <div id="ProductoSearch" class="form-group @if(Model.Productos != null){<text>d-none</text>}">
                         <input asp-for="ProductoID" type="hidden" />
                         <label asp-for="ProductoID" class="control-label"></label>
-                        <div class="input-group">
+                        <div class="input-group search-0">
                             <input id="ProductoSearchInput" type="search" class="form-control"
                                    data-bs-toggle="focus" data-bs-target=".list-registers"
                                    placeholder="Ingrese código o nombre..."
@@ -115,10 +120,10 @@
                     </div>
                 </div>
                 <!-- Cantidad -->
-                <div class="col-12 col-md-6">
+                <div class="col-12">
                     <div class="form-group">
                         <label asp-for="Cantidad" class="control-label"></label>
-                        <div class="input-group">
+                        <div class="input-group search-0">
                             <span class="input-group-text">
                                 <i class="fas fa-cash-register"></i>
                             </span>
@@ -130,7 +135,7 @@
                 </div>
             </div>
         </div>
-        <div class="modal-footer justify-content-between">
+        <div class="modal-footer justify-content-between mt-4">
             <div class="px-md-3">
                 <input type="submit" value="Actualizar Detalle" class="btn btn-base" />
                 <a asp-action="Details" asp-controller="Salidas" asp-route-id="@Model.SalidaID" class="btn btn-outline-secondary">Regresar</a>

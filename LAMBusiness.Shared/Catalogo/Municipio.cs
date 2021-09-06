@@ -4,6 +4,7 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using Newtonsoft.Json;
 
+    [Table("Municipios", Schema = "Catalogo")]
     public class Municipio
     {
         [Key]

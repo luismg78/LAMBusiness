@@ -6,6 +6,7 @@
 
     public class SalidaViewModel: Salida
     {
+        public bool PermisoEscritura { get; set; }
         public IEnumerable<SelectListItem> SalidaTipoDDL { get; set; }
         public ICollection<SalidaDetalle> SalidaDetalle { get; set; }
     }

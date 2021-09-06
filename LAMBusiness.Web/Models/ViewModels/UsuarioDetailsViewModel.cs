@@ -5,6 +5,7 @@
 
     public class UsuarioDetailsViewModelUsuario: Usuario
     {
+        public bool PermisoEscritura { get; set; }
         public List<UsuarioModulo> UsuarioModulos { get; set; }
     }
 }

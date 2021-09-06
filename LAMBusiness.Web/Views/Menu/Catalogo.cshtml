@@ -39,8 +39,8 @@
                 <a asp-action="Index" asp-controller="Generos" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
-                            <i class="fas fa-restroom display-4 text-base"></i>
-                            <h4 class="mt-4"><span class="text-base">@Model.Generos</span> Géneros</h4>
+                            <i class="fas fa-restroom display-4 text-info"></i>
+                            <h4 class="mt-4"><span class="text-info">@Model.Generos</span> Géneros</h4>
                             <p class="mb-3">Solo se permiten ediciones</p>
                         </div>
                     </div>
@@ -74,6 +74,22 @@
                             <i class="fas fa-globe-americas display-4 text-primary"></i>
                             <h4 class="mt-4"><span class="text-primary">@Model.Estados</span> Estados</h4>
                             <p class="mb-3">Solo se permiten ediciones</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+
+        <!--Formas de pago-->
+        @if (Model.ModulosMenu.Contains(Guid.Parse("1f1a8a70-239b-432c-afcd-71dff20d042c")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="Index" asp-controller="FormasPago" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fas fa-money-check-alt display-4 text-base"></i>
+                            <h4 class="mt-4"><span class="text-base">@Model.FormasPago</span> Formas de Pago</h4>
+                            <p class="mb-3">Catálogo de formas de pago</p>
                         </div>
                     </div>
                 </a>

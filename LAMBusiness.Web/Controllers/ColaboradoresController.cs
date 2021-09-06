@@ -11,9 +11,9 @@
     using Data;
     using Helpers;
     using Models.ViewModels;
+    using Shared.Aplicacion;
     using Shared.Contacto;
     using Shared.Catalogo;
-
     public class ColaboradoresController : GlobalController
     {
         private readonly DataContext _context;
@@ -46,18 +46,27 @@
                 return RedirectToAction("Inicio", "Menu");
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
-            var dataContext = _context.Colaboradores
+            var colaboradores = _context.Colaboradores
                 .Include(c => c.Municipios)
                 .Include(c => c.Municipios.Estados)
                 .Where(c => c.CURP != "CURP781227HCSRNS00")
                 .OrderBy(c => c.CURP);
 
-            return View(await dataContext.ToListAsync());
+            var filtro = new Filtro<List<Colaborador>>()
+            {
+                Datos = await colaboradores.Take(50).ToListAsync(),
+                Patron = "",
+                PermisoEscritura = permisosModulo.PermisoEscritura,
+                PermisoImprimir = permisosModulo.PermisoImprimir,
+                PermisoLectura = permisosModulo.PermisoLectura,
+                Registros = await colaboradores.CountAsync(),
+                Skip = 0
+            };
+
+            return View(filtro);
         }
 
-        public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
+        public async Task<IActionResult> _AddRowsNextAsync(Filtro<List<Colaborador>> filtro)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
             if (validateToken != null) { return null; }
@@ -67,12 +76,10 @@
                 return null;
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
             IQueryable<Colaborador> query = null;
-            if (searchby != null && searchby != "")
+            if (filtro.Patron != null && filtro.Patron != "")
             {
-                var words = searchby.Trim().ToUpper().Split(' ');
+                var words = filtro.Patron.Trim().ToUpper().Split(' ');
                 foreach (var w in words)
                 {
                     if (w.Trim() != "")
@@ -111,16 +118,22 @@
                     .Include(c => c.Municipios);
             }
 
-            var colaboradores = await query.Where(c => c.CURP != "CURP781227HCSRNS00").OrderBy(p => p.CURP)
-                .Skip(skip)
+            filtro.Registros = await query.CountAsync();
+
+            filtro.Datos = await query.Where(c => c.CURP != "CURP781227HCSRNS00").OrderBy(p => p.CURP)
+                .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
+
+            filtro.PermisoEscritura = permisosModulo.PermisoEscritura;
+            filtro.PermisoImprimir = permisosModulo.PermisoImprimir;
+            filtro.PermisoLectura = permisosModulo.PermisoLectura;
 
             return new PartialViewResult
             {
                 ViewName = "_AddRowsNextAsync",
                 ViewData = new ViewDataDictionary
-                            <List<Colaborador>>(ViewData, colaboradores)
+                            <Filtro<List<Colaborador>>>(ViewData, filtro)
             };
         }
 
@@ -194,6 +207,7 @@
             }
             
             TempData["toast"] = "Falta información en algún campo, verifique.";
+            await ValidarDatosDelColaborador(colaboradorViewModel);
 
             if (ModelState.IsValid)
             {
@@ -209,11 +223,14 @@
                     _context.Add(resultado.Contenido);
                     await _context.SaveChangesAsync();
                     TempData["toast"] = "Los datos del colaborador fueron almacenados correctamente.";
+                    await BitacoraAsync("Alta", resultado.Contenido);
                     return RedirectToAction(nameof(Details), new { id = resultado.Contenido.ColaboradorID });
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
                     TempData["toast"] = "[Error] Los datos del colaborador no fueron almacenados.";
+                    await BitacoraAsync("Alta", resultado.Contenido, excepcion);
                 }
             }
 
@@ -280,11 +297,14 @@
                 return RedirectToAction(nameof(Index));
             }
 
+            TempData["toast"] = "Falta información en algún campo.";
+            await ValidarDatosDelColaborador(colaboradorViewModel);
+
             if (ModelState.IsValid)
             {                
+                var resultado = await _converterHelper.ToColaboradorAsync(colaboradorViewModel, false);
                 try
                 {
-                    var resultado = await _converterHelper.ToColaboradorAsync(colaboradorViewModel, false);
                     if(resultado.Error)
                     {
                         TempData["toast"] = resultado.Mensaje;
@@ -292,27 +312,39 @@
                     }
 
                     _context.Update(resultado.Contenido);
-
                     await _context.SaveChangesAsync();
+
                     TempData["toast"] = "Los datos del colaborador fueron actualizados correctamente.";
+                    await BitacoraAsync("Actualizar", resultado.Contenido);
                     return RedirectToAction(nameof(Details), new { id = resultado.Contenido.ColaboradorID });
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
                     if (!ColaboradorExists(colaboradorViewModel.ColaboradorID))
                         TempData["toast"] = "Colaborador inexistente (identificador incorrecto).";
                     else
                         TempData["toast"] = "[Error] Los datos del colaborador no fueron actualizados.";
+                    
+                    await BitacoraAsync("Actualizar", resultado.Contenido, excepcion);
                 }
                 catch(Exception ex) {
-                    string x = ex.Message;
-                    TempData["toast"] = "Los datos del colaborador no fueron actualizados.";
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    TempData["toast"] = "[Error] Los datos del colaborador no fueron actualizados.";
+                    await BitacoraAsync("Actualizar", resultado.Contenido, excepcion);
                 }
 
                 return RedirectToAction(nameof(Index));
             }
 
-            TempData["toast"] = "Falta información en algún campo.";
+            colaboradorViewModel.EstadosDDL = await _combosHelper.GetComboEstadosAsync();
+            colaboradorViewModel.MunicipiosDDL = await _combosHelper
+                .GetComboMunicipiosAsync((short)colaboradorViewModel.EstadoID);
+            colaboradorViewModel.EstadosCivilesDDL = await _combosHelper.GetComboEstadosCivilesAsync();
+            colaboradorViewModel.EstadosNacimientoDDL = await _combosHelper.GetComboEstadosAsync();
+            colaboradorViewModel.GenerosDDL = await _combosHelper.GetComboGenerosAsync();
+            colaboradorViewModel.PuestosDDL = await _combosHelper.GetComboPuestosAsync();
+
             return View(colaboradorViewModel);
         }
 
@@ -345,10 +377,13 @@
                 await _context.SaveChangesAsync();
 
                 TempData["toast"] = "Los datos del colaborador fueron eliminados correctamente.";
+                await BitacoraAsync("Baja", colaborador);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
                 TempData["toast"] = "Los datos del colaborador no pueden ser eliminados por integridad de la información.";
+                await BitacoraAsync("Baja", colaborador, excepcion);
             }
 
             return RedirectToAction(nameof(Index));
@@ -382,6 +417,38 @@
         private bool ColaboradorExists(Guid id)
         {
             return _context.Colaboradores.Any(e => e.ColaboradorID == id);
+        }
+
+        private async Task BitacoraAsync(string accion, Colaborador colaborador, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                colaborador, colaborador.ColaboradorID.ToString(), directorioBitacora, excepcion);
+        }
+
+        private async Task ValidarDatosDelColaborador(ColaboradorViewModel colaborador)
+        {
+            colaborador.CURP = colaborador.CURP.Trim().ToUpper();
+            colaborador.Email = colaborador.Email.Trim().ToLower();
+
+            var existeCURP = await _context.Colaboradores
+                .AnyAsync(c => c.CURP == colaborador.CURP && 
+                               c.ColaboradorID != colaborador.ColaboradorID);
+            if (existeCURP)
+            {
+                TempData["toast"] = "CURP previamente asignada a otro colaborador.";
+                ModelState.AddModelError("CURP", "CURP previamente asignada.");
+            }
+
+            var existeEmail = await _context.Colaboradores
+                .AnyAsync(c => c.Email == colaborador.Email &&
+                               c.ColaboradorID != colaborador.ColaboradorID);
+            if (existeEmail)
+            {
+                TempData["toast"] = "Email previamente asignada a otro colaborador.";
+                ModelState.AddModelError("Email", "Email previamente asignada.");
+            }
         }
     }
 }

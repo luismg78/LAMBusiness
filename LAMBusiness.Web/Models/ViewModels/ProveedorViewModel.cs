@@ -12,6 +12,8 @@
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public short? EstadoID { get; set; }
 
+        public bool PermisoEscritura { get; set; }
+
         public IEnumerable<SelectListItem> EstadosDDL { get; set; }
 
         public IEnumerable<SelectListItem> MunicipiosDDL { get; set; }

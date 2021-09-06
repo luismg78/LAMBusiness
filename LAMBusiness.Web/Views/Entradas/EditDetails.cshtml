@@ -12,11 +12,16 @@
                 <ul class="breadcrumb bg-transparent p-0 small">
                     <li class="breadcrumb-item"><a asp-action="Movimiento" asp-controller="Menu">Movimientos</a></li>
                     <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Entradas">Entradas</a></li>
-                    <li class="breadcrumb-item"><a asp-action="Details" asp-controller="Entradas" asp-route-id="@Model.EntradaID" >Detalle de Entrada</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Details" asp-controller="Entradas" asp-route-id="@Model.EntradaID">Detalle de Entrada</a></li>
                     <li class="breadcrumb-item active">Editar Registro</li>
                 </ul>
             </div>
-            <a asp-action="Details" asp-controller="Entradas" asp-route-id="@Model.EntradaID" class="btn-close me-md-1" aria-label="Close"></a>
+            <div class="d-flex align-items-center">
+                <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewEdit', event);">
+                    <i class="fa fa-question-circle"></i>
+                </a>
+                <a asp-action="Details" asp-controller="Entradas" asp-route-id="@Model.EntradaID" class="btn-close me-md-1" aria-label="Close"></a>
+            </div>
         </div>
         <div class="modal-body py-4">
             <input type="hidden" asp-for="EntradaDetalleID" />
@@ -27,7 +32,7 @@
                     <div id="AlmacenSearch" class="form-group @if (Model.Almacenes != null) {<text>d-none</text>}">
                         <input asp-for="AlmacenID" type="hidden" />
                         <label asp-for="AlmacenID" class="control-label"></label>
-                        <div class="input-group">
+                        <div class="input-group search-0">
                             <input id="AlmacenSearchInput" type="search" class="form-control"
                                    data-bs-toggle="focus" data-bs-target=".list-registers"
                                    placeholder="Ingrese nombre del almacén..."
@@ -73,7 +78,7 @@
                     <div id="ProductoSearch" class="form-group @if(Model.Productos != null){<text>d-none</text>}">
                         <input asp-for="ProductoID" type="hidden" />
                         <label asp-for="ProductoID" class="control-label"></label>
-                        <div class="input-group">
+                        <div class="input-group search-0">
                             <input id="ProductoSearchInput" type="search" class="form-control"
                                    data-bs-toggle="focus" data-bs-target=".list-registers"
                                    placeholder="Ingrese código o nombre..."
@@ -81,14 +86,14 @@
                                    onkeyup="positionCursorWithArrowKey(event);"
                                    onkeypress="getProducto(event);" />
                             <button id="ProductoSearchButton" class="btn btn-light border"
-                                    type="button" onclick="search(event);">
+                                    type="button" onclick="searchProducto(event);">
                                 <span id="SpinList" class="d-flex align-items-center">
                                     <i class="fa fa-search"></i>
                                 </span>
                             </button>
                         </div>
                         <span asp-validation-for="ProductoID" class="text-danger"></span>
-                        <div id="dRow" class="mb-4 mt-1 list-registers" data-charging="0" data-rows-next="1">
+                        <div id="dRowProducto" class="mb-4 mt-1 list-registers" data-charging="0" data-rows-next="1">
                         </div>
                     </div>
                 </div>
@@ -118,7 +123,7 @@
                 <div class="col-12 col-md-6">
                     <div class="form-group">
                         <label asp-for="PrecioVenta" class="control-label"></label>
-                        <div class="input-group">
+                        <div class="input-group search-0">
                             <span class="input-group-text">
                                 <i class="fas fa-dollar-sign"></i>
                             </span>
@@ -129,10 +134,10 @@
                     </div>
                 </div>
                 <!-- Precio costo -->
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-6 mt-4 mt-lg-0">
                     <div class="form-group">
                         <label asp-for="PrecioCosto" class="control-label"></label>
-                        <div class="input-group">
+                        <div class="input-group search-0">
                             <span class="input-group-text">
                                 <i class="fas fa-dollar-sign"></i>
                             </span>
@@ -144,8 +149,8 @@
                     </div>
                 </div>
                 <!-- Cantidad -->
-                <div class="col-12 col-md-6">
-                    <div class="form-group">
+                <div class="col-12 col-md-6 mt-4">
+                    <div class="form-group search-0">
                         <label asp-for="Cantidad" class="control-label"></label>
                         <div class="input-group">
                             <span class="input-group-text">
@@ -159,10 +164,10 @@
                     </div>
                 </div>
                 <!-- Importe (cant x pcosto) -->
-                <div class="col-12 col-md-6">
-                    <div class="form-group">
+                <div class="col-12 col-md-6 mt-4">
+                    <div class="form-group search-0">
                         <label class="control-label">Importe (Cant x PCosto)</label>
-                        <h3 id="Importe" class="fw-bold text-dark">@Convert.ToDecimal(Model.Cantidad * Model.PrecioCosto).ToString("$#,###,##0.00")</h3>
+                        <h3 id="Importe" class="fw-bold text-dark mt-2">@Convert.ToDecimal(Model.Cantidad * Model.PrecioCosto).ToString("$#,###,##0.00")</h3>
                     </div>
                 </div>
             </div>
@@ -180,22 +185,19 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-<script>
-    var skip = 0;
-    var input = '';
-
+    <script>
     $(document).ready(function () {
-        $('#dRow').on("scroll", function () {
-            if ($('#dRow')[0] !== this.undefined &&
-                $('#dRow').attr('data-rows-next') === "1" &&
-                $('#dRow').attr('data-charging') === "0" &&
-                $('#dRow > div').length % 50 === 0) {
+        $('#dRowProducto').on("scroll", function () {
+            if ($('#dRowProducto')[0] !== this.undefined &&
+                $('#dRowProducto').attr('data-rows-next') === "1" &&
+                $('#dRowProducto').attr('data-charging') === "0" &&
+                $('#dRowProducto > div').length % 50 === 0) {
                 var scrollHeight = $(document).height();
                 var scrollPosition = $(window).height() + $(window).scrollTop();
                 var result = (scrollHeight - scrollPosition) / scrollHeight;
                 if (result <= 0.0005) {
                     skip += 50;
-                    addRowsNext(skip);
+                    addRowsNextProducto(skip);
                 }
             }
         });
@@ -228,6 +230,7 @@
     function addRowsNextAlmacen(skip, inicio = false) {
         addProcessWithSpinnerInList('SpinListAlmacen', 'fa-search');
         $('#dRowAlmacen').attr('data-charging', "1");
+        $('[data-valmsg-for = "AlmacenID"]')[0].textContent = '';
         var searchBy = $('#AlmacenSearchInput')[0] === undefined ? "" : $('#AlmacenSearchInput').val();
         if (searchBy === '') {
             $('#dRowAlmacen').attr('data-rows-next', "0");
@@ -263,13 +266,14 @@
         });
     }
 
-    function addRowsNext(skip, inicio = false) {
+    function addRowsNextProducto(skip, inicio = false) {
         addProcessWithSpinnerInList('SpinList', 'fa-search');
-        $('#dRow').attr('data-charging', "1");
+        $('#dRowProducto').attr('data-charging', "1");
+        $('[data-valmsg-for = "ProductoID"]')[0].textContent = '';
         var searchBy = $('#ProductoSearchInput')[0] === undefined ? "" : $('#ProductoSearchInput').val();
         if (searchBy === '') {
-            $('#dRow').attr('data-rows-next', "0");
-            $('#dRow').attr('data-charging', "0");
+            $('#dRowProducto').attr('data-rows-next', "0");
+            $('#dRowProducto').attr('data-charging', "0");
             removeProcessWithSpinnerInList('SpinList', 'fa-search');
             return false;
         }
@@ -282,19 +286,19 @@
                 skip: skip
             },
             success: function (r) {
-                if (inicio) { $('#dRow').empty(); }
+                if (inicio) { $('#dRowProducto').empty(); }
                 if (r !== null && r.trim() !== '') {
-                    $('#dRow').append(r);
-                    $('#dRow').slideDown();
+                    $('#dRowProducto').append(r);
+                    $('#dRowProducto').slideDown();
                     $('#ProductoSearchInput').focus();
                 } else {
-                    $('#dRow').attr('data-rows-next', "0");
+                    $('#dRowProducto').attr('data-rows-next', "0");
                 }
-                $('#dRow').attr('data-charging', "0");
+                $('#dRowProducto').attr('data-charging', "0");
                 removeProcessWithSpinnerInList('SpinList', 'fa-search');
             },
             error: function (r) {
-                $('#dRow').attr('data-charging', "0");
+                $('#dRowProducto').attr('data-charging', "0");
                 removeProcessWithSpinnerInList('SpinList', 'fa-search');
             },
             cache: false
@@ -324,7 +328,7 @@
         $('#Importe')[0].innerText = '$0.00';
         $('#ProductoDatos').removeClass('d-block').addClass('d-none');
         $('#ProductoSearch').removeClass('d-none').addClass('d-block');
-        $('#dRow > div').remove();
+        $('#dRowProducto > div').remove();
         $('#ProductoSearchInput').val('');
         $('#ProductoSearchInput').focus();
     }
@@ -381,6 +385,7 @@
     function getProductoByCode(code) {
         if (code !== '') {
             addProcessWithSpinnerInList('SpinList', 'fa-search');
+            $('[data-valmsg-for = "ProductoID"]')[0].textContent = '';
             $.ajax({
                 url: '@Url.Action("GetProducto", "Entradas")',
                 method: 'POST',
@@ -397,8 +402,8 @@
                         $('#PrecioVenta').val(r.precioVenta);
                         $('#Importe')[0].innerText = formatCurrency(r.precioCosto);
                         $('#ProductoSearch').removeClass('d-block').addClass('d-none');
-                        $('#dRow > div').remove();
-                        $('#PrecioCosto').focus();
+                        $('#dRowProducto > div').remove();
+                        $('#PrecioVenta').focus();
                     } else {
                         alert(r.message);
                     }
@@ -422,14 +427,15 @@
         }
     }
 
-    function search(e) {
+    function searchProducto(e) {
         e.preventDefault();
         if ($('#ProductoSearchInput').attr('data-bs-toggle')) {
             if ($('#ProductoSearchInput').val() !== '') {
                 skip = 0;
-                addRowsNext(skip, true);
+                addRowsNextProducto(skip, true);
             }
         }
     }
-</script>
+
+    </script>
 }

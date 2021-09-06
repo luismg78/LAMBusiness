@@ -10,6 +10,7 @@
     using Microsoft.Extensions.Configuration;
     using Data;
     using Helpers;
+    using Shared.Aplicacion;
     using Shared.Catalogo;
 
     public class MunicipiosController : GlobalController
@@ -36,16 +37,26 @@
                 return RedirectToAction("Inicio", "Menu");
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
             var municipios = _context.Municipios
                 .Include(m => m.Estados)
                 .OrderBy(m => m.EstadoID)
                 .ThenBy(m => m.MunicipioDescripcion);
-            return View(municipios);
+
+            var filtro = new Filtro<List<Municipio>>()
+            {
+                Datos = await municipios.Take(50).ToListAsync(),
+                Patron = "",
+                PermisoEscritura = permisosModulo.PermisoEscritura,
+                PermisoImprimir = permisosModulo.PermisoImprimir,
+                PermisoLectura = permisosModulo.PermisoLectura,
+                Registros = await municipios.CountAsync(),
+                Skip = 0
+            };
+
+            return View(filtro);
         }
 
-        public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip) 
+        public async Task<IActionResult> _AddRowsNextAsync(Filtro<List<Municipio>> filtro) 
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return null; }
@@ -55,12 +66,10 @@
                 return null;
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
             IQueryable<Municipio> query = null;
-            if (searchby != null && searchby != "")
+            if (filtro.Patron != null && filtro.Patron != "")
             {
-                var words = searchby.Trim().ToUpper().Split(' ');
+                var words = filtro.Patron.Trim().ToUpper().Split(' ');
                 foreach (var w in words)
                 {
                     if (w.Trim() != "")
@@ -79,22 +88,29 @@
                     }
                 }
             }
+
             if(query == null)
             {
                 query = _context.Municipios.Include(m => m.Estados);
             }
 
-            var municipios = await query.OrderBy(m => m.EstadoID)
+            filtro.Registros = await query.CountAsync();
+
+            filtro.Datos = await query.OrderBy(m => m.EstadoID)
                 .ThenBy(m => m.MunicipioDescripcion)
-                .Skip(skip)
+                .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
+
+            filtro.PermisoEscritura = permisosModulo.PermisoEscritura;
+            filtro.PermisoImprimir = permisosModulo.PermisoImprimir;
+            filtro.PermisoLectura = permisosModulo.PermisoLectura;
 
             return new PartialViewResult
             {
                 ViewName = "_AddRowsNextAsync",
                 ViewData = new ViewDataDictionary
-                            <List<Municipio>>(ViewData, municipios)
+                            <Filtro<List<Municipio>>>(ViewData, filtro)
             };
 
         }
@@ -111,7 +127,8 @@
 
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var municipio = await _context.Municipios
@@ -120,7 +137,8 @@
 
             if (municipio == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             return View(municipio);
@@ -140,34 +158,45 @@
 
             if (id != municipio.MunicipioID)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var municipioUpdate = await _context.Municipios
                         .Include(m => m.Estados)
                         .FirstOrDefaultAsync(m => m.MunicipioID == municipio.MunicipioID);
 
+            TempData["toast"] = "Falta información en algún campo, verifique.";
             if (ModelState.IsValid)
             {
-                
                 municipioUpdate.MunicipioDescripcion = municipio.MunicipioDescripcion.Trim().ToUpper();
                 try
                 {
                     _context.Update(municipioUpdate);
                     await _context.SaveChangesAsync();
+                    TempData["toast"] = "Los datos del municipio fueron actualizados correctamente.";
+                    await BitacoraAsync("Actualizar", municipioUpdate);
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
                     if (!MunicipioExists(municipio.MunicipioID))
                     {
-                        return NotFound();
+                        TempData["toast"] = "Registro inexistente.";
                     }
                     else
                     {
-                        throw;
+                        TempData["toast"] = "[Error] Los datos del municipio no fueron actualizados.";
                     }
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", municipioUpdate, excepcion);
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    TempData["toast"] = "[Error] Los datos del municipio no fueron actualizados.";
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", municipioUpdate, excepcion);
+                }
             }
             
             return View(municipioUpdate);
@@ -176,6 +205,14 @@
         private bool MunicipioExists(int id)
         {
             return _context.Municipios.Any(e => e.MunicipioID == id);
-        }       
+        }
+
+        private async Task BitacoraAsync(string accion, Municipio municipio, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                municipio, municipio.MunicipioID.ToString(), directorioBitacora, excepcion);
+        }
     }
 }

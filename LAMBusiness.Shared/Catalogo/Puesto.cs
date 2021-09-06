@@ -3,9 +3,11 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
     using Contacto;
     using Newtonsoft.Json;
 
+    [Table("Puestos", Schema = "Catalogo")]
     public class Puesto
     {
         [Key]

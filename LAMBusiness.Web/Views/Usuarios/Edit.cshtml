@@ -15,7 +15,12 @@
                     <li class="breadcrumb-item active">Editar Registro</li>
                 </ul>
             </div>
-            <a asp-action="Index" asp-controller="Usuarios" class="btn-close me-md-1" aria-label="Close"></a>
+            <div class="d-flex align-items-center">
+                <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewEdit', event);">
+                    <i class="fa fa-question-circle"></i>
+                </a>
+                <a asp-action="Index" asp-controller="Usuarios" class="btn-close me-md-1" aria-label="Close"></a>
+            </div>
         </div>
         <div class="modal-body py-4">
             <div class="row px-md-3">
@@ -23,21 +28,21 @@
                 <input asp-for="ColaboradorID" type="hidden" />
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="form-group">
-                        <label asp-for="FechaInicio" class="control-label"></label>
+                        <label asp-for="FechaInicio" class="control-label required"></label>
                         <input asp-for="FechaInicio" class="form-control" autofocus />
                         <span asp-validation-for="FechaInicio" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="form-group">
-                        <label asp-for="FechaTermino" class="control-label"></label>
+                        <label asp-for="FechaTermino" class="control-label required"></label>
                         <input asp-for="FechaTermino" class="form-control" autofocus />
                         <span asp-validation-for="FechaTermino" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-12 col-lg-4">
                     <div class="form-group">
-                        <label asp-for="AdministradorID" class="control-label"></label>
+                        <label asp-for="AdministradorID" class="control-label required"></label>
                         <select asp-for="AdministradorID" class="form-select" asp-items="Model.AdministradoresDDL"></select>
                         <span asp-validation-for="AdministradorID" class="text-danger"></span>
                     </div>

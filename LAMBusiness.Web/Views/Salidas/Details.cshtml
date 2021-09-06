@@ -6,7 +6,7 @@
 
 <div class="modal-content border-0 box-shadow">
     <div class="modal-header pb-0 align-items-baseline">
-        <div>
+        <div class="ms-3">
             <h3 class="modal-title" id="exampleModalLabel">Salidas</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
                 <li class="breadcrumb-item"><a asp-action="Movimiento" asp-controller="Menu">Movimientos</a></li>
@@ -14,7 +14,12 @@
                 <li class="breadcrumb-item active">Detalle</li>
             </ul>
         </div>
-        <a asp-action="Index" asp-controller="Salidas" class="btn-close me-md-1" aria-label="Close"></a>
+        <div class="d-flex align-items-center">
+            <a class="btn-help text-secondary me-3" href="/" onclick="help('DetailsMovimientos', event);">
+                <i class="fa fa-question-circle"></i>
+            </a>
+            <a asp-action="Index" asp-controller="Salidas" class="btn-close me-md-1" aria-label="Close"></a>
+        </div>
     </div>
     <div class="modal-body py-4">
         <div class="row px-md-3">
@@ -34,9 +39,9 @@
                             <div class="col-12">
                                 @if (!Model.Aplicado)
                                 {
-                                    @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                                    @if (Model.PermisoEscritura)
                                     {
-                                        <a asp-action="Edit" asp-route-id="@Model.SalidaID" class="btn btn-base btn-sm rounded">Editar</a>
+                                        <a asp-action="Edit" asp-route-id="@Model.SalidaID" class="btn btn-base btn-sm">Editar</a>
                                     }
                                 }
                                 <a asp-action="Index" class="btn btn-sm btn-outline-secondary border">Regresar</a>
@@ -48,7 +53,7 @@
                     <div class="row g-0 row-bordered border">
                         <div class="bg-row d-flex col-md-6 col-lg-4 align-items-center">
                             <div class="card-body d-flex align-items-center">
-                                <i class="fas fa-calendar display-4 text-secondary"></i>
+                                <i class="fas fa-calendar display-4"></i>
                                 <div class="ms-3">
                                     <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.FechaCreacion)</div>
                                     <h6>@Model.FechaCreacion.ToString("dd MMMM, yyyy")</h6>
@@ -57,7 +62,7 @@
                         </div>
                         <div class="bg-row d-flex col-md-6 col-lg-4 align-items-center">
                             <div class="card-body d-flex align-items-center">
-                                <i class="fas fa-calendar display-4 text-secondary"></i>
+                                <i class="fas fa-calendar display-4"></i>
                                 <div class="ms-3">
                                     <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.FechaActualizacion)</div>
                                     <h6>@Model.FechaActualizacion.ToString("dd MMMM, yyyy")</h6>
@@ -68,25 +73,25 @@
                             <div class="card-body d-flex align-items-center">
                                 @if (Model.Aplicado)
                                 {
-                                    <i class="fas fa-user-check display-4 text-secondary"></i>
+                                    <i class="fas fa-user-check display-4"></i>
                                     <div class="ms-3">
                                         <div class="text-muted small line-height-1">Responsable Aplicar Movimiento</div>
-                                        <h6>Nombre del responsable</h6>
+                                        <h6 class="text-capitalize">@Html.DisplayFor(model => model.Usuarios.Colaborador.NombreCompleto)</h6>
                                     </div>
                                 }
                                 else
                                 {
-                                    <i class="fas fa-user-edit display-4 text-secondary"></i>
+                                    <i class="fas fa-user-edit display-4"></i>
                                     <div class="ms-3">
                                         <div class="text-muted small line-height-1">Responsable Última Actualización</div>
-                                        <h6>Nombre del responsable</h6>
+                                        <h6 class="text-capitalize">@Html.DisplayFor(model => model.Usuarios.Colaborador.NombreCompleto)</h6>
                                     </div>
                                 }
                             </div>
                         </div>
                         <div class="bg-row d-flex col-md-12 col-lg-8 align-items-center">
                             <div class="card-body d-flex align-items-center">
-                                <i class="fas fa-eye display-4 text-secondary"></i>
+                                <i class="fas fa-eye display-4"></i>
                                 <div class="ms-3">
                                     <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.Observaciones)</div>
                                     <h6>@Html.DisplayFor(model => model.Observaciones)</h6>
@@ -120,14 +125,14 @@
                 <div class="my-4">
                     @if (!Model.Aplicado)
                     {
-                        @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                        @if (Model.PermisoEscritura)
                         {
                             <a asp-action="AddDetails" asp-controller="Salidas" asp-route-id="@Model.SalidaID" class="btn btn-sm btn-base float-end"><i class="fas fa-plus"></i> Ingresar Detalle</a>
                         }
                     }
                     @if (Model.SalidaDetalle.Count > 0)
                     {
-                        <p class="fw-bold text-base">Detalle</p>
+                        <p class="text-base">Detalle</p>
                         <hr class="mb-0" />
                         <div class="row g-0 py-1 d-none d-md-flex border-bottom">
                             <div class="@if (Model.Aplicado) {<text>col-md-6</text>} else {<text>col-md-4</text>}">
@@ -152,8 +157,15 @@
                             <div class="bg-row row align-items-center border-bottom py-2 px-2 g-0">
                                 <div class="col-12 @if(Model.Aplicado) {<text>col-md-6</text>} else {<text>col-md-4</text>}">
                                     <span class="fw-bold d-block d-md-none">Producto</span>
-                                    <span class="d-block">@item.Productos.ProductoNombre</span>
-                                    <small class="d-block">@item.Productos.Codigo</small>
+                                    <div class="d-flex justify-content-start align-items-center">
+                                        <div class="me-3">
+                                            <img class="rounded-circle" style="width:2rem;" src="@Url.Action("GetProductImages", "Productos", new { productoId = item.ProductoID, imageId = item.ProductoID, tipo = "sm" })" alt="Image Product" />
+                                        </div>
+                                        <div>
+                                            <span class="d-block">@item.Productos.ProductoNombre</span>
+                                            <a href="#" class="d-block small" onclick="getProducto('@item.ProductoID');">@item.Productos.Codigo</a>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-12 col-md-2">
                                     <span class="fw-bold d-block d-md-none">Almacén</span>
@@ -176,7 +188,7 @@
                                                 <i class="fa fa-edit"></i>
                                             </div>
                                         </a>
-                                        <a href="#" data-id="@item.SalidaDetalleID" class="deleteConfirm text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteConfirm">
+                                        <a href="#" data-id="@item.SalidaDetalleID" class="deleteConfirm text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteRegister">
                                             <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="eliminar registro">
                                                 <i class="fa fa-trash"></i>
                                             </div>
@@ -189,7 +201,7 @@
                             <div class="col-12 col-md-6 order-2 text-center text-md-start pt-3 pt-md-0 order-md-1">
                                 @if (!Model.Aplicado)
                                 {
-                                    @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                                    @if (Model.PermisoEscritura)
                                     {
                                         <a href="#" data-id="@Model.SalidaID" class="applyConfirm col-12 col-md-7 col-lg-5 btn btn-info text-white" data-bs-toggle="modal" data-bs-target="#applyConfirm">Aplicar Movimiento</a>
                                     }
@@ -203,7 +215,7 @@
                     }
                     else
                     {
-                        <p class="fw-bold text-base">Sin registro en el detalle de movimientos.</p>
+                        <p class="text-base">Sin registro en el detalle de movimientos.</p>
                     }
                 </div>
             </div>
@@ -211,34 +223,60 @@
     </div>
 </div>
 
-@if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+@if (Model.PermisoEscritura)
 {
-    <partial name="_DeleteConfirmDialog" />
+    <partial name="_DeleteConfirmDialogDetail" />
     <partial name="_ApplyConfirmDialog" />
 }
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-    <script>
+<script>
         var itemToDelete, itemToApply;
 
         $(document).ready(function () {
             $('.applyConfirm').click((e) => {
                 itemToApply = e.currentTarget.dataset.id;
             });
-
-            $("#ApplyYesButton").click((e) => {
-                window.location.href = '@Url.Action("Apply", "Salidas")' + '/' + itemToApply;
-            });
-
-            $('.deleteConfirm').click((e) => {
-                itemToDelete = e.currentTarget.dataset.id;
-            });
-
-            $("#DeleteYesButton").click((e) => {
-                window.location.href = '@Url.Action("DeleteDetails", "Salidas")' + '/' + itemToDelete;
-            });
         });
-    </script>
+
+        function apply(e) {
+            var url = '@Url.Action("Apply", "Salidas", new { id = "paramId" })';
+            url = url.replace('paramId', itemToApply);
+
+            window.location.href = url;
+        }
+        function deleteRegister(e) {
+            var url = '@Url.Action("DeleteDetails", "Salidas", new { id = "paramId" })';
+            url = url.replace('paramId', itemToDelete);
+
+            window.location.href = url;
+        }
+        function getProducto(id) {
+            addProcessWithSpinnerInList('SpinList', 'fa-search');
+            $.ajax({
+                url: '@Url.Action("GetProductDetail", "Productos")',
+                method: 'POST',
+                datatype: 'text',
+                data: {
+                    id: id,
+                    mostrarPrecioCosto: true
+                },
+                success: function (r) {
+                    if (r !== null && r.trim() !== '') {
+                        $('#ModalHelpLabel')[0].innerHTML = 'Producto';
+                        $('#ModalHelp .modal-body').empty();
+                        $('#ModalHelp .modal-body').append(r);
+                        $('#ModalHelp').modal('show');
+                    }
+                    removeProcessWithSpinnerInList('SpinList', 'fa-search');
+                },
+                error: function (r) {
+                    removeProcessWithSpinnerInList('SpinList', 'fa-search');
+                },
+                cache: false
+            });
+        }
+</script>
 }

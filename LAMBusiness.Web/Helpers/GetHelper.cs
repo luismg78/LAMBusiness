@@ -2,24 +2,28 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Net;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Data;
+    using Models.ViewModels;
+    using Newtonsoft.Json;
+    using Shared.Aplicacion;
     using Shared.Catalogo;
     using Shared.Contacto;
     using Shared.Movimiento;
-    using Shared.Aplicacion;
-    using System.IO;
-    using Newtonsoft.Json;
 
     public class GetHelper : IGetHelper
     {
         private readonly DataContext _context;
+        private readonly BitacoraContext _dbBitacora;
 
-        public GetHelper(DataContext context)
+        public GetHelper(DataContext context, BitacoraContext dbBitacora)
         {
             _context = context;
+            _dbBitacora = dbBitacora;
         }
 
         //Administradores
@@ -97,6 +101,10 @@
             return await query.OrderBy(e => e.AlmacenNombre).Skip(skip).Take(50).ToListAsync();
         }
 
+        //Bitácora
+
+
+
         //Clientes
 
         /// <summary>
@@ -109,6 +117,129 @@
             return await _context.Clientes
                 .Include(c => c.ClienteContactos)
                 .FirstOrDefaultAsync(c => c.ClienteID == id);
+        }
+
+        //Aplicación
+        
+        private string GetHostName()
+        {
+            string localIP = string.Empty;
+            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+            return host.HostName.Trim().ToUpper();
+        }
+
+        private string GetIPPrivada()
+        {
+            string localIP = string.Empty;
+            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (IPAddress ip in host.AddressList)
+            {
+                if (ip.AddressFamily.ToString() == "InterNetwork")
+                {
+                    localIP += ip.ToString();
+                    break;
+                }
+            }
+            return localIP;
+        }
+
+        private string GetIPPublica()
+        {
+            string htmlIpPublica = string.Empty;
+            string ip = string.Empty;
+            try
+            {
+                // Solicitud Web:
+                WebRequest solicitudWeb = WebRequest.Create("http://checkip.dyndns.org/");
+                // Recuperación de código HTML que contiene la dirección IP pública:
+                using (WebResponse respuestaWeb = solicitudWeb.GetResponse())
+                using (StreamReader stream = new StreamReader(respuestaWeb.GetResponseStream()))
+                {
+                    htmlIpPublica = stream.ReadToEnd();
+                }
+                // Expresión regular para una dirección IP:
+                System.Text.RegularExpressions.Regex regexIp = new System.Text.RegularExpressions.Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b");
+                System.Text.RegularExpressions.MatchCollection resultado = regexIp.Matches(htmlIpPublica);
+                foreach (System.Text.RegularExpressions.Match match in resultado)
+                {
+                    ip = match.Value;
+                    break;
+                }
+            }
+            catch
+            {
+                ip = "Sin Conexión";
+            }
+            return ip;
+        }
+
+        //Bitácora
+
+        public async Task SetBitacoraAsync(Token token, string accion, Guid moduloId, object clase, 
+            string parametroId, string directorio, string excepcion = "")
+        {
+            Guid bitacoraId = Guid.NewGuid();
+            Bitacora bitacora = new Bitacora()
+            {
+                Accion = accion.Trim(),
+                AccionRealizada = excepcion == "" ? true : false,
+                BitacoraID = bitacoraId,
+                Fecha = DateTime.Now,
+                Hostname = token.HostName,
+                IPPrivada = token.IPPrivada,
+                IPPublica = token.IPPublica,
+                ModuloID = moduloId,
+                ParametrosJson = JsonConvert.SerializeObject(clase, Formatting.Indented, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                }),
+                ParametroID = parametroId,
+                UsuarioID = token.UsuarioID
+            };
+
+            _dbBitacora.Bitacora.Add(bitacora);
+
+            if (!string.IsNullOrEmpty(excepcion))
+            {
+                _dbBitacora.BitacoraExcepciones.Add(new BitacoraExcepciones()
+                {
+                    BitacoraID = bitacoraId,
+                    Excepcion = excepcion
+                });
+            }
+
+            try
+            {
+                await _dbBitacora.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                BitacoraExcepcionViewModel bitacoraExcepcion = new BitacoraExcepcionViewModel()
+                {
+                    Accion = accion.Trim(),
+                    AccionRealizada = excepcion == "" ? true : false,
+                    BitacoraID = bitacoraId,
+                    ErrorAlGuardarBitacoraDB = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString(),
+                    Excepcion = excepcion,
+                    Fecha = DateTime.Now,
+                    Hostname = token.HostName,
+                    IPPrivada = token.IPPrivada,
+                    IPPublica = token.IPPublica,
+                    ModuloID = moduloId,
+                    ParametrosJson = JsonConvert.SerializeObject(clase, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    }),
+                    ParametroID = parametroId,
+                    UsuarioID = token.UsuarioID
+                };
+                if (!Directory.Exists(directorio))
+                {
+                    Directory.CreateDirectory(directorio);
+                }
+                string file = Path.Combine(directorio, $"{bitacoraId}.txt");
+                File.WriteAllText(file, JsonConvert.SerializeObject(bitacoraExcepcion));
+            }
         }
 
         //Colaborador
@@ -293,6 +424,8 @@
         public async Task<Entrada> GetEntradaByIdAsync(Guid id)
         {
             return await _context.Entradas
+                .Include(e => e.Usuarios)
+                .ThenInclude(e => e.Colaborador)
                 .Include(e => e.Proveedores)
                 .ThenInclude(e => e.Municipios)
                 .ThenInclude(e => e.Estados)
@@ -507,6 +640,8 @@
         {
             return await _context.Productos
                 .Include(p => p.Existencias)
+                .ThenInclude(p => p.Almacenes)
+                .Include(p => p.Marcas)
                 .Include(p => p.Paquete)
                 .Include(p => p.TasasImpuestos)
                 .Include(p => p.Unidades)
@@ -522,6 +657,8 @@
         {
             return await _context.Productos
                 .Include(p => p.Existencias)
+                .ThenInclude(p => p.Almacenes)
+                .Include(p => p.Marcas)
                 .Include(p => p.Paquete)
                 .Include(p => p.TasasImpuestos)
                 .Include(p => p.Unidades)
@@ -637,6 +774,8 @@
         public async Task<Salida> GetSalidaByIdAsync(Guid id)
         {
             return await _context.Salidas
+                .Include(e => e.Usuarios)
+                .ThenInclude(e => e.Colaborador)
                 .Include(e => e.SalidaTipo)
                 .FirstOrDefaultAsync(m => m.SalidaID == id);
         }
@@ -729,6 +868,9 @@
             {
                 Administrador = "",
                 ColaboradorID = Guid.Empty,
+                HostName = "",
+                IPPrivada = "",
+                IPPublica = "",
                 Nombre = "",
                 PrimerApellido = "",
                 SegundoApellido = "",
@@ -906,6 +1048,10 @@
                     };
                 }
 
+                token.HostName = GetHostName();
+                token.IPPrivada = GetIPPrivada();
+                token.IPPublica = GetIPPublica();
+
                 resultado.Contenido = token;
 
                 try
@@ -945,8 +1091,12 @@
             //initialize token class
             var token = new Token()
             {
+                Activo = false,
                 Administrador = "",
-                ColaboradorID = Guid.Empty,
+                ColaboradorID = Guid.Empty,               
+                HostName = "",
+                IPPrivada = "",
+                IPPublica = "",
                 Nombre = "",
                 PrimerApellido = "",
                 SegundoApellido = "",
@@ -1129,6 +1279,10 @@
                         };
                     }
                 }
+
+                token.HostName = GetHostName();
+                token.IPPrivada = GetIPPrivada();
+                token.IPPublica = GetIPPublica();
 
                 resultado.Contenido = token;
                 

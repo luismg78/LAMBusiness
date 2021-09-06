@@ -10,6 +10,7 @@
     using Microsoft.Extensions.Configuration;
     using Data;
     using Helpers;
+    using Shared.Aplicacion;
     using Shared.Catalogo;
     using Shared.Contacto;
     using Shared.Movimiento;
@@ -44,17 +45,27 @@
                 return RedirectToAction("Inicio", "Menu");
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
-            var dataContext = _context.Entradas
+            var entradas = _context.Entradas
                 .Include(e => e.Proveedores)
                 .OrderBy(e => e.Folio)
                 .ThenBy(e => e.Proveedores.Nombre);
 
-            return View(dataContext);
+            var filtro = new Filtro<List<Entrada>>()
+            {
+                Datos = await entradas.Take(50).ToListAsync(),
+                Patron = "",
+                PermisoEscritura = permisosModulo.PermisoEscritura,
+                PermisoImprimir = permisosModulo.PermisoImprimir,
+                PermisoLectura = permisosModulo.PermisoLectura,
+                Registros = await entradas.CountAsync(),
+                Skip = 0
+            };
+
+            return View(filtro);
+
         }
 
-        public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
+        public async Task<IActionResult> _AddRowsNextAsync(Filtro<List<Entrada>> filtro)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
             if (validateToken != null) { return null; }
@@ -64,12 +75,10 @@
                 return null;
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
             IQueryable<Entrada> query = null;
-            if (searchby != null && searchby != "")
+            if (filtro.Patron != null && filtro.Patron != "")
             {
-                var words = searchby.Trim().ToUpper().Split(' ');
+                var words = filtro.Patron.Trim().ToUpper().Split(' ');
                 foreach (var w in words)
                 {
                     if (w.Trim() != "")
@@ -96,16 +105,22 @@
                 query = _context.Entradas.Include(e => e.Proveedores);
             }
 
-            var entradas = await query.OrderByDescending(m => m.FechaActualizacion)
-                .Skip(skip)
+            filtro.Registros = await query.CountAsync();
+
+            filtro.Datos = await query.OrderByDescending(m => m.FechaActualizacion)
+                .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
+
+            filtro.PermisoEscritura = permisosModulo.PermisoEscritura;
+            filtro.PermisoImprimir = permisosModulo.PermisoImprimir;
+            filtro.PermisoLectura = permisosModulo.PermisoLectura;
 
             return new PartialViewResult
             {
                 ViewName = "_AddRowsNextAsync",
                 ViewData = new ViewDataDictionary
-                            <List<Entrada>>(ViewData, entradas)
+                            <Filtro<List<Entrada>>>(ViewData, filtro)
             };
         }
 
@@ -118,8 +133,6 @@
             {
                 return RedirectToAction(nameof(Index));
             }
-
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
 
             if (id == null)
             {
@@ -137,6 +150,8 @@
 
             var entradaViewModel = await _converterHelper.ToEntradaViewModelAsync(entrada);
 
+            entradaViewModel.PermisoEscritura = permisosModulo.PermisoEscritura;
+
             return View(entradaViewModel);
         }
 
@@ -150,7 +165,7 @@
                 return RedirectToAction(nameof(Index));
             }
 
-            return View();
+            return View(new Entrada());
         }
 
         [HttpPost]
@@ -171,14 +186,13 @@
                 return RedirectToAction(nameof(Details), new { id = entrada.EntradaID });
             }
 
-            TempData["toast"] = "Información incompleta, verifique los campos.";
+            TempData["toast"] = "Falta información en algún campo.";
 
             if (ModelState.IsValid)
             {
-                entrada.EntradaID = Guid.NewGuid();
                 entrada.Aplicado = false;
-                entrada.FechaActualizacion = DateTime.Now;
                 entrada.FechaCreacion = DateTime.Now;
+                entrada.FechaActualizacion = DateTime.Now;
                 entrada.Folio = entrada.Folio.Trim().ToUpper();
                 entrada.Observaciones = entrada.Observaciones == null ? "" : entrada.Observaciones.Trim().ToUpper();
                 entrada.UsuarioID = token.UsuarioID;
@@ -188,11 +202,14 @@
                     _context.Add(entrada);
                     await _context.SaveChangesAsync();
                     TempData["toast"] = "Los datos de la entrada se almacenaron correctamente.";
+                    await BitacoraAsync("Alta", entrada);
                     return RedirectToAction(nameof(Details), new { id = entrada.EntradaID });
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
                     TempData["toast"] = "Error al guardar entrada, verifique bitácora de errores.";
+                    await BitacoraAsync("Alta", entrada, excepcion);
                 }
             }
 
@@ -221,9 +238,7 @@
                 return RedirectToAction(nameof(Details), new { id });
             }
 
-            var entrada = await _context.Entradas
-                .Include(e => e.Proveedores)
-                .FirstOrDefaultAsync(e => e.EntradaID == id);
+            var entrada = await _getHelper.GetEntradaByIdAsync((Guid)id);
 
             if (entrada == null)
             {
@@ -258,11 +273,11 @@
                 return RedirectToAction(nameof(Details), new { id });
             }
 
-            TempData["toast"] = "Información incompleta, verifique los campos.";
+            TempData["toast"] = "Falta información en algún campo.";
 
             if (ModelState.IsValid)
             {
-                var _entrada = await _context.Entradas.FindAsync(entrada.EntradaID);
+                var _entrada = await _getHelper.GetEntradaByIdAsync(entrada.EntradaID);
 
                 _entrada.FechaActualizacion = DateTime.Now;
                 _entrada.ProveedorID = entrada.ProveedorID;
@@ -276,9 +291,12 @@
                     _context.Update(_entrada);
                     await _context.SaveChangesAsync();
                     TempData["toast"] = "Los datos de la entrada se actualizaron correctamente.";
+                    await BitacoraAsync("Actualizar", entrada);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", entrada, excepcion);
                     if (!EntradaExists(entrada.EntradaID))
                     {
                         TempData["toast"] = "Identificador de la entrada inexistente.";
@@ -286,8 +304,14 @@
                     }
                     else
                     {
-                        TempData["toast"] = "Error al guardar entrada, verifique bitácora de errores.";
+                        TempData["toast"] = "[Error] Los datos de la entrada no fueron actualizados.";
                     }
+                }
+                catch(Exception ex)
+                {
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    TempData["toast"] = "[Error] Los datos de la entrada no fueron actualizados.";
+                    await BitacoraAsync("Actualizar", entrada, excepcion);
                 }
                 return RedirectToAction(nameof(Details), new { id = entrada.EntradaID });
             }
@@ -311,19 +335,20 @@
                 return RedirectToAction(nameof(Index));
             }
 
-            if (EntradaAplicada((Guid)id))
-            {
-                TempData["toast"] = "Entrada aplicada no se permiten cambios.";
-                return RedirectToAction(nameof(Details), new { id });
-            }
-
             var entrada = await _context.Entradas
                 .Include(e => e.Proveedores)
                 .FirstOrDefaultAsync(m => m.EntradaID == id);
             
             if (entrada == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificador incorrecto, entrada inexistente.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (EntradaAplicada((Guid)id))
+            {
+                TempData["toast"] = "Entrada aplicada no se permiten cambios.";
+                return RedirectToAction(nameof(Details), new { id });
             }
 
             var entradaDetalle = await _context.EntradasDetalle
@@ -342,15 +367,17 @@
             try
             {
                 await _context.SaveChangesAsync();
-                TempData["toast"] = "El registro ha sido eliminado correctamente.";
+                TempData["toast"] = "Los datos de la entrada fueron eliminados correctamente.";
+                await BitacoraAsync("Baja", entrada);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                TempData["toast"] = "El registro no ha sido eliminado, verifique bitácora de errores.";
+                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                TempData["toast"] = "[Error] Los datos de la entrada no fueron eliminados.";
+                await BitacoraAsync("Baja", entrada);
             }
 
             return RedirectToAction(nameof(Index));
-
         }
 
         public async Task<IActionResult> Apply(Guid? id)
@@ -418,7 +445,8 @@
                 item.Productos.PrecioVenta = (decimal)item.PrecioVenta;
 
                 var existencia = existencias
-                    .FirstOrDefault(e => e.ProductoID == _productoId && e.AlmacenID == _almacenId);
+                    .FirstOrDefault(e => e.ProductoID == _productoId && 
+                                        e.AlmacenID == _almacenId);
 
                 if(existencia == null)
                 {
@@ -492,10 +520,13 @@
             {
                 await _context.SaveChangesAsync();
                 TempData["toast"] = "La entrada ha sido aplicada, no podrá realizar cambios en la información.";
+                await BitacoraAsync("Aplicar", entrada);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
                 TempData["toast"] = "Error al aplicar el movimieno, verifique bitácora de errores.";
+                await BitacoraAsync("Aplicar", entrada, excepcion);
             }
 
             return RedirectToAction(nameof(Details), new { id });
@@ -745,12 +776,14 @@
 
             if (entradaDetalle.AlmacenID == null)
             {
+                TempData["toast"] = "El campo almacén es requerido.";
                 ModelState.AddModelError("AlmacenID", "El campo almacén es requerido.");
                 return View(entradaDetalle);
             }
 
             if (entradaDetalle.ProductoID == null)
             {
+                TempData["toast"] = "El campo producto es requerido.";
                 ModelState.AddModelError("ProductoID", "El campo producto es requerido.");
                 return View(entradaDetalle);
             }
@@ -758,7 +791,7 @@
             var almacen = await _getHelper.GetAlmacenByIdAsync((Guid)entradaDetalle.AlmacenID);
             var producto = await _getHelper.GetProductByIdAsync((Guid)entradaDetalle.ProductoID);
 
-            TempData["toast"] = "Información incompleta, verifique los campos.";
+            TempData["toast"] = "Falta información en algún campo.";
 
             ValidarDatosDelProducto(entradaDetalle);
 
@@ -766,12 +799,14 @@
             {
                 if (almacen == null)
                 {
+                    TempData["toast"] = "El campo almacén es requerido.";
                     ModelState.AddModelError("AlmacenID", "El campo almacén es requerido.");
                     return View(entradaDetalle);
                 }
 
                 if (producto == null)
                 {
+                    TempData["toast"] = "El campo producto es requerido.";
                     ModelState.AddModelError("ProductoID", "El campo producto es requerido.");
                     return View(entradaDetalle);
                 }
@@ -787,10 +822,10 @@
 
                     _context.Add(entradaDetalle);
 
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();  
 
-                    TempData["toast"] = "Registro almacenado.";
-                    ModelState.AddModelError(string.Empty, "Registro almacenado.");
+                    TempData["toast"] = "Los datos del producto fueron almacenados correctamente.";
+                    await BitacoraAsync("Alta", entradaDetalle, entradaDetalle.EntradaID);
 
                     return View(new EntradaDetalle() { 
                         AlmacenID = entradaDetalle.AlmacenID,
@@ -802,10 +837,12 @@
                     });
 
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    TempData["toast"] = "Error al guardar registro, verifique bitácora de errores.";
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    TempData["toast"] = "[Error] Los datos del producto no fueron almacenados.";
                     ModelState.AddModelError(string.Empty, "Error al guardar registro");
+                    await BitacoraAsync("Alta", entradaDetalle, entradaDetalle.EntradaID, excepcion);
                 }
             }
 
@@ -908,15 +945,17 @@
                     _context.Update(entradaDetalle);
 
                     await _context.SaveChangesAsync();
-                    TempData["toast"] = "Registro almacenado.";
-                    ModelState.AddModelError(string.Empty, "Registro almacenado.");
+                    TempData["toast"] = "Los datos del producto fueron actualizados correctamente.";
+                    await BitacoraAsync("Actualizar", entradaDetalle, entradaDetalle.EntradaID);
 
                     return RedirectToAction(nameof(Details), new { id = entradaDetalle.EntradaID });
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    TempData["toast"] = "Error al guardar registro, verifique bitácora de errores.";
-                    ModelState.AddModelError(string.Empty, "Error al guardar registro");
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    TempData["toast"] = "[Error] Los datos del producto no fueron actualizados.";
+                    ModelState.AddModelError(string.Empty, "Error al actualizar el registro");
+                    await BitacoraAsync("Actualizar", entradaDetalle, entradaDetalle.EntradaID, excepcion);
                 }
             }
 
@@ -959,16 +998,34 @@
             try
             {
                 await _context.SaveChangesAsync();
-                TempData["toast"] = "El producto ha sido eliminado de la lista.";
+                TempData["toast"] = "Los datos del producto fueron eliminados correctamente.";
+                await BitacoraAsync("Baja", detalle, detalle.EntradaID);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                TempData["toast"] = "Error al intentar eliminar el producto de la lista.";
+                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                TempData["toast"] = "[Error] Los datos del producto no fueron eliminados.";
+                await BitacoraAsync("Baja", detalle, detalle.EntradaID, excepcion);
             }
 
             return RedirectToAction(nameof(Details), new { id = detalle.EntradaID });
         }
-    
+
+        private async Task BitacoraAsync(string accion, Entrada entrada, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                entrada, entrada.EntradaID.ToString(), directorioBitacora, excepcion);
+        }
+        private async Task BitacoraAsync(string accion, EntradaDetalle entradaDetalle, Guid entradaId, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                entradaDetalle, entradaId.ToString(), directorioBitacora, excepcion);
+        }
+
         private void ValidarDatosDelProducto(EntradaDetalle entradaDetalle)
         {
             if(entradaDetalle.PrecioVenta == null || entradaDetalle.PrecioVenta <= 0)
@@ -988,6 +1045,6 @@
                 TempData["toast"] = "Precio de costo incorrecto.";
                 ModelState.AddModelError("PrecioCosto", "Precio de venta incorrecto.");
             }
-        }
+        }        
     }
 }

@@ -1,8 +1,10 @@
 ﻿namespace LAMBusiness.Shared.Catalogo
 {
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
     using Newtonsoft.Json;
 
+    [Table("Generos", Schema = "Catalogo")]
     public class Genero
     {
         [Key]

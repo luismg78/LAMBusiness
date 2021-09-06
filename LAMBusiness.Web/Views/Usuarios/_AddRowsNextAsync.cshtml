@@ -1,47 +1,62 @@
-﻿@model IEnumerable<LAMBusiness.Shared.Contacto.Usuario>
+﻿@model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Shared.Contacto.Usuario>>
 
-@if (Model.Any())
+@if (Model != null)
 {
-    foreach (var item in Model)
-    {
-        <div class="row bg-row">
-            <div class="border-bottom col-2 col-lg-1 py-3 px-0 text-center">
-                <img class="rounded-circle" style="width:3rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = item.ColaboradorID, tipo = "profile" })" alt="Image Profile" />
-            </div>
-            <div class="border-bottom col-10 col-md-7 col-lg-8 py-3 px-2 px-lg-1">
-                <span class="text-dark">
-                    @Html.DisplayFor(modelItem => item.Colaborador.PrimerApellido)
-                    @Html.DisplayFor(modelItem => item.Colaborador.SegundoApellido)
-                    @Html.DisplayFor(modelItem => item.Colaborador.Nombre)
-                </span>
-                <div class="d-block">
-                    <small class="text-muted me-md-3">@Html.DisplayFor(modelItem => item.Colaborador.CURP)</small>
-                    @if (!item.Activo)
-                    {
-                        <small class="badge bg-danger">No Disponible</small>
-                    }
+    <div id="dRows" data-charging="0" data-rows-next="1">
+        @if (Model.Skip == 0)
+        {
+            <div class="row px-md-3">
+                <div class="border-bottom col-8 p-3">
+                    <div class="fw-bold text-uppercase">Usuarios</div>
                 </div>
+                <small class="border-bottom col-4 p-3 text-muted text-end">
+                    @Model.Registros.ToString("#,###,##0") Registro(s).
+                </small>
             </div>
-            <div class="border-bottom col-12 col-md-3 py-2 p-md-3 text-end">
-                <a asp-action="Details" asp-route-id="@item.UsuarioID" class="text-decoration-none">
-                    <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="ver detalle">
-                        <i class="fa fa-file-alt"></i>
+        }
+        <div class="px-md-3">
+            @foreach (var item in Model.Datos)
+            {
+                <div class="row bg-row">
+                    <div class="border-bottom col-2 col-lg-1 py-3 px-0 text-center">
+                        <img class="rounded-circle" style="width:3rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = item.ColaboradorID, tipo = "profile" })" alt="Image Profile" />
                     </div>
-                </a>
-                @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
-                {
-                    <a asp-action="Edit" asp-route-id="@item.UsuarioID" class="text-decoration-none">
-                        <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar registro">
-                            <i class="fa fa-edit"></i>
+                    <div class="border-bottom col-10 col-md-7 col-lg-8 py-3 px-2 px-lg-1">
+                        <span class="text-dark">
+                            @Html.DisplayFor(modelItem => item.Colaborador.PrimerApellido)
+                            @Html.DisplayFor(modelItem => item.Colaborador.SegundoApellido)
+                            @Html.DisplayFor(modelItem => item.Colaborador.Nombre)
+                        </span>
+                        <div class="d-block">
+                            <small class="text-muted me-md-3">@Html.DisplayFor(modelItem => item.Colaborador.CURP)</small>
+                            @if (!item.Activo)
+                            {
+                                <small class="badge bg-danger">No Disponible</small>
+                            }
                         </div>
-                    </a>
-                    <a href="#" data-id="@item.UsuarioID" class="deleteConfirm text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteConfirm">
-                        <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="eliminar registro">
-                            <i class="fa fa-trash"></i>
-                        </div>
-                    </a>
-                }
-            </div>
+                    </div>
+                    <div class="border-bottom col-12 col-md-3 py-2 p-md-3 text-end">
+                        <a asp-action="Details" asp-route-id="@item.UsuarioID" class="text-decoration-none">
+                            <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="ver detalle">
+                                <i class="fa fa-file-alt"></i>
+                            </div>
+                        </a>
+                        @if (Model.PermisoEscritura)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.UsuarioID" class="text-decoration-none">
+                                <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar registro">
+                                    <i class="fa fa-edit"></i>
+                                </div>
+                            </a>
+                            <a href="#" data-id="@item.UsuarioID" class="deleteConfirm text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteConfirm">
+                                <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="eliminar registro">
+                                    <i class="fa fa-trash"></i>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
         </div>
-    }
+    </div>
 }

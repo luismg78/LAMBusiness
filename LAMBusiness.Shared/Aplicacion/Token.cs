@@ -15,6 +15,9 @@
         public bool Activo { get; set; }
         public DateTime FechaInicio { get; set; }
         public DateTime FechaTermino { get; set; }
+        public string HostName { get; set; }
+        public string IPPublica { get; set; }
+        public string IPPrivada { get; set; }
         public List<Guid> UsuariosModulos { get; set; }
     }
 }

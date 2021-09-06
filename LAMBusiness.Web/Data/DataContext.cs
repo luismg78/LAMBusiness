@@ -15,6 +15,8 @@
         }
 
         #region Aplicación
+        //public DbSet<Bitacora> Bitacora { get; set; }
+        //public DbSet<BitacoraExcepciones> BitacoraExcepciones { get; set; }
         public DbSet<Modulo> Modulos { get; set; }
         public DbSet<Sesion> Sesiones { get; set; }
         #endregion
@@ -23,6 +25,7 @@
         public DbSet<Almacen> Almacenes { get; set; }
         public DbSet<Estado> Estados { get; set; }
         public DbSet<EstadoCivil> EstadosCiviles { get; set; }
+        public DbSet<FormaPago> FormasPago { get; set; }
         public DbSet<Genero> Generos { get; set; }
         public DbSet<Marca> Marcas { get; set; }
         public DbSet<Municipio> Municipios { get; set; }
@@ -50,6 +53,11 @@
         public DbSet<Salida> Salidas { get; set; }
         public DbSet<SalidaDetalle> SalidasDetalle { get; set; }
         public DbSet<SalidaTipo> SalidasTipo { get; set; }
+        public DbSet<RetiroCaja> RetirosCaja { get; set; }
+        public DbSet<Venta> Ventas { get; set; }
+        public DbSet<VentaCierre> VentasCierre { get; set; }
+        public DbSet<VentaCierreDetalle> VentasCierreDetalle { get; set; }
+        public DbSet<VentaDetalle> VentasDetalle { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

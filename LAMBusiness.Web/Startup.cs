@@ -27,6 +27,11 @@ namespace LAMBusiness.Web
                 config.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            services.AddDbContext<BitacoraContext>(config =>
+            {
+                config.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            });
+
             services.AddHttpContextAccessor();
             
             services.AddSession(options =>

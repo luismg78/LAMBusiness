@@ -15,7 +15,12 @@
                     <li class="breadcrumb-item active">Nuevo Registro</li>
                 </ul>
             </div>
-            <a asp-action="Index" asp-controller="Salidas" class="btn-close me-md-1" aria-label="Close"></a>
+            <div class="d-flex align-items-center">
+                <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewCreate', event);">
+                    <i class="fa fa-question-circle"></i>
+                </a>
+                <a asp-action="Index" asp-controller="Salidas" class="btn-close me-md-1" aria-label="Close"></a>
+            </div>
         </div>
         <div class="modal-body py-4">
             <div class="row px-md-3">

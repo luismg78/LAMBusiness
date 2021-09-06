@@ -15,7 +15,12 @@
                     <li class="breadcrumb-item active">Editar Registro</li>
                 </ul>
             </div>
-            <a asp-action="Index" asp-controller="Municipios" class="btn-close me-md-1" aria-label="Close"></a>
+            <div class="d-flex align-items-center">
+                <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewEdit', event);">
+                    <i class="fa fa-question-circle"></i>
+                </a>
+                <a asp-action="Index" asp-controller="Municipios" class="btn-close me-md-1" aria-label="Close"></a>
+            </div>
         </div>
         <div class="modal-body py-4">
             <div class="row px-md-3">
@@ -29,8 +34,8 @@
                         <label class="d-block text-muted">@Model.Estados.EstadoDescripcion</label>
                     </div>
                     <div class="form-group">
-                        <label asp-for="MunicipioDescripcion" class="control-label"></label>
-                        <input asp-for="MunicipioDescripcion" class="form-control" />
+                        <label asp-for="MunicipioDescripcion" class="control-label required"></label>
+                        <input asp-for="MunicipioDescripcion" class="form-control" autofocus/>
                         <span asp-validation-for="MunicipioDescripcion" class="text-danger"></span>
                     </div>
                 </div>
@@ -45,38 +50,3 @@
         </div>
     </div>
 </form>
-
-@*<form asp-action="Create">
-        <div class="modal-content border-0 box-shadow box-responsive m-auto">
-            <div class="modal-header pb-0 align-items-baseline">
-                <div>
-                    <h3 class="modal-title" id="exampleModalLabel">Municipios</h3>
-                    <ul class="breadcrumb bg-transparent p-0 small">
-                        <li class="breadcrumb-item">Catálogo</li>
-                        <li class="breadcrumb-item">Municipios</li>
-                        <li class="breadcrumb-item active">Nuevo Registro</li>
-                    </ul>
-                </div>
-                <a asp-action="Index" asp-controller="Municipios" class="btn-close me-md-1" aria-label="Close"></a>
-            </div>
-            <div class="modal-body py-4">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="form-group">
-                            <label asp-for="MunicipioID" class="control-label"></label>
-                            <input asp-for="MunicipioID" class="form-control" />
-                            <span asp-validation-for="MunicipioID" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <div>
-                    <input type="submit" value="Guardar" class="btn btn-base" />
-                    <a asp-action="Index" class="btn btn-outline-secondary">Regresar</a>
-                </div>
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            </div>
-        </div>
-    </form>*@
-

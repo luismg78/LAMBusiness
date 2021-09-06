@@ -10,6 +10,7 @@
     using Microsoft.Extensions.Configuration;
     using Data;
     using Helpers;
+    using Shared.Aplicacion;
     using Shared.Catalogo;
 
     public class MarcasController : GlobalController
@@ -36,15 +37,24 @@
                 return RedirectToAction("Inicio", "Menu");
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
-            var dataContext = _context.Marcas
+            var marcas = _context.Marcas
                 .OrderBy(p => p.MarcaNombre);
 
-            return View(dataContext);
+            var filtro = new Filtro<List<Marca>>()
+            {
+                Datos = await marcas.Take(50).ToListAsync(),
+                Patron = "",
+                PermisoEscritura = permisosModulo.PermisoEscritura,
+                PermisoImprimir = permisosModulo.PermisoImprimir,
+                PermisoLectura = permisosModulo.PermisoLectura,
+                Registros = await marcas.CountAsync(),
+                Skip = 0
+            };
+
+            return View(filtro);
         }
 
-        public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
+        public async Task<IActionResult> _AddRowsNextAsync(Filtro<List<Marca>> filtro)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return null; }
@@ -54,12 +64,10 @@
                 return null;
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
             IQueryable<Marca> query = null;
-            if (searchby != null && searchby != "")
+            if (filtro.Patron != null && filtro.Patron != "")
             {
-                var words = searchby.Trim().ToUpper().Split(' ');
+                var words = filtro.Patron.Trim().ToUpper().Split(' ');
                 foreach (var w in words)
                 {
                     if (w.Trim() != "")
@@ -83,16 +91,22 @@
                 query = _context.Marcas;
             }
 
-            var almacenes = await query.OrderBy(m => m.MarcaNombre)
-                .Skip(skip)
+            filtro.Registros = await query.CountAsync();
+
+            filtro.Datos = await query.OrderBy(m => m.MarcaNombre)
+                .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
+
+            filtro.PermisoEscritura = permisosModulo.PermisoEscritura;
+            filtro.PermisoImprimir = permisosModulo.PermisoImprimir;
+            filtro.PermisoLectura = permisosModulo.PermisoLectura;
 
             return new PartialViewResult
             {
                 ViewName = "_AddRowsNextAsync",
                 ViewData = new ViewDataDictionary
-                            <List<Marca>>(ViewData, almacenes)
+                            <Filtro<List<Marca>>>(ViewData, filtro)
             };
         }
 
@@ -121,16 +135,26 @@
                 return RedirectToAction(nameof(Index));
             }
 
+            TempData["toast"] = "Falta información en algún campo.";
             if (ModelState.IsValid)
             {
-                marca.MarcaID = Guid.NewGuid();
-                _context.Add(marca);
-                await _context.SaveChangesAsync();
-                TempData["toast"] = "Los datos de la marca fueron almacenados correctamente.";
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    marca.MarcaID = Guid.NewGuid();
+                    _context.Add(marca);
+                    await _context.SaveChangesAsync();
+                    await BitacoraAsync("Alta", marca);
+                    TempData["toast"] = "Los datos de la marca fueron almacenados correctamente.";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    TempData["toast"] = "[Error] Los datos de la marca no fueron almacenados.";
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Alta", marca, excepcion);
+                }
             }
             
-            TempData["toast"] = "Falta información en algún campo.";
             return View(marca);
         }
 
@@ -156,6 +180,7 @@
                 TempData["toast"] = "Identificacor incorrecto, verifique.";
                 return RedirectToAction(nameof(Index));
             }
+
             return View(marca);
         }
 
@@ -177,15 +202,18 @@
                 return RedirectToAction(nameof(Index));
             }
 
+            TempData["toast"] = "Falta información en algún campo, verifique.";
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(marca);
                     await _context.SaveChangesAsync();
-                    TempData["toast"] = "Los datos del almacén fueron actualizados correctamente.";
+                    TempData["toast"] = "Los datos de la marca fueron actualizados correctamente.";
+                    await BitacoraAsync("Actualizar", marca);
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
                     if (!MarcaExists(marca.MarcaID))
                     {
@@ -193,14 +221,19 @@
                     }
                     else
                     {
-                        TempData["toast"] = "Error al actualizar la información.";
+                        TempData["toast"] = "[Error] Los datos de la marca no fueron actualizados.";
                     }
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", marca, excepcion);
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    TempData["toast"] = "[Error] Los datos de la marca no fueron actualizados.";
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", marca, excepcion);
+                }
             }
             
-            TempData["toast"] = "Falta información en algún campo, verifique.";
-
             return View(marca);
         }
 
@@ -229,15 +262,34 @@
                 return RedirectToAction(nameof(Index));
             }
 
-            _context.Marcas.Remove(marca);
-            await _context.SaveChangesAsync();
-            TempData["toast"] = "Los datos de la marca fueron eliminados correctamente.";
+            try
+            {
+                _context.Marcas.Remove(marca);
+                await _context.SaveChangesAsync();
+                await BitacoraAsync("Baja", marca);
+                TempData["toast"] = "Los datos de la marca fueron eliminados correctamente.";
+            }
+            catch (Exception ex)
+            {
+                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                TempData["toast"] = "[Error] Los datos de la marca no fueron eliminados.";
+                await BitacoraAsync("Baja", marca, excepcion);
+            }
+            
             return RedirectToAction(nameof(Index));
         }
 
         private bool MarcaExists(Guid id)
         {
             return _context.Marcas.Any(e => e.MarcaID == id);
+        }
+
+        private async Task BitacoraAsync(string accion, Marca marca, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                marca, marca.MarcaID.ToString(), directorioBitacora, excepcion);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LAMBusiness.Shared.Catalogo.Almacen>
+﻿@model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Shared.Catalogo.Almacen>>
 
 @{
     ViewData["Title"] = "Almacenes";
@@ -6,141 +6,44 @@
 
 <div class="modal-content border-0 box-shadow">
     <div class="modal-header pb-0 align-items-baseline">
-        <div>
+        <div class="ms-3">
             <h3 class="modal-title" id="exampleModalLabel">Almacenes</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
                 <li class="breadcrumb-item"><a asp-action="Catalogo" asp-controller="Menu">Catálogos</a></li>
                 <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Almacenes">Almacenes</a></li>
-                <li class="breadcrumb-item active text-base">@Model.Count() Registro(s)</li>
+                <li class="breadcrumb-item active text-muted">Lista</li>
             </ul>
         </div>
-        <a asp-action="Catalogo" asp-controller="Menu" class="btn-close me-md-1" aria-label="Close"></a>
+        <div class="d-flex align-items-center">
+            <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewIndex', event);">
+                <i class="fa fa-question-circle"></i>
+            </a>
+            <a asp-action="Catalogo" asp-controller="Menu" class="btn-close me-md-1" aria-label="Close"></a>
+        </div>
     </div>
-    <div class="modal-body pt-4">
+    <div class="modal-body pt-4" data-module="Almacenes">
         <div class="row px-md-3">
             <div class="col-9 col-md-8 pr-0 pr-md-3">
-                <div class="input-group mb-3">
+                <div class="input-group mb-3 search">
                     <input type="search" id="SearchInput" class="form-control" placeholder="Buscar..." onkeypress="search(event);">
-                    <div class="input-group-append">
-                        <button class="btn btn-light border" type="button" onclick="search(event);"><i class="fa fa-search"></i></button>
-                    </div>
+                    <button class="btn btn-light border" type="button" onclick="search(event);"><i class="fa fa-search"></i></button>
                 </div>
             </div>
             <div class="col-3 col-md-4 text-end">
-                @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
+                @if (Model.PermisoEscritura)
                 {
                     <p><a asp-action="Create" class="btn btn-base"><i class="fas fa-plus"></i><span class="d-none d-md-inline-block ms-2">Nuevo Registro</span></a></p>
                 }
             </div>
         </div>
         <div>
-            <div class="row px-md-3 fw-bold text-uppercase">
-                <div class="border-bottom col-12 px-3 py-2">
-                    @Html.DisplayNameFor(model => model.AlmacenNombre)
-                </div>
-            </div>
-            <div class="px-md-3" id="dRows" data-charging="0" data-rows-next="1">
-                @foreach (var item in Model.Take(50))
-                {
-                    <div class="row bg-row">
-                        <div class="border-bottom col-10 col-md-9 p-3">
-                            <span class="text-dark">@Html.DisplayFor(modelItem => item.AlmacenNombre)</span>
-                            <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.AlmacenDescripcion)</small>
-                        </div>
-                        <div class="border-bottom col-2 col-md-3 p-3 text-end">
-                            @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
-                            {
-                                <a asp-action="Edit" asp-route-id="@item.AlmacenID" class="d-block d-md-inline text-decoration-none">
-                                    <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar registro">
-                                        <i class="fa fa-edit"></i>
-                                    </div>
-                                </a>
-                                <a href="#" data-id="@item.AlmacenID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteConfirm">
-                                    <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="eliminar registro">
-                                        <i class="fa fa-trash"></i>
-                                    </div>
-                                </a>
-                            }
-                        </div>
-                    </div>
-                }
-            </div>
+            <partial name="_AddRowsNextAsync" model="Model" />
         </div>
     </div>
 </div>
 
-<partial name="_DeleteConfirmDialog" />
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
-    <script>
-        var skip = 0;
-        var itemToDelete;
-
-        $(document).ready(function () {
-            $(window).on("scroll", function () {
-                if ($('#dRows')[0] !== this.undefined &&
-                    $('#dRows').attr('data-rows-next') === "1" &&
-                    $('#dRows').attr('data-charging') === "0" &&
-                    $('#dRows > div').length % 50 === 0)
-                {
-                    var scrollHeight = $(document).height();
-                    var scrollPosition = $(window).height() + $(window).scrollTop();
-                    var result = (scrollHeight - scrollPosition) / scrollHeight;
-                    if (result <= 0.0005) {
-                        skip += 50;
-                        addRowsNext(skip);
-                    }
-                }
-            });
-
-            $('.deleteConfirm').click((e) => {
-                itemToDelete = e.currentTarget.dataset.id;
-            });
-
-            $("#DeleteYesButton").click((e) => {
-                window.location.href = '@Url.Action("Delete", "Almacenes")' + '/' + itemToDelete;
-            });
-        });
-
-        function addRowsNext(skip, inicio = false) {
-            addProcessWithSpinner('Cargando Almacenes...');
-            $('#dRows').attr('data-charging', "1");
-            var searchBy = $('#SearchInput')[0] === undefined ? "" : $('#SearchInput').val();
-            $.ajax({
-                url: '@Url.Action("_AddRowsNext", "Almacenes")',
-                method: 'POST',
-                datatype: 'text',
-                data: {
-                    searchby: searchBy,
-                    skip: skip
-                },
-                success: function (r) {
-                    if (inicio) { $('#dRows').empty(); }
-                    if (r !== null && r.trim() !== '') {
-                        $('#dRows').append(r);
-                        $('[data-bs-toggle="tooltip"]').tooltip();
-                    } else {
-                        $('#dRows').attr('data-rows-next', "0");
-                    }
-                    $('#dRows').attr('data-charging', "0");
-                    removeProcessWithSpinner();
-                },
-                error: function (r) {
-                    $('#dRows').attr('data-charging', "0");
-                    removeProcessWithSpinner();
-                },
-                cache: false
-            });
-        }
-
-        function search(e) {
-            if (e.keyCode === 13 || e.which === 1) {
-                skip = 0;
-                $('#dRows').attr('data-rows-next', "1");
-                addRowsNext(skip, true);
-            }
-        }
-    </script>
+@if (Model.PermisoEscritura)
+{
+    <partial name="_DeleteConfirmDialog" />
 }
+

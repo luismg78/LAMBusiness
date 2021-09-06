@@ -15,15 +15,20 @@
                     <li class="breadcrumb-item active">Editar Registro</li>
                 </ul>
             </div>
-            <a asp-action="Index" asp-controller="Generos" class="btn-close me-md-1" aria-label="Close"></a>
+            <div class="d-flex align-items-center">
+                <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewEdit', event);">
+                    <i class="fa fa-question-circle"></i>
+                </a>
+                <a asp-action="Index" asp-controller="Generos" class="btn-close me-md-1" aria-label="Close"></a>
+            </div>
         </div>
         <div class="modal-body py-4">
             <div class="row px-md-3">
                 <div class="col">
                     <input type="hidden" asp-for="GeneroID" />
                     <div class="form-group">
-                        <label asp-for="GeneroDescripcion" class="control-label"></label>
-                        <input asp-for="GeneroDescripcion" class="form-control" />
+                        <label asp-for="GeneroDescripcion" class="control-label required"></label>
+                        <input asp-for="GeneroDescripcion" class="form-control" autofocus />
                         <span asp-validation-for="GeneroDescripcion" class="text-danger"></span>
                     </div>
                 </div>

@@ -9,6 +9,7 @@
         public int Generos { get; set; }
         public int Estados { get; set; }
         public int EstadosCiviles { get; set; }
+        public int FormasPago { get; set; }
         public int Marcas { get; set; }
         public int Municipios { get; set; }
         public int Productos { get; set; }

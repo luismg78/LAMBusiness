@@ -1,11 +1,12 @@
 ﻿namespace LAMBusiness.Shared.Catalogo
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
     using Newtonsoft.Json;
 
+    [Table("TasasImpuestos", Schema = "Catalogo")]
     public class TasaImpuesto
     {
         [Key]

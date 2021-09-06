@@ -6,6 +6,7 @@
     using Catalogo;
     using Newtonsoft.Json;
 
+    [Table("Colaboradores", Schema = "Contacto")]
     public class Colaborador
     {
         [Key]
@@ -110,5 +111,9 @@
         public DateTime FechaActualizacion { get; set; }
 
         public bool Activo { get; set; }
+
+        [NotMapped]
+        public string NombreCompleto => Nombre.ToLower() + " " + PrimerApellido.ToLower() + (SegundoApellido == null ? "" : " " + SegundoApellido.ToLower());
+
     }
 }

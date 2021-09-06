@@ -8,6 +8,8 @@
 
     public class ProductoDetailsViewModel: Producto
     {
+        public bool MostrarPrecioCosto { get; set; }
+        public bool PermisoEscritura { get; set; }
         public ICollection<ProductoAsignadoViewModel> ProductosAsignadosViewModel { get; set; }
         public ICollection<Guid> ProductoImages { get; set; }
     }

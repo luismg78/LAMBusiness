@@ -1,14 +1,16 @@
 ﻿namespace LAMBusiness.Web.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Data;
+    using Helpers;
+    using Shared.Aplicacion;
     using Shared.Catalogo;
-    using LAMBusiness.Web.Helpers;
 
     public class GenerosController : GlobalController
     {
@@ -34,9 +36,20 @@
                 return RedirectToAction("Inicio", "Menu");
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
+            var generos = _context.Generos.OrderBy(g => g.GeneroDescripcion);
 
-            return View(_context.Generos.OrderBy(g => g.GeneroDescripcion));
+            var filtro = new Filtro<List<Genero>>()
+            {
+                Datos = await generos.Take(50).ToListAsync(),
+                Patron = "",
+                PermisoEscritura = permisosModulo.PermisoEscritura,
+                PermisoImprimir = permisosModulo.PermisoImprimir,
+                PermisoLectura = permisosModulo.PermisoLectura,
+                Registros = await generos.CountAsync(),
+                Skip = 0
+            };
+
+            return View(filtro);
         }
 
         public async Task<IActionResult> Edit(string id)
@@ -51,14 +64,17 @@
 
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var genero = await _context.Generos.FindAsync(id);
             if (genero == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
+
             return View(genero);
         }
 
@@ -76,28 +92,34 @@
 
             if (id != genero.GeneroID)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
+            TempData["toast"] = "Falta información en algún campo, verifique.";
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(genero);
                     await _context.SaveChangesAsync();
+                    TempData["toast"] = "Los datos del género fueron actualizados correctamente.";
+                    await BitacoraAsync("Actualizar", genero);
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
                     if (!GeneroExists(genero.GeneroID))
                     {
-                        return NotFound();
+                        TempData["toast"] = "Registro inexistente.";
                     }
                     else
                     {
-                        throw;
+                        TempData["toast"] = "[Error] Los datos del género no fueron actualizados.";
                     }
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", genero, excepcion);
                 }
-                return RedirectToAction(nameof(Index));
             }
 
             return View(genero);
@@ -106,6 +128,14 @@
         private bool GeneroExists(string id)
         {
             return _context.Generos.Any(e => e.GeneroID == id);
+        }
+
+        private async Task BitacoraAsync(string accion, Genero genero, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                genero, genero.GeneroID.ToString(), directorioBitacora, excepcion);
         }
     }
 }

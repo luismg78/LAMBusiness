@@ -1,9 +1,11 @@
-﻿using LAMBusiness.Shared.Aplicacion;
+﻿using BarcodeLib;
+using LAMBusiness.Shared.Aplicacion;
 using LAMBusiness.Shared.Catalogo;
 using LAMBusiness.Shared.Contacto;
 using LAMBusiness.Shared.Movimiento;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -54,6 +56,7 @@ namespace LAMBusiness.Web.Helpers
         Task<Unidad> GetUnidadByIdAsync(Guid id);
         Task<Usuario> GetUsuarioByIdAsync(Guid id);
         Task<UsuarioModulo> GetUsuarioModuloByUsuarioAndModuloIDAsync(Guid usuarioId, Guid moduloId);
+        Task SetBitacoraAsync(Token token, string accion, Guid moduloId, object clase, string parametroId, string directorio, string excepcion = "");
         Task<Resultado<Token>> SetTokenByUsuarioIDAsync(string sessionId, Guid usuarioId, string directorio);
     }
 }

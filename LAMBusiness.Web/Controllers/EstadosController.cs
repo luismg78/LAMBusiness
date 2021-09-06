@@ -8,9 +8,10 @@
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
-    using Shared.Catalogo;
     using Helpers;
     using Data;
+    using Shared.Aplicacion;
+    using Shared.Catalogo;
 
     public class EstadosController : GlobalController
     {
@@ -36,16 +37,25 @@
                 return RedirectToAction("Inicio", "Menu");
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
             var estados = _context.Estados
                 .Include(e => e.Municipios)
                 .OrderBy(e => e.EstadoDescripcion);
 
-            return View(estados);
+            var filtro = new Filtro<List<Estado>>()
+            {
+                Datos = await estados.Take(50).ToListAsync(),
+                Patron = "",
+                PermisoEscritura = permisosModulo.PermisoEscritura,
+                PermisoImprimir = permisosModulo.PermisoImprimir,
+                PermisoLectura = permisosModulo.PermisoLectura,
+                Registros = await estados.CountAsync(),
+                Skip = 0
+            };
+
+            return View(filtro);
         }
 
-        public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
+        public async Task<IActionResult> _AddRowsNextAsync(Filtro<List<Estado>> filtro)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return null; }
@@ -55,12 +65,10 @@
                 return RedirectToAction(nameof(Index));
             }
             
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
             IQueryable<Estado> query = null;
-            if (searchby != null && searchby != "")
+            if (filtro.Patron != null && filtro.Patron != "")
             {
-                var words = searchby.Trim().ToUpper().Split(' ');
+                var words = filtro.Patron.Trim().ToUpper().Split(' ');
                 foreach (var w in words)
                 {
                     if (w.Trim() != "")
@@ -84,16 +92,22 @@
                 query = _context.Estados.Include(e => e.Municipios);
             }
 
-            var estados = await query.OrderBy(m => m.EstadoDescripcion)
-                .Skip(skip)
+            filtro.Registros = await query.CountAsync();
+
+            filtro.Datos = await query.OrderBy(m => m.EstadoDescripcion)
+                .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
+
+            filtro.PermisoEscritura = permisosModulo.PermisoEscritura;
+            filtro.PermisoImprimir = permisosModulo.PermisoImprimir;
+            filtro.PermisoLectura = permisosModulo.PermisoLectura;
 
             return new PartialViewResult
             {
                 ViewName = "_AddRowsNextAsync",
                 ViewData = new ViewDataDictionary
-                            <List<Estado>>(ViewData, estados)
+                            <Filtro<List<Estado>>>(ViewData, filtro)
             };
 
         }
@@ -110,13 +124,15 @@
 
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var estado = await _context.Estados.FindAsync(id);
             if (estado == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             return View(estado);
@@ -136,35 +152,56 @@
 
             if (id != estado.EstadoID)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
+            TempData["toast"] = "Falta información en algún campo, verifique.";
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(estado);
                     await _context.SaveChangesAsync();
+                    TempData["toast"] = "Los datos del Estado fueron actualizados correctamente.";
+                    await BitacoraAsync("Actualizar", estado);
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
                     if (!EstadoExists(estado.EstadoID))
                     {
-                        return NotFound();
+                        TempData["toast"] = "Registro inexistente.";
                     }
                     else
                     {
-                        throw;
+                        TempData["toast"] = "[Error] Los datos del Estado no fueron actualizados.";
                     }
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", estado, excepcion);
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    TempData["toast"] = "[Error] Los datos del Estado no fueron actualizados.";
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", estado, excepcion);
+                }
             }
+
             return View(estado);
         }
 
         private bool EstadoExists(short id)
         {
             return _context.Estados.Any(e => e.EstadoID == id);
+        }
+
+        private async Task BitacoraAsync(string accion, Estado estado, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                estado, estado.EstadoID.ToString(), directorioBitacora, excepcion);
         }
     }
 }

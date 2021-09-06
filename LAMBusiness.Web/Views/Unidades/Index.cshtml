@@ -6,22 +6,30 @@
 
 <div class="modal-content border-0 box-shadow">
     <div class="modal-header pb-0 align-items-baseline">
-        <div>
+        <div class="ms-3">
             <h3 class="modal-title" id="exampleModalLabel">Unidades</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
                 <li class="breadcrumb-item"><a asp-action="Catalogo" asp-controller="Menu">Catálogos</a></li>
                 <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Unidades">Unidades</a></li>
-                <li class="breadcrumb-item active text-base">@Model.Count() Registro(s)</li>
+                <li class="breadcrumb-item active text-muted">Lista</li>
             </ul>
         </div>
-        <a asp-action="Catalogo" asp-controller="Menu" class="btn-close me-md-1" aria-label="Close"></a>
+        <div class="d-flex align-items-center">
+            <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewIndex', event);">
+                <i class="fa fa-question-circle"></i>
+            </a>
+            <a asp-action="Catalogo" asp-controller="Menu" class="btn-close me-md-1" aria-label="Close"></a>
+        </div>
     </div>
     <div class="modal-body pt-4">
         <div>
-            <div class="row px-md-3 fw-bold text-uppercase">
-                <div class="border-bottom col-12 px-3 py-2">
-                    @Html.DisplayNameFor(model => model.UnidadDescripcion)
+            <div class="row px-md-3">
+                <div class="border-bottom col-8 p-3">
+                    <div class="fw-bold text-uppercase">Unidades</div>
                 </div>
+                <small class="border-bottom col-4 p-3 text-muted text-end">
+                    @Model.Count().ToString("#,###,##0") Registro(s).
+                </small>
             </div>
             <div class="row px-md-3" id="dRows" data-charging="0" data-rows-next="1">
                 @foreach (var item in Model)

@@ -1,0 +1,234 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LAMBusiness.Web</title>
+    <meta name="description" content="Software punto de venta">
+    <meta name="keywords" content="Business, Negocios, Punto de venta, Ventas, Compras, Pedidos, Clientes, Proveedores">
+    <meta name="author" content="Ing. Luis Martínez">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="LAMBusiness">
+    <meta property="og:description" content="software punto de venta">
+    <meta property="og:url" content="http://www.lambusiness.com/">
+    <meta property="og:site_name" content="LAMBusiness">
+    <meta property="og:image" content="http://www.lambusiness.com/Imagen/icono.png">
+    @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />*@
+    <link href="~/lib/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link href="~/css/helper.css" rel="stylesheet" />
+    <link href="~/css/fontAwesome.css" rel="stylesheet" />
+</head>
+<body class="m-0">
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
+            <div class="container-fluid">
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <ul class="navbar-nav flex-grow-1 justify-content-start">
+                        <li class="nav-item">
+                            <a class="nav-link"
+                                asp-area="" asp-controller="Menu" asp-action="Sesion">
+                                <div class="d-inline-block">
+                                    <img src="@Url.Action("GetProfilePicture", "Sesion", new { id = ViewBag.Id, tipo = "profile" })" class="rounded-circle" style="width:2.5rem;" alt="Image Profile" />
+                                </div>
+                                <span class="d-md-none ms-2">Sesión de Usuario</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                                asp-area="" asp-controller="Home" asp-action="Index">
+                                <div class="btn-icon rounded-circle d-inline-block">
+                                    <i class="fa fa-bell"></i>
+                                </div>
+                                <span class="d-md-none ms-2">Notificaciones</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <a class="navbar-brand text-base" asp-area="" asp-controller="Home" asp-action="Index">LAMBusiness</a>
+            </div>
+        </nav>
+    </header>
+    <div class="container-fluid p-0">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+    <!--loader-->
+    <div id="loader" class="d-none">
+        <input type="text" id="inputDisabled" class="d-none" />
+    </div>
+
+    <!--place the cursor at the top of the screen-->
+    <button id="UpButton" onclick="positionTopScreen(event);"><i class="fas fa-arrow-alt-circle-up"></i></button>
+
+    <!-- Flexbox container for aligning the toasts -->
+    <partial name="_Toast" />
+
+    <!-- Modal Help -->
+    <partial name="_Help" />
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @*<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
+    <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+
+    <script>
+        var skip = 0;
+        var itemToDelete;
+
+        $(document).ready(function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            })
+            //var elem = document.body; // Make the body go full screen.
+            /*requestFullScreen(elem);*/
+            if ('@TempData.ContainsKey("toast")' === 'True') {
+                $('.toast').toast("show");
+            }
+            $(window).scroll(function () {
+                if (screen.width > 425) {
+                    if ($(this).scrollTop() < 300) {
+                        $('#UpButton').fadeOut();
+                    } else {
+                        $('#UpButton').fadeIn();
+                    }
+                }
+                if ($('#dRows')[0] !== this.undefined &&
+                    $('#dRows').attr('data-rows-next') === "1" &&
+                    $('#dRows').attr('data-charging') === "0" &&
+                    $('#dRows .bg-row').length % 50 === 0) {
+                    var scrollHeight = $(document).height();
+                    var scrollPosition = $(window).height() + $(window).scrollTop();
+                    var result = (scrollHeight - scrollPosition) / scrollHeight;
+                    if (result <= 0.0005) {
+                        skip += 50;
+                        addRowsNext(skip);
+                    }
+                }
+                if ($('#dRowsListBox')[0] !== this.undefined &&
+                    $('#dRowsListBox').attr('data-rows-next') === "1" &&
+                    $('#dRowsListBox').attr('data-charging') === "0" &&
+                    $('#dRowsListBox .bg-row').length % 50 === 0) {
+                    var scrollHeight = $(document).height();
+                    var scrollPosition = $(window).height() + $(window).scrollTop();
+                    var result = (scrollHeight - scrollPosition) / scrollHeight;
+                    if (result <= 0.0005) {
+                        skip += 50;
+                        addRowsNextListBox(skip);
+                    }
+                }
+            });
+
+            if ($('#BuscarInput')[0] !== undefined) {
+                $('#BuscarInput').focus();
+            }
+
+            $('.deleteConfirm').click((e) => {
+                itemToDelete = e.currentTarget.dataset.id;
+            });
+        });
+
+        function addRowsNext(skip, inicio = false) {
+            if (skip === 0) {
+                addProcess('Cargando datos, por favor espere...');
+            } else {
+                addProcessWithSpinner('Cargando datos, por favor espere...');
+            }
+            var controller = $('[data-module]')[0].dataset.module;
+            var url = '@Url.Action("_AddRowsNext","controlador")';
+            url = url.replace('controlador', controller);
+
+            $('#dRows').attr('data-charging', "1");
+            var searchBy = $('#SearchInput')[0] === undefined ? "" : $('#SearchInput').val();
+            $.ajax({
+                url: url,
+                method: 'POST',
+                datatype: 'text',
+                data: {
+                    filtro: {
+                        Patron: searchBy,
+                        Skip: skip
+                    }
+                },
+                success: function (r) {
+                    if (inicio) { $('#dRows').empty(); }
+                    if (r !== null && r.trim() !== '') {
+                        $('#dRows').append(r);
+                        $('[data-bs-toggle="tooltip"]').tooltip();
+                    } else {
+                        $('#dRows').attr('data-rows-next', "0");
+                    }
+                    $('#dRows').attr('data-charging', "0");
+                    if (skip === 0) {
+                        removeProcess();
+                    } else {
+                        removeProcessWithSpinner();
+                    }
+                },
+                error: function (r) {
+                    $('#dRows').attr('data-charging', "0");
+                    if (skip === 0) {
+                        removeProcess();
+                    } else {
+                        removeProcessWithSpinner();
+                    }
+                },
+                cache: false
+            });
+        }
+        function deleteYesButton(e) {
+            var controller = $('[data-module]')[0].dataset.module;
+            var url = '@Url.Action("Delete", "controlador", new { id = "paramId" })';
+            url = url.replace('controlador', controller);
+            url = url.replace('paramId', itemToDelete);
+
+            window.location.href = url;
+        }
+        function help(view, e) {
+            e.preventDefault();
+            var url = "@Url.Action("view", "Help")";
+            url = url.replace("view", view);
+            addProcessWithSpinner('Cargando ayuda');
+            $.ajax({
+                url: url,
+                method: 'POST',
+                datatype: 'text',
+                data: {
+                    view: view
+                },
+                success: function (r) {
+                    if (r !== null && r.trim() !== '') {
+                        $('#ModalHelp .modal-body').empty();
+                        $('#ModalHelp .modal-body').append(r);
+                        var modalHelp = new bootstrap.Modal(document.getElementById('ModalHelp'), {
+                            keyboard: false
+                        })
+                        removeProcessWithSpinner();
+                        modalHelp.show();
+                    } else {
+                        removeProcessWithSpinner();
+                        alert('No existe módulo de ayuda');
+                    }
+                },
+                error: function (r) {
+                    removeProcessWithSpinner();
+                    alert('No existe módulo de ayuda');
+                },
+                cache: false
+            });
+        }
+        function search(e) {
+            if (e.keyCode === 13 || e.which === 1) {
+                skip = 0;
+                $('#dRows').attr('data-rows-next', "1");
+                addRowsNext(skip, true);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -5,6 +5,7 @@
 
     public class EntradaViewModel: Entrada
     {
+        public bool PermisoEscritura { get; set; }
         public ICollection<EntradaDetalle> EntradaDetalle { get; set; }
     }
 }

@@ -4,13 +4,12 @@
     using System.Linq;
     using System.Threading.Tasks;
     using System.IO;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Data;
     using Helpers;
     using LAMBusiness.Web.Models.ViewModels;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.AspNetCore.Hosting;
 
     public class SesionController : GlobalController
     {
@@ -20,7 +19,7 @@
         private readonly IGetHelper _getHelper;
         private readonly ICriptografiaHelper _criptografiaHelper;
         private readonly IWebHostEnvironment _webHostEnvironment;
-
+        private Guid moduloId = Guid.Parse("CAED13FC-E9FF-4E0C-8D3D-9ECE76196EA2");
         public SesionController(DataContext context, 
             IConfiguration configuration, 
             IConverterHelper converterHelper,
@@ -63,9 +62,12 @@
                         HttpContext.Session.Remove("LAMBusiness");
                     }
                     await _context.SaveChangesAsync();
+                    await BitacoraAsync("CerrarSesion", token, token.ColaboradorID);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("CerrarSesion", token, token.ColaboradorID, excepcion);
                 }
             }
 
@@ -252,6 +254,13 @@
         public IActionResult Index()
         {
             return View();
+        }
+
+        private async Task BitacoraAsync(string accion, object clase, Guid id, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                clase, id.ToString(), directorioBitacora, excepcion);
         }
     }
 }

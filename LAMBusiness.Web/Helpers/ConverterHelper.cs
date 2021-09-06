@@ -14,6 +14,7 @@
     using Shared.Catalogo;
     using Shared.Contacto;
     using Shared.Movimiento;
+    using System.Drawing.Imaging;
 
     public class ConverterHelper : IConverterHelper
     {
@@ -31,6 +32,29 @@
         }
 
         #region Image
+        public FileContentResult GenerateBarcode(String _data, BarcodeLib.TYPE t)
+        {
+            BarcodeLib.Barcode barcode = new BarcodeLib.Barcode()
+            {
+                IncludeLabel = false,
+                Alignment = BarcodeLib.AlignmentPositions.CENTER,
+                Width = 400,
+                Height = 200,
+                RotateFlipType = RotateFlipType.RotateNoneFlipNone,
+                BackColor = Color.White,
+                ForeColor = Color.Black,
+            };
+            Image img = barcode.Encode(t, _data);
+            return new FileContentResult(ImageToByte(img), "image/png");
+        }
+        public byte[] ImageToByte(Image image)
+        {
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                image.Save(memoryStream, ImageFormat.Png);
+                return memoryStream.ToArray();
+            }
+        }
         public byte[] UploadImageBase64(string file, int size)
         {
             byte[] aImage;
@@ -84,7 +108,7 @@
         public FileContentResult ToImageBase64(string path)
         {
             byte[] img = null;
-            img = System.IO.File.ReadAllBytes(path);
+            img = File.ReadAllBytes(path);
             if (img == null) return null;
             return new FileContentResult(img, "image/jpeg");
         }
@@ -330,7 +354,7 @@
                 FechaActualizacion = DateTime.Now,
                 FechaCreacion = isNew ? DateTime.Now : entradaViewModel.FechaCreacion,
                 Folio = entradaViewModel.Folio.Trim().ToUpper(),
-                Observaciones = entradaViewModel.Observaciones.Trim().ToUpper(),
+                Observaciones = entradaViewModel.Observaciones == null ? "" : entradaViewModel.Observaciones.Trim().ToUpper(),
                 ProveedorID = entradaViewModel.ProveedorID,
                 UsuarioID = entradaViewModel.UsuarioID,
                 Proveedores = await _getHelper.GetProveedorByIdAsync((Guid)entradaViewModel.ProveedorID)
@@ -359,6 +383,7 @@
                 ProveedorID = entrada.ProveedorID,
                 Proveedores = await _getHelper.GetProveedorByIdAsync((Guid)entrada.ProveedorID),
                 UsuarioID = entrada.UsuarioID,
+                Usuarios = entrada.Usuarios,
                 EntradaDetalle = await _getHelper.GetEntradaDetalleByEntradaIdAsync(entrada.EntradaID)
             };
 
@@ -626,13 +651,19 @@
         /// <returns></returns>
         public async Task<Salida> ToSalidaAsync(SalidaViewModel salidaViewModel, bool isNew)
         {
-            var fechaCreacion = await _context.Salidas
-                .Where(s => s.SalidaID == salidaViewModel.SalidaID)
-                .Select(s => s.FechaCreacion).FirstOrDefaultAsync();
+            DateTime _fecha = DateTime.Now;
+            DateTime _fechaCreacion = _fecha;
 
-            if (fechaCreacion == null)
+            if (!isNew)
             {
-                return null;
+                var fechaCreacion = await _context.Salidas
+                    .Where(s => s.SalidaID == salidaViewModel.SalidaID)
+                    .Select(s => s.FechaCreacion).FirstOrDefaultAsync();
+
+                if (fechaCreacion == null)
+                {
+                    fechaCreacion = _fecha;
+                }
             }
 
             return new Salida()
@@ -640,8 +671,8 @@
                 Aplicado = salidaViewModel.Aplicado,
                 SalidaID = isNew ? Guid.NewGuid() : salidaViewModel.SalidaID,
                 Fecha = salidaViewModel.Fecha,
-                FechaActualizacion = DateTime.Now,
-                FechaCreacion = isNew ? DateTime.Now: fechaCreacion,
+                FechaActualizacion = _fecha,
+                FechaCreacion = _fechaCreacion,
                 Folio = salidaViewModel.Folio.Trim().ToUpper(),
                 Observaciones = salidaViewModel.Observaciones == null ? "" : salidaViewModel.Observaciones.Trim().ToUpper(),
                 SalidaTipoID = salidaViewModel.SalidaTipoID,
@@ -673,6 +704,7 @@
                 SalidaTipo = await _getHelper.GetSalidaTipoByIdAsync((Guid)salida.SalidaTipoID),
                 SalidaTipoDDL = await _combosHelper.GetComboSalidasTipoAsync(),
                 UsuarioID = salida.UsuarioID,
+                Usuarios = salida.Usuarios,
                 SalidaDetalle = await _getHelper.GetSalidaDetalleBySalidaIdAsync(salida.SalidaID)
             };
 

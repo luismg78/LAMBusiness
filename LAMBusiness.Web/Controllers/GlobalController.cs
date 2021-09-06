@@ -2,12 +2,12 @@
 {
     using System;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Helpers;
     using Shared.Aplicacion;
     using Shared.Contacto;
-    using Microsoft.AspNetCore.Http;
 
     public class GlobalController : Controller
     {
@@ -63,7 +63,7 @@
                     //validar la conexión a internet con la cuenta de google.
                     if (conexionInternet)
                     {
-                        System.Uri url = new System.Uri("https://www.google.com/");
+                        Uri url = new Uri("https://www.google.com/");
                         System.Net.WebRequest WebRequest;
                         WebRequest = System.Net.WebRequest.Create(url);
                         System.Net.WebResponse objetoResp;

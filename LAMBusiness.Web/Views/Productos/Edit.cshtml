@@ -15,49 +15,54 @@
                     <li class="breadcrumb-item active">Editar Registro</li>
                 </ul>
             </div>
-            <a asp-action="Index" asp-controller="Productos" class="btn-close me-md-1" aria-label="Close"></a>
+            <div class="d-flex align-items-center">
+                <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewEdit', event);">
+                    <i class="fa fa-question-circle"></i>
+                </a>
+                <a asp-action="Index" asp-controller="Productos" class="btn-close me-md-1" aria-label="Close"></a>
+            </div>
         </div>
         <div class="modal-body py-4">
             <input type="hidden" asp-for="ProductoID" />
             <div class="row px-md-3">
                 <div class="col-12 col-md-4">
                     <div class="form-group">
-                        <label asp-for="Codigo" class="control-label"></label>
+                        <label asp-for="Codigo" class="control-label required"></label>
                         <input asp-for="Codigo" class="form-control" autofocus />
                         <span asp-validation-for="Codigo" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-12 col-md-8">
                     <div class="form-group">
-                        <label asp-for="ProductoNombre" class="control-label"></label>
+                        <label asp-for="ProductoNombre" class="control-label required"></label>
                         <input asp-for="ProductoNombre" class="form-control" />
                         <span asp-validation-for="ProductoNombre" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-12">
                     <div class="form-group">
-                        <label asp-for="ProductoDescripcion" class="control-label"></label>
+                        <label asp-for="ProductoDescripcion" class="control-label required"></label>
                         <textarea asp-for="ProductoDescripcion" class="form-control"></textarea>
                         <span asp-validation-for="ProductoDescripcion" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label asp-for="PrecioVenta" class="control-label"></label>
+                        <label asp-for="PrecioVenta" class="control-label required"></label>
                         <input asp-for="PrecioVenta" class="form-control" />
                         <span asp-validation-for="PrecioVenta" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label asp-for="TasaID" class="control-label"></label>
+                        <label asp-for="TasaID" class="control-label required"></label>
                         <select asp-for="TasaID" class="form-select" asp-items="Model.TasasImpuestosDDL"></select>
                         <span asp-validation-for="TasaID" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label asp-for="UnidadID" class="control-label"></label>
+                        <label asp-for="UnidadID" class="control-label required"></label>
                         <select asp-for="UnidadID" class="form-select" asp-items="Model.UnidadesDDL"></select>
                         <span asp-validation-for="UnidadID" class="text-danger"></span>
                     </div>
@@ -65,7 +70,7 @@
                 <div class="col-12">
                     <div id="MarcaSearch" class="form-group @if (Model.Marcas != null) {<text>d-none</text>}">
                         <input asp-for="MarcaID" type="hidden" />
-                        <label asp-for="MarcaID" class="control-label"></label>
+                        <label asp-for="MarcaID" class="control-label required"></label>
                         <div class="input-group">
                             <input id="MarcaSearchInput" type="search" class="form-control"
                                    data-bs-toggle="focus"
@@ -75,14 +80,14 @@
                                    onkeyup="positionCursorWithArrowKey(event);"
                                    onkeypress="getMarca(event);" />
                             <button id="MarcaSearchButton" class="btn btn-light border"
-                                    type="button" onclick="search(event);">
+                                    type="button" onclick="searchMarca(event);">
                                 <span id="SpinList" class="d-flex align-items-center">
                                     <i class="fa fa-search"></i>
                                 </span>
                             </button>
                         </div>
                         <span asp-validation-for="MarcaID" class="text-danger"></span>
-                        <div id="dRow" class="mb-4 mt-1 list-registers" data-charging="0" data-rows-next="1">
+                        <div id="dRowListBox" class="mb-4 mt-1 list-registers" data-charging="0" data-rows-next="1">
                         </div>
                     </div>
                 </div>
@@ -129,12 +134,12 @@
                 </div>
                 <!--End Package-->
                 @*<div class="col-12 col-md-4">
-            <div class="form-group">
-                <label asp-for="ExistenciaMaxima" class="control-label"></label>
-                <input asp-for="ExistenciaMaxima" class="form-control" />
-                <span asp-validation-for="ExistenciaMaxima" class="text-danger"></span>
-            </div>
-        </div>*@
+                        <div class="form-group">
+                            <label asp-for="ExistenciaMaxima" class="control-label"></label>
+                            <input asp-for="ExistenciaMaxima" class="form-control" />
+                            <span asp-validation-for="ExistenciaMaxima" class="text-danger"></span>
+                        </div>
+                    </div>*@
                 <div class="col-12 col-md-4">
                     <div class="form-group">
                         <label asp-for="Activo" class="control-label"></label>
@@ -155,7 +160,7 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-<script>
+    <script>
     $(document).ready(function () {
         validatedUnitChange();
     });
@@ -169,13 +174,13 @@
         getMarcaByNombre(e.currentTarget.dataset.search);
     }
 
-    function addRowsNext(skip, inicio = false) {
+    function addRowsNextListBox(skip, inicio = false) {
         addProcessWithSpinnerInList('SpinList', 'fa-search');
-        $('#dRow').attr('data-charging', "1");
+        $('#dRowListBox').attr('data-charging', "1");
         var searchBy = $('#MarcaSearchInput')[0] === undefined ? "" : $('#MarcaSearchInput').val();
         if (searchBy === '') {
-            $('#dRow').attr('data-rows-next', "0");
-            $('#dRow').attr('data-charging', "0");
+            $('#dRowListBox').attr('data-rows-next', "0");
+            $('#dRowListBox').attr('data-charging', "0");
             removeProcessWithSpinnerInList('SpinList', 'fa-search');
             return false;
         }
@@ -188,19 +193,19 @@
                 skip: skip
             },
             success: function (r) {
-                if (inicio) { $('#dRow').empty(); }
+                if (inicio) { $('#dRowListBox').empty(); }
                 if (r !== null && r.trim() !== '') {
-                    $('#dRow').append(r);
-                    $('#dRow').slideDown();
+                    $('#dRowListBox').append(r);
+                    $('#dRowListBox').slideDown();
                     $('#MarcaSearchInput').focus();
                 } else {
-                    $('#dRow').attr('data-rows-next', "0");
+                    $('#dRowListBox').attr('data-rows-next', "0");
                 }
-                $('#dRow').attr('data-charging', "0");
+                $('#dRowListBox').attr('data-charging', "0");
                 removeProcessWithSpinnerInList('SpinList', 'fa-search');
             },
             error: function (r) {
-                $('#dRow').attr('data-charging', "0");
+                $('#dRowListBox').attr('data-charging', "0");
                 removeProcessWithSpinnerInList('SpinList', 'fa-search');
             },
             cache: false
@@ -241,7 +246,7 @@
                         $('#MarcaNombre')[0].innerText = r.marcaNombre;
                         $('#MarcaDescripcion')[0].innerText = r.marcaDescripcion;
                         $('#MarcaSearch').removeClass('d-block').addClass('d-none');
-                        $('#dRow > div').remove();
+                        $('#dRowListBox > div').remove();
                         $('#Activo').focus();
                     } else {
                         alert(r.message);
@@ -256,16 +261,16 @@
         }
     }
 
-    function search(e) {
+    function searchMarca(e) {
         e.preventDefault();
         if ($('#MarcaSearchInput').attr('data-bs-toggle')) {
             if ($('#MarcaSearchInput').val() !== '') {
                 skip = 0;
-                addRowsNext(skip, true);
+                addRowsNextListBox(skip, true);
             }
         }
     }
-    
+
     function validatedUnitChange() {
         if ($('#UnidadID').val() === '6C9C7801-D654-11E9-8B00-8CDCD47D68A1' ||
             $('#UnidadID').val() === '95B850EC-D654-11E9-8B00-8CDCD47D68A1') {
@@ -274,5 +279,5 @@
             $('#dPackage').hide();
         }
     }
-</script>
+    </script>
 }

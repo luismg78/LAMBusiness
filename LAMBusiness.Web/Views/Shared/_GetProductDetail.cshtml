@@ -1,0 +1,193 @@
+﻿@model LAMBusiness.Web.Models.ViewModels.ProductoDetailsViewModel
+
+<div class="row">
+    <div class="col-12">
+        <div class="row g-0">
+            <div class="col-12 col-lg-8">
+                <div class="d-flex justify-content-start align-items-center">
+                    <div class="me-3">
+                        <img src="@Url.Action("GetProductImages", "Productos", new { productoId = Model.ProductoID, imageId = Model.ProductoID, tipo = "md" })" class="rounded-circle" style="width:5rem;" alt="Image Profile">
+                    </div>
+                    <div>
+                        <h4 class="fw-bold m-0 pt-2 pt-md-0 title">@Html.DisplayFor(model => model.ProductoNombre)</h4>
+                        <small class="d-block mb-3 subtitle text-muted">@Html.DisplayFor(model => model.ProductoDescripcion)</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-4">
+                <img src="@Url.Action("GetProductBarCode", "Productos", new { id = Model.Codigo })" style="height:3rem;width:50%;" class="float-end pe-lg-3" alt="Image Profile">
+            </div>
+        </div>
+    </div>
+    <!--Datos del producto-->
+    <div class="col-12 mb-4">
+        <div class="card-body-lam-d1 mt-2">
+            <div class="row g-0 row-bordered border">
+                @{ 
+                    string col3 = "col-lg-4";
+                    if (Model.MostrarPrecioCosto)
+                    {
+                        col3 = "col-lg-3";
+                    }
+                }
+                <div class="bg-row d-flex col-md-6 col-lg-4 align-items-center">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="fas fa-barcode display-4"></i>
+                        <div class="ms-3">
+                            <div class="text-muted small">@Html.DisplayNameFor(model => model.Codigo)</div>
+                            <h6>@Html.DisplayFor(model => model.Codigo)</h6>
+                        </div>
+                    </div>
+                </div>
+                @if (Model.MostrarPrecioCosto)
+                {
+                    <div class="bg-row d-flex col-md-6 col-lg-4 align-items-center">
+                        <div class="card-body d-flex align-items-center">
+                            <i class="fas fa-dollar-sign display-4"></i>
+                            <div class="ms-3">
+                                <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.PrecioCosto)</div>
+                                <h6>@Html.DisplayFor(model => model.PrecioCosto)</h6>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="bg-row d-flex col-md-6 col-lg-4 align-items-center">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="fas fa-dollar-sign display-4"></i>
+                        <div class="ms-3">
+                            <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.PrecioVenta)</div>
+                            <h6>@Html.DisplayFor(model => model.PrecioVenta)</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-row d-flex col-md-6 @col3 align-items-center">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="fab fa-uniregistry display-4"></i>
+                        <div class="ms-3">
+                            <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.Unidades.UnidadNombre)</div>
+                            <h6>@Html.DisplayFor(model => model.Unidades.UnidadNombre)</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-row d-flex col-md-6 @col3 align-items-center">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="far fa-copyright display-4"></i>
+                        <div class="ms-3">
+                            <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.Marcas.MarcaNombre)</div>
+                            <h6>@Html.DisplayFor(model => model.Marcas.MarcaNombre)</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-row d-flex col-md-6 @col3 align-items-center">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="fas fa-percentage display-4"></i>
+                        <div class="ms-3">
+                            <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.TasasImpuestos.Tasa)</div>
+                            <h6>@Html.DisplayFor(model => model.TasasImpuestos.Tasa)</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-row d-flex col-md-6 @col3 align-items-center">
+                    <div class="card-body d-flex align-items-center">
+                        @if (Model.Activo)
+                        {
+                            <i class="far fa-check-circle display-4 text-success"></i>
+                            <div class="ms-3">
+                                <div class="text-muted small line-height-1">Estatus</div>
+                                <h6 class="text-success">Disponible</h6>
+                            </div>
+                        }
+                        else
+                        {
+                            <i class="fas fa-ban display-4 text-danger"></i>
+                            <div class="ms-4">
+                                <div class="text-muted small line-height-1">Estatus</div>
+                                <h6 class="text-danger">No Disponible</h6>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Productos asignados a paquetes-->
+    @if (Model.ProductosAsignadosViewModel.Count > 0)
+    {
+        <div class="col-12">
+            <div class="mb-4">
+                @if (Model.Paquete == null)
+                {
+                    <p class="text-base">Producto asignado al(os) paquete(s).</p>
+                }
+                else
+                {
+                    <p class="text-base">Pieza asignada</p>
+                }
+                <hr />
+                @if (Model.ProductosAsignadosViewModel.Count > 0)
+                {
+                    <div class="row border-bottom d-none d-md-flex px-2 g-0">
+                        <div class="col-12 col-md-3 col-lg-2 mb-2">
+                            <span class="fw-bold">Código</span>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg mb-2">
+                            <span class="fw-bold">Descripción</span>
+                        </div>
+                        <div class="col-12 col-md-3 col-lg-2 mb-2 text-md-end">
+                            <span class="fw-bold">Piezas x Paquete</span>
+                        </div>
+                    </div>
+                }
+                @foreach (var productoAsignado in Model.ProductosAsignadosViewModel)
+                {
+                    <div class="bg-row row align-items-center border-bottom py-2 px-2 g-0">
+                        <div class="col-12 col-md-3 col-lg-2">
+                            <span class="fw-bold d-block d-md-none">Código</span>
+                            <span class="d-block">@productoAsignado.Codigo</span>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg">
+                            <span class="fw-bold d-block d-md-none">Descripción</span>
+                            <span class="d-block">@productoAsignado.Descripcion</span>
+                        </div>
+                        <div class="col-12 col-md-3 col-lg-2 text-md-end">
+                            <span class="fw-bold d-block d-md-none">Piezas x Paquete</span>
+                            <span class="d-block">@productoAsignado.Cantidad</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    <!--Existencias-->
+    @if (Model.Existencias.Count > 0)
+    {
+        <div class="col-12">
+            <div class="mb-4">
+                <p class="text-base">Existencia por almacén</p>
+                <hr />
+                <div class="row border-bottom d-none d-md-flex px-2 g-0">
+                    <div class="col-12 col-md-9 mb-2">
+                        <span class="fw-bold">Almacén</span>
+                    </div>
+                    <div class="col-12 col-md-3 mb-2 text-md-end">
+                        <span class="fw-bold">Existencia</span>
+                    </div>
+                </div>
+                @foreach (var existencia in Model.Existencias.OrderBy(e => e.Almacenes.AlmacenNombre))
+                {
+                    <div class="bg-row row align-items-center border-bottom py-2 px-2 g-0">
+                        <div class="col-12 col-md-9">
+                            <span class="fw-bold d-block d-md-none">Almacén</span>
+                            <span class="d-block">@existencia.Almacenes.AlmacenNombre</span>
+                            <small class="d-block">@existencia.Almacenes.AlmacenDescripcion</small>
+                        </div>
+                        <div class="col-12 col-md-3 text-md-end">
+                            <span class="fw-bold d-block d-md-none">Existencia</span>
+                            <span class="d-block">@existencia.ExistenciaEnAlmacen</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

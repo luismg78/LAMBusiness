@@ -29,7 +29,7 @@ function addProcessWithSpinner(text) {
         var html = '';
         html += '<div class="process-with-spinner">';
         html += '    <div class="spinner"></div>';
-        html += '    <div class="ml-3">' + text + '</div>';
+        html += '    <div class="ms-3">' + text + '</div>';
         html += '</div>';
         $('body').append(html);
     }

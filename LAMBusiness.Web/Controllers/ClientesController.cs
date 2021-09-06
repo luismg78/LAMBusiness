@@ -7,12 +7,13 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
     using Data;
     using Helpers;
     using Models.ViewModels;
+    using Shared.Aplicacion;
     using Shared.Catalogo;
     using Shared.Contacto;
-    using Microsoft.Extensions.Configuration;
 
     public class ClientesController : GlobalController
     {
@@ -46,16 +47,26 @@
                 return RedirectToAction("Inicio", "Menu");
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
-            var dataContext = _context.Clientes
+            var clientes = _context.Clientes
                 .Include(c => c.ClienteContactos)
                 .Include(c => c.Municipios)
                 .Include(c => c.Municipios.Estados);
-            return View(await dataContext.ToListAsync());
+
+            var filtro = new Filtro<List<Cliente>>()
+            {
+                Datos = await clientes.Take(50).ToListAsync(),
+                Patron = "",
+                PermisoEscritura = permisosModulo.PermisoEscritura,
+                PermisoImprimir = permisosModulo.PermisoImprimir,
+                PermisoLectura = permisosModulo.PermisoLectura,
+                Registros = await clientes.CountAsync(),
+                Skip = 0
+            };
+
+            return View(filtro);
         }
 
-        public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
+        public async Task<IActionResult> _AddRowsNextAsync(Filtro<List<Cliente>> filtro)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
             if (validateToken != null) { return null; }
@@ -65,12 +76,10 @@
                 return null;
             }
             
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
             IQueryable<Cliente> query = null;
-            if (searchby != null && searchby != "")
+            if (filtro.Patron != null && filtro.Patron != "")
             {
-                var words = searchby.Trim().ToUpper().Split(' ');
+                var words = filtro.Patron.Trim().ToUpper().Split(' ');
                 foreach (var w in words)
                 {
                     if (w.Trim() != "")
@@ -108,8 +117,14 @@
                     .Include(c => c.Municipios);
             }
 
-            var clientes = await query.OrderBy(p => p.RFC)
-                .Skip(skip)
+            filtro.Registros = await query.CountAsync();
+
+            filtro.PermisoEscritura = permisosModulo.PermisoEscritura;
+            filtro.PermisoImprimir = permisosModulo.PermisoImprimir;
+            filtro.PermisoLectura = permisosModulo.PermisoLectura;
+
+            filtro.Datos = await query.OrderBy(p => p.RFC)
+                .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
 
@@ -117,7 +132,7 @@
             {
                 ViewName = "_AddRowsNextAsync",
                 ViewData = new ViewDataDictionary
-                            <List<Cliente>>(ViewData, clientes)
+                            <Filtro<List<Cliente>>>(ViewData, filtro)
             };
         }
 
@@ -144,6 +159,7 @@
                 .Include(c => c.Municipios.Estados)
                 .Include(c => c.Municipios)
                 .FirstOrDefaultAsync(m => m.ClienteID == id);
+
             if (cliente == null)
             {
                 TempData["toast"] = "Identificacor incorrecto, verifique.";
@@ -184,6 +200,9 @@
                 return RedirectToAction(nameof(Index));
             }
 
+            TempData["toast"] = "Falta información en algún campo, verifique.";
+            await ValidarDatosDelCliente(clienteViewModel);
+            
             if (ModelState.IsValid)
             {
                 var cliente = await _converterHelper.ToClienteAsync(clienteViewModel, true);
@@ -192,11 +211,14 @@
                 {
                     await _context.SaveChangesAsync();
                     TempData["toast"] = "Los datos del cliente fueron almacenados correctamente.";
+                    await BitacoraAsync("Alta", cliente);
                     return RedirectToAction(nameof(Details), new { id = cliente.ClienteID});
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
                     TempData["toast"] = "[Error] Los datos del cliente no fueron almacenados.";
+                    await BitacoraAsync("Alta", cliente, excepcion);
                 }
             }
 
@@ -204,7 +226,6 @@
             clienteViewModel.MunicipiosDDL = await _combosHelper
                 .GetComboMunicipiosAsync((short)clienteViewModel.EstadoID);
 
-            TempData["toast"] = "Falta información en algún campo, verifique.";
             return View(clienteViewModel);
         }
 
@@ -256,32 +277,33 @@
                 return RedirectToAction(nameof(Index));
             }
 
+            TempData["toast"] = "Falta información en algún campo.";
+            await ValidarDatosDelCliente(clienteViewModel);
+
             if (ModelState.IsValid)
             {
+                var cliente = await _converterHelper.ToClienteAsync(clienteViewModel, false);
                 try
                 {
-                    var cliente = await _converterHelper.ToClienteAsync(clienteViewModel, false);
                     _context.Update(cliente);
-
                     await _context.SaveChangesAsync();
                     TempData["toast"] = "Los datos del cliente fueron actualizados correctamente.";
+                    await BitacoraAsync("Actualizar", cliente);
                     return RedirectToAction(nameof(Details), new { id = cliente.ClienteID });
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!ClienteExists(clienteViewModel.ClienteID))
-                    {
-                        TempData["toast"] = "Cliente inexistente (identificador incorrecto).";
-                    }
-                    else
-                    {
-                        TempData["toast"] = "[Error] Los datos del cliente no fueron actualizados.";
-                    }
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    TempData["toast"] = "[Error] Los datos del cliente no fueron actualizados.";
+                    await BitacoraAsync("Actualizar", cliente, excepcion);
                 }
                 return RedirectToAction(nameof(Index));
             }
 
-            TempData["toast"] = "Falta información en algún campo.";
+            clienteViewModel.EstadosDDL = await _combosHelper.GetComboEstadosAsync();
+            clienteViewModel.MunicipiosDDL = await _combosHelper
+                .GetComboMunicipiosAsync((short)clienteViewModel.EstadoID);
+
             return View(clienteViewModel);
         }
 
@@ -315,10 +337,20 @@
                 return RedirectToAction(nameof(Index));
             }
 
-            _context.Clientes.Remove(cliente);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Clientes.Remove(cliente);
+                await _context.SaveChangesAsync();
+                TempData["toast"] = "Los datos del cliente fueron eliminados correctamente.";
+                await BitacoraAsync("Baja", cliente);
+            }
+            catch (Exception ex)
+            {
+                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                TempData["toast"] = "[Error] Los datos del cliente no fueron eliminados.";
+                await BitacoraAsync("Baja", cliente, excepcion);
+            }
             
-            TempData["toast"] = "Los datos del cliente fueron eliminados correctamente.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -398,7 +430,6 @@
                 if (cliente == null)
                 {
                     TempData["toast"] = "Contacto no ingresado, cliente inexistente.";
-                    ModelState.AddModelError(string.Empty, "Contacto no ingresado, cliente inexistente.");
                     return View();
                 }
 
@@ -415,13 +446,15 @@
                     await _context.SaveChangesAsync();
                     
                     TempData["toast"] = "Los datos del contacto fueron almacenados correctamente.";
+                    await BitacoraAsync("Alta", clienteContacto, cliente.ClienteID);
                     return RedirectToAction(nameof(Details), new { id = clienteContacto.ClienteID });
 
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
                     TempData["toast"] = "[Error] Los datos del contacto no fueron almacenados.";
-                    //ModelState.AddModelError(string.Empty, ex.Message);
+                    await BitacoraAsync("Alta", clienteContacto, cliente.ClienteID, excepcion);
                 }
             }
 
@@ -471,8 +504,6 @@
                 if (contacto == null)
                 {
                     TempData["toast"] = "Actualización no realizada, contacto inexistente.";
-                    ModelState.AddModelError(string.Empty,
-                        "Actualización no realizada, contacto inexistente.");
                     clienteContacto.Cliente = await _getHelper
                         .GetClienteByIdAsync(clienteContacto.ClienteID);
 
@@ -492,13 +523,15 @@
                     await _context.SaveChangesAsync();
                     
                     TempData["toast"] = "Los datos del contacto fueron actualizados correctamente.";
+                    await BitacoraAsync("Actualizar", contacto, contacto.ClienteID);
                     return RedirectToAction(nameof(Details), new { id = contacto.ClienteID });
 
                 }
                 catch (Exception ex)
                 {
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
                     TempData["toast"] = "[Error] Los datos del contacto no fueron actualizados.";
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    await BitacoraAsync("Actualizar", contacto, contacto.ClienteID, excepcion);
                 }
             }
 
@@ -532,11 +565,50 @@
                 return RedirectToAction(nameof(Details), new { id });
             }
 
-            _context.ClienteContactos.Remove(contacto);
-            await _context.SaveChangesAsync();
-                
-            TempData["toast"] = "Los datos del contacto fueron eliminados correctamente.";
+            try
+            {
+                _context.ClienteContactos.Remove(contacto);
+                await _context.SaveChangesAsync();
+                TempData["toast"] = "Los datos del contacto fueron eliminados correctamente.";
+                await BitacoraAsync("Baja", contacto, contacto.ClienteID);
+            }
+            catch (Exception ex)
+            {
+                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                TempData["toast"] = "[Error] Los datos del contacto no fueron eliminados.";
+                await BitacoraAsync("Baja", contacto, contacto.ClienteID);
+            }
+
             return RedirectToAction(nameof(Details),new { id = contacto.ClienteID });
+        }
+
+        private async Task BitacoraAsync(string accion, Cliente cliente, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                cliente, cliente.ClienteID.ToString(), directorioBitacora, excepcion);
+        }
+        private async Task BitacoraAsync(string accion, ClienteContacto contacto, Guid clienteId, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                contacto, clienteId.ToString(), directorioBitacora, excepcion);
+        }
+
+        private async Task ValidarDatosDelCliente(ClienteViewModel cliente)
+        {
+            cliente.RFC = cliente.RFC.Trim().ToUpper();
+
+            var existeRFC = await _context.Clientes
+                .AnyAsync(c => c.RFC == cliente.RFC &&
+                               c.ClienteID != cliente.ClienteID);
+            if (existeRFC)
+            {
+                TempData["toast"] = "RFC previamente asignado a otro cliente.";
+                ModelState.AddModelError("RFC", "RFC previamente asignado.");
+            }
         }
     }
 }

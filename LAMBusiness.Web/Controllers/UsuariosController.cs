@@ -11,6 +11,7 @@
     using Data;
     using Helpers;
     using Models.ViewModels;
+    using Shared.Aplicacion;
     using Shared.Contacto;
 
     public class UsuariosController : GlobalController
@@ -45,17 +46,27 @@
                 return RedirectToAction("Inicio", "Menu");
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
             var usuarios = _context.Usuarios
                 .Include(e => e.Colaborador)
                 .Where(e => e.AdministradorID != "SA")
                 .OrderBy(e => e.Colaborador.CURP);
 
-            return View(usuarios);
+            var filtro = new Filtro<List<Usuario>>()
+            {
+                Datos = await usuarios.Take(50).ToListAsync(),
+                Patron = "",
+                PermisoEscritura = permisosModulo.PermisoEscritura,
+                PermisoImprimir = permisosModulo.PermisoImprimir,
+                PermisoLectura = permisosModulo.PermisoLectura,
+                Registros = await usuarios.CountAsync(),
+                Skip = 0
+            };
+
+            return View(filtro);
+
         }
 
-        public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
+        public async Task<IActionResult> _AddRowsNextAsync(Filtro<List<Usuario>> filtro)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
             if (validateToken != null) { return null; }
@@ -65,12 +76,10 @@
                 return null;
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
             IQueryable<Usuario> query = null;
-            if (searchby != null && searchby != "")
+            if (filtro.Patron != null && filtro.Patron != "")
             {
-                var words = searchby.Trim().ToUpper().Split(' ');
+                var words = filtro.Patron.Trim().ToUpper().Split(' ');
                 foreach (var w in words)
                 {
                     if (w.Trim() != "")
@@ -105,16 +114,22 @@
                     .Where(c => c.AdministradorID != "SA");
             }
 
-            var usuarios = await query.OrderBy(c => c.Colaborador.CURP)
-                .Skip(skip)
+            filtro.Registros = await query.CountAsync();
+
+            filtro.Datos = await query.OrderBy(c => c.Colaborador.CURP)
+                .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
+
+            filtro.PermisoEscritura = permisosModulo.PermisoEscritura;
+            filtro.PermisoImprimir = permisosModulo.PermisoImprimir;
+            filtro.PermisoLectura = permisosModulo.PermisoLectura;
 
             return new PartialViewResult
             {
                 ViewName = "_AddRowsNextAsync",
                 ViewData = new ViewDataDictionary
-                            <List<Usuario>>(ViewData, usuarios)
+                            <Filtro<List<Usuario>>>(ViewData, filtro)
             };
         }
 
@@ -127,8 +142,6 @@
             {
                 return RedirectToAction(nameof(Index));
             }
-
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
 
             if (id == null)
             {
@@ -166,6 +179,7 @@
                 FechaInicio = usuario.FechaInicio,
                 FechaTermino = usuario.FechaTermino,
                 FechaUltimoAcceso = usuario.FechaUltimoAcceso,
+                PermisoEscritura = permisosModulo.PermisoEscritura,
                 UsuarioID = usuario.UsuarioID,
                 UsuarioModulos = usuarioModulos
             };
@@ -209,6 +223,7 @@
             usuarioViewModel.Password = "";
             usuarioViewModel.FechaUltimoAcceso = DateTime.Now;
 
+            TempData["toast"] = "Falta información en algún campo.";
             if (ModelState.IsValid)
             {
                 var usuario = await _converterHelper.ToUsuarioAsync(usuarioViewModel, true);
@@ -217,11 +232,15 @@
                 try
                 {
                     await _context.SaveChangesAsync();
+                    await BitacoraAsync("Alta", usuario);
+                    TempData["toast"] = "Los datos del usuario fueron almacenados correctamente.";
                     return RedirectToAction(nameof(Details), new { id = usuario.UsuarioID });
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    TempData["toast"] = "[Error] Los datos del usuario no fueron almacenados.";
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Alta", usuario, excepcion);
                 }
             }
             
@@ -278,6 +297,7 @@
                 return RedirectToAction(nameof(Index));
             }
 
+            TempData["toast"] = "Falta información en algún campo, verifique.";
             if (ModelState.IsValid)
             {
                 var usuario = await _converterHelper.ToUsuarioAsync(usuarioViewModel, false);
@@ -306,15 +326,18 @@
                     }
 
                     await _context.SaveChangesAsync();
+                    TempData["toast"] = "Los datos del usuario fueron actualizados correctamente.";
+                    await BitacoraAsync("Actualizar", usuario);
                     return RedirectToAction(nameof(Details), new { id = usuario.UsuarioID });
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    TempData["toast"] = "[Error] Los datos del usuario no fueron actualizados.";
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", usuario, excepcion);
                 }
             }
             
-            TempData["toast"] = "Falta información en algún campo, verifique.";
             usuarioViewModel.AdministradoresDDL = await _combosHelper.GetComboAdministradoresAsync(token.UsuarioID);
             return View(usuarioViewModel);
         }
@@ -370,11 +393,14 @@
             {
                 _context.Usuarios.Remove(usuario);
                 await _context.SaveChangesAsync();
+                await BitacoraAsync("Baja", usuario);
                 TempData["toast"] = "Los datos del usuario fueron eliminados correctamente.";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
                 TempData["toast"] = "Los datos del usuario no pueden ser eliminados por la integridad de la información.";
+                await BitacoraAsync("Baja", usuario, excepcion);
             }
 
             return RedirectToAction(nameof(Index));
@@ -585,13 +611,14 @@
 
                     await _context.SaveChangesAsync();
                     TempData["toast"] = "Permisos actualizados con éxito.";
-
+                    await BitacoraAsync("Permisos", usuarioDetailsViewModelUsuario.UsuarioModulos, usuarioDetailsViewModelUsuario.UsuarioID.ToString());
                     return RedirectToAction(nameof(Details), new { id = usuarioDetailsViewModelUsuario.UsuarioID});
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
                     TempData["toast"] = "Error al actualizar los permisos seleccionados.";
-                    //bitacora
+                    await BitacoraAsync("Permisos", usuarioDetailsViewModelUsuario.UsuarioModulos, usuarioDetailsViewModelUsuario.UsuarioID.ToString(), excepcion);
                 } 
             }
             else
@@ -625,6 +652,21 @@
             };
 
             return View(usuarioDetails);
+        }
+
+        private async Task BitacoraAsync(string accion, Usuario usuario, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                usuario, usuario.ColaboradorID.ToString(), directorioBitacora, excepcion);
+        }
+        private async Task BitacoraAsync(string accion, List<UsuarioModulo> usuarioModulo, string usuarioId, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                usuarioModulo, usuarioId.ToString(), directorioBitacora, excepcion);
         }
     }
 }

@@ -10,6 +10,7 @@
     using Microsoft.Extensions.Configuration;
     using Data;
     using Helpers;
+    using Shared.Aplicacion;
     using Shared.Catalogo;
 
     public class SalidasTipoController : GlobalController
@@ -36,15 +37,24 @@
                 return RedirectToAction("Inicio", "Menu");
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
             var salidaTipo = _context.SalidasTipo
                 .OrderBy(e => e.SalidaTipoDescripcion);
 
-            return View(salidaTipo);
+            var filtro = new Filtro<List<SalidaTipo>>()
+            {
+                Datos = await salidaTipo.Take(50).ToListAsync(),
+                Patron = "",
+                PermisoEscritura = permisosModulo.PermisoEscritura,
+                PermisoImprimir = permisosModulo.PermisoImprimir,
+                PermisoLectura = permisosModulo.PermisoLectura,
+                Registros = await salidaTipo.CountAsync(),
+                Skip = 0
+            };
+
+            return View(filtro);
         }
 
-        public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
+        public async Task<IActionResult> _AddRowsNextAsync(Filtro<List<SalidaTipo>> filtro)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return null; }
@@ -54,12 +64,10 @@
                 return null;
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
             IQueryable<SalidaTipo> query = null;
-            if (searchby != null && searchby != "")
+            if (filtro.Patron != null && filtro.Patron != "")
             {
-                var words = searchby.Trim().ToUpper().Split(' ');
+                var words = filtro.Patron.Trim().ToUpper().Split(' ');
                 foreach (var w in words)
                 {
                     if (w.Trim() != "")
@@ -81,18 +89,23 @@
                 query = _context.SalidasTipo;
             }
 
-            var salidasTipo = await query.OrderBy(m => m.SalidaTipoDescripcion)
-                .Skip(skip)
+            filtro.Registros = await query.CountAsync();
+
+            filtro.Datos = await query.OrderBy(m => m.SalidaTipoDescripcion)
+                .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
+
+            filtro.PermisoEscritura = permisosModulo.PermisoEscritura;
+            filtro.PermisoImprimir = permisosModulo.PermisoImprimir;
+            filtro.PermisoLectura = permisosModulo.PermisoLectura;
 
             return new PartialViewResult
             {
                 ViewName = "_AddRowsNextAsync",
                 ViewData = new ViewDataDictionary
-                            <List<SalidaTipo>>(ViewData, salidasTipo)
+                            <Filtro<List<SalidaTipo>>>(ViewData, filtro)
             };
-
         }
 
         public async Task<IActionResult> Create()
@@ -120,12 +133,24 @@
                 return RedirectToAction(nameof(Index));
             }
 
+            TempData["toast"] = "Falta información en algún campo.";
             if (ModelState.IsValid)
             {
-                salidaTipo.SalidaTipoID = Guid.NewGuid();
-                _context.Add(salidaTipo);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    salidaTipo.SalidaTipoID = Guid.NewGuid();
+                    _context.Add(salidaTipo);
+                    await _context.SaveChangesAsync();
+                    await BitacoraAsync("Alta", salidaTipo);
+                    TempData["toast"] = "Los datos del tipo de salida fueron almacenados correctamente.";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    TempData["toast"] = "[Error] Los datos del tipo de salida no fueron almacenados.";
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Alta", salidaTipo, excepcion);
+                }
             }
 
             return View(salidaTipo);
@@ -143,13 +168,15 @@
 
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var salidaTipo = await _context.SalidasTipo.FindAsync(id);
             if (salidaTipo == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             return View(salidaTipo);
@@ -169,29 +196,42 @@
 
             if (id != salidaTipo.SalidaTipoID)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
+            TempData["toast"] = "Falta información en algún campo, verifique.";
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(salidaTipo);
                     await _context.SaveChangesAsync();
+                    TempData["toast"] = "Los datos del tipo de salida fueron actualizados correctamente.";
+                    await BitacoraAsync("Actualizar", salidaTipo);
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
                     if (!SalidaTipoExists(salidaTipo.SalidaTipoID))
                     {
-                        return NotFound();
+                        TempData["toast"] = "Registro inexistente.";
                     }
                     else
                     {
-                        throw;
+                        TempData["toast"] = "[Error] Los datos del tipo de salida no fueron actualizados.";
                     }
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", salidaTipo, excepcion);
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    TempData["toast"] = "[Error] Los datos del tipo de salida no fueron actualizados.";
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", salidaTipo, excepcion);
+                }
             }
+
             return View(salidaTipo);
         }
 
@@ -207,7 +247,8 @@
 
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var salidaTipo = await _context.SalidasTipo
@@ -215,11 +256,23 @@
 
             if (salidaTipo == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
-            _context.SalidasTipo.Remove(salidaTipo);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.SalidasTipo.Remove(salidaTipo);
+                await _context.SaveChangesAsync();
+                await BitacoraAsync("Baja", salidaTipo);
+                TempData["toast"] = "Los datos del tipo de salida fueron eliminados correctamente.";
+            }
+            catch (Exception ex)
+            {
+                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                TempData["toast"] = "[Error] Los datos del tipo de salida no fueron eliminados.";
+                await BitacoraAsync("Baja", salidaTipo, excepcion);
+            }
 
             return RedirectToAction(nameof(Index));
         }
@@ -227,6 +280,14 @@
         private bool SalidaTipoExists(Guid id)
         {
             return _context.SalidasTipo.Any(e => e.SalidaTipoID == id);
+        }
+
+        private async Task BitacoraAsync(string accion, SalidaTipo salidaTipo, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                salidaTipo, salidaTipo.SalidaTipoID.ToString(), directorioBitacora, excepcion);
         }
     }
 }

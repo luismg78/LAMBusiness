@@ -3,9 +3,9 @@
     using System;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using Catalogo;
     using Newtonsoft.Json;
 
+    [Table("Usuarios", Schema = "Contacto")]
     public class Usuario
     {
         [Key]
@@ -20,6 +20,7 @@
         [JsonIgnore]
         public virtual Colaborador Colaborador { get; set; }
 
+        [JsonIgnore]
         public string Password { get; set; }
 
         public bool Activo { get; set; }

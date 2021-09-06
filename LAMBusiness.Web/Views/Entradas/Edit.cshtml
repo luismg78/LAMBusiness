@@ -15,15 +15,20 @@
                     <li class="breadcrumb-item active">Editar Registro</li>
                 </ul>
             </div>
-            <a asp-action="Index" asp-controller="Entradas" class="btn-close me-md-1" aria-label="Close"></a>
+            <div class="d-flex align-items-center">
+                <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewEdit', event);">
+                    <i class="fa fa-question-circle"></i>
+                </a>
+                <a asp-action="Index" asp-controller="Entradas" class="btn-close me-md-1" aria-label="Close"></a>
+            </div>
         </div>
         <div class="modal-body py-4">
             <input type="hidden" asp-for="EntradaID" />
             <div class="row px-md-3">
                 <div class="col-12">
                     <div id="ProveedorSearch" class="form-group @if (Model.Proveedores != null) {<text>d-none</text>}">
-                        <input asp-for="ProveedorID" type="hidden"/>
-                        <label asp-for="ProveedorID" class="control-label"></label>
+                        <input asp-for="ProveedorID" type="hidden" />
+                        <label asp-for="ProveedorID" class="control-label required"></label>
                         <div class="input-group">
                             <input id="ProveedorSearchInput" type="search" class="form-control"
                                    data-bs-toggle="focus" data-bs-target=".list-registers"
@@ -32,14 +37,14 @@
                                    onkeyup="positionCursorWithArrowKey(event);"
                                    onkeypress="getProveedor(event);" />
                             <button id="ProveedorSearchButton" class="btn btn-light border"
-                                    type="button" onclick="search(event);">
+                                    type="button" onclick="searchListBox(event);">
                                 <span id="SpinList" class="d-flex align-items-center">
                                     <i class="fa fa-search"></i>
                                 </span>
                             </button>
                         </div>
                         <span asp-validation-for="ProveedorID" class="text-danger"></span>
-                        <div id="dRow" class="mb-4 mt-1 list-registers" data-charging="0" data-rows-next="1">
+                        <div id="dRowListBox" class="mb-4 mt-1 list-registers" data-charging="0" data-rows-next="1">
                         </div>
                     </div>
                 </div>
@@ -67,15 +72,15 @@
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label asp-for="Folio" class="control-label"></label>
+                        <label asp-for="Folio" class="control-label required"></label>
                         <input asp-for="Folio" class="form-control" autofocus />
                         <span asp-validation-for="Folio" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label asp-for="Fecha" class="control-label"></label>
-                        <input asp-for="Fecha" class="form-control" max="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+                        <label asp-for="Fecha" class="control-label required"></label>
+                        <input asp-for="Fecha" class="form-control" max="@DateTime.Now.ToString("yyyy-MM-dd")" />
                         <span asp-validation-for="Fecha" class="text-danger"></span>
                     </div>
                 </div>
@@ -101,39 +106,19 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-<script>
-            var skip = 0;
-    var input = '';
-
-    $(document).ready(function () {
-        $('#dRow').on("scroll", function () {
-            if ($('#dRow')[0] !== this.undefined &&
-                $('#dRow').attr('data-rows-next') === "1" &&
-                $('#dRow').attr('data-charging') === "0" &&
-                $('#dRow > div').length % 50 === 0) {
-                var scrollHeight = $(document).height();
-                var scrollPosition = $(window).height() + $(window).scrollTop();
-                var result = (scrollHeight - scrollPosition) / scrollHeight;
-                if (result <= 0.0005) {
-                    skip += 50;
-                    addRowsNext(skip);
-                }
-            }
-        });
-    });
-
+    <script>
     function addProveedor(e) {
         e.preventDefault();
         getProveedorByRFC(e.currentTarget.dataset.search);
     }
 
-    function addRowsNext(skip, inicio = false) {
+    function addRowsNextListBox(skip, inicio = false) {
         addProcessWithSpinnerInList('SpinList', 'fa-search');
-        $('#dRow').attr('data-charging', "1");
+        $('#dRowListBox').attr('data-charging', "1");
         var searchBy = $('#ProveedorSearchInput')[0] === undefined ? "" : $('#ProveedorSearchInput').val();
         if (searchBy === '') {
-            $('#dRow').attr('data-rows-next', "0");
-            $('#dRow').attr('data-charging', "0");
+            $('#dRowListBox').attr('data-rows-next', "0");
+            $('#dRowListBox').attr('data-charging', "0");
             removeProcessWithSpinnerInList('SpinList', 'fa-search');
             return false;
         }
@@ -146,19 +131,19 @@
                 skip: skip
             },
             success: function (r) {
-                if (inicio) { $('#dRow').empty(); }
+                if (inicio) { $('#dRowListBox').empty(); }
                 if (r !== null && r.trim() !== '') {
-                    $('#dRow').append(r);
-                    $('#dRow').slideDown();
+                    $('#dRowListBox').append(r);
+                    $('#dRowListBox').slideDown();
                     $('#ProveedorSearchInput').focus();
                 } else {
-                    $('#dRow').attr('data-rows-next', "0");
+                    $('#dRowListBox').attr('data-rows-next', "0");
                 }
-                $('#dRow').attr('data-charging', "0");
+                $('#dRowListBox').attr('data-charging', "0");
                 removeProcessWithSpinnerInList('SpinList', 'fa-search');
             },
             error: function (r) {
-                $('#dRow').attr('data-charging', "0");
+                $('#dRowListBox').attr('data-charging', "0");
                 removeProcessWithSpinnerInList('SpinList', 'fa-search');
             },
             cache: false
@@ -200,7 +185,7 @@
                         $('#ProveedorNombre')[0].innerText = r.nombre;
                         $('#ProveedorRFC')[0].innerText = r.rfc;
                         $('#ProveedorSearch').removeClass('d-block').addClass('d-none');
-                        $('#dRow > div').remove();
+                        $('#dRowListBox > div').remove();
                         $('#Folio').focus();
                     } else {
                         alert(r.message);
@@ -215,14 +200,15 @@
         }
     }
 
-    function search(e) {
+    function searchListBox(e) {
         e.preventDefault();
         if ($('#ProveedorSearchInput').attr('data-bs-toggle')) {
             if ($('#ProveedorSearchInput').val() !== '') {
                 skip = 0;
-                addRowsNext(skip, true);
+                addRowsNextListBox(skip, true);
             }
         }
     }
-</script>
+
+    </script>
 }

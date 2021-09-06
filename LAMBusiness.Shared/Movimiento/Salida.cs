@@ -3,31 +3,32 @@
     using System;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using Newtonsoft.Json;
     using Catalogo;
+    using Newtonsoft.Json;
+    using Shared.Contacto;
 
+    [Table("Salidas", Schema = "Movimiento")]
     public class Salida
     {
         [Key]
         [Display(Name = "Salida")]
         public Guid SalidaID { get; set; }
 
+        [ForeignKey("SalidaTipo")]
         [Display(Name = "Tipo de salida")]
-        [JsonIgnore]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public Guid? SalidaTipoID { get; set; }
         
-        [ForeignKey("SalidaTipoID")]
         [JsonIgnore]
         public virtual SalidaTipo SalidaTipo { get; set; }
 
-        //[ForeignKey("Usuario")]
+        [ForeignKey("Usuario")]
         [Display(Name = "Usuario")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public Guid UsuarioID { get; set; }
 
-        //[JsonIgnore]
-        //public virtual Usuario Usuarios { get; set; }
+        [JsonIgnore]
+        public virtual Usuario Usuarios { get; set; }
 
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = false, DataFormatString = "{0:yyyy-MM-dd}")]
@@ -42,7 +43,6 @@
         public string Observaciones { get; set; }
 
         public bool Aplicado { get; set; }
-
 
         [Display(Name = "Fecha Creación")]
         [DataType(DataType.Date)]

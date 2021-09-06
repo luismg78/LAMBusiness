@@ -5,15 +5,25 @@
  */
 
 /*Html*/
-a {color: #0366d6; text-decoration:none;}
+a {
+    color: #0366d6;
+    text-decoration: none;
+}
     a.navbar-brand {text-align:center;white-space:normal;word-break:break-all;}
 body {background-color:#eaedef;margin-bottom:60px;}
 button.accept-policy {font-size: 1rem;line-height: inherit;}
 html {font-size:14px;min-height:100%;position:relative;}
 input[type=checkbox], input[type=radio] {cursor:pointer;height:1.5rem;width:1.4rem;}
-input.form-control, select.form-select, textarea.form-control{font-weight:500;}
-label.control-label{color:#6c757d!important;margin-bottom:.25rem;margin-top:.25rem;}
+input.form-control, select.form-select, textarea.form-control{font-weight:500;margin-bottom:1rem;padding:0.75rem;}
+label.control-label{color:#6c757d!important;margin-bottom:.35rem;margin-top:.25rem;}
 ul li.selected{background-color:#f8f9fa;color:#000;font-weight:bold;}
+
+[type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled), 
+button:not(:disabled), a.btn {
+    border-radius: 50rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
 
 /*IDs*/
 #UpButton{background-color:transparent;border:0;bottom:4rem;color:#ff4152;display:none;
@@ -49,7 +59,7 @@ transparencia: rgba(255,65,82,.5)*/
     .bg-card:hover{box-shadow:0 0.25rem 0.75rem rgba(0,0,0,0.2);}
 .bg-disabled {z-index:9999;}
 .bg-fixed {bottom:0;left:0;position:fixed;right:0;top:0;}
-.bg-absolute {bottom:0;opacity:0;left:0;position:absolute;right:0;top:0;}
+.bg-absolute {bottom:0;left:0;position:absolute;right:0;top:0;}
     .bg-absolute:hover {opacity:1;}
 .bg-row{background-color:transparent;}
     .bg-row:hover{background-color:rgba(0,0,0,0.03);}
@@ -66,6 +76,9 @@ transparencia: rgba(255,65,82,.5)*/
     .btn-icon > i{height:20px;width:20px;}
     .btn-icon > img{border-radius:50%;width:1.8rem;}
 
+.btn-help{font-size:1.4rem;opacity:0.7;}
+    .btn-help:hover, .btn-help.focus{opacity:1;}
+
 .btn-lam{cursor:pointer;transform:translate(0, 0);-webkit-transform:translate(0, 0);-o-transform:translate(0, 0);-moz-transform:translate(0, 0);-ms-transform:translate(0, 0);
          transition:all .5s;-webkit-transition:all .5s;-o-transition:all .5s;-moz-transition:all .5s;}
     .btn-lam:hover{transform:translate(0, -20px);-webkit-transform:translate(0, -20px);-o-transform:translate(0, -20px);-moz-transform:translate(0, -20px);-ms-transform:translate(0, -20px);
@@ -80,16 +93,18 @@ transparencia: rgba(255,65,82,.5)*/
         .card-header-lam-d1 p.title{font-size:1.3rem;}
         .card-header-lam-d1 span.subtitle{font-size:0.8rem;}
 
-.card-body-lam-d1 i{font-size:1.5rem;}
+.card-body-lam-d1 i{color:#a1b4cc;font-size:1rem;margin:0 .75rem;}
 
 .card-footer-lam-d1{display:block;}
 
 .checkbox-select {cursor:pointer;height:1rem!important;width:1rem!important;}
 
+.flex-container{display:flex; flex-direction:column; height:100%;}
 .footer {bottom:0;line-height:60px;position:absolute;width:100%;white-space:nowrap;}
 
 .list-registers{max-height:13.75rem;overflow-y:auto;}
 
+.modal-footer{padding:1.2rem .75rem;}
 .mt-container{margin-top:6rem;}
 
 .nav-pills .nav-link.active, 
@@ -97,6 +112,8 @@ transparencia: rgba(255,65,82,.5)*/
 
 .process-with-spinner {background-color:transparent;border-radius:8px;bottom:4px;display:inline-flex;
                        padding:1rem;position:fixed;right:3px;z-index:999;}
+
+.required::after{color:#00c6fc;content:'*';margin-left:0.3rem;position:relative;top:3px;}
 
 .rounded-lam-lg { border-radius: 1rem !important; }
 .rounded-lam-lg-bottom { border-bottom-left-radius: 1rem !important; border-bottom-right-radius: 1rem !important;}
@@ -124,6 +141,25 @@ transparencia: rgba(255,65,82,.5)*/
 .row-bordered > [class*=" col "]::after, .row-bordered > [class$=" col"]::after,
 .row-bordered > [class="col"]::after {border-left: 1px solid #dee2e6;bottom: 0;content: "";
                                       display: block;left: -1px;position: absolute;top: 0;width: 0;}
+
+.search input[type=search], .search input[type=number] {
+    border-top-left-radius: 50rem;
+    border-bottom-left-radius: 50rem;
+    margin-bottom: initial;
+    padding-left: 1.5rem;
+}
+
+.search-0 input[type=search], .search-0 input[type=number] {
+    border-top-left-radius: .25rem!important;
+    border-bottom-left-radius: .25rem!important;
+    margin-bottom: initial!important;
+    padding-left: 0.75rem;
+}
+
+.search-0 button{
+    border-radius:.25rem!important;
+    padding: .375rem .75rem!important;
+}
 
 .signIn{display:flex;flex-basis:100%;max-height:100vh;width:100%;}
 .box-shadow-lam{box-shadow:0px 1px 1px #cacaca;}

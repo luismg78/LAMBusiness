@@ -3,9 +3,10 @@
     using System;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using Newtonsoft.Json;
     using Contacto;
+    using Newtonsoft.Json;
 
+    [Table("Entradas", Schema = "Movimiento")]
     public class Entrada
     {
         [Key]
@@ -20,13 +21,13 @@
         [JsonIgnore]
         public virtual Proveedor Proveedores { get; set; }
 
-        //[ForeignKey("Usuario")]
+        [ForeignKey("Usuario")]
         [Display(Name = "Usuario")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public Guid UsuarioID { get; set; }
 
-        //[JsonIgnore]
-        //public virtual Usuario Usuarios { get; set; }
+        [JsonIgnore]
+        public virtual Usuario Usuarios { get; set; }
 
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = false, DataFormatString = "{0:yyyy-MM-dd}")]

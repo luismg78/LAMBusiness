@@ -1,6 +1,8 @@
 ﻿namespace LAMBusiness.Web.Helpers
 {
+    using System.Drawing;
     using System.Threading.Tasks;
+    using BarcodeLib;
     using LAMBusiness.Shared.Aplicacion;
     using LAMBusiness.Shared.Contacto;
     using LAMBusiness.Shared.Movimiento;
@@ -10,6 +12,7 @@
 
     public interface IConverterHelper
     {
+        FileContentResult GenerateBarcode(string _data, TYPE t);
         Task<Cliente> ToClienteAsync(ClienteViewModel clienteViewModel, bool isNew);
         Task<ClienteViewModel> ToClienteViewModelAsync(Cliente cliente);
         Task<Resultado<Colaborador>> ToColaboradorAsync(ColaboradorViewModel colaboradorViewModel, bool isNew);

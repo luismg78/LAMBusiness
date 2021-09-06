@@ -2,7 +2,9 @@
 {
     using System;
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
+    [Table("Modulos", Schema = "Aplicacion")]
     public class Modulo
     {
         [Key]

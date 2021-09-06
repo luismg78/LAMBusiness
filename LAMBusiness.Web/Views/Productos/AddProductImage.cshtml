@@ -18,9 +18,14 @@
                 <li class="breadcrumb-item active">Imagen</li>
             </ul>
         </div>
-        <a asp-action="Details" asp-controller="Productos" asp-route-id="@Model.ProductoID" class="btn-close me-md-1" aria-label="Close"></a>
+        <div class="d-flex align-items-center">
+            <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewImage', event);">
+                <i class="fa fa-question-circle"></i>
+            </a>
+            <a asp-action="Details" asp-controller="Productos" asp-route-id="@Model.ProductoID" class="btn-close me-md-1" aria-label="Close"></a>
+        </div>
     </div>
-    <div class="col-12 text-end" id="actions">
+    <div class="col-12 text-end p-3" id="actions">
         <div class="docs-buttons">
             <div class="btn-group">
                 <button type="button" class="btn btn-info" data-method="rotate" data-option="-45" title="Rotate Left">
@@ -60,7 +65,7 @@
                 </label>
             </div>
             <div class="btn-group btn-group-crop">
-                <button type="button" class="btn btn-success" data-method="getCroppedCanvas" data-option="{ &quot;maxWidth&quot;: 4096, &quot;maxHeight&quot;: 4096 }">
+                <button type="button" class="btn btn-success" data-method="getCroppedCanvas" data-option="{ &quot;maxWidth&quot;: 4096, &quot;maxHeight&quot;: 4096 }" data-bs-toggle="modal" data-bs-target="#getCroppedCanvasModal">
                     <span class="docs-tooltip" data-bs-toggle="tooltip" title="Actualizar imagen">
                         <span class="fa fa-save"></span>
                     </span>
@@ -85,18 +90,16 @@
 
 <!-- Show the cropped image in modal -->
 <div class="modal fade docs-cropped" id="getCroppedCanvasModal" role="dialog" aria-hidden="true" aria-labelledby="getCroppedCanvasTitle" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="getCroppedCanvasTitle">Imagen del producto</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-light border" data-bs-dismiss="modal" autofocus>Cancelar</button>
                 <a class="btn btn-info" id="download" href="javascript:void(0);" onclick="addProductImage(event);">Agregar imagen</a>
             </div>
         </div>

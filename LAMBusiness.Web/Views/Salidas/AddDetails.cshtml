@@ -16,7 +16,12 @@
                     <li class="breadcrumb-item active">Nuevo Registro</li>
                 </ul>
             </div>
-            <a asp-action="Details" asp-controller="Salidas" asp-route-id="@Model.SalidaID" class="btn-close me-md-1" aria-label="Close"></a>
+            <div class="d-flex align-items-center">
+                <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewCreate', event);">
+                    <i class="fa fa-question-circle"></i>
+                </a>
+                <a asp-action="Details" asp-controller="Salidas" asp-route-id="@Model.SalidaID" class="btn-close me-md-1" aria-label="Close"></a>
+            </div>
         </div>
         <div class="modal-body py-4">
             <input type="hidden" asp-for="SalidaID" />
@@ -26,7 +31,7 @@
                     <div id="AlmacenSearch" class="form-group @if (Model.Almacenes != null) {<text>d-none</text>}">
                         <input asp-for="AlmacenID" type="hidden" />
                         <label asp-for="AlmacenID" class="control-label"></label>
-                        <div class="input-group">
+                        <div class="input-group search-0">
                             <input id="AlmacenSearchInput" type="search" class="form-control"
                                    data-bs-toggle="focus" data-bs-target=".list-registers"
                                    placeholder="Ingrese nombre del almacén..."
@@ -72,7 +77,7 @@
                     <div id="ProductoSearch" class="form-group">
                         <input asp-for="ProductoID" type="hidden" />
                         <label asp-for="ProductoID" class="control-label"></label>
-                        <div class="input-group">
+                        <div class="input-group search-0">
                             <input id="ProductoSearchInput" type="search" class="form-control"
                                    data-bs-toggle="focus" data-bs-target=".list-registers"
                                    placeholder="Ingrese código o nombre..."
@@ -107,19 +112,19 @@
                 <div class="col-12">
                     <div class="form-group">
                         <label asp-for="Cantidad" class="control-label"></label>
-                        <div class="input-group">
+                        <div class="input-group search-0">
                             <span class="input-group-text">
                                 <i class="fas fa-cash-register"></i>
                             </span>
                             <input asp-for="Cantidad" type="number" value="@Model.Cantidad"
-                                   step="0.0001" min="0.0000" class="form-control"/>
+                                   step="0.0001" min="0.0000" class="form-control" />
                         </div>
                         <span asp-validation-for="Cantidad" class="text-danger"></span>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="modal-footer justify-content-between">
+        <div class="modal-footer justify-content-between mt-4">
             <div class="px-md-3">
                 <input type="submit" value="Agregar Detalle" class="btn btn-base" />
                 <a asp-action="Details" asp-controller="Salidas" asp-route-id="@Model.SalidaID" class="btn btn-outline-secondary">Regresar</a>

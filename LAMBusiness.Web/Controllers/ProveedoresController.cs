@@ -11,6 +11,7 @@
     using Data;
     using Helpers;
     using Models.ViewModels;
+    using Shared.Aplicacion;
     using Shared.Catalogo;
     using Shared.Contacto;
 
@@ -46,16 +47,26 @@
                 return RedirectToAction("Inicio", "Menu");
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
-            var dataContext = _context.Proveedores
+            var proveedores = _context.Proveedores
                 .Include(c => c.ProveedorContactos)
                 .Include(c => c.Municipios)
                 .Include(c => c.Municipios.Estados);
-            return View(await dataContext.ToListAsync());
+
+            var filtro = new Filtro<List<Proveedor>>()
+            {
+                Datos = await proveedores.Take(50).ToListAsync(),
+                Patron = "",
+                PermisoEscritura = permisosModulo.PermisoEscritura,
+                PermisoImprimir = permisosModulo.PermisoImprimir,
+                PermisoLectura = permisosModulo.PermisoLectura,
+                Registros = await proveedores.CountAsync(),
+                Skip = 0
+            };
+
+            return View(filtro);
         }
 
-        public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
+        public async Task<IActionResult> _AddRowsNextAsync(Filtro<List<Proveedor>> filtro)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
             if (validateToken != null) { return null; }
@@ -65,12 +76,10 @@
                 return null;
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
             IQueryable<Proveedor> query = null;
-            if (searchby != null && searchby != "")
+            if (filtro.Patron != null && filtro.Patron != "")
             {
-                var words = searchby.Trim().ToUpper().Split(' ');
+                var words = filtro.Patron.Trim().ToUpper().Split(' ');
                 foreach (var w in words)
                 {
                     if (w.Trim() != "")
@@ -108,16 +117,22 @@
                     .Include(c => c.Municipios);
             }
 
-            var proveedores = await query.OrderBy(p => p.RFC)
-                .Skip(skip)
+            filtro.Registros = await query.CountAsync();
+
+            filtro.Datos = await query.OrderBy(p => p.RFC)
+                .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
+
+            filtro.PermisoEscritura = permisosModulo.PermisoEscritura;
+            filtro.PermisoImprimir = permisosModulo.PermisoImprimir;
+            filtro.PermisoLectura = permisosModulo.PermisoLectura;
 
             return new PartialViewResult
             {
                 ViewName = "_AddRowsNextAsync",
                 ViewData = new ViewDataDictionary
-                            <List<Proveedor>>(ViewData, proveedores)
+                            <Filtro<List<Proveedor>>>(ViewData, filtro)
             };
         }
 
@@ -135,7 +150,8 @@
 
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var proveedor = await _context.Proveedores
@@ -145,7 +161,8 @@
                 .FirstOrDefaultAsync(m => m.ProveedorID == id);
             if (proveedor == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             return View(proveedor);
@@ -182,6 +199,9 @@
                 return RedirectToAction(nameof(Index));
             }
 
+            TempData["toast"] = "Falta información en algún campo.";
+            await ValidarDatosDelProveedor(proveedorViewModel);
+
             if (ModelState.IsValid)
             {
                 var proveedor = await _converterHelper.ToProveedorAsync(proveedorViewModel, true);
@@ -189,11 +209,15 @@
                 try
                 {
                     await _context.SaveChangesAsync();
+                    await BitacoraAsync("Alta", proveedor);
+                    TempData["toast"] = "Los datos del proveedor fueron almacenados correctamente.";
                     return RedirectToAction(nameof(Details), new { id = proveedor.ProveedorID });
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    TempData["toast"] = "[Error] Los datos del proveedor no fueron almacenados.";
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Alta", proveedor, excepcion);
                 }
             }
 
@@ -216,7 +240,8 @@
 
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var proveedor = await _context.Proveedores
@@ -224,7 +249,8 @@
                 .FirstOrDefaultAsync(c => c.ProveedorID == id);
             if (proveedor == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var proveedorViewModel = await _converterHelper.ToProveedorViewModelAsync(proveedor);
@@ -246,31 +272,43 @@
 
             if (id != proveedorViewModel.ProveedorID)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
+            TempData["toast"] = "Falta información en algún campo, verifique.";
+            await ValidarDatosDelProveedor(proveedorViewModel);
+            
             if (ModelState.IsValid)
             {
+                var proveedor = await _converterHelper.ToProveedorAsync(proveedorViewModel, false);
                 try
                 {
-                    var proveedor = await _converterHelper.ToProveedorAsync(proveedorViewModel, false);
                     _context.Update(proveedor);
-
                     await _context.SaveChangesAsync();
+                    TempData["toast"] = "Los datos del proveedor fueron actualizados correctamente.";
+                    await BitacoraAsync("Actualizar", proveedor);
                     return RedirectToAction(nameof(Details), new { id = proveedor.ProveedorID });
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
                     if (!ProveedorExists(proveedorViewModel.ProveedorID))
                     {
-                        return NotFound();
+                        TempData["toast"] = "Registro inexistente.";
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "Proveedor Inexistente.");
+                        TempData["toast"] = "[Error] Los datos del proveedor no fueron actualizados.";
                     }
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", proveedor, excepcion);
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    TempData["toast"] = "[Error] Los datos del proveedor no fueron actualizados.";
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", proveedor, excepcion);
+                }
             }
 
             return View(proveedorViewModel);
@@ -288,23 +326,37 @@
 
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var proveedor = await _getHelper.GetProveedorByIdAsync((Guid)id);
             if (proveedor == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             if (proveedor.ProveedorContactos.Count > 0)
             {
-                ModelState.AddModelError(string.Empty, $"El proveedor no se puede eliminar, porque tiene {proveedor.ProveedorContactos.Count} contacto(s) asignado(s).");
+                TempData["toast"] = $"El proveedor no se puede eliminar, porque tiene {proveedor.ProveedorContactos.Count} contacto(s) asignado(s).";
                 return RedirectToAction(nameof(Index));
             }
 
-            _context.Proveedores.Remove(proveedor);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Proveedores.Remove(proveedor);
+                await _context.SaveChangesAsync();
+                await BitacoraAsync("Baja", proveedor);
+                TempData["toast"] = "Los datos del proveedor fueron eliminados correctamente.";
+            }
+            catch (Exception ex)
+            {
+                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                TempData["toast"] = "[Error] Los datos del proveedor no fueron eliminados.";
+                await BitacoraAsync("Baja", proveedor, excepcion);
+            }
+            
             return RedirectToAction(nameof(Index));
         }
 
@@ -352,7 +404,8 @@
 
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var contacto = new ProveedorContacto()
@@ -378,12 +431,13 @@
 
             var proveedor = await _getHelper.GetProveedorByIdAsync(proveedorContacto.ProveedorID);
 
+            TempData["toast"] = "Falta información en algún campo, verifique.";
             if (ModelState.IsValid)
             {
                 if (proveedor == null)
                 {
-                    ModelState.AddModelError(string.Empty, "Contacto no ingresado, proveedor inexistente.");
-                    return View();
+                    TempData["toast"] = "Identificacor incorrecto, verifique.";
+                    return RedirectToAction(nameof(Index));
                 }
 
                 try
@@ -397,12 +451,16 @@
                     _context.Add(proveedorContacto);
 
                     await _context.SaveChangesAsync();
+                    TempData["toast"] = "Los datos del contacto fueron almacenados correctamente.";
+                    await BitacoraAsync("Alta", proveedorContacto, proveedorContacto.ProveedorID);
                     return RedirectToAction(nameof(Details), new { id = proveedorContacto.ProveedorID });
 
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    TempData["toast"] = "[Error] Los datos del contacto no fueron almacenados.";
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Alta", proveedorContacto, proveedorContacto.ProveedorID, excepcion);
                 }
             }
 
@@ -422,7 +480,8 @@
 
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var contacto = await _getHelper.GetContactoProveedorByIdAsync((Guid)id);
@@ -465,14 +524,17 @@
                     contacto.TelefonoMovilContacto = proveedorContacto.TelefonoMovilContacto;
 
                     _context.Update(contacto);
-
                     await _context.SaveChangesAsync();
+                    TempData["toast"] = "Los datos del contacto fueron actualizados correctamente.";
+                    await BitacoraAsync("Actualizar", contacto, contacto.ProveedorID);
                     return RedirectToAction(nameof(Details), new { id = contacto.ProveedorID });
 
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    TempData["toast"] = "[Error] Los datos del contacto no fueron actualizados.";
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", contacto, contacto.ProveedorID, excepcion);
                 }
             }
 
@@ -494,18 +556,61 @@
 
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var contacto = await _getHelper.GetContactoProveedorByIdAsync((Guid)id);
             if (contacto == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
-            _context.ProveedorContactos.Remove(contacto);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.ProveedorContactos.Remove(contacto);
+                await _context.SaveChangesAsync();
+                await BitacoraAsync("Baja", contacto, contacto.ProveedorID);
+                TempData["toast"] = "Los datos del contacto fueron eliminados correctamente.";
+            }
+            catch (Exception ex)
+            {
+                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                TempData["toast"] = "[Error] Los datos del contacto no fueron eliminados.";
+                await BitacoraAsync("Baja", contacto, contacto.ProveedorID, excepcion);
+            }
+
             return RedirectToAction(nameof(Details), new { id = contacto.ProveedorID });
+        }
+
+        private async Task BitacoraAsync(string accion, Proveedor proveedor, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                proveedor, proveedor.ProveedorID.ToString(), directorioBitacora, excepcion);
+        }
+        private async Task BitacoraAsync(string accion, ProveedorContacto contacto, Guid proveedorId, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                contacto, proveedorId.ToString(), directorioBitacora, excepcion);
+        }
+
+        private async Task ValidarDatosDelProveedor(ProveedorViewModel proveedor)
+        {
+            proveedor.RFC = proveedor.RFC.Trim().ToUpper();
+
+            var existeRFC = await _context.Proveedores
+                .AnyAsync(p => p.RFC == proveedor.RFC &&
+                               p.ProveedorID != proveedor.ProveedorID);
+            if (existeRFC)
+            {
+                TempData["toast"] = "RFC previamente asignado a otro proveedor.";
+                ModelState.AddModelError("RFC", "RFC previamente asignado.");
+            }
         }
     }
 }

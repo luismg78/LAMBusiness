@@ -16,7 +16,12 @@
                     <li class="breadcrumb-item active">Editar Registro</li>
                 </ul>
             </div>
-            <a asp-action="Details" asp-controller="Clientes" asp-route-id="@Model.Cliente.ClienteID" class="btn-close me-md-1" aria-label="Close"></a>
+            <div class="d-flex align-items-center">
+                <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewEdit', event);">
+                    <i class="fa fa-question-circle"></i>
+                </a>
+                <a asp-action="Details" asp-controller="Clientes" asp-route-id="@Model.Cliente.ClienteID" class="btn-close me-md-1" aria-label="Close"></a>
+            </div>
         </div>
         <div class="modal-body py-4">
             <input type="hidden" asp-for="ClienteContactoID" />
@@ -24,12 +29,12 @@
             <div class="row px-md-3">
                 <div class="col">
                     <div class="form-group">
-                        <label asp-for="NombreContacto" class="control-label"></label>
+                        <label asp-for="NombreContacto" class="control-label required"></label>
                         <input asp-for="NombreContacto" class="form-control" autofocus />
                         <span asp-validation-for="NombreContacto" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="PrimerApellidoContacto" class="control-label"></label>
+                        <label asp-for="PrimerApellidoContacto" class="control-label required"></label>
                         <input asp-for="PrimerApellidoContacto" class="form-control" />
                         <span asp-validation-for="PrimerApellidoContacto" class="text-danger"></span>
                     </div>
@@ -44,7 +49,7 @@
                         <span asp-validation-for="TelefonoMovilContacto" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="EmailContacto" class="control-label"></label>
+                        <label asp-for="EmailContacto" class="control-label required"></label>
                         <input asp-for="EmailContacto" class="form-control" />
                         <span asp-validation-for="EmailContacto" class="text-danger"></span>
                     </div>

@@ -15,14 +15,19 @@
                     <li class="breadcrumb-item active">Nuevo Registro</li>
                 </ul>
             </div>
-            <a asp-action="Index" asp-controller="Clientes" class="btn-close me-md-1" aria-label="Close"></a>
+            <div class="d-flex align-items-center">
+                <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewCreate', event);">
+                    <i class="fa fa-question-circle"></i>
+                </a>
+                <a asp-action="Index" asp-controller="Clientes" class="btn-close me-md-1" aria-label="Close"></a>
+            </div>
         </div>
         <div class="modal-body py-4">
             <div class="row px-md-3">
                 <!--RFC-->
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label asp-for="RFC" class="control-label"></label>
+                        <label asp-for="RFC" class="control-label required"></label>
                         <input asp-for="RFC" class="form-control" autofocus />
                         <span asp-validation-for="RFC" class="text-danger"></span>
                     </div>
@@ -30,7 +35,7 @@
                 <!--Nombre-->
                 <div class="col-md-8">
                     <div class="form-group">
-                        <label asp-for="Nombre" class="control-label"></label>
+                        <label asp-for="Nombre" class="control-label required"></label>
                         <input asp-for="Nombre" class="form-control" />
                         <span asp-validation-for="Nombre" class="text-danger"></span>
                     </div>
@@ -38,7 +43,7 @@
                 <!--Domicilio-->
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label asp-for="Domicilio" class="control-label"></label>
+                        <label asp-for="Domicilio" class="control-label required"></label>
                         <input asp-for="Domicilio" class="form-control" />
                         <span asp-validation-for="Domicilio" class="text-danger"></span>
                     </div>
@@ -46,7 +51,7 @@
                 <!--Colonia-->
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label asp-for="Colonia" class="control-label"></label>
+                        <label asp-for="Colonia" class="control-label required"></label>
                         <input asp-for="Colonia" class="form-control" />
                         <span asp-validation-for="Colonia" class="text-danger"></span>
                     </div>
@@ -54,7 +59,7 @@
                 <!--Código Postal-->
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label asp-for="CodigoPostal" class="control-label"></label>
+                        <label asp-for="CodigoPostal" class="control-label required"></label>
                         <input asp-for="CodigoPostal" class="form-control" />
                         <span asp-validation-for="CodigoPostal" class="text-danger"></span>
                     </div>
@@ -62,7 +67,7 @@
                 <!--Estados-->
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label asp-for="EstadoID" class="control-label"></label>
+                        <label asp-for="EstadoID" class="control-label required"></label>
                         <select asp-for="EstadoID" class="form-control" asp-items="Model.EstadosDDL"></select>
                         <span asp-validation-for="EstadoID" class="text-danger"></span>
                     </div>
@@ -70,7 +75,7 @@
                 <!--Municipios-->
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label asp-for="MunicipioID" class="control-label"></label>
+                        <label asp-for="MunicipioID" class="control-label required"></label>
                         <select asp-for="MunicipioID" class="form-control" asp-items="Model.MunicipiosDDL"></select>
                         <span asp-validation-for="MunicipioID" class="text-danger"></span>
                     </div>
@@ -78,7 +83,7 @@
                 <!--Teléfono Fijo-->
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label asp-for="Telefono" class="control-label"></label>
+                        <label asp-for="Telefono" class="control-label required"></label>
                         <input asp-for="Telefono" class="form-control" />
                         <span asp-validation-for="Telefono" class="text-danger"></span>
                     </div>
@@ -86,7 +91,7 @@
                 <!--Correo Electrónico-->
                 <div class="col-md-8">
                     <div class="form-group">
-                        <label asp-for="Email" class="control-label"></label>
+                        <label asp-for="Email" class="control-label required"></label>
                         <input asp-for="Email" class="form-control" />
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>

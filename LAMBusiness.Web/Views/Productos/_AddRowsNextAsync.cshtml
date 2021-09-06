@@ -1,50 +1,68 @@
-﻿@model IEnumerable<LAMBusiness.Shared.Catalogo.Producto>
+﻿@model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Shared.Catalogo.Producto>>
 
-@if (Model.Any())
+@if (Model != null)
 {
-    @foreach (var item in Model)
-    {
-        <div class="row bg-row">
-            <div class="border-bottom col-10 col-md-9 p-3">
-                <span class="text-dark">@Html.DisplayFor(modelItem => item.ProductoNombre)</span>
-                <div class="d-block">
-                    <small class="text-muted me-md-3">Código: @Html.DisplayFor(modelItem => item.Codigo)</small>
-                    <small class="d-block d-md-inline-block me-md-3 text-muted">Marca: @Html.DisplayFor(modelItem => item.Marcas.MarcaNombre)</small>
-                    @if (item.Paquete == null)
-                    {
-                        <small class="d-block d-md-inline-block text-muted">Unidad: <span class="fw-bold text-info">Pieza</span></small>
-                    }
-                    else
-                    {
-                        <small class="d-block d-md-inline-block text-muted">Unidad: <span class="fw-bold text-danger">Caja</span></small>
-                    }
-                    @if (!item.Activo)
-                    {
-                        <small class="badge bg-danger">No Disponible</small>
-                    }
+    <div id="dRows" data-charging="0" data-rows-next="1">
+        @if (Model.Skip == 0)
+        {
+            <div class="row px-md-3">
+                <div class="border-bottom col-8 p-3">
+                    <div class="fw-bold text-uppercase">Productos</div>
                 </div>
-                <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.ProductoDescripcion)</small>
+                <small class="border-bottom col-4 p-3 text-muted text-end">
+                    @Model.Registros.ToString("#,###,##0") Registro(s).
+                </small>
             </div>
-            <div class="border-bottom col-2 col-md-3 px-3 py-2 text-end">
-                <a asp-action="Details" asp-route-id="@item.ProductoID" class="d-block d-md-inline text-decoration-none">
-                    <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="ver detalle">
-                        <i class="fa fa-file-alt"></i>
+        }
+        <div class="px-md-3">
+            @foreach (var item in Model.Datos)
+            {
+                <div class="row bg-row">
+                    <div class="border-bottom col-2 col-lg-1 py-3 px-0 text-center">
+                        <img class="rounded-circle" style="width:3rem;" src="@Url.Action("GetProductImages", "Productos", new { productoId = item.ProductoID, imageId = item.ProductoID, tipo = "sm" })" alt="Image Product" />
                     </div>
-                </a>
-                @if (Convert.ToBoolean(ViewBag.PermisoEscritura))
-                {
-                    <a asp-action="Edit" asp-route-id="@item.ProductoID" class="d-block d-md-inline text-decoration-none">
-                        <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar registro">
-                            <i class="fa fa-edit"></i>
+                    <div class="border-bottom col-8 p-3">
+                        <span class="text-dark">@Html.DisplayFor(modelItem => item.ProductoNombre)</span>
+                        <div class="d-block">
+                            <small class="text-muted me-md-3">Código: @Html.DisplayFor(modelItem => item.Codigo)</small>
+                            <small class="d-block d-md-inline-block me-md-3 text-muted">Marca: @Html.DisplayFor(modelItem => item.Marcas.MarcaNombre)</small>
+                            @if (item.Paquete == null)
+                            {
+                                <small class="d-block d-md-inline-block text-muted">Unidad: <span class="fw-bold text-info">Pieza</span></small>
+                            }
+                            else
+                            {
+                                <small class="d-block d-md-inline-block text-muted">Unidad: <span class="fw-bold text-danger">Caja</span></small>
+                            }
+                            @if (!item.Activo)
+                            {
+                                <small class="badge bg-danger">No Disponible</small>
+                            }
                         </div>
-                    </a>
-                    <a href="#" data-id="@item.ProductoID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteConfirm">
-                        <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="eliminar registro">
-                            <i class="fa fa-trash"></i>
-                        </div>
-                    </a>
-                }
-            </div>
+                        <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.ProductoDescripcion)</small>
+                    </div>
+                    <div class="border-bottom col-2 col-md-3 px-3 py-2 text-end">
+                        <a asp-action="Details" asp-route-id="@item.ProductoID" class="d-block d-md-inline text-decoration-none">
+                            <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="ver detalle">
+                                <i class="fa fa-file-alt"></i>
+                            </div>
+                        </a>
+                        @if (Model.PermisoEscritura)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.ProductoID" class="d-block d-md-inline text-decoration-none">
+                                <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar registro">
+                                    <i class="fa fa-edit"></i>
+                                </div>
+                            </a>
+                            <a href="#" data-id="@item.ProductoID" class="d-block d-md-inline deleteConfirm text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteConfirm">
+                                <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="eliminar registro">
+                                    <i class="fa fa-trash"></i>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
         </div>
-    }
+    </div>
 }

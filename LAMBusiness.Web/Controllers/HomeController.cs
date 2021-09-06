@@ -11,8 +11,10 @@
     using Helpers;
     using Models;
     using Models.ViewModels;
+    using Shared.Aplicacion;
     using Shared.Contacto;
     using System;
+    using Newtonsoft.Json;
 
     public class HomeController : GlobalController
     {
@@ -29,7 +31,7 @@
             _context = context;
             _criptografia = criptografia;
             _configuration = configuration;
-            _getHelper = getHelper;
+            _getHelper = getHelper;;
         }
 
         public IActionResult ErrorDeConexion()
@@ -94,6 +96,8 @@
                 }
 
                 TempData["toast"] = "¡Qué gusto tenerte de vuelta!";
+                await BitacoraAsync("InicioSesion", resultado);
+
                 return RedirectToAction("Inicio", "menu");
             }
 
@@ -112,6 +116,15 @@
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private async Task BitacoraAsync(string accion, Resultado<Token> token, string excepcion = "")
+        {
+            Guid moduloId = Guid.Parse("4C4CD77D-E11F-4A69-AC1C-331A022A5718");
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token.Contenido, accion, moduloId,
+                token, token.Contenido.ColaboradorID.ToString(), directorioBitacora, excepcion);
         }
     }
 }

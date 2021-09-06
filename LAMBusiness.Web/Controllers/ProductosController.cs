@@ -1,20 +1,22 @@
 ﻿namespace LAMBusiness.Web.Controllers
 {
-    using Data;
-    using Helpers;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.ViewFeatures;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
-    using Models.ViewModels;
-    using Shared.Catalogo;
-    using Shared.Movimiento;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ViewFeatures;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+    using BarcodeLib;
+    using Data;
+    using Helpers;
+    using Models.ViewModels;
+    using Shared.Aplicacion;
+    using Shared.Catalogo;
+    using Shared.Movimiento;
 
     public class ProductosController : GlobalController
     {
@@ -52,19 +54,28 @@
                 return RedirectToAction("Inicio", "Menu");
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
-            var dataContext = _context.Productos
+            var productos = _context.Productos
                 .Include(p => p.Marcas)
                 .Include(p => p.TasasImpuestos)
                 .Include(p => p.Unidades)
                 .Include(p => p.Paquete)
                 .OrderBy(p => p.Codigo);
 
-            return View(dataContext);
+            var filtro = new Filtro<List<Producto>>()
+            {
+                Datos = await productos.Take(50).ToListAsync(),
+                Patron = "",
+                PermisoEscritura = permisosModulo.PermisoEscritura,
+                PermisoImprimir = permisosModulo.PermisoImprimir,
+                PermisoLectura = permisosModulo.PermisoLectura,
+                Registros = await productos.CountAsync(),
+                Skip = 0
+            };
+
+            return View(filtro);
         }
 
-        public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
+        public async Task<IActionResult> _AddRowsNextAsync(Filtro<List<Producto>> filtro)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return null; }
@@ -74,12 +85,10 @@
                 return null;
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
             IQueryable<Producto> query = null;
-            if (searchby != null && searchby != "")
+            if (filtro.Patron != null && filtro.Patron != "")
             {
-                var words = searchby.Trim().ToUpper().Split(' ');
+                var words = filtro.Patron.Trim().ToUpper().Split(' ');
                 foreach (var w in words)
                 {
                     if (w.Trim() != "")
@@ -105,21 +114,27 @@
                 query = _context.Productos;
             }
 
-            var productos = await query
+            filtro.Registros = await query.CountAsync();
+
+            filtro.Datos = await query
                 .Include(p => p.Marcas)
                 .Include(p => p.TasasImpuestos)
                 .Include(p => p.Unidades)
                 .Include(p => p.Paquete)
                 .OrderBy(p => p.ProductoNombre)
-                .Skip(skip)
+                .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
+
+            filtro.PermisoEscritura = permisosModulo.PermisoEscritura;
+            filtro.PermisoImprimir = permisosModulo.PermisoImprimir;
+            filtro.PermisoLectura = permisosModulo.PermisoLectura;
 
             return new PartialViewResult
             {
                 ViewName = "_AddRowsNextAsync",
                 ViewData = new ViewDataDictionary
-                            <List<Producto>>(ViewData, productos)
+                            <Filtro<List<Producto>>>(ViewData, filtro)
             };
         }
 
@@ -133,28 +148,23 @@
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
-            var producto = await _context.Productos
-                .Include(p => p.Marcas)
-                .Include(p => p.TasasImpuestos)
-                .Include(p => p.Unidades)
-                .Include(p => p.Paquete)
-                .Include(p => p.Existencias)
-                .ThenInclude(p => p.Almacenes)
-                .FirstOrDefaultAsync(m => m.ProductoID == id);
+            var producto = await _getHelper.GetProductByIdAsync((Guid)id);
             if (producto == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var productoDetailsViewModel = await _converterHelper.ToProductosDetailsViewModelAsync(producto);
-            
+
+            productoDetailsViewModel.PermisoEscritura = permisosModulo.PermisoEscritura;
+
             string directorio = _configuration.GetValue<string>("DirectorioImagenProducto");
             string directorioProducto = Path.Combine(directorio, producto.ProductoID.ToString(), "md");
 
@@ -250,13 +260,18 @@
                 try
                 {
                     await _context.SaveChangesAsync();
+                    await BitacoraAsync("Alta", producto);
+                    TempData["toast"] = "Los datos del producto fueron almacenados correctamente.";
                     return RedirectToAction(nameof(Details), new { id = producto.ProductoID});
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, ex.Message);
+                    TempData["toast"] = "[Error] Los datos del producto no fueron almacenados.";
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Alta", producto, excepcion);
                 }
             }
+
             productoViewModel.TasasImpuestosDDL = await _combosHelper.GetComboTasaImpuestosAsync();
             productoViewModel.UnidadesDDL = await _combosHelper.GetComboUnidadesAsync();
             return View(productoViewModel);
@@ -274,7 +289,8 @@
 
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var producto = await _context.Productos
@@ -283,7 +299,8 @@
 
             if (producto == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var productoViewModel = await _converterHelper.ToProductosViewModelAsync(producto);
@@ -305,17 +322,18 @@
 
             if (id != productoViewModel.ProductoID)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
+            TempData["toast"] = "Falta información en algún campo, verifique.";
             await ValidateFieldsAsync(productoViewModel);
 
             if (ModelState.IsValid)
             {
+                var producto = await _converterHelper.ToProductoAsync(productoViewModel, false);
                 try
                 {
-                    var producto = await _converterHelper.ToProductoAsync(productoViewModel, false);
-
                     producto.PrecioCosto = _context.Productos
                         .Where(p => p.ProductoID == producto.ProductoID)
                         .Select(p => p.PrecioCosto).FirstOrDefault();
@@ -367,6 +385,8 @@
                     }
 
                     await _context.SaveChangesAsync();
+                    TempData["toast"] = "Los datos del producto fueron actualizados correctamente.";
+                    await BitacoraAsync("Actualizar", producto);
                     return RedirectToAction(nameof(Details), new { id = producto.ProductoID});
 
                 }
@@ -374,13 +394,20 @@
                 {
                     if (!ProductoExists(productoViewModel.ProductoID))
                     {
-                        return NotFound();
+                        TempData["toast"] = "Registro inexistente.";
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, ex.Message);
-                        return View();
+                        TempData["toast"] = "[Error] Los datos del producto no fueron actualizados.";
                     }
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", producto, excepcion);
+                }
+                catch (Exception ex)
+                {
+                    TempData["toast"] = "[Error] Los datos del producto no fueron actualizados.";
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", producto, excepcion);
                 }
             }
             
@@ -402,7 +429,8 @@
 
             if (id == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var producto = await _context.Productos
@@ -413,7 +441,8 @@
 
             if (producto == null)
             {
-                return NotFound();
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             if (producto.Unidades.Paquete) {
@@ -421,14 +450,15 @@
                 if (paquete != null) {
                     _context.Remove(paquete);
                 }
-            }else
+            }
+            else
             {
                 var piezaAsignada = await _context.Paquetes
                     .Where(p => p.PiezaProductoID == producto.ProductoID)
                     .ToListAsync();
                 if (piezaAsignada.Count > 0)
                 {
-                    ModelState.AddModelError(string.Empty, $"El producto no se puede eliminar, porque está asignado a {piezaAsignada.Count} paquete(s).");
+                    TempData["toast"] = $"El producto no se puede eliminar, porque está asignado a {piezaAsignada.Count} paquete(s).";
                     return RedirectToAction(nameof(Index));
                 }
             }
@@ -439,7 +469,7 @@
                 {
                     if (existencia.ExistenciaEnAlmacen > 0)
                     {
-                        ModelState.AddModelError(string.Empty, $"El producto no se puede eliminar, porque tiene {producto.Existencias.Count} en existencia(s).");
+                        TempData["toast"] = $"El producto no se puede eliminar, porque tiene {producto.Existencias.Count} en existencia(s).";
                         return RedirectToAction(nameof(Index));
                     }
                 }
@@ -460,12 +490,14 @@
 
                 _context.Productos.Remove(producto);
                 await _context.SaveChangesAsync();
-                TempData["toast"] = "El producto ha sido eliminado satisfactoriamente.";
-
+                await BitacoraAsync("Baja", producto);
+                TempData["toast"] = "Los datos del producto fueron eliminados correctamente.";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                TempData["toast"] = "[Error] Los datos del producto no fueron eliminados.";
+                await BitacoraAsync("Baja", producto, excepcion);
             }
 
             return RedirectToAction(nameof(Index));
@@ -526,6 +558,67 @@
                 ViewData = new ViewDataDictionary
                             <List<Marca>>(ViewData, marcas)
             };
+        }
+
+        public FileContentResult GetProductBarCode(string id)
+        {
+            return _converterHelper.GenerateBarcode(id, TYPE.CODE128);
+        }
+
+        public async Task<IActionResult> GetProductDetail(Guid? id, bool mostrarPrecioCosto = false)
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return new EmptyResult(); }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+                return new EmptyResult();
+
+            if (id == null)
+                return new EmptyResult();
+           
+            var producto = await _getHelper.GetProductByIdAsync((Guid)id);
+            if (producto == null)
+                return new EmptyResult();
+
+            var productoDetailsViewModel = await _converterHelper.ToProductosDetailsViewModelAsync(producto);
+
+            productoDetailsViewModel.MostrarPrecioCosto = mostrarPrecioCosto;
+
+            return new PartialViewResult
+            {
+                ViewName = "_GetProductDetail",
+                ViewData = new ViewDataDictionary
+                            <ProductoDetailsViewModel>(ViewData, productoDetailsViewModel)
+            };
+
+        }
+
+        public async Task<IActionResult> GetProductDetailByCode(string id, bool mostrarPrecioCosto = false)
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return new EmptyResult(); }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+                return new EmptyResult();
+
+            if (id == null)
+                return new EmptyResult();
+
+            var producto = await _getHelper.GetProductByCodeAsync(id);
+            if (producto == null)
+                return new EmptyResult();
+
+            var productoDetailsViewModel = await _converterHelper.ToProductosDetailsViewModelAsync(producto);
+
+            productoDetailsViewModel.MostrarPrecioCosto = mostrarPrecioCosto;
+
+            return new PartialViewResult
+            {
+                ViewName = "_GetProductDetail",
+                ViewData = new ViewDataDictionary
+                            <ProductoDetailsViewModel>(ViewData, productoDetailsViewModel)
+            };
+
         }
 
         public async Task<FileContentResult> GetProductImages(Guid productoId, Guid imageId, string tipo)
@@ -868,6 +961,14 @@
             TempData["toast"] = "La imagen del producto ha sido asignada como principal.";
             return RedirectToAction(nameof(Details), new { id = productoId });
 
+        }
+
+        private async Task BitacoraAsync(string accion, Producto producto, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                producto, producto.ProductoID.ToString(), directorioBitacora, excepcion);
         }
     }
 }

@@ -5,6 +5,7 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using Newtonsoft.Json;
 
+    [Table("ProveedorContactos", Schema = "Contacto")]
     public class ProveedorContacto
     {
         [Key]

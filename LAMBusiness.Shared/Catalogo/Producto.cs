@@ -7,6 +7,7 @@
     using Movimiento;
     using Newtonsoft.Json;
 
+    [Table("Productos", Schema = "Catalogo")]
     public class Producto
     {
         [Key]

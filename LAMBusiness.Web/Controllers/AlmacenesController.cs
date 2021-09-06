@@ -10,6 +10,7 @@
     using Microsoft.Extensions.Configuration;
     using Data;
     using Helpers;
+    using Shared.Aplicacion;
     using Shared.Catalogo;
 
     public class AlmacenesController : GlobalController
@@ -36,15 +37,23 @@
                 return RedirectToAction("Inicio", "Menu");
             }
 
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
+            var almacenes = _context.Almacenes;
 
-            var dataContext = _context.Almacenes
-                .OrderBy(p => p.AlmacenNombre);
+            var filtro = new Filtro<List<Almacen>>()
+            {
+                Datos = await almacenes.OrderBy(p => p.AlmacenNombre).Take(50).ToListAsync(),
+                Patron = "",
+                PermisoEscritura = permisosModulo.PermisoEscritura,
+                PermisoImprimir = permisosModulo.PermisoImprimir,
+                PermisoLectura = permisosModulo.PermisoImprimir,
+                Registros = await almacenes.CountAsync(),
+                Skip = 0
+            };
 
-            return View(dataContext);
+            return View(filtro);
         }
 
-        public async Task<IActionResult> _AddRowsNextAsync(string searchby, int skip)
+        public async Task<IActionResult> _AddRowsNextAsync(Filtro<List<Almacen>> filtro)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return null; }
@@ -54,12 +63,10 @@
                 return null;
             }
             
-            ViewBag.PermisoEscritura = permisosModulo.PermisoEscritura;
-
             IQueryable<Almacen> query = null;
-            if (searchby != null && searchby != "")
+            if (filtro.Patron != null && filtro.Patron != "")
             {
-                var words = searchby.Trim().ToUpper().Split(' ');
+                var words = filtro.Patron.Trim().ToUpper().Split(' ');
                 foreach (var w in words)
                 {
                     if (w.Trim() != "")
@@ -83,16 +90,22 @@
                 query = _context.Almacenes;
             }
 
-            var almacenes = await query.OrderBy(m => m.AlmacenNombre)
-                .Skip(skip)
+            filtro.Registros = await query.CountAsync();
+
+            filtro.Datos = await query.OrderBy(m => m.AlmacenNombre)
+                .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
+
+            filtro.PermisoEscritura = permisosModulo.PermisoEscritura;
+            filtro.PermisoImprimir = permisosModulo.PermisoImprimir;
+            filtro.PermisoLectura = permisosModulo.PermisoImprimir;
 
             return new PartialViewResult
             {
                 ViewName = "_AddRowsNextAsync",
                 ViewData = new ViewDataDictionary
-                            <List<Almacen>>(ViewData, almacenes)
+                            <Filtro<List<Almacen>>>(ViewData, filtro)
             };
         }
 
@@ -121,15 +134,26 @@
                 return RedirectToAction(nameof(Index));
             }
 
+            TempData["toast"] = "Falta información en algún campo.";
             if (ModelState.IsValid)
             {
-                almacen.AlmacenID = Guid.NewGuid();
-                _context.Add(almacen);
-                await _context.SaveChangesAsync();
-                TempData["toast"] = "Los datos del almacén fueron almacenados correctamente.";
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    almacen.AlmacenID = Guid.NewGuid();
+                    _context.Add(almacen);
+                    await _context.SaveChangesAsync();
+                    await BitacoraAsync("Alta", almacen);
+                    TempData["toast"] = "Los datos del almacén fueron almacenados correctamente.";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    TempData["toast"] = "[Error] Los datos del almacén no fueron almacenados.";
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Alta", almacen, excepcion);
+                }
             }
-            TempData["toast"] = "Falta información en algún campo.";
+
             return View(almacen);
         }
 
@@ -155,6 +179,7 @@
                 TempData["toast"] = "Identificacor incorrecto, verifique.";
                 return RedirectToAction(nameof(Index));
             }
+
             return View(almacen);
         }
 
@@ -176,6 +201,7 @@
                 return RedirectToAction(nameof(Index));
             }
 
+            TempData["toast"] = "Falta información en algún campo, verifique.";
             if (ModelState.IsValid)
             {
                 try
@@ -183,8 +209,10 @@
                     _context.Update(almacen);
                     await _context.SaveChangesAsync();
                     TempData["toast"] = "Los datos del almacén fueron actualizados correctamente.";
+                    await BitacoraAsync("Actualizar", almacen);
+                    return RedirectToAction(nameof(Index)); 
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException ex)
                 {
                     if (!AlmacenExists(almacen.AlmacenID))
                     {
@@ -192,13 +220,19 @@
                     }
                     else
                     {
-                        TempData["toast"] = "Error al actualizar la información.";
+                        TempData["toast"] = "[Error] Los datos del almacén no fueron actualizados.";
                     }
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", almacen, excepcion);
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    TempData["toast"] = "[Error] Los datos del almacén no fueron actualizados.";
+                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    await BitacoraAsync("Actualizar", almacen, excepcion);
+                }
             }
 
-            TempData["toast"] = "Falta información en algún campo, verifique.";
             return View(almacen);
         }
 
@@ -214,8 +248,8 @@
 
             if (id == null)
             {
-                TempData["toast"] = "Identificacor incorrecto, verifique.";
-                return RedirectToAction(nameof(Index));
+                    TempData["toast"] = "Identificacor incorrecto, verifique.";
+                    return RedirectToAction(nameof(Index));
             }
 
             var almacen = await _context.Almacenes
@@ -233,20 +267,39 @@
 
                 if (existencias > 0)
                 {
-                    ModelState.AddModelError(string.Empty, $"El almacen no puede ser eliminado, tiene {existencias} producto(s) en existencia(s).");
+                    TempData["toast"] = $"El almacen no puede ser eliminado, tiene {existencias} producto(s) en existencia(s).";
                     return RedirectToAction(nameof(Index));
                 }
             }
 
-            _context.Almacenes.Remove(almacen);
-            await _context.SaveChangesAsync();
-            TempData["toast"] = "Los datos del almacén fueron eliminados correctamente.";
+            try
+            {
+                _context.Almacenes.Remove(almacen);
+                await _context.SaveChangesAsync();
+                await BitacoraAsync("Baja", almacen);
+                TempData["toast"] = "Los datos del almacén fueron eliminados correctamente.";
+            }
+            catch (Exception ex)
+            {
+                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                TempData["toast"] = "[Error] Los datos del almacén no fueron eliminados.";
+                await BitacoraAsync("Baja", almacen, excepcion);
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
         private bool AlmacenExists(Guid id)
         {
             return _context.Almacenes.Any(e => e.AlmacenID == id);
+        }
+    
+        private async Task BitacoraAsync(string accion, Almacen almacen, string excepcion = "" )
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+            
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                almacen, almacen.AlmacenID.ToString(), directorioBitacora, excepcion);
         }
     }
 }

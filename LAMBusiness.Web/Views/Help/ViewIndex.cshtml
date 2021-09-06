@@ -1,0 +1,111 @@
+﻿<div>
+    <h5 class="fw-bold">Página de Lista</h5>
+    <p class="text-muted">Las páginas de lista contienen la siguiente información:</p>
+    <div class="text-center">
+        <img src="~/images/help/ViewList.png" class="w-100" alt="página de listas"/>
+    </div>
+    <ol class="list-group list-group-flush list-group-numbered">
+        <li class="list-group-item">Título de la página</li>
+        <li class="list-group-item">Enlaces a vistas precedentes, los enlaces son textos en color <span class="text-primary">azul</span></li>
+        <li class="list-group-item">
+            Si desea buscar un contenido en particular de la colección de datos,
+            proporcione la información en la caja de texto buscar y posteriormente presione
+            Enter de su teclado u opción 4 ( <small class="fa fa-search text-muted"></small> ):
+            <div class="py-2 px-3 text-muted">
+                <span class="fst-italic">ejemplos de búsqueda</span>
+                <ul>
+                    <li>
+                        una palabra en particular <span class="fst-italic">(ej. alma)</span>,
+                        esto buscará en la colección de datos, todos aquellos registros que
+                        contengan esa palabra en cualquier parte del texto.
+                    </li>
+                    <li>
+                        palabras separadas <span class="fst-italic">(ej. mar go lu)</span>,
+                        esto buscará en la colección de datos, todos aquellos registros que
+                        contengan cada una de las palabras proporcionadass en cualquier parte 
+                        del texto.
+                        <div class="small py-2">
+                            <span class="fst-italic">Resultados posibles</span>
+                            <ul>
+                                <li>
+                                    <span class="fw-bold text-secondary">Mar</span>tínez
+                                    <span class="fw-bold text-secondary">Go</span>nzález
+                                    <span class="fw-bold text-secondary">Lu</span>is
+                                </li>
+                                <li>
+                                    <span class="fw-bold text-secondary">Már</span>quez
+                                    <span class="fw-bold text-secondary">Gó</span>mez
+                                    <span class="fw-bold text-secondary">Lu</span>cía
+                                </li>
+                                <li>
+                                    <span class="fw-bold text-secondary">Gó</span>mez
+                                    <span class="fw-bold text-secondary">Lu</span>via
+                                    <span class="fw-bold text-secondary">Mar</span>ía
+                                </li>
+                                <li>
+                                    <span class="fw-bold text-secondary">Mar</span>roquín
+                                    <span class="fw-bold text-secondary">Go</span>det
+                                    José <span class="fw-bold text-secondary">Lu</span>ciano
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+                <p>
+                    <span class="text-danger">Importante:</span> Usar acentos si el texto que
+                    desea buscar lo requiere.
+                </p>
+            </div>
+        </li>
+        <li class="list-group-item">
+            Presione el botón <small class="fa fa-search"></small> si desea ejecutar el motor
+            de búsqueda, si la caja de texto (buscar), esta vacía, el sistema reinicia la
+            lista de información.
+        </li>
+        <li class="list-group-item">
+            Presione el botón <div class="btn btn-sm btn-danger text-white">
+                <small class="fa fa-plus"></small> Nuevo Registro
+            </div> para ir al módulo que le
+            permita dar de alta a un registro en la lista.
+            <small class="fst-italic text-danger">
+                (solo para usuarios con privilegios para realizar cambios en los registros.)
+            </small>
+        </li>
+        <li class="list-group-item">
+            Título del contenido de la lista
+        </li>
+        <li class="list-group-item">
+            Cantidad de registros encontrados en la colección de datos, puede variar de acuerdo
+            al proceso de búsqueda.
+        </li>
+        <li class="list-group-item">
+            <span class="fst-italic">
+                Opciones por registro:
+                <small class="fst-italic text-danger">
+                    (solo para usuarios con privilegios para realizar cambios en los registros.)
+                </small>
+            </span>
+            <ul class="small">
+                <li>
+                    <small class="fa fa-file-alt text-secondary"></small> 
+                    <span class="fst-italic text-muted">Ver detalle. </span>
+                    Presione el botón si desea ver el detalle de la 
+                    información del registro seleccionado.
+                </li>
+                <li>
+                    <small class="fa fa-edit text-secondary"></small> 
+                    <span class="fst-italic text-muted">Editar registro. </span>
+                    Presione el botón si desea actualizar la
+                    información del registro seleccionado.
+                </li>
+                <li>
+                    <small class="fa fa-trash text-secondary"></small>
+                    <span class="fst-italic text-muted">Eliminar registro. </span>
+                    Presione el botón para mostrar una ventana
+                    de confirmación para ejecutar la eliminación del registro seleccionado, puede
+                    confirmar o cancelar el proceso.
+                </li>
+            </ul>
+        </li>
+    </ol>
+</div>

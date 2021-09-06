@@ -47,6 +47,7 @@
                 Generos = GetCountGeneros(),
                 EstadosCiviles = GetCountEstadosCiviles(),
                 Estados = GetCountEstados(),
+                FormasPago = GetCountFormasPago(),
                 Marcas = GetCountMarcas(),
                 Municipios = GetCountMunicipios(),
                 Productos = GetCountProductos(),
@@ -133,7 +134,12 @@
         {
             return _context.EstadosCiviles.Count();
         }
-        
+
+        private int GetCountFormasPago()
+        {
+            return _context.FormasPago.Count();
+        }
+
         private int GetCountMarcas()
         {
             return _context.Marcas.Count();

@@ -7,6 +7,7 @@
     using LAMBusiness.Shared.Contacto;
     using Newtonsoft.Json;
 
+    [Table("Sesiones", Schema = "Aplicacion")]
     public class Sesion
     {
         [Key]
