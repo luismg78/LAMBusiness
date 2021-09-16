@@ -1,38 +1,37 @@
-﻿@model LAMBusiness.Web.Models.ViewModels.ProductoViewModel
+﻿@model LAMBusiness.Shared.Movimiento.VentaNoAplicadaDetalle
 
 @if (Model != null)
 {
     string textDanger = "";
     string textDecoration = "";
-    if (Model.CantidadProducto < 0)
+    if (Model.Cantidad < 0)
     {
         textDanger = "text-danger";
         textDecoration = "text-decoration-line-through";
     }
-    <div class="bg-white row align-items-center border-bottom py-2 px-2 g-0">
-        <div class="col-12 col-md-8">
-            <span class="d-block d-md-none text-muted">Producto</span>
+    <div class="row align-items-center p-3 g-0" data-id="@Model.VentaNoAplicadaDetalleID">
+        <div class="col-12 col-lg-8 mb-3 mb-lg-0">
             <div class="d-flex justify-content-start align-items-center">
                 <div class="me-3">
                     <img class="rounded-circle" style="width:2rem;" src="@Url.Action("GetProductImages", "Productos", new { productoId = Model.ProductoID, imageId = Model.ProductoID, tipo = "sm" })" alt="Image Product" />
                 </div>
                 <div>
-                    <h5 class="fw-bold d-block @textDanger @textDecoration">@Model.ProductoNombre</h5>
-                    <a href="#" class="d-block small" onclick="getProduct('@Model.ProductoID');">@Model.Codigo</a>
+                    <h5 class="fw-bold d-block @textDanger @textDecoration">@Model.Productos.ProductoNombre</h5>
+                    <a href="#" class="d-block small" onclick="getProduct('@Model.ProductoID');">@Model.Productos.Codigo</a>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-md-2 text-md-end">
-            <span class="d-block d-md-none text-muted">Cantidad x Precio</span>
-            <span class="d-block">@Convert.ToDecimal(Model.CantidadProducto).ToString("#,###,##0.0000")</span>
+        <div class="col-6 col-lg-2 text-lg-end">
+            <span class="d-block d-lg-none text-muted">Cantidad x Precio</span>
+            <span class="d-block">@Convert.ToDecimal(Model.Cantidad).ToString("#,###,##0.0000")</span>
             <small class="d-block">x @Convert.ToDecimal(Model.PrecioVenta).ToString("$#,###,##0.00")</small>
         </div>
-        <div class="col-12 col-md-2 text-md-end">
-            <span class="d-block d-md-none text-muted">Importe</span>
+        <div class="col-6 col-lg-2 text-end">
+            <span class="d-block d-lg-none text-muted">Importe</span>
             @{ 
-                decimal importe = @Convert.ToDecimal(Model.CantidadProducto * Model.PrecioVenta);
+                decimal importe = @Convert.ToDecimal(Model.Cantidad * Model.PrecioVenta);
             }
-            <h5 class="fw-bold d-block @textDanger @textDecoration"
+            <h5 class="fw-bold d-block saleAmount @textDanger @textDecoration"
                 data-importe="@importe">
                 @importe.ToString("$#,###,##0.00")
             </h5>

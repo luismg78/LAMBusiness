@@ -239,7 +239,7 @@
                 catch (Exception ex)
                 {
                     TempData["toast"] = "[Error] Los datos del usuario no fueron almacenados.";
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Alta", usuario, excepcion);
                 }
             }
@@ -333,7 +333,7 @@
                 catch (Exception ex)
                 {
                     TempData["toast"] = "[Error] Los datos del usuario no fueron actualizados.";
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Actualizar", usuario, excepcion);
                 }
             }
@@ -398,7 +398,7 @@
             }
             catch (Exception ex)
             {
-                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                 TempData["toast"] = "Los datos del usuario no pueden ser eliminados por la integridad de la información.";
                 await BitacoraAsync("Baja", usuario, excepcion);
             }
@@ -616,7 +616,7 @@
                 }
                 catch (Exception ex)
                 {
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     TempData["toast"] = "Error al actualizar los permisos seleccionados.";
                     await BitacoraAsync("Permisos", usuarioDetailsViewModelUsuario.UsuarioModulos, usuarioDetailsViewModelUsuario.UsuarioID.ToString(), excepcion);
                 } 

@@ -4,8 +4,8 @@
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using Catalogo;
+    using Contacto;
     using Newtonsoft.Json;
-    using Shared.Contacto;
 
     [Table("Ventas", Schema = "Movimiento")]
     public class Venta
@@ -38,15 +38,7 @@
         [JsonIgnore]
         public virtual Almacen Almacenes { get; set; }
 
-        public Guid? ClienteID { get; set; }
-
-        [ForeignKey("FormaPago")]
-        [Display(Name = "Forma de pago")]
-        [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public byte FormaPagoID { get; set; }
-
-        [JsonIgnore]
-        public virtual FormaPago FormasPago { get; set; }
+        public Guid? ClienteID { get; set; }        
 
         [ForeignKey("VentaCierre")]
         [Display(Name = "Cierre de ventas")]
@@ -58,8 +50,6 @@
         [Display(Name = "Fecha fin del proceso")]
         [DataType(DataType.Date)]
         public DateTime FechaFinProceso { get; set; }
-
-        public bool Aplicado { get; set; }
 
     }
 }

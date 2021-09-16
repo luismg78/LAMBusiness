@@ -148,7 +148,7 @@
                 catch (Exception ex)
                 {
                     TempData["toast"] = "[Error] Los datos del tipo de salida no fueron almacenados.";
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Alta", salidaTipo, excepcion);
                 }
             }
@@ -221,13 +221,13 @@
                     {
                         TempData["toast"] = "[Error] Los datos del tipo de salida no fueron actualizados.";
                     }
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Actualizar", salidaTipo, excepcion);
                 }
                 catch (Exception ex)
                 {
                     TempData["toast"] = "[Error] Los datos del tipo de salida no fueron actualizados.";
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Actualizar", salidaTipo, excepcion);
                 }
             }
@@ -269,7 +269,7 @@
             }
             catch (Exception ex)
             {
-                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                 TempData["toast"] = "[Error] Los datos del tipo de salida no fueron eliminados.";
                 await BitacoraAsync("Baja", salidaTipo, excepcion);
             }

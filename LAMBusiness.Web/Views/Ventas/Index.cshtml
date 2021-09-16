@@ -1,30 +1,81 @@
-﻿@{
+﻿@model LAMBusiness.Web.Models.ViewModels.VentasNoAplicadasViewModel
+
+@{
     Layout = "~/Views/Shared/_LayoutVentas.cshtml";
     ViewData["Title"] = "LAMBusiness";
 }
 
 <div class="row g-0">
+    <div>
+        <input type="hidden" asp-for="VentaNoAplicadaID" />
+    </div>
     <div class="col-12 col-md-8">
         <div class="flex-container">
             <section class="position-relative">
-                <div id="Datos" class="p-4 bg-light bg-absolute overflow-auto">
+                <div id="datos" class="p-4 bg-light bg-absolute overflow-auto">
                     <div class="list-group list-group-flush text-dark mb-2">
+                        @if (Model.VentasNoAplicadasDetalle != null)
+                        {
+                            foreach (var item in Model.VentasNoAplicadasDetalle)
+                            {
+                                string textDanger = "";
+                                string textDecoration = "";
+                                if (item.Cantidad < 0)
+                                {
+                                    textDanger = "text-danger";
+                                    textDecoration = "text-decoration-line-through";
+                                }
+                                <div class="bg-white list-group-item list-group-item-action">
+                                    <div class="row align-items-center p-3 g-0">
+                                        <div class="col-12 col-lg-8 mb-3 mb-lg-0">
+                                            <div class="d-flex justify-content-start align-items-center">
+                                                <div class="me-3">
+                                                    <img class="rounded-circle" style="width:2rem;" src="@Url.Action("GetProductImages", "Productos", new { productoId = item.ProductoID, imageId = item.ProductoID, tipo = "sm" })" alt="Image Product" />
+                                                </div>
+                                                <div>
+                                                    <h5 class="fw-bold d-block @textDanger @textDecoration">@item.Productos.ProductoNombre</h5>
+                                                    <a href="#" class="d-block small" onclick="getProduct('@item.ProductoID');">@item.Productos.Codigo</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 col-lg-2 text-lg-end">
+                                            <span class="d-block d-lg-none text-muted">Cantidad x Precio</span>
+                                            <span class="d-block">@Convert.ToDecimal(item.Cantidad).ToString("#,###,##0.0000")</span>
+                                            <small class="d-block">x @Convert.ToDecimal(item.PrecioVenta).ToString("$#,###,##0.00")</small>
+                                        </div>
+                                        <div class="col-6 col-lg-2 text-end">
+                                            <span class="d-block d-lg-none text-muted">Importe</span>
+                                            @{
+                                                decimal importe = @Convert.ToDecimal(item.Cantidad * item.PrecioVenta);
+                                            }
+                                            <h5 class="fw-bold d-block saleAmount @textDanger @textDecoration"
+                                                data-importe="@importe">
+                                                @importe.ToString("$#,###,##0.00")
+                                            </h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
                     </div>
                 </div>
             </section>
             <div id="footer" class="bg-light position-relative border-top">
+                <div class="bg-base p-3 text-end d-block d-md-none">
+                    <h4 id="total-sm" class="fw-bold text-white">Total $0.00</h4>
+                </div>
                 <div class="p-4 position-relative">
                     <div class="position-absolute" style="top:0.2rem;left:4rem;">
-                        <label id="MessageLabel" class="ms-4 text-danger" style="display:none;"></label>
+                        <label id="messageLabel" class="ms-4 text-danger" style="display:none;"></label>
                     </div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <label for="InputText"
+                        <label for="inputText"
                                class="p-2"
                                style="font-size:2rem;">
                             <i id="icon" class="fa fa-barcode"></i>
                         </label>
                         <div class="w-100 mx-2">
-                            <input id="InputText"
+                            <input id="inputText"
                                    type="text"
                                    data-input="codigo"
                                    class="rounded-pill px-4 py-2 border w-100"
@@ -43,8 +94,64 @@
         </div>
     </div>
     <div class="col-4 d-none d-md-block">
-        <div class="p-3">
-            <h4 id="Total" class="fw-bold">Total $0.00</h4>
+        <div class="flex-container">
+            <section class="position-relative">
+                <div class="row g-0 text-center p-4">
+                    <div class="col-4">
+                        <a href="#" onclick="saleMode();" class="text-secondary">
+                            <div id="saleButton" class="bg-white bg-card border box-shadow-lam mx-2 rounded-lam-lg">
+                                <div class="py-3 px-2 mb-3">
+                                    <div class="text-center my-2">
+                                        <h3 class="fas fa-barcode"></h3>
+                                    </div>
+                                    <div class="text-center">
+                                        <span class="fw-bold">VENDER</span>
+                                        <span class="fw-light d-block">[ESC]</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-4">
+                        <a href="#" onclick="payMode();" class="text-secondary">
+                            <div id="payButton" class="bg-white bg-card border box-shadow-lam mx-2 rounded-lam-lg">
+                                <div class="py-3 px-2 mb-3">
+                                    <div class="text-center my-2">
+                                        <h3 class="fas fa-dollar-sign"></h3>
+                                    </div>
+                                    <div class="text-center">
+                                        <span class="fw-bold">COBRAR</span>
+                                        <span class="fw-light d-block">[F5]</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-4">
+                        <a href="#" onclick="searchMode();" class="text-secondary">
+                            <div id="searchButton" class="bg-white bg-card border box-shadow-lam mx-2 rounded-lam-lg">
+                                <div class="py-3 px-2 mb-3">
+                                    <div class="text-center my-2">
+                                        <h3 class="fas fa-search"></h3>
+                                    </div>
+                                    <div class="text-center">
+                                        <span class="fw-bold">BUSCAR</span>
+                                        <span class="fw-light d-block">[F1]</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+            <div class="bg-light position-relative border-top border-start">
+                <div class="position-absolute" style="left:0.5rem;top:0.2rem;">
+                    <span id="payStatusLabel" class="text-muted">Total</span>
+                </div>
+                <div class="p-4 position-relative text-center">
+                    <h1 id="total" class="fw-bold text-dark mt-2">@Model.ImporteTotal.ToString("$###,###,##0.00")</h1>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -61,192 +168,13 @@
 
 @section Scripts{
     <script>
-        var cant = '1';
-
-        $(document).ready(function () {
-            var myOffcanvas = document.getElementById('offcanvasRight');
-            myOffcanvas.addEventListener('shown.bs.offcanvas', function () {
-                alert('abriendo offcanvas');
-            });
-
-            screenResize();
-
-            $(window).resize(function () {
-                screenResize();
-            });
-        });
-        $("#InputText").keydown(function (e) {
-            switch (e.which) {
-                case 13: //enter
-                    inputText(e);
-                    break;
-                case 27: //*
-                    cant = '1';
-                    $("#InputText").val('')
-                    $("#InputText")[0].dataset.input = 'codigo';
-                    $("#InputText").attr('type', 'text');
-                    $("#icon").removeClass('fa-dollar-sign');
-                    $("#icon").removeClass('fa-search');
-                    $("#icon").addClass('fa-barcode');
-                    $('#MessageLabel')[0].innerHTML = '';
-                    $('#MessageLabel').hide();
-                    break;
-                case 106: //*
-                    if (isNaN($("#InputText").val())) {
-                        cant = '1';
-                        $('#MessageLabel')[0].innerHTML = 'Cantidad incorrecta';
-                        $('#MessageLabel').show();
-                    } else {
-                        $('#MessageLabel').hide();
-                        cant = $("#InputText").val();
-                    }
-                    $("#InputText").val('')
-                    e.preventDefault;
-                    return false;
-                    break;
-                case 112: //F1
-                    e.preventDefault();
-                    $("#InputText").attr('type', 'text');
-                    $("#InputText")[0].dataset.input = 'buscar';
-                    $("#icon").removeClass('fa-barcode');
-                    $("#icon").removeClass('fa-dollar-sign');
-                    $("#icon").addClass('fa-search');
-                    break;
-                case 116: //F5
-                    e.preventDefault();
-                    $("#InputText").attr('type', 'number');
-                    $("#InputText")[0].dataset.input = 'importe';
-                    $("#icon").removeClass('fa-barcode');
-                    $("#icon").removeClass('fa-search');
-                    $("#icon").addClass('fa-dollar-sign');
-                    break;
-            }
-        });
-
-        function getProduct(id, code = false) {
-            addProcessWithSpinnerInList('SpinList', 'fa-search');
-            var url = '@Url.Action("GetProductDetail", "Productos")';
-            if (code) {
-                url = '@Url.Action("GetProductDetailByCode", "Productos")';
-            }
-            if (id === '') {
-                $('#MessageLabel')[0].innerHTML = 'Favor de proporcionar el código del producto';
-                $('#MessageLabel').show();
-                return false;
-            }
-            $.ajax({
-                url: url,
-                method: 'POST',
-                datatype: 'text',
-                data: { id: id },
-                success: function (r) {
-                    if (r !== null && r.trim() !== '') {
-                        $('#ModalHelpLabel')[0].innerHTML = 'Producto';
-                        $('#ModalHelp .modal-body').empty();
-                        $('#ModalHelp .modal-body').append(r);
-                        $('#ModalHelp').modal('show');
-                        $('#MessageLabel')[0].innerHTML = '';
-                        $('#MessageLabel').hide();
-                    } else {
-                        $('#MessageLabel')[0].innerHTML = 'Código inexistente...';
-                        $('#MessageLabel').show();
-                    }
-                    $("#InputText").val('');
-                    removeProcessWithSpinnerInList('SpinList', 'fa-search');
-                },
-                error: function (r) {
-                    removeProcessWithSpinnerInList('SpinList', 'fa-search');
-                },
-                cache: false
-            });
-        }
-        function getProductByCode() {
-            $.ajax({
-                url: '@Url.Action("GetProductByCode", "Ventas")',
-                method: 'POST',
-                datatype: 'text',
-                data: {
-                    codigo: $('#InputText').val(),
-                    cantidad: cant
-                },
-                success: function (result) {
-                    if (result == null || result == '') {
-                        $('#InputText').val('');
-                        $('#MessageLabel')[0].innerHTML = 'Código inexistente...';
-                        $('#MessageLabel').show();
-                    } else {
-                        $('#Datos > div').append(result);
-                        var box = document.getElementById('Datos');
-                        box.scrollTop = box.scrollHeight;
-                        cant = '1';
-                        $('#InputText').val('');
-                        $('#MessageLabel')[0].innerHTML = '';
-                        $('#MessageLabel').hide();
-                        getTotalSum();
-                    }
-                },
-                error: function (r) {
-                    $('#InputText').val('');
-                    $('#MessageLabel')[0].innerHTML = 'Código inexistente...';
-                    $('#MessageLabel').show();
-                },
-                cache: false
-            });
-        }
-        function getTotalSum() {
-            var total = 0;
-            $("[data-importe]").each(function (index) {
-                total += parseFloat($(this)[0].dataset.importe);
-            });
-            $('#Total').text('Total $' + total);
-        }
-        function inputText(e) {
-            e.preventDefault();
-            var input = $("#InputText")[0].dataset.input;
-            switch (input) {
-                case 'buscar':
-                    getProduct($("#InputText").val(), true);
-                    break;
-                case 'codigo':
-                    makeSale(e);
-                    break;
-                case 'importe':
-                    paySale(e);
-                    break;
-            }
-        }
-        function offcanvas(e) {
-            var myOffcanvas = document.getElementById('offcanvasRight');
-            var bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas);
-            bsOffcanvas.show();
-        }
-        function makeSale(e) {
-            e.preventDefault();
-            cant = cant === '' ? '1' : cant;
-            if ($("#InputText").val() === '') {
-                $('#MessageLabel')[0].innerHTML = 'Favor de proporcionar el código del producto';
-                $('#MessageLabel').show();
-                return false;
-            }
-            getProductByCode();
-        }
-        function paySale(e) {
-            e.preventDefault();
-            if ($("#InputText").val() === '') {
-                $('#MessageLabel')[0].innerHTML = 'Favor de proporcionar el importe.';
-                $('#MessageLabel').show();
-                return false;
-            }
-            $('#MessageLabel')[0].innerHTML = '';
-            $('#MessageLabel').hide();
-            alert('Realizar venta');
-        }
-        function screenResize() {
-            var height = $(window).height();
-            var heightH = $('header').height();
-            var heightF = $('#footer').height();
-
-            $('section').height(height - heightH - heightF - 1);
-        }
+        let urlSale = '@Url.Action("Index", "Ventas")';
+        let urlMovement = '@Url.Action("Movimiento", "Menu")';
+        let urlProductByCode = '@Url.Action("GetProductByCode", "Ventas")';
+        let urlProductDetail = '@Url.Action("GetProductDetail", "Productos")';
+        let urlProductDetailByCode = '@Url.Action("GetProductDetailByCode", "Productos")';
+        let urlProductList = '@Url.Action("GetProductList", "Productos")';
+        let urlSetSale = '@Url.Action("SetSale", "Ventas")';
     </script>
+    <script src="~/js/sales.js"></script>
 }

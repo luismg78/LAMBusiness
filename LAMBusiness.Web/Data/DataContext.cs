@@ -55,9 +55,13 @@
         public DbSet<SalidaTipo> SalidasTipo { get; set; }
         public DbSet<RetiroCaja> RetirosCaja { get; set; }
         public DbSet<Venta> Ventas { get; set; }
+        public DbSet<VentaCancelada> VentasCanceladas { get; set; }
         public DbSet<VentaCierre> VentasCierre { get; set; }
         public DbSet<VentaCierreDetalle> VentasCierreDetalle { get; set; }
         public DbSet<VentaDetalle> VentasDetalle { get; set; }
+        public DbSet<VentaImporte> VentasImportes { get; set; }
+        public DbSet<VentaNoAplicada> VentasNoAplicadas { get; set; }
+        public DbSet<VentaNoAplicadaDetalle> VentasNoAplicadasDetalle { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -43,8 +43,9 @@ namespace LAMBusiness.Web.Helpers
         Task<Paquete> GetPaqueteByIdAsync(Guid id);
         Task<Paquete> GetPaqueteByPieceID(Guid id);
         Task<Producto> GetProductByCodeAsync(string codigo);
+        Task<Resultado<VentaNoAplicadaDetalle>> GetProductByCodeForSale(Guid? id, string codigo, decimal cantidad);
         Task<Producto> GetProductByIdAsync(Guid id);
-        Task<List<Producto>> GetProductosByPatternAsync(string pattern, int skip);
+        Task<Filtro<List<Producto>>> GetProductosByPatternAsync(Filtro<List<Producto>> filtro);
         Task<Proveedor> GetProveedorByIdAsync(Guid id);
         Task<Proveedor> GetProveedorByRFCAsync(string rfc);
         Task<List<Proveedor>> GetProveedoresByPatternAsync(string pattern, int skip);

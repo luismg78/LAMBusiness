@@ -5,13 +5,13 @@
 }
 
 <form asp-action="Edit">
-    <div class="modal-content border-0 box-shadow">
+    <div class="modal-content border-0 box-shadow box-responsive m-auto">
         <div class="modal-header pb-0 align-items-baseline">
             <div>
                 <h3 class="modal-title" id="exampleModalLabel">Módulos</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
-                    <li class="breadcrumb-item">Contacto</li>
-                    <li class="breadcrumb-item">Módulos</li>
+                    <li class="breadcrumb-item"><a asp-action="Aplicacion" asp-controller="Menu">Aplicaciones</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Modulos">Modulos</a></li>
                     <li class="breadcrumb-item active">Editar Registro</li>
                 </ul>
             </div>
@@ -21,7 +21,7 @@
             <input type="hidden" asp-for="ModuloID" />
             <div class="row px-md-3">
                 <!--Descripción-->
-                <div class="col-md-6">
+                <div class="col-12">
                     <div class="form-group">
                         <label asp-for="Descripcion" class="control-label"></label>
                         <input asp-for="Descripcion" class="form-control" autofocus />
@@ -29,7 +29,7 @@
                     </div>
                 </div>
                 <!--Módulos (padre)-->
-                <div class="col-md-6">
+                <div class="col-12">
                     <div class="form-group">
                         <label asp-for="ModuloPadreID" class="control-label"></label>
                         <select asp-for="ModuloPadreID" class="form-select" asp-items="Model.ModulosPadresDDL"></select>

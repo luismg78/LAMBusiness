@@ -117,7 +117,7 @@
                     {
                         TempData["toast"] = "[Error] Los datos del género no fueron actualizados.";
                     }
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Actualizar", genero, excepcion);
                 }
             }

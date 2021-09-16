@@ -10,6 +10,8 @@
     using Helpers;
     using Models.ViewModels;
     using Shared.Aplicacion;
+    using System.Collections.Generic;
+    using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
     public class ModulosController : GlobalController
     {
@@ -18,6 +20,7 @@
         private readonly ICombosHelper _combosHelper;
         private readonly IConverterHelper _converterHelper;
         private readonly IConfiguration _configuration;
+        //36a7c3fa-a7fe-4288-988f-adcdfef9ef63
 
         public ModulosController(DataContext context,
             IGetHelper getHelper,
@@ -34,7 +37,7 @@
 
         public async Task<IActionResult> Index()
         {
-            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "aplicacion");
             if (validateToken != null) { return validateToken; }
 
             if (token.Administrador != "SA") {
@@ -42,12 +45,80 @@
                 return RedirectToAction("Inicio", "Menu"); 
             }
 
-            return View(await _context.Modulos.OrderBy(m => m.Descripcion).ToListAsync());
+            var modulos = _context.Modulos.OrderBy(m => m.Descripcion);
+
+            var filtro = new Filtro<List<Modulo>>()
+            {
+                Datos = await modulos.Take(50).ToListAsync(),
+                Patron = "",
+                PermisoEscritura = true,
+                PermisoImprimir = true,
+                PermisoLectura = true,
+                Registros = await modulos.CountAsync(),
+                Skip = 0
+            };
+
+            return View(filtro);
+        }
+
+        public async Task<IActionResult> _AddRowsNextAsync(Filtro<List<Modulo>> filtro)
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "aplicacion");
+            if (validateToken != null) { return validateToken; }
+
+            if (token.Administrador != "SA")
+            {
+                TempData["toast"] = "No tiene privilegios de acceso en el módulo";
+                return RedirectToAction("Inicio", "Menu");
+            }
+
+            IQueryable<Modulo> query = null;
+            if (filtro.Patron != null && filtro.Patron != "")
+            {
+                var words = filtro.Patron.Trim().ToUpper().Split(' ');
+                foreach (var w in words)
+                {
+                    if (w.Trim() != "")
+                    {
+                        if (query == null)
+                        {
+                            query = _context.Modulos
+                                    .Where(p => p.Descripcion.Contains(w));
+                        }
+                        else
+                        {
+                            query = query.Where(p => p.Descripcion.Contains(w));
+                        }
+                    }
+                }
+            }
+            if (query == null)
+            {
+                query = _context.Modulos;
+            }
+
+            filtro.Registros = await query.CountAsync();
+
+            filtro.Datos = await query.OrderBy(m => m.Descripcion)
+                .Skip(filtro.Skip)
+                .Take(50)
+                .ToListAsync();
+
+            filtro.PermisoEscritura = true;
+            filtro.PermisoImprimir = true;
+            filtro.PermisoLectura = true;
+
+            return new PartialViewResult
+            {
+                ViewName = "_AddRowsNextAsync",
+                ViewData = new ViewDataDictionary
+                            <Filtro<List<Modulo>>>(ViewData, filtro)
+            };
         }
 
         public async Task<IActionResult> Create()
         {
-            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "aplicacion");
             if (validateToken != null) { return validateToken; }
 
             if (token.Administrador != "SA")
@@ -68,7 +139,7 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ModuloViewModel moduloViewModel)
         {
-            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "aplicacion");
             if (validateToken != null) { return validateToken; }
 
             if (token.Administrador != "SA")
@@ -101,7 +172,7 @@
 
         public async Task<IActionResult> Edit(Guid? id)
         {
-            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "aplicacion");
             if (validateToken != null) { return validateToken; }
 
             if (token.Administrador != "SA")
@@ -132,7 +203,7 @@
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, ModuloViewModel moduloViewModel)
         {
-            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "aplicacion");
             if (validateToken != null) { return validateToken; }
 
             if (token.Administrador != "SA")
@@ -178,7 +249,7 @@
 
         public async Task<IActionResult> Delete(Guid? id)
         {
-            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "aplicacion");
             if (validateToken != null) { return validateToken; }
 
             if (token.Administrador != "SA")

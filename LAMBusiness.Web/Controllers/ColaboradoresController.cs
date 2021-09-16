@@ -228,7 +228,7 @@
                 }
                 catch (Exception ex)
                 {
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     TempData["toast"] = "[Error] Los datos del colaborador no fueron almacenados.";
                     await BitacoraAsync("Alta", resultado.Contenido, excepcion);
                 }
@@ -320,7 +320,7 @@
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     if (!ColaboradorExists(colaboradorViewModel.ColaboradorID))
                         TempData["toast"] = "Colaborador inexistente (identificador incorrecto).";
                     else
@@ -329,7 +329,7 @@
                     await BitacoraAsync("Actualizar", resultado.Contenido, excepcion);
                 }
                 catch(Exception ex) {
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     TempData["toast"] = "[Error] Los datos del colaborador no fueron actualizados.";
                     await BitacoraAsync("Actualizar", resultado.Contenido, excepcion);
                 }
@@ -381,7 +381,7 @@
             }
             catch (Exception ex)
             {
-                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                 TempData["toast"] = "Los datos del colaborador no pueden ser eliminados por integridad de la información.";
                 await BitacoraAsync("Baja", colaborador, excepcion);
             }

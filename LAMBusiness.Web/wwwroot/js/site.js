@@ -48,7 +48,7 @@ function addButtonWithSpinner(text, container, buttonDisabled, time = 0) {
         var html = '';
         html += '<a id="button-with-spinner" class="btn btn-secondary text-white">';
         html += '   <div class="row align-items-center">';
-        html += '       <div class="col-1"><div class="spinner"></div></div>';
+        html += '       <div class="col-2 ps-0 pe-3"><div class="spinner"></div></div>';
         html += '       <div class="col-10">'+text+'</div>';
         html += '   </div>';
         html += '</a>';
@@ -204,21 +204,5 @@ function multiplyCantByPriceWhenChangeValue(precio) {
 
 //expandir pantalla
 function toggleFullScreen() {
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-    } else {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        }
-    }
+    document.documentElement.requestFullscreen();
 }
-
-//function launchFullScreen(element) {
-//    if (element.requestFullScreen) {
-//        element.requestFullScreen();
-//    } else if (element.mozRequestFullScreen) {
-//        element.mozRequestFullScreen();
-//    } else if (element.webkitRequestFullScreen) {
-//        element.webkitRequestFullScreen();
-//    }
-//}

@@ -209,7 +209,7 @@
                 }
                 catch (Exception ex)
                 {
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     TempData["toast"] = "Error al guardar salida, verifique bitácora de errores.";
                     await BitacoraAsync("Alta", salida, excepcion);
                 }
@@ -297,7 +297,7 @@
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Actualizar", salida, excepcion);
                     if (!SalidaExists(salidaViewModel.SalidaID))
                     {
@@ -370,7 +370,7 @@
             }
             catch (Exception ex)
             {
-                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                 TempData["toast"] = "[Error] Los datos de la salida no fueron eliminados.";
                 await BitacoraAsync("Baja", salida);
             }
@@ -495,7 +495,7 @@
             }
             catch (Exception ex)
             {
-                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                 TempData["toast"] = "Error al aplicar el movimieno, verifique bitácora de errores.";
                 await BitacoraAsync("Aplicar", salida, excepcion);
             }
@@ -561,54 +561,54 @@
             };
         }
 
-        public async Task<IActionResult> GetProducto(string code)
-        {
-            var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
-            if (validateToken != null) { return null; }
+        //public async Task<IActionResult> GetProducto(string code)
+        //{
+        //    var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+        //    if (validateToken != null) { return null; }
 
-            if (code == null || code == "")
-            {
-                return null;
-            }
+        //    if (code == null || code == "")
+        //    {
+        //        return null;
+        //    }
 
-            var producto = await _getHelper.GetProductByCodeAsync(code.Trim().ToUpper());
-            if (producto != null)
-            {
-                return Json(
-                    new
-                    {
-                        producto.ProductoID,
-                        producto.Codigo,
-                        producto.ProductoNombre,
-                        producto.PrecioCosto,
-                        producto.PrecioVenta,
-                        error = false
-                    });
-            }
+        //    var producto = await _getHelper.GetProductByCodeAsync(code.Trim().ToUpper());
+        //    if (producto != null)
+        //    {
+        //        return Json(
+        //            new
+        //            {
+        //                producto.ProductoID,
+        //                producto.Codigo,
+        //                producto.ProductoNombre,
+        //                producto.PrecioCosto,
+        //                producto.PrecioVenta,
+        //                error = false
+        //            });
+        //    }
 
-            return Json(new { error = true, message = "Producto inexistente" });
+        //    return Json(new { error = true, message = "Producto inexistente" });
 
-        }
+        //}
 
-        public async Task<IActionResult> GetProductos(string pattern, int? skip)
-        {
-            var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
-            if (validateToken != null) { return null; }
+        //public async Task<IActionResult> GetProductos(string pattern, int? skip)
+        //{
+        //    var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+        //    if (validateToken != null) { return null; }
 
-            if (pattern == null || pattern == "" || skip == null)
-            {
-                return null;
-            }
+        //    if (pattern == null || pattern == "" || skip == null)
+        //    {
+        //        return null;
+        //    }
 
-            var productos = await _getHelper.GetProductosByPatternAsync(pattern, (int)skip);
+        //    var productos = await _getHelper.GetProductosByPatternAsync(pattern, (int)skip);
 
-            return new PartialViewResult
-            {
-                ViewName = "_GetProductos",
-                ViewData = new ViewDataDictionary
-                            <List<Producto>>(ViewData, productos)
-            };
-        }
+        //    return new PartialViewResult
+        //    {
+        //        ViewName = "_GetProductos",
+        //        ViewData = new ViewDataDictionary
+        //                    <List<Producto>>(ViewData, productos)
+        //    };
+        //}
 
         //Detalle de movimientos
 
@@ -744,7 +744,7 @@
                 }
                 catch (Exception ex)
                 {
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     TempData["toast"] = "[Error] Los datos del producto no fueron almacenados.";
                     ModelState.AddModelError(string.Empty, "Error al guardar registro");
                     await BitacoraAsync("Alta", salidaDetalle, salidaDetalle.SalidaID, excepcion);
@@ -872,7 +872,7 @@
                 }
                 catch (Exception ex)
                 {
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     TempData["toast"] = "[Error] Los datos del producto no fueron actualizados.";
                     await BitacoraAsync("Actualizar", salidaDetalle, salidaDetalle.SalidaID, excepcion);
                 }
@@ -922,7 +922,7 @@
             }
             catch (Exception ex)
             {
-                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                 TempData["toast"] = "[Error] Los datos del producto no fueron eliminados.";
                 await BitacoraAsync("Baja", detalle, detalle.SalidaID, excepcion);
             }

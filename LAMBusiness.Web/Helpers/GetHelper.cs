@@ -219,7 +219,7 @@
                     Accion = accion.Trim(),
                     AccionRealizada = excepcion == "" ? true : false,
                     BitacoraID = bitacoraId,
-                    ErrorAlGuardarBitacoraDB = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString(),
+                    ErrorAlGuardarBitacoraDB = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString(),
                     Excepcion = excepcion,
                     Fecha = DateTime.Now,
                     Hostname = token.HostName,
@@ -670,35 +670,50 @@
         /// </summary>
         /// <param name="pattern"></param>
         /// <returns></returns>
-        public async Task<List<Producto>> GetProductosByPatternAsync(string pattern, int skip)
+        public async Task<Filtro<List<Producto>>> GetProductosByPatternAsync(Filtro<List<Producto>> filtro)
         {
-            string[] patterns = pattern.Trim().Split(' ');
             IQueryable<Producto> query = null;
-            foreach (var p in patterns)
+            if (filtro.Patron != null && filtro.Patron != "")
             {
-                string _pattern = p.Trim();
-                if (_pattern != "")
+                var words = filtro.Patron.Trim().ToUpper().Split(' ');
+                foreach (var w in words)
                 {
-                    if (query == null)
+                    if (w.Trim() != "")
                     {
-                        query = _context.Productos
-                                .Where(p => p.Codigo.Contains(_pattern) ||
-                                            p.ProductoNombre.Contains(_pattern));
-                    }
-                    else
-                    {
-                        query = query.Where(p => p.Codigo.Contains(_pattern) ||
-                                                 p.ProductoNombre.Contains(_pattern));
+                        if (query == null)
+                        {
+                            query = _context.Productos
+                                    .Where(p => p.Codigo.Contains(w) ||
+                                                p.ProductoNombre.Contains(w) ||
+                                                p.ProductoDescripcion.Contains(w));
+                        }
+                        else
+                        {
+                            query = query.Where(p => p.Codigo.Contains(w) ||
+                                                p.ProductoNombre.Contains(w) ||
+                                                p.ProductoDescripcion.Contains(w));
+                        }
                     }
                 }
             }
-
             if (query == null)
             {
                 query = _context.Productos;
             }
 
-            return await query.OrderBy(e => e.ProductoNombre).Skip(skip).Take(50).ToListAsync();
+            filtro.Registros = await query.CountAsync();
+
+            filtro.Datos = await query
+                .Include(p => p.Marcas)
+                .Include(p => p.TasasImpuestos)
+                .Include(p => p.Unidades)
+                .Include(p => p.Paquete)
+                .OrderBy(p => p.ProductoNombre)
+                .Skip(filtro.Skip)
+                .Take(50)
+                .ToListAsync();
+
+            return filtro;
         }
 
         //Proveedores
@@ -1352,6 +1367,121 @@
                               where m.Activo == true && u.PermisoLectura == true &&
                                     m.ModuloPadreID == moduloPadreId && u.UsuarioID == usuarioId
                               select m.ModuloID).Distinct().ToListAsync();
+            }
+        }
+
+        //Ventas
+
+        public async Task<Resultado<VentaNoAplicadaDetalle>> GetProductByCodeForSale(Guid? id, string codigo, decimal cantidad)
+        {
+            Resultado<VentaNoAplicadaDetalle> resultado = new Resultado<VentaNoAplicadaDetalle>() {
+                Contenido = null,
+                Error = true,
+                Mensaje = ""
+            };
+            codigo = codigo.Trim().ToUpper();
+
+            if (id == null || id == Guid.Empty)
+            {
+                resultado.Mensaje = "reinciar";
+                return resultado ;
+            }
+
+            if (cantidad == 0)
+            {
+                resultado.Mensaje = "Cantidad incorrecta";
+                return resultado;
+            }
+
+            var producto = await GetProductByCodeAsync(codigo);
+            if (producto == null)
+            {
+                resultado.Mensaje = "buscarProducto";
+                return resultado;
+            }
+
+            if (!producto.Activo)
+            {
+                resultado.Mensaje = "Producto inexistente";
+                return resultado;
+            }
+
+            if (cantidad < 0)
+            {
+                var productoVendido = await _context.VentasNoAplicadasDetalle
+                    .Where(v => v.ProductoID == producto.ProductoID).ToListAsync();
+
+                if (productoVendido == null)
+                {
+                    resultado.Mensaje = "Producto no registrado";
+                    return resultado;
+                }
+                decimal cantidadRestar = cantidad;
+                decimal cantidadProducto = productoVendido.Sum(p => p.Cantidad);
+
+                if (Math.Abs(cantidadRestar) > cantidadProducto)
+                {
+                    resultado.Mensaje = "La cantidad excede a la vendida.";
+                    return resultado;
+                }
+
+                foreach (var item in productoVendido)
+                {
+                    if (item.Cantidad > Math.Abs(cantidadRestar))
+                    {
+                        item.Cantidad += cantidadRestar;
+                        _context.Update(item);
+                        break;
+                    }
+                    else
+                    {
+                        cantidadRestar += item.Cantidad;
+                        _context.Remove(item);
+                        if (cantidadRestar == 0)
+                            break;
+                    }
+                }
+            }
+
+            VentaNoAplicadaDetalle ventaDetalle = new VentaNoAplicadaDetalle()
+            {
+                Cantidad = cantidad,
+                PrecioVenta = Convert.ToDecimal(producto.PrecioVenta),
+                ProductoID = producto.ProductoID,
+                Productos = producto,
+                VentaNoAplicadaDetalleID = Guid.NewGuid(),
+                VentaNoAplicadaID = (Guid)id,
+            };
+
+            if (cantidad > 0)
+            {
+                _context.VentasNoAplicadasDetalle.Add(ventaDetalle);
+            }
+            else
+            {
+                VentaCancelada ventaCancelada = new VentaCancelada()
+                {
+                    Cantidad = Math.Abs(cantidad),
+                    PrecioVenta = Convert.ToDecimal(producto.PrecioVenta),
+                    ProductoID = producto.ProductoID,
+                    VentaCanceladaID = Guid.NewGuid(),
+                    VentaID = (Guid)id,
+                };
+
+                _context.VentasCanceladas.Add(ventaCancelada);
+            }
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                resultado.Contenido = ventaDetalle;
+                resultado.Error = false;
+                return resultado;
+            }
+            catch (Exception)
+            {
+                resultado.Mensaje = "Error al actualizar la venta.";
+                return resultado;
             }
         }
     }

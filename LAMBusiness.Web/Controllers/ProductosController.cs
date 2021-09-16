@@ -85,46 +85,7 @@
                 return null;
             }
 
-            IQueryable<Producto> query = null;
-            if (filtro.Patron != null && filtro.Patron != "")
-            {
-                var words = filtro.Patron.Trim().ToUpper().Split(' ');
-                foreach (var w in words)
-                {
-                    if (w.Trim() != "")
-                    {
-                        if (query == null)
-                        {
-                            query = _context.Productos                                    
-                                    .Where(p => p.Codigo.Contains(w) ||
-                                                p.ProductoNombre.Contains(w) ||
-                                                p.ProductoDescripcion.Contains(w));
-                        }
-                        else
-                        {
-                            query = query.Where(p => p.Codigo.Contains(w) ||
-                                                p.ProductoNombre.Contains(w) ||
-                                                p.ProductoDescripcion.Contains(w));
-                        }
-                    }
-                }
-            }
-            if (query == null)
-            {
-                query = _context.Productos;
-            }
-
-            filtro.Registros = await query.CountAsync();
-
-            filtro.Datos = await query
-                .Include(p => p.Marcas)
-                .Include(p => p.TasasImpuestos)
-                .Include(p => p.Unidades)
-                .Include(p => p.Paquete)
-                .OrderBy(p => p.ProductoNombre)
-                .Skip(filtro.Skip)
-                .Take(50)
-                .ToListAsync();
+            filtro = await _getHelper.GetProductosByPatternAsync(filtro);
 
             filtro.PermisoEscritura = permisosModulo.PermisoEscritura;
             filtro.PermisoImprimir = permisosModulo.PermisoImprimir;
@@ -267,7 +228,7 @@
                 catch (Exception ex)
                 {
                     TempData["toast"] = "[Error] Los datos del producto no fueron almacenados.";
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Alta", producto, excepcion);
                 }
             }
@@ -400,13 +361,13 @@
                     {
                         TempData["toast"] = "[Error] Los datos del producto no fueron actualizados.";
                     }
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Actualizar", producto, excepcion);
                 }
                 catch (Exception ex)
                 {
                     TempData["toast"] = "[Error] Los datos del producto no fueron actualizados.";
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Actualizar", producto, excepcion);
                 }
             }
@@ -495,7 +456,7 @@
             }
             catch (Exception ex)
             {
-                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                 TempData["toast"] = "[Error] Los datos del producto no fueron eliminados.";
                 await BitacoraAsync("Baja", producto, excepcion);
             }
@@ -636,6 +597,70 @@
             }
 
             return _converterHelper.ToImageBase64(ruta);
+        }
+
+        public async Task<IActionResult> GetProductoByCodeAsync(string code)
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+            if (validateToken != null) { return new EmptyResult(); }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return new EmptyResult();
+            }
+
+            if (code == null || code == "")
+            {
+                return new EmptyResult();
+            }
+
+            var producto = await _getHelper.GetProductByCodeAsync(code.Trim().ToUpper());
+            if (producto != null)
+            {
+                producto.PrecioCosto = Convert.ToDecimal(producto.PrecioCosto?.ToString("0.00"));
+                producto.PrecioVenta = Convert.ToDecimal(producto.PrecioVenta?.ToString("0.00"));
+
+                return Json(
+                    new
+                    {
+                        producto.ProductoID,
+                        producto.Codigo,
+                        producto.ProductoNombre,
+                        producto.PrecioCosto,
+                        producto.PrecioVenta,
+                        error = false
+                    });
+            }
+
+            return Json(new { error = true, message = "Producto inexistente" });
+
+        }
+
+        public async Task<IActionResult> GetProductListAsync(Filtro<List<Producto>> filtro, bool mostrarPrecioVenta = false)
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+            if (validateToken != null) { return new EmptyResult(); }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return new EmptyResult();
+            }
+
+            filtro = await _getHelper.GetProductosByPatternAsync(filtro);
+
+            if(filtro.Registros == 0)
+            {
+                return new EmptyResult();
+            }
+
+            ViewBag.MostrarPrecioVenta = mostrarPrecioVenta;
+
+            return new PartialViewResult
+            {
+                ViewName = "_GetProductos",
+                ViewData = new ViewDataDictionary
+                            <Filtro<List<Producto>>>(ViewData, filtro)
+            };
         }
 
         private bool PaqueteExists(Guid id)

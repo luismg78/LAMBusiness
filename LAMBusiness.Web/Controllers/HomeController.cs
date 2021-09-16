@@ -70,14 +70,14 @@
 
                 if(usuario == null)
                 {
-                    ModelState.AddModelError(string.Empty, "Correo electrónico inexistente, verifique");
+                    TempData["toast"] = "Correo electrónico inexistente, verifique";
                     return View(inicioSesionViewModel);
                 }
 
                 var pwd = _criptografia.Encrypt(inicioSesionViewModel.Password);
                 if(usuario.Password != pwd)
                 {
-                    ModelState.AddModelError(string.Empty, "Credenciales Incorrectas, verifique");
+                    TempData["toast"] = "Credenciales Incorrectas, verifique";
                     return View(inicioSesionViewModel);
                 }
                 

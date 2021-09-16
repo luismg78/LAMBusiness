@@ -25,9 +25,34 @@
         public async Task<IActionResult> Inicio()
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "home");
-            if (validateToken != null) { return validateToken; }
+            if (validateToken != null) { 
+                TempData["toast"] = "Ingrese sus credenciales";
+                return validateToken; 
+            }
             
             return View(token);
+        }
+
+        public async Task<IActionResult> Aplicacion()
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "aplicacion");
+            if (validateToken != null) { return validateToken; }
+
+            if (token.Administrador != "SA")
+            {
+                TempData["toast"] = "No tiene privilegios de acceso en el módulo";
+                return RedirectToAction("Inicio", "Menu");
+            }
+
+            Guid moduloId = Guid.Parse("37A8C12A-254F-44FB-BE68-67AF358B0610");
+
+            var aplicacion = new Aplicacion()
+            {
+                Modulos = GetCountModulos(),
+                ModulosMenu = await _getHelper.GetModulesByUsuarioIDAndModuloPadreID(token.UsuarioID, moduloId)
+            };
+            
+            return View(aplicacion);
         }
 
         public async Task<IActionResult> Catalogo()
@@ -114,7 +139,14 @@
 
             return View();
         }
-        
+
+        #region Aplicacation's counts
+        private int GetCountModulos()
+        {
+            return _context.Modulos.Count();
+        }
+        #endregion
+
         #region Category's counts
         private int GetCountAlmacenes()
         {

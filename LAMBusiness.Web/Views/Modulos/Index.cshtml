@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LAMBusiness.Shared.Aplicacion.Modulo>
+﻿@model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Shared.Aplicacion.Modulo>>
 
 @{
     ViewData["Title"] = "Módulos";
@@ -6,127 +6,43 @@
 
 <div class="modal-content border-0 box-shadow">
     <div class="modal-header pb-0 align-items-baseline">
-        <div>
+        <div class="ms-3">
             <h3 class="modal-title" id="exampleModalLabel">Módulos</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
-                <li class="breadcrumb-item">Aplicación</li>
-                <li class="breadcrumb-item">Módulos</li>
-                <li class="breadcrumb-item active text-info">@Model.Count() Registro(s)</li>
+                <li class="breadcrumb-item"><a asp-action="Aplicacion" asp-controller="Menu">Configuración</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Modulos">Módulos</a></li>
+                <li class="breadcrumb-item active text-muted">Lista</li>
             </ul>
         </div>
-        <a asp-action="Aplicacion" asp-controller="Menu" class="btn-close me-md-1" aria-label="Close"></a>
+        <div class="d-flex align-items-center">
+            <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewIndex', event);">
+                <i class="fa fa-question-circle"></i>
+            </a>
+            <a asp-action="Aplicacion" asp-controller="Menu" class="btn-close me-md-1" aria-label="Close"></a>
+        </div>
     </div>
-    <div class="modal-body pt-4">
+    <div class="modal-body pt-4" data-module="Modulos">
         <div class="row px-md-3">
             <div class="col-9 col-md-8 pr-0 pr-md-3">
-                <div class="input-group mb-3">
+                <div class="input-group mb-3 search">
                     <input type="search" id="SearchInput" class="form-control" placeholder="Buscar..." onkeypress="search(event);">
                     <button class="btn btn-light border" type="button" onclick="search(event);"><i class="fa fa-search"></i></button>
                 </div>
             </div>
             <div class="col-3 col-md-4 text-end">
-                <p><a asp-action="Create" class="btn btn-base"><i class="fas fa-plus"></i><span class="d-none d-md-inline-block ms-2">Nuevo Registro</span></a></p>
+                @if (Model.PermisoEscritura)
+                {
+                    <p><a asp-action="Create" class="btn btn-base"><i class="fas fa-plus"></i><span class="d-none d-md-inline-block ms-2">Nuevo Registro</span></a></p>
+                }
             </div>
         </div>
         <div>
-            <div class="row px-md-3 fw-bold text-uppercase">
-                <div class="border-bottom col-12 px-3 py-2">
-                    @Html.DisplayNameFor(model => model.ModuloID)
-                </div>
-            </div>
-            <div class="row px-md-3" id="dRows" data-charging="0" data-rows-next="1">
-                @foreach (var item in Model)
-                {
-                    <div class="col-12 border-bottom">
-                        <div class="row">
-                            <div class="col-md-6 p-3">
-                                <span class="text-dark">@Html.DisplayFor(modelItem => item.Descripcion)</span>
-                                <div class="d-block">
-                                    @if (!item.Activo)
-                                    {
-                                        <small class="badge border border-danger text-danger fw-normal">No Disponible</small>
-                                    }
-                                </div>
-                            </div>
-                            <div class="col-md-6 px-3 py-2 text-end">
-                                <div class="mt-md-2">
-                                    <a asp-action="Edit" asp-route-id="@item.ModuloID" class="d-inline-block text-decoration-none">
-                                        <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar registro">
-                                            <i class="fa fa-edit"></i>
-                                        </div>
-                                    </a>
-                                    <a href="#" data-id="@item.ModuloID" class="d-inline-block deleteConfirm text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteConfirm">
-                                        <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="eliminar registro">
-                                            <i class="fa fa-trash"></i>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                }
-            </div>
+            <partial name="_AddRowsNextAsync" model="Model" />
         </div>
     </div>
 </div>
 
-<partial name="_DeleteConfirmDialog" />
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
-    <script>
-        var skip = 0;
-        var itemToDelete;
-
-        $(document).ready(function () {
-            $('.deleteConfirm').click((e) => {
-                itemToDelete = e.currentTarget.dataset.id;
-            });
-
-            $("#DeleteYesButton").click((e) => {
-                window.location.href = '@Url.Action("Delete", "Modulos")' + '/' + itemToDelete;
-            });
-        });
-
-        function addRowsNext(skip, inicio = false) {
-            addProcessWithSpinner('Cargando Módulos...');
-            $('#dRows').attr('data-charging', "1");
-            var searchBy = $('#SearchInput')[0] === undefined ? "" : $('#SearchInput').val();
-            $.ajax({
-                url: '@Url.Action("_AddRowsNext","Modulos")',
-                method: 'POST',
-                datatype: 'text',
-                data: {
-                    filtro.Patron: searchBy,
-                    skip: skip
-                },
-                success: function (r) {
-                    if (inicio) { $('#dRows').empty(); }
-                    if (r !== null && r.trim() !== '') {
-                        $('#dRows').append(r);
-                        $('[data-bs-toggle="tooltip"]').tooltip();
-                    } else {
-                        $('#dRows').attr('data-rows-next', "0");
-                    }
-                    $('#dRows').attr('data-charging', "0");
-                    removeProcessWithSpinner();
-                },
-                error: function (r) {
-                    $('#dRows').attr('data-charging', "0");
-                    removeProcessWithSpinner();
-                },
-                cache: false
-            });
-        }
-
-        function search(e) {
-            if (e.keyCode === 13 || e.which === 1) {
-                skip = 0;
-                $('#dRows').attr('data-rows-next', "1");
-                addRowsNext(skip, true);
-            }
-        }
-    </script>
+@if (Model.PermisoEscritura)
+{
+    <partial name="_DeleteConfirmDialog" />
 }

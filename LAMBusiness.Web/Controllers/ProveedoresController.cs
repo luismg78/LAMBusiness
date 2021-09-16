@@ -216,7 +216,7 @@
                 catch (Exception ex)
                 {
                     TempData["toast"] = "[Error] Los datos del proveedor no fueron almacenados.";
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Alta", proveedor, excepcion);
                 }
             }
@@ -300,13 +300,13 @@
                     {
                         TempData["toast"] = "[Error] Los datos del proveedor no fueron actualizados.";
                     }
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Actualizar", proveedor, excepcion);
                 }
                 catch (Exception ex)
                 {
                     TempData["toast"] = "[Error] Los datos del proveedor no fueron actualizados.";
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Actualizar", proveedor, excepcion);
                 }
             }
@@ -352,7 +352,7 @@
             }
             catch (Exception ex)
             {
-                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                 TempData["toast"] = "[Error] Los datos del proveedor no fueron eliminados.";
                 await BitacoraAsync("Baja", proveedor, excepcion);
             }
@@ -459,7 +459,7 @@
                 catch (Exception ex)
                 {
                     TempData["toast"] = "[Error] Los datos del contacto no fueron almacenados.";
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Alta", proveedorContacto, proveedorContacto.ProveedorID, excepcion);
                 }
             }
@@ -533,7 +533,7 @@
                 catch (Exception ex)
                 {
                     TempData["toast"] = "[Error] Los datos del contacto no fueron actualizados.";
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Actualizar", contacto, contacto.ProveedorID, excepcion);
                 }
             }
@@ -576,7 +576,7 @@
             }
             catch (Exception ex)
             {
-                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                 TempData["toast"] = "[Error] Los datos del contacto no fueron eliminados.";
                 await BitacoraAsync("Baja", contacto, contacto.ProveedorID, excepcion);
             }

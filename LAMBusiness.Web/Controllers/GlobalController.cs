@@ -106,7 +106,7 @@
 
             if (resultado.Error)
             {
-                TempData["toast"] = resultado.Mensaje;
+                TempData["toast"] = "Por favor, ingrese sus credenciales, para accesar al sistema.";
                 //Response.Cookies.Delete("LAMBusiness_SessionId");
                 return null;
             }

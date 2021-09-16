@@ -25,7 +25,7 @@
         {
             <!-- menú catálogo -->
             @if (Model.Administrador == "SA" || Model.Administrador == "GA" ||
-                 Model.UsuariosModulos.Contains(Guid.Parse("50B65B8C-1CBA-47E4-8327-5F1A34375394")))
+                Model.UsuariosModulos.Contains(Guid.Parse("50B65B8C-1CBA-47E4-8327-5F1A34375394")))
             {
                 <li class="nav-item">
                     <a class="nav-link @if (menu == "catalogo")
@@ -43,7 +43,7 @@
 
             <!-- menú contacto -->
             @if (Model.Administrador == "SA" || Model.Administrador == "GA" ||
-                 Model.UsuariosModulos.Contains(Guid.Parse("25C76712-5552-44C5-93A1-298590F337FA")))
+                Model.UsuariosModulos.Contains(Guid.Parse("25C76712-5552-44C5-93A1-298590F337FA")))
             {
                 <li class="nav-item">
                     <a class="nav-link @if (menu == "contacto")
@@ -61,7 +61,7 @@
 
             <!-- menú movimiento-->
             @if (Model.Administrador == "SA" || Model.Administrador == "GA" ||
-                 Model.UsuariosModulos.Contains(Guid.Parse("4BA5D993-8BEB-48AF-A45F-4813825A658F")))
+                Model.UsuariosModulos.Contains(Guid.Parse("4BA5D993-8BEB-48AF-A45F-4813825A658F")))
             {
                 <li class="nav-item">
                     <a class="nav-link @if (menu == "movimiento")
@@ -73,6 +73,23 @@
                             <i class="fa fa-shopping-cart"></i>
                         </div>
                         <span class="ms-2 ms-md-0">Movimientos</span>
+                    </a>
+                </li>
+            }
+
+            <!-- menú aplicación-->
+            @if (Model.Administrador == "SA")
+            {
+                <li class="nav-item">
+                    <a class="nav-link @if (menu == "aplicacion")
+                {<text>fw-bold text-base</text>}
+                else
+                {<text>text-dark</text>} "
+                       asp-area="" asp-controller="Menu" asp-action="Aplicacion">
+                        <div class="d-md-none btn-icon rounded-circle d-inline-block">
+                            <i class="fa fa-user-cog"></i>
+                        </div>
+                        <span class="ms-2 ms-md-0">Aplicaciones</span>
                     </a>
                 </li>
             }

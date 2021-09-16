@@ -154,7 +154,7 @@
                 catch (Exception ex)
                 {
                     TempData["toast"] = "[Error] Los datos de la tasa de impuesto no fueron almacenados.";
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Alta", tasaImpuesto, excepcion);
                 }
             }
@@ -227,13 +227,13 @@
                     {
                         TempData["toast"] = "[Error] Los datos de la tasa de impuesto no fueron actualizados.";
                     }
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Actualizar", tasaImpuesto, excepcion);
                 }
                 catch (Exception ex)
                 {
                     TempData["toast"] = "[Error] Los datos de la tasa de impuesto no fueron actualizados.";
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Actualizar", tasaImpuesto, excepcion);
                 }
             }
@@ -282,7 +282,7 @@
             }
             catch (Exception ex)
             {
-                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                 TempData["toast"] = "[Error] Los datos la tasa de impuesto no fueron eliminados.";
                 await BitacoraAsync("Baja", tasaImpuesto, excepcion);
             }

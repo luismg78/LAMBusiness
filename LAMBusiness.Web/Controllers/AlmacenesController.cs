@@ -149,7 +149,7 @@
                 catch (Exception ex)
                 {
                     TempData["toast"] = "[Error] Los datos del almacén no fueron almacenados.";
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Alta", almacen, excepcion);
                 }
             }
@@ -222,13 +222,13 @@
                     {
                         TempData["toast"] = "[Error] Los datos del almacén no fueron actualizados.";
                     }
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Actualizar", almacen, excepcion);
                 }
                 catch (Exception ex)
                 {
                     TempData["toast"] = "[Error] Los datos del almacén no fueron actualizados.";
-                    string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                    string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     await BitacoraAsync("Actualizar", almacen, excepcion);
                 }
             }
@@ -281,7 +281,7 @@
             }
             catch (Exception ex)
             {
-                string excepcion = ex.InnerException != null ? ex.InnerException.ToString() : ex.ToString();
+                string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                 TempData["toast"] = "[Error] Los datos del almacén no fueron eliminados.";
                 await BitacoraAsync("Baja", almacen, excepcion);
             }
