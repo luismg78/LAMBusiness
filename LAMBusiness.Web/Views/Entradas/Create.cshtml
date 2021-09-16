@@ -38,14 +38,14 @@
                                    onkeyup="positionCursorWithArrowKey(event);"
                                    onkeypress="getProveedor(event);" />
                             <button id="ProveedorSearchButton" class="btn btn-light border"
-                                    type="button" onclick="searchListBox(event);">
+                                    type="button" onclick="searchProveedor(event);">
                                 <span id="SpinList" class="d-flex align-items-center">
                                     <i class="fa fa-search"></i>
                                 </span>
                             </button>
                         </div>
                         <span asp-validation-for="ProveedorID" class="text-danger"></span>
-                        <div id="dRowListBox" class="mb-4 mt-1 list-registers" data-charging="0" data-rows-next="1">
+                        <div id="dRowProveedor" class="mb-4 mt-1 list-registers" data-charging="0" data-rows-next="1">
                         </div>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
                 <div class="col-12 col-md-6">
                     <div class="form-group">
                         <label asp-for="Fecha" class="control-label required"></label>
-                        <input asp-for="Fecha" class="form-control" max="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+                        <input asp-for="Fecha" class="form-control" max="@DateTime.Now.ToString("yyyy-MM-dd")" />
                         <span asp-validation-for="Fecha" class="text-danger"></span>
                     </div>
                 </div>
@@ -100,109 +100,10 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-<script>
-    function addProveedor(e) {
-        e.preventDefault();
-        getProveedorByRFC(e.currentTarget.dataset.search);
-    }
+    <script>
+        let urlProveedor = '@Url.Action("GetSupplierByRFC", "Proveedores")';
+        let urlProveedores = '@Url.Action("GetSuppliers", "Proveedores")';
+    </script>
 
-    function addRowsNextListBox(skip, inicio = false) {
-        addProcessWithSpinnerInList('SpinList', 'fa-search');
-        $('#dRowListBox').attr('data-charging', "1");
-        var searchBy = $('#ProveedorSearchInput')[0] === undefined ? "" : $('#ProveedorSearchInput').val();
-        if (searchBy === '') {
-            $('#dRowListBox').attr('data-rows-next', "0");
-            $('#dRowListBox').attr('data-charging', "0");
-            removeProcessWithSpinnerInList('SpinList', 'fa-search');
-            return false;
-        }
-        $.ajax({
-            url: '@Url.Action("GetProveedores", "Entradas")',
-            method: 'POST',
-            datatype: 'text',
-            data: {
-                pattern: searchBy,
-                skip: skip
-            },
-            success: function (r) {
-                if (inicio) { $('#dRowListBox').empty(); }
-                if (r !== null && r.trim() !== '') {
-                    $('#dRowListBox').append(r);
-                    $('#dRowListBox').slideDown();
-                    $('#ProveedorSearchInput').focus();
-                } else {
-                    $('#dRowListBox').attr('data-rows-next', "0");
-                }
-                $('#dRowListBox').attr('data-charging', "0");
-                removeProcessWithSpinnerInList('SpinList', 'fa-search');
-            },
-            error: function (r) {
-                $('#dRowListBox').attr('data-charging', "0");
-                removeProcessWithSpinnerInList('SpinList', 'fa-search');
-            },
-            cache: false
-        });
-    }
-
-    function deleteButtonProveedor(e) {
-        e.preventDefault();
-        $('#ProveedorID').val('');
-        $('#ProveedorNombre')[0].innerText = '';
-        $('#ProveedorRFC')[0].innerText = '';
-        $('#ProveedorDatos').removeClass('d-block').addClass('d-none');
-        $('#ProveedorSearch').removeClass('d-none').addClass('d-block');
-        $('#ProveedoresLista > div').remove();
-        $('#ProveedorSearchInput').val('');
-        $('#ProveedorSearchInput').focus();
-    }
-
-    function getProveedor(e) {
-        if (e.keyCode === 13) {
-            e.preventDefault();
-            getProveedorByRFC(e.currentTarget.value);
-        }
-
-    }
-
-    function getProveedorByRFC(rfc) {
-        if (rfc !== '') {
-            addProcessWithSpinnerInList('SpinList', 'fa-search');
-            $.ajax({
-                url: '@Url.Action("GetProveedor", "Entradas")',
-                method: 'POST',
-                datatype: 'text',
-                data: { rfc: rfc },
-                success: function (r) {
-                    if (!r.error) {
-                        $('#ProveedorDatos').removeClass('d-none').addClass('d-block');
-                        $('#ProveedorID').val(r.proveedorID);
-                        $('#ProveedorNombre')[0].innerText = r.nombre;
-                        $('#ProveedorRFC')[0].innerText = r.rfc;
-                        $('#ProveedorSearch').removeClass('d-block').addClass('d-none');
-                        $('#dRowListBox > div').remove();
-                        $('#Folio').focus();
-                    } else {
-                        alert(r.message);
-                    }
-                    removeProcessWithSpinnerInList('SpinList', 'fa-search');
-                },
-                error: function (r) {
-                    removeProcessWithSpinnerInList('SpinList', 'fa-search');
-                },
-                cache: false
-            });
-        }
-    }
-
-    function searchListBox(e) {
-        e.preventDefault();
-        if ($('#ProveedorSearchInput').attr('data-bs-toggle')) {
-            if ($('#ProveedorSearchInput').val() !== '') {
-                skip = 0;
-                addRowsNextListBox(skip, true);
-            }
-        }
-    }
-      
-</script>
+    <script src="~/js/movements.js"></script>
 }

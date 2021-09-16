@@ -1,12 +1,21 @@
-﻿@model IEnumerable<LAMBusiness.Shared.Catalogo.Almacen>
+﻿@model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Shared.Catalogo.Almacen>>
 
-@if (Model.Any())
+@if (Model != null)
 {
     <div>
         <ul class="list-group">
-            @foreach (var item in Model.OrderBy(p => p.AlmacenNombre))
+            @if (Model.Skip == 0)
             {
-                <li class="list-group-item list-group-item-action"
+                <li class="list-group-item list-group-item-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Almacenes</span>
+                        <span>@Model.Registros reg.</span>
+                    </div>
+                </li>
+            }
+            @foreach (var item in Model.Datos)
+            {
+                <li class="list-group-item list-group-item-action almacen"
                     data-id="@item.AlmacenID"
                     data-search="@item.AlmacenNombre"
                     data-nombre="@item.AlmacenDescripcion"

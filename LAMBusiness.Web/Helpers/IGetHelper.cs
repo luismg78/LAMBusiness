@@ -16,7 +16,7 @@ namespace LAMBusiness.Web.Helpers
         Task<Administrador> GetAdministradorByIdAsync(string id);
         Task<Almacen> GetAlmacenByIdAsync(Guid id);
         Task<Almacen> GetAlmacenByNombreAsync(string almacen);
-        Task<List<Almacen>> GetAlmacenesByPatternAsync(string pattern, int skip);
+        Task<Filtro<List<Almacen>>> GetAlmacenesByPatternAsync(Filtro<List<Almacen>> filtro);
         Task<Cliente> GetClienteByIdAsync(Guid id);
         Task<Colaborador> GetColaboradorByCURPAsync(string curp);
         Task<Colaborador> GetColaboradorByIdAsync(Guid id);
@@ -48,7 +48,7 @@ namespace LAMBusiness.Web.Helpers
         Task<Filtro<List<Producto>>> GetProductosByPatternAsync(Filtro<List<Producto>> filtro);
         Task<Proveedor> GetProveedorByIdAsync(Guid id);
         Task<Proveedor> GetProveedorByRFCAsync(string rfc);
-        Task<List<Proveedor>> GetProveedoresByPatternAsync(string pattern, int skip);
+        Task<Filtro<List<Proveedor>>> GetProveedoresByPatternAsync(Filtro<List<Proveedor>> filtro);
         Task<Salida> GetSalidaByIdAsync(Guid id);
         Task<SalidaDetalle> GetSalidaDetalleByIdAsync(Guid id);
         Task<List<SalidaDetalle>> GetSalidaDetalleBySalidaIdAsync(Guid id);

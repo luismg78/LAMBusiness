@@ -70,35 +70,44 @@
         /// </summary>
         /// <param name="pattern"></param>
         /// <returns></returns>
-        public async Task<List<Almacen>> GetAlmacenesByPatternAsync(string pattern, int skip)
+        public async Task<Filtro<List<Almacen>>> GetAlmacenesByPatternAsync(Filtro<List<Almacen>> filtro)
         {
-            string[] patterns = pattern.Trim().Split(' ');
             IQueryable<Almacen> query = null;
-            foreach (var p in patterns)
+            if (filtro.Patron != null && filtro.Patron != "")
             {
-                string _pattern = p.Trim();
-                if (_pattern != "")
+                var words = filtro.Patron.Trim().ToUpper().Split(' ');
+                foreach (var w in words)
                 {
-                    if (query == null)
+                    if (w.Trim() != "")
                     {
-                        query = _context.Almacenes
-                                .Where(p => p.AlmacenNombre.Contains(_pattern) ||
-                                            p.AlmacenDescripcion.Contains(_pattern));
-                    }
-                    else
-                    {
-                        query = query.Where(p => p.AlmacenNombre.Contains(_pattern) ||
-                                                 p.AlmacenDescripcion.Contains(_pattern));
+                        if (query == null)
+                        {
+                            query = _context.Almacenes
+                                .Where(a => a.AlmacenNombre.Contains(w) ||
+                                            a.AlmacenDescripcion.Contains(w));
+                        }
+                        else
+                        {
+                            query = query.Where(a => a.AlmacenNombre.Contains(w) ||
+                                                a.AlmacenDescripcion.Contains(w));
+                        }
                     }
                 }
             }
-
             if (query == null)
             {
                 query = _context.Almacenes;
             }
 
-            return await query.OrderBy(e => e.AlmacenNombre).Skip(skip).Take(50).ToListAsync();
+            filtro.Registros = await query.CountAsync();
+
+            filtro.Datos = await query
+                .OrderBy(p => p.AlmacenNombre)
+                .Skip(filtro.Skip)
+                .Take(50)
+                .ToListAsync();
+
+            return filtro;
         }
 
         //Bitácora
@@ -735,35 +744,46 @@
         /// </summary>
         /// <param name="pattern"></param>
         /// <returns></returns>
-        public async Task<List<Proveedor>> GetProveedoresByPatternAsync(string pattern, int skip)
+        public async Task<Filtro<List<Proveedor>>> GetProveedoresByPatternAsync(Filtro<List<Proveedor>> filtro)
         {
-            string[] patterns = pattern.Trim().Split(' ');
             IQueryable<Proveedor> query = null;
-            foreach (var p in patterns)
+            if (filtro.Patron != null && filtro.Patron != "")
             {
-                string _pattern = p.Trim();
-                if (_pattern != "")
+                var words = filtro.Patron.Trim().ToUpper().Split(' ');
+                foreach (var w in words)
                 {
-                    if (query == null)
+                    if (w.Trim() != "")
                     {
-                        query = _context.Proveedores
-                            .Where(p => p.RFC.Contains(_pattern) ||
-                                        p.Nombre.Contains(_pattern));
-                    }
-                    else
-                    {
-                        query = query.Where(p => p.RFC.Contains(_pattern) ||
-                                                 p.Nombre.Contains(_pattern));
+                        if (query == null)
+                        {
+                            query = _context.Proveedores
+                                    .Where(p => p.RFC.Contains(w) ||
+                                                p.Nombre.Contains(w));
+                        }
+                        else
+                        {
+                            query = query.Where(p => p.RFC.Contains(w) ||
+                                                p.Nombre.Contains(w));
+                        }
                     }
                 }
             }
-
             if (query == null)
             {
                 query = _context.Proveedores;
             }
 
-            return await query.OrderBy(e => e.RFC).Skip(skip).Take(50).ToListAsync();
+            filtro.Registros = await query.CountAsync();
+
+            filtro.Datos = await query
+                .Include(p => p.Municipios)
+                .Include(p => p.Municipios.Estados)
+                .OrderBy(p => p.RFC)
+                .Skip(filtro.Skip)
+                .Take(50)
+                .ToListAsync();
+
+            return filtro;
         }
 
         /// <summary>

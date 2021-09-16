@@ -173,7 +173,7 @@
                                         </div>
                                         <div>
                                             <span class="d-block">@item.Productos.ProductoNombre</span>
-                                            <a href="#" class="d-block small" onclick="getProducto('@item.ProductoID');">@item.Productos.Codigo</a>
+                                            <a href="#" class="d-block small" onclick="getProductoDetail('@item.ProductoID');">@item.Productos.Codigo</a>
                                         </div>
                                     </div>
                                 </div>
@@ -216,7 +216,7 @@
                                 {
                                     @*@if (Model.PermisoEscritura) cambiar por permiso para aplicar
                                         {*@
-                                    <a href="#" data-id="@Model.EntradaID" class="applyConfirm col-12 col-md-7 col-lg-5 btn btn-info text-white" data-bs-toggle="modal" data-bs-target="#applyConfirm">Aplicar Movimiento</a>
+                                    <a href="#" id="applyConfirmButton" data-id="@Model.EntradaID" class="col-12 col-md-7 col-lg-5 btn btn-info text-white" data-bs-toggle="modal" data-bs-target="#applyConfirm">Aplicar Movimiento</a>
                                     //}
                                 }
                                 <a asp-action="Index" class="btn btn-outline-secondary col-12 col-md-4 col-lg-3 mt-2 mt-md-0">Regresar</a>
@@ -245,28 +245,32 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-<script>
-        var itemToDelete, itemToApply;
+    <script>
+    let urlApply = '@Url.Action("Apply", "Entradas", new { id = "paramId" })';
+    let urlDeleteDetails = '@Url.Action("DeleteDetails", "Entradas", new { id = "paramId" })';
+    let urlProductoDetails = '@Url.Action("GetProductDetail", "Productos")';
 
-        $(document).ready(function () {
-            $('.applyConfirm').click((e) => {
-                itemToApply = e.currentTarget.dataset.id;
-            });
-        });
+        //var itemToApply;
 
-        function apply(e) {
+        //$(document).ready(function () {
+        //    $('.applyConfirm').click((e) => {
+        //        itemToApply = e.currentTarget.dataset.id;
+        //    });
+        //});
+
+        @*function apply(e) {
             var url = '@Url.Action("Apply", "Entradas", new { id = "paramId" })';
             url = url.replace('paramId', itemToApply);
 
             window.location.href = url;
-        }
-        function deleteRegister(e) {
+        }*@
+        @*function deleteRegister(e) {
             var url = '@Url.Action("DeleteDetails", "Entradas", new { id = "paramId" })';
             url = url.replace('paramId', itemToDelete);
 
             window.location.href = url;
-        }
-        function getProducto(id) {
+        }*@
+        @*function getProducto(id) {
             addProcessWithSpinnerInList('SpinList', 'fa-search');
             $.ajax({
                 url: '@Url.Action("GetProductDetail", "Productos")',
@@ -282,7 +286,7 @@
                         $('#ModalHelp .modal-body').empty();
                         $('#ModalHelp .modal-body').append(r);
                         $('#ModalHelp').modal('show');
-                    } 
+                    }
                     removeProcessWithSpinnerInList('SpinList', 'fa-search');
                 },
                 error: function (r) {
@@ -290,6 +294,7 @@
                 },
                 cache: false
             });
-        }
-</script>
+        }*@
+    </script>
+    <script src="~/js/movements.js"></script>
 }

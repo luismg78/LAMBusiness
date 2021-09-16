@@ -390,6 +390,63 @@
             return _context.Proveedores.Any(e => e.ProveedorID == id);
         }
 
+        public async Task<IActionResult> GetSupplierByRFCAsync(string rfc)
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+            if (validateToken != null) { return null; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return null;
+            }
+
+            if (rfc == null || rfc == "")
+            {
+                return null;
+            }
+
+            var proveedor = await _getHelper.GetProveedorByRFCAsync(rfc);
+            if (proveedor != null)
+            {
+                return Json(
+                    new
+                    {
+                        proveedor.ProveedorID,
+                        proveedor.RFC,
+                        proveedor.Nombre,
+                        error = false
+                    });
+            }
+
+            return Json(new { error = true, message = "Proveedor inexistente" });
+
+        }
+
+        public async Task<IActionResult> GetSuppliersAsync(Filtro<List<Proveedor>> filtro)
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return new EmptyResult(); }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return new EmptyResult();
+            }
+
+            filtro = await _getHelper.GetProveedoresByPatternAsync(filtro);
+
+            if (filtro.Registros == 0)
+            {
+                return new EmptyResult();
+            }
+
+            return new PartialViewResult
+            {
+                ViewName = "_GetProveedores",
+                ViewData = new ViewDataDictionary
+                            <Filtro<List<Proveedor>>>(ViewData, filtro)
+            };
+        }
+
         //Contactos
 
         public async Task<IActionResult> AddContacto(Guid? id)

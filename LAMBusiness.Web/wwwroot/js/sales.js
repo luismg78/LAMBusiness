@@ -55,7 +55,7 @@ modalElement.addEventListener('hidden.bs.modal', function (event) {
 
 function addProduct(){
     let product = document.querySelector('li.product');
-    inputText.value = product.dataset.code;
+    inputText.value = product.dataset.search;
     getProductByCode();
     bsOffcanvas.hide();
 }

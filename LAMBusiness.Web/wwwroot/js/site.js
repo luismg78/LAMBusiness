@@ -146,7 +146,7 @@ function positionCursorWithArrowKey(e) {
             }
             if (band) {
                 var obj = $('div.list-registers ul li.selected')
-                e.currentTarget.value = obj[0].dataset.search;
+                e.currentTarget.value = obj[0].dataset.search === undefined ? '' : obj[0].dataset.search;
                 obj[0].scrollIntoView(false);
                 $(e.currentTarget).focus();
             }
@@ -166,7 +166,7 @@ function positionCursorWithArrowKey(e) {
             }
             if (band) {
                 var obj = $('div.list-registers ul li.selected')
-                e.currentTarget.value = obj[0].dataset.search;
+                e.currentTarget.value = obj[0].dataset.search === undefined ? '' : obj[0].dataset.search;
                 obj[0].scrollIntoView(false);
                 $(e.currentTarget).focus();
             }

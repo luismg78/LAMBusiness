@@ -601,7 +601,7 @@
 
         public async Task<IActionResult> GetProductoByCodeAsync(string code)
         {
-            var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return new EmptyResult(); }
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
@@ -638,7 +638,7 @@
 
         public async Task<IActionResult> GetProductListAsync(Filtro<List<Producto>> filtro, bool mostrarPrecioVenta = false)
         {
-            var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return new EmptyResult(); }
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))

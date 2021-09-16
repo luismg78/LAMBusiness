@@ -514,52 +514,52 @@
             return _context.Salidas.Any(s => s.SalidaID == id && s.Aplicado == true);
         }
 
-        public async Task<IActionResult> GetAlmacen(string almacenNombre)
-        {
-            var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
-            if (validateToken != null) { return null; }
+        //public async Task<IActionResult> GetAlmacen(string almacenNombre)
+        //{
+        //    var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+        //    if (validateToken != null) { return null; }
 
-            if (almacenNombre == null || almacenNombre == "")
-            {
-                return null;
-            }
+        //    if (almacenNombre == null || almacenNombre == "")
+        //    {
+        //        return null;
+        //    }
 
-            var almacen = await _getHelper.GetAlmacenByNombreAsync(almacenNombre.Trim().ToUpper());
-            if (almacen != null)
-            {
-                return Json(
-                    new
-                    {
-                        almacen.AlmacenID,
-                        almacen.AlmacenNombre,
-                        almacen.AlmacenDescripcion,
-                        error = false
-                    });
-            }
+        //    var almacen = await _getHelper.GetAlmacenByNombreAsync(almacenNombre.Trim().ToUpper());
+        //    if (almacen != null)
+        //    {
+        //        return Json(
+        //            new
+        //            {
+        //                almacen.AlmacenID,
+        //                almacen.AlmacenNombre,
+        //                almacen.AlmacenDescripcion,
+        //                error = false
+        //            });
+        //    }
 
-            return Json(new { error = true, message = "Almacén inexistente" });
+        //    return Json(new { error = true, message = "Almacén inexistente" });
 
-        }
+        //}
 
-        public async Task<IActionResult> GetAlmacenes(string pattern, int? skip)
-        {
-            var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
-            if (validateToken != null) { return null; }
+        //public async Task<IActionResult> GetAlmacenes(string pattern, int? skip)
+        //{
+        //    var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+        //    if (validateToken != null) { return null; }
 
-            if (pattern == null || pattern == "" || skip == null)
-            {
-                return null;
-            }
+        //    if (pattern == null || pattern == "" || skip == null)
+        //    {
+        //        return null;
+        //    }
 
-            var almacenes = await _getHelper.GetAlmacenesByPatternAsync(pattern, (int)skip);
+        //    var almacenes = await _getHelper.GetAlmacenesByPatternAsync(pattern, (int)skip);
 
-            return new PartialViewResult
-            {
-                ViewName = "_GetAlmacenes",
-                ViewData = new ViewDataDictionary
-                            <List<Almacen>>(ViewData, almacenes)
-            };
-        }
+        //    return new PartialViewResult
+        //    {
+        //        ViewName = "_GetAlmacenes",
+        //        ViewData = new ViewDataDictionary
+        //                    <List<Almacen>>(ViewData, almacenes)
+        //    };
+        //}
 
         //public async Task<IActionResult> GetProducto(string code)
         //{

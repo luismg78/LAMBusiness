@@ -289,6 +289,58 @@
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> GetAlmacenByNameAsync(string almacenNombre)
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return null; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+            {
+                return new EmptyResult();
+            }
+
+            if (almacenNombre == null || almacenNombre == "")
+            {
+                return new EmptyResult();
+            }
+
+            var almacen = await _getHelper.GetAlmacenByNombreAsync(almacenNombre.Trim().ToUpper());
+            if (almacen != null)
+            {
+                return Json(
+                    new
+                    {
+                        almacen.AlmacenID,
+                        almacen.AlmacenNombre,
+                        almacen.AlmacenDescripcion,
+                        error = false
+                    });
+            }
+
+            return Json(new { error = true, message = "Almacén inexistente" });
+
+        }
+
+        public async Task<IActionResult> GetAlmacenesListAsync(Filtro<List<Almacen>> filtro)
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+            if (validateToken != null) { return null; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return null;
+            }
+
+            filtro = await _getHelper.GetAlmacenesByPatternAsync(filtro);
+
+            return new PartialViewResult
+            {
+                ViewName = "_GetAlmacenes",
+                ViewData = new ViewDataDictionary
+                            <Filtro<List<Almacen>>>(ViewData, filtro)
+            };
+        }
+
         private bool AlmacenExists(Guid id)
         {
             return _context.Almacenes.Any(e => e.AlmacenID == id);

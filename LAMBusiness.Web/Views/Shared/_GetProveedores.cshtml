@@ -1,13 +1,22 @@
-﻿@model IEnumerable<LAMBusiness.Shared.Contacto.Proveedor>
+﻿@model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Shared.Contacto.Proveedor>>
 
-@if (Model.Any())
+@if (Model != null)
 {
     <div>
         <ul class="list-group">
-            @foreach (var item in Model.OrderBy(p => p.Nombre))
+            @if (Model.Skip == 0)
             {
-                <li class="list-group-item list-group-item-action" 
-                    data-id="@item.ProveedorID" 
+                <li class="list-group-item list-group-item-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Proveedores</span>
+                        <span>@Model.Registros reg.</span>
+                    </div>
+                </li>
+            }
+            @foreach (var item in Model.Datos)
+            {
+                <li class="list-group-item list-group-item-action proveedor"
+                    data-id="@item.ProveedorID"
                     data-search="@item.RFC"
                     data-nombre="@item.Nombre"
                     onclick="addProveedor(event);">
