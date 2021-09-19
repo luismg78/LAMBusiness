@@ -1,0 +1,17 @@
+﻿@model LAMBusiness.Web.Models.ViewModels.VentasViewModel
+
+@if (Model != null)
+{
+    <div class="p-3">
+        <div class="row px-4">
+            <h3 class="col-6 mb-4 text-base">FOLIO</h3>
+            <h3 class="col-6 mb-4 text-end text-base">@Model.Folio.ToString("00000000")</h3>
+            <h4 class="col-6 text-muted">Importe cobro</h4>
+            <h4 class="col-6 text-end text-muted">@Model.ImporteCobro.ToString("$###,###,##0.00")</h4>
+            <h4 class="col-6 text-muted">Importe venta</h4>
+            <h4 class="col-6 text-end text-muted">@Model.ImporteTotal.ToString("$###,###,##0.00")</h4>
+            <h3 class="col-6 mt-3 fw-bold">Cambio</h3>
+            <h3 class="col-6 text-end mt-3 fw-bold">@Convert.ToDecimal(Model.ImporteCobro - Model.ImporteTotal).ToString("$###,###,##0.00")</h3>
+        </div>
+    </div>
+}

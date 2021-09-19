@@ -32,28 +32,28 @@
     <header class="fixed-top">
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand text-base" asp-area="" asp-controller="Home" asp-action="Index">LAMBusiness</a>
+                <a class="navbar-brand text-base d-block d-md-none d-lg-block" asp-area="" asp-controller="Home" asp-action="Index">LAMBusiness</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                        aria-expanded="false" aria-label="Toggle navigation" style="padding:0.35rem;">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 @await Html.PartialAsync("_Menu.cshtml", ViewData["token"])
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1 justify-content-end">
                         <li class="nav-item">
-                                <a class="nav-link"
-                                   href="javascript:void(0);"
-                                   onClick="toggleFullScreen();">
-                                    <div class="btn-icon rounded-circle d-inline-block">
-                                        <i class="fa fa-expand-arrows-alt"></i>
-                                    </div>
-                                    <span class="d-md-none ms-2">Notificaciones</span>
-                                </a>
-                            </li>
-                        <li class="nav-item">
-                            <a class="nav-link @if (menu == "notificaciones") {<text>fw-bold text-base</text>} else {<text>text-dark</text>} "
-                               asp-area="" asp-controller="Home" asp-action="Index">
+                            <a class="nav-link"
+                                href="javascript:void(0);"
+                                onClick="toggleFullScreen();">
                                 <div class="btn-icon rounded-circle d-inline-block">
+                                    <i class="fa fa-expand-arrows-alt"></i>
+                                </div>
+                                <span class="d-md-none ms-2">Expandir Pantalla</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="LAMNotificationText" class="nav-link @if (menu == "notificaciones") {<text>fw-bold text-base</text>} else {<text>text-dark</text>} "
+                               asp-area="" asp-controller="Home" asp-action="Index">
+                                <div id="LAMNotificationIcon" class="btn-icon rounded-circle d-inline-block">
                                     <i class="fa fa-bell"></i>
                                 </div>
                                 <span class="d-md-none ms-2">Notificaciones</span>
@@ -99,9 +99,16 @@
     <!-- Modal Help -->
     <partial name="_Help" />
 
+    <!-- Audio Notification -->
+    <audio id="audioNotification" controls="controls" class="d-none">
+        <source src="~/audio/Notification.mp3" type="audio/mpeg" />
+    </audio>
+    
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     @*<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
     <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/hub.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
     

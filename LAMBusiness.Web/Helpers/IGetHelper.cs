@@ -1,16 +1,13 @@
-﻿using BarcodeLib;
-using LAMBusiness.Shared.Aplicacion;
-using LAMBusiness.Shared.Catalogo;
-using LAMBusiness.Shared.Contacto;
-using LAMBusiness.Shared.Movimiento;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace LAMBusiness.Web.Helpers
+﻿namespace LAMBusiness.Web.Helpers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using Shared.Aplicacion;
+    using Shared.Catalogo;
+    using Shared.Contacto;
+    using Shared.Movimiento;
+
     public interface IGetHelper
     {
         Task<Administrador> GetAdministradorByIdAsync(string id);
@@ -43,7 +40,7 @@ namespace LAMBusiness.Web.Helpers
         Task<Paquete> GetPaqueteByIdAsync(Guid id);
         Task<Paquete> GetPaqueteByPieceID(Guid id);
         Task<Producto> GetProductByCodeAsync(string codigo);
-        Task<Resultado<VentaNoAplicadaDetalle>> GetProductByCodeForSale(Guid? id, string codigo, decimal cantidad);
+        Task<Resultado<VentaNoAplicadaDetalle>> GetProductByCodeForSale(Guid? id, Guid usuarioId, string codigo, decimal cantidad);
         Task<Producto> GetProductByIdAsync(Guid id);
         Task<Filtro<List<Producto>>> GetProductosByPatternAsync(Filtro<List<Producto>> filtro);
         Task<Proveedor> GetProveedorByIdAsync(Guid id);

@@ -1,4 +1,14 @@
-﻿/*Loader*/
+﻿/*Blinking*/
+.blinking {animation:blinkingText 1s infinite;}
+@keyframes blinkingText{
+	0%{color:#ff4152;}
+	49%{color: transparent;}
+	50%{color: transparent;}
+	99%{color:transparent;}
+	100%{color:#ff4152;}
+}
+
+/*Loader*/
 .loader {align-items:center;animation-delay:1s;display:flex;height:60px;
          justify-content:center;overflow:hidden;}
 

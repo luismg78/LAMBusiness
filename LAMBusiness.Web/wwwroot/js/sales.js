@@ -10,6 +10,11 @@ myOffcanvas.addEventListener('hidden.bs.offcanvas', function () {
     inputText.focus();
 });
 
+let modalHelp = document.getElementById('ModalHelp');
+modalHelp.addEventListener('hidden.bs.modal', function (event) {
+    window.location.href = urlSale;
+})
+
 screenResize();
 resetMode('saleButton');
 window.addEventListener('resize', function () {
@@ -21,7 +26,7 @@ document.getElementById('inputText').addEventListener('keydown', function (e) {
         case 13: //enter
             setInputText(e);
             break;
-        case 27: //*
+        case 27: //ESC            
             saleMode();
             break;
         case 106: //*
@@ -41,9 +46,24 @@ document.getElementById('inputText').addEventListener('keydown', function (e) {
             e.preventDefault();
             searchMode();
             break;
+        case 114: //F3    
+            e.preventDefault();
+            cancelSaleMode();
+            break;
+        case 115: //F4
+            e.preventDefault();
+            getItBackSaleMode();
+            break;
         case 116: //F5
             e.preventDefault();
             payMode();
+            break;
+        case 118: //F7 retiro de efectivo
+            withdrawCashMode(event);
+            break;
+        case 119: //F8
+            e.preventDefault();
+            closeSalesMode();
             break;
     }
 });
@@ -53,11 +73,101 @@ modalElement.addEventListener('hidden.bs.modal', function (event) {
     inputText.focus();
 })
 
-function addProduct(){
-    let product = document.querySelector('li.product');
+function addProduct(e){
+    let product = e.currentTarget;
     inputText.value = product.dataset.search;
     getProductByCode();
     bsOffcanvas.hide();
+}
+function addSale(e) {
+    let sale = e.currentTarget;
+    window.location.href = urlSale + '?id=' + sale.dataset.id;
+}
+function cancelSale(e) {
+    e.preventDefault();
+    addProcessWithSpinner('Cancelando venta...');
+    $.ajax({
+        url: urlCancelSale,
+        method: 'POST',
+        datatype: 'text',
+        data: { id: ventaId.value },
+        success: function (result) {
+            if (result.error !== undefined && result.error !== null && result.error) {
+                if (result.reiniciar) {
+                    window.location.href = urlMovement;
+                } else {
+                    message.innerHTML = result.estatus;
+                    message.style.display = 'block';
+                    removeProcessWithSpinner();
+                    bsOffcanvas.hide();
+                    inputText.focus();
+                }
+            } else {
+                window.location.href = urlSale;
+            }
+        },
+        error: function (r) {
+            alert(r);
+            removeProcessWithSpinner();
+        },
+        cache: false
+    });
+}
+function cancelSaleMode() {
+    if (!validateSale()) { return; }
+    resetMode('cancelSaleButton');
+    let myOffCanvasLabel = document.getElementById('offcanvasRightLabel');
+    myOffCanvasLabel.innerHTML = "Cancelar Venta";
+    let myOffCanvasBody = document.getElementsByClassName('offcanvas-body');
+    let html = '<div class="p-3">';
+    html += '<p class="text-muted">Presione el botón cancelar si desea anular la venta actual e iniciar una nueva venta.</p>';
+    html += '<button class="btn btn-danger mb-3" onclick="cancelSale(event);">Cancelar venta</button>';
+    html += '<p class="text-muted">Presione el botón guardar si desea almacenar temporalmente la venta actual e iniciar una nueva venta.</p>';
+    html += '<button class="btn btn-warning mb-3" onclick="saveSale(event);">Guardar venta</button>';
+    html += '</div>';
+    myOffCanvasBody[0].innerHTML = html;
+    bsOffcanvas.show();
+    inputText.focus();
+}
+function closeSalesMode() {
+    resetMode('closeSalesButton');
+    inputText.setAttribute('type', 'password');
+    inputText.dataset.input = 'corteCaja';
+    icon.classList.remove('fa-barcode', 'fa-search', 'fa-dollar-sign', 'fa-cash-register');
+    icon.classList.add('fa-file-invoice-dollar');
+    inputText.focus();
+}
+function getItBackSale(e) {
+    e.preventDefault();    
+}
+function getItBackSaleMode() {    
+    $.ajax({
+        url: urlGetItBackSale,
+        method: 'POST',
+        success: function (result) {
+            if (result.error !== undefined && result.error !== null && result.error) {
+                if (result.reiniciar) {
+                    window.location.href = urlMovement;
+                } else {
+                    message.innerHTML = result.estatus;
+                    message.style.display = 'block';
+                }
+            } else {
+                resetMode('getItBackSaleButton');
+                let myOffCanvasLabel = document.getElementById('offcanvasRightLabel');
+                myOffCanvasLabel.innerHTML = "Ventas pendientes de aplicar";
+                let myOffCanvasBody = document.getElementsByClassName('offcanvas-body');
+                myOffCanvasBody[0].innerHTML = result;
+                bsOffcanvas.show();
+            }
+        },
+        error: function (r) {
+            inputText.value = '';
+            message.innerHTML = 'Código inexistente...';
+            message.style.display = 'block';
+        },
+        cache: false
+    });
 }
 function getProduct(id, code = false) {
     addProcessWithSpinnerInList('SpinList', 'fa-search');
@@ -66,7 +176,7 @@ function getProduct(id, code = false) {
         url = urlProductDetailByCode;
     }
     if (id === '') {
-        messageLabel.innerHTML = 'Favor de Urlrllroporcionar el código del producto';
+        messageLabel.innerHTML = 'Favor de proporcionar el código del producto';
         messageLabel.style.display = 'block';
         return false;
     }
@@ -154,7 +264,7 @@ function getTotalSum() {
         total += parseFloat(importe[i].dataset.importe);
     }
     document.getElementById('total').innerHTML = formatCurrency(total);
-    document.getElementById('total-sm').innerHTML = formatCurrency(total);
+    document.getElementById('total-sm').innerHTML = 'Total ' + formatCurrency(total);
 }
 function offcanvas(e) {
     bsOffcanvas.show();
@@ -169,23 +279,12 @@ function makeSale(e) {
     }
     getProductByCode();
 }
-function saleMode() {
-    resetMode('saleButton');
-    cant = '1';
-    inputText.setAttribute('type', 'text');
-    inputText.value = '';
-    inputText.dataset.input = 'codigo';
-    icon.classList.remove('fa-dollar-sign', 'fa-search');
-    icon.classList.add('fa-barcode');
-    message.innerHTML = '';
-    message.style.display = 'none';
-    inputText.focus();
-}
 function payMode() {
+    if (!validateSale()) { return; }
     resetMode('payButton');
     inputText.setAttribute('type', 'number');
     inputText.dataset.input = 'importe';
-    icon.classList.remove('fa-barcode', 'fa-search');
+    icon.classList.remove('fa-barcode', 'fa-search', 'fa-cash-register', 'fa-file-invoice-dollar');
     icon.classList.add('fa-dollar-sign');
     inputText.focus();
 }
@@ -213,7 +312,7 @@ function paySale(e) {
                     message.style.display = 'block';
                 }
             } else {
-                window.location.href = urlSale;
+                resetSale(result);
             }
         },
         error: function (r) {
@@ -225,35 +324,96 @@ function paySale(e) {
     });
 }
 function resetMode(button) {
-    let payButton = document.getElementById('payButton');
-    let saleButton = document.getElementById('saleButton');
-    let searchButton = document.getElementById('searchButton');
-    payButton.classList.remove('bg-success');
-    saleButton.classList.remove('bg-primary');
-    searchButton.classList.remove('bg-warning');
-    payButton.classList.remove('text-white');
-    saleButton.classList.remove('text-white');
-    searchButton.classList.remove('text-white');
-    payButton.classList.add('bg-white');
-    saleButton.classList.add('bg-white');
-    searchButton.classList.add('bg-white');
+    inputText.value = '';
+    message.innerHTML = '';
+    message.style.display = 'none';
+    let elementSelectedButton = document.querySelector('.selected');
+    elementSelectedButton.classList.remove('bg-base', 'selected', 'text-white');
+    elementSelectedButton.classList.add('bg-white');
+    let elementButton = document.getElementById(button);
+    elementButton.classList.remove('bg-white');
+    elementButton.classList.add('bg-base', 'selected', 'text-white');
+    inputText.setAttribute('placeholder', 'Contraseña del usuario.');
     switch (button) {
-        case 'payButton':
-            payButton.classList.remove('bg-white');
-            payButton.classList.add('bg-success');
-            payButton.classList.add('text-white');
+        case 'closeSalesButton':
+            inputText.setAttribute('placeholder', 'Contraseña del usuario.');
             break;
+        case 'payButton':
+            inputText.setAttribute('placeholder', 'Importe');
+            break;
+        case 'cancelSaleButton':
         case 'saleButton':
-            saleButton.classList.remove('bg-white');
-            saleButton.classList.add('bg-primary');
-            saleButton.classList.add('text-white');
+        case 'getItBackSaleButton':
+            inputText.setAttribute('placeholder', 'Código del producto.');
             break;
         case 'searchButton':
-            searchButton.classList.remove('bg-white');
-            searchButton.classList.add('bg-warning');
-            searchButton.classList.add('text-white');
+            inputText.setAttribute('placeholder', 'Código o descripción del producto.');
+            break;
+        case 'withdrawCashButton':
+            inputText.setAttribute('placeholder', 'Cantidad * Denominación.');
             break;
     }
+}
+function resetSale(r) {    
+    let modalHelpLabel = document.getElementById('ModalHelpLabel');
+    let myModal = new bootstrap.Modal(document.getElementById('ModalHelp'), {
+        keyboard: true
+    })
+    myModal.show(modalHelp);
+    modalHelpLabel.innerHTML = 'Ventas';
+    modalHelp.querySelectorAll('div.modal-dialog')[0].classList.remove('modal-lg');
+    modalHelp.querySelectorAll('div.modal-dialog')[0].classList.add('modal-md');
+    modalHelp.querySelectorAll('div.modal-body')[0].innerHTML = r;
+}
+function saveSale(e) {
+    e.preventDefault();
+    addProcessWithSpinner('Guardando venta...');
+    $.ajax({
+        url: urlSaveSale,
+        method: 'POST',
+        datatype: 'text',
+        data: { id : ventaId.value },
+        success: function (result) {            
+            if (result.error !== undefined && result.error !== null && result.error) {
+                if (result.reiniciar) {
+                    window.location.href = urlMovement;
+                } else {
+                    message.innerHTML = result.estatus;
+                    message.style.display = 'block';
+                    removeProcessWithSpinner();
+                    bsOffcanvas.hide();
+                    inputText.focus();
+                }
+            } else {
+                window.location.href = urlSale;
+            }
+        },
+        error: function (r) {
+            alert(r);
+            removeProcessWithSpinner();
+        },
+        cache: false
+    });
+}
+function saleMode() {
+    if (inputText.dataset.input === 'retiroEfectivo') {
+        var box = document.getElementById('datos');
+        if (box.children[0].children !== undefined && box.children[0].children.length > 0) {
+            message.innerHTML = 'Opción no aprobada, retiro de efectivo en proceso.'
+            message.style.display = 'block';
+            return false;
+        }
+    }
+    resetMode('saleButton');
+    cant = '1';
+    inputText.setAttribute('type', 'text');
+    inputText.value = '';
+    inputText.dataset.input = 'codigo';
+    icon.classList.remove('fa-dollar-sign', 'fa-search', 'fa-cash-register', 'fa-file-invoice-dollar');
+    icon.classList.add('fa-barcode');
+    message.innerHTML = '';
+    message.style.display = 'none';
+    inputText.focus();
 }
 function screenResize() {
     var height = $(window).height();
@@ -266,7 +426,7 @@ function searchMode() {
     resetMode('searchButton');
     inputText.setAttribute('type', 'text');
     inputText.dataset.input = 'buscar';
-    icon.classList.remove('fa-barcode', 'fa-dollar-sign');
+    icon.classList.remove('fa-barcode', 'fa-dollar-sign', 'fa-cash-register', 'fa-file-invoice-dollar');
     icon.classList.add('fa-search');
     inputText.focus();
 }
@@ -284,11 +444,11 @@ function searchProduct() {
         },
         success: function (r) {
             if (r !== null && r.trim() !== '') {
-                bsOffcanvas.show();
                 let myOffCanvasLabel = document.getElementById('offcanvasRightLabel');
                 myOffCanvasLabel.innerHTML = "Productos";
                 let myOffCanvasBody = document.getElementsByClassName('offcanvas-body');
                 myOffCanvasBody[0].innerHTML = r;
+                bsOffcanvas.show();
             } else {
                 message.innerHTML = 'Código inexistente...';
                 message.style.display = 'block';
@@ -311,8 +471,71 @@ function setInputText(e) {
         case 'codigo':
             makeSale(e);
             break;
+        case 'corteCaja':
+            //closeSale(e);
+            alert('Corte de caja');
+            break;
         case 'importe':
             paySale(e);
             break;
+        case 'retiroEfectivo':
+            withdrawCashSale();
+            break;
     }
+}
+function validateSale(e){
+    var box = document.getElementById('datos');
+    if (box.children[0].children !== undefined && box.children[0].children.length > 0) {
+        message.innerHTML = "";
+        message.style.display = 'none';
+        return true;
+    }
+    message.innerHTML = "No hay registros de ventas para procesar";
+    message.style.display = 'block';
+    return false;
+}
+function withdrawCashMode(e) {
+    e.preventDefault();
+    if (inputText.dataset.input === 'codigo') {
+        var box = document.getElementById('datos');
+        if (box.children[0].children !== undefined && box.children[0].children.length > 0) {
+            message.innerHTML = 'Opción no aprobada, venta en proceso.'
+            message.style.display = 'block';
+            return false;
+        }
+    }
+    resetMode('withdrawCashButton');
+    inputText.setAttribute('type', 'number');
+    inputText.dataset.input = 'retiroEfectivo';
+    icon.classList.remove('fa-barcode', 'fa-search', 'fa-dollar-sign', 'fa-file-invoice-dollar');
+    icon.classList.add('fa-cash-register');
+    inputText.focus();
+}
+function withdrawCashRemove(e) {
+    e.currentTarget.parentNode.parentNode.parentNode.remove();
+    getTotalSum();
+}
+function withdrawCashSale() {
+    if (inputText.value === '' || cant <= 0 || inputText.value <= 0) {
+        message.innerHTML = 'Cantidad incorrecta.';
+        message.style.display = 'block';
+    } else {
+        var elementNode = document.createElement('div');
+        elementNode.classList.add('bg-white', 'list-group-item', 'list-group-item-action')
+        let importe = cant * inputText.value;
+        var html = '<div class="row p-3">';
+        html += '<div class="col-6"><h4>' + cant + ' x ' + formatCurrency(inputText.value) + '</h4></div>';
+        html += '<div class="col-5 text-end saleAmount" data-importe="' + importe + '"><h4>' + formatCurrency(importe) + '</h4></div>';
+        html += '<div class="col-1 text-end"><a href="#" class="fas fa-times text-danger" onclick="withdrawCashRemove(event);"></a></div>';
+        html += '</div>';
+        elementNode.innerHTML = html;
+        var box = document.getElementById('datos');
+        box.children[0].appendChild(elementNode);
+        box.scrollTop = box.scrollHeight;
+        message.innerHTML = '';
+        message.style.display = 'none';
+        getTotalSum();
+    }
+    cant = '1';
+    inputText.value = '';
 }

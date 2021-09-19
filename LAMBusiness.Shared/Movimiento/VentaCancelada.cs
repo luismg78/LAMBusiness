@@ -3,7 +3,7 @@
     using System;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using Catalogo;
+    using Contacto;
     using Newtonsoft.Json;
 
     [Table("VentasCanceladas", Schema = "Movimiento")]
@@ -13,18 +13,20 @@
         [Display(Name = "Venta (Detalle)")]
         public Guid VentaCanceladaID { get; set; }
 
-        [Display(Name = "Venta (No Aplicada)")]
+        [ForeignKey("Usuario")]
+        [Display(Name = "Usuario")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public Guid VentaID { get; set; }
+        public Guid UsuarioID { get; set; }
 
-        [Display(Name = "Producto")]
-        [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public Guid ProductoID { get; set; }
-
-        [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public decimal Cantidad { get; set; }
+        [JsonIgnore]
+        public virtual Usuario Usuarios { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public decimal PrecioVenta { get; set; }
+        public DateTime? Fecha { get; set; }
+
+        [Display(Name = "Venta Completa")]
+        [Required(ErrorMessage = "El campo {0} es requerido.")]
+        public bool VentaCompleta { get; set; }
+        
     }
 }

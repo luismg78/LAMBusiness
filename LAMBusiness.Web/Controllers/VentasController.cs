@@ -11,6 +11,7 @@
     using Models.ViewModels;
     using Shared.Movimiento;
     using System.Collections.Generic;
+    using LAMBusiness.Shared.Aplicacion;
 
     public class VentasController : GlobalController
     {
@@ -30,7 +31,7 @@
             _configuration = configuration;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(Guid? id)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
             if (validateToken != null) { return validateToken; }
@@ -40,11 +41,22 @@
                 return RedirectToAction(nameof(Index));
             }
 
-            VentaNoAplicada ventaNoAplicada = await _context.VentasNoAplicadas
-                .OrderByDescending(v => v.Fecha)
-                .FirstOrDefaultAsync(v => v.UsuarioID == token.UsuarioID);
+            VentaNoAplicada ventaNoAplicada = new VentaNoAplicada();
 
-            if(ventaNoAplicada == null)
+            if(id == null)
+            {
+                ventaNoAplicada = await _context.VentasNoAplicadas
+                    .OrderByDescending(v => v.Fecha)
+                    .FirstOrDefaultAsync(v => v.UsuarioID == token.UsuarioID);
+            }
+            else
+            {
+                ventaNoAplicada = await _context.VentasNoAplicadas
+                    .OrderByDescending(v => v.Fecha)
+                    .FirstOrDefaultAsync(v => v.VentaNoAplicadaID == id);
+            }
+
+            if (ventaNoAplicada == null)
             {
                 ventaNoAplicada = new VentaNoAplicada()
                 {
@@ -92,9 +104,42 @@
             }
         }
 
+        public async Task<IActionResult> GetItBackSale()
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+            if (validateToken != null) { return Json(new { Reiniciar = true, Error = true }); }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return Json(new { Reiniciar = true, Error = true });
+            }
+
+            var ventasNoAplicadas = (from v in _context.VentasNoAplicadas
+                                     join d in _context.VentasNoAplicadasDetalle
+                                     on v.VentaNoAplicadaID equals d.VentaNoAplicadaID
+                                     orderby v.Fecha descending
+                                     where v.UsuarioID == token.UsuarioID
+                                     select v).Distinct();
+            
+            int registros = await ventasNoAplicadas.CountAsync();
+            if (registros == 0)
+                return Json(new { Estatus = "No existe registro de ventas pendientes por aplicar.", Error = true });
+
+            Filtro<List<VentaNoAplicada>> filtro = new Filtro<List<VentaNoAplicada>>()
+            {
+                Datos = await ventasNoAplicadas.ToListAsync(),
+                Registros = registros
+            };
+
+            return PartialView(filtro);
+        }
+
         public async Task<IActionResult> GetProductByCode(Guid? id, string codigo, decimal cantidad)
         {
-            var resultado = await _getHelper.GetProductByCodeForSale(id, codigo, cantidad);
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+            if (validateToken != null) { return Json(new { Reiniciar = true, Error = true }); }
+
+            var resultado = await _getHelper.GetProductByCodeForSale(id, token.UsuarioID, codigo, cantidad);
 
             if (resultado.Error)
             {
@@ -113,14 +158,98 @@
             return PartialView(resultado.Contenido);
         }
 
-        public async Task<IActionResult> SetSale(Guid? id, decimal importe)
-        {
+        public async Task<IActionResult> SetCancelSale(Guid? id) {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
-            if (validateToken != null) { return validateToken; }
+            if (validateToken != null) { return Json(new { Reiniciar = true, Error = true }); }
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
             {
-                return RedirectToAction(nameof(Index));
+                return Json(new { Reiniciar = true, Error = true });
+            }
+
+            if (id == null || id == Guid.Empty)
+            {
+                TempData["toast"] = "Identificador de la venta incorrecto.";
+                return Json(new { Reiniciar = true, Error = true });
+            }
+            var ventaNoAplicada = await _context.VentasNoAplicadas
+                .FirstOrDefaultAsync(v => v.VentaNoAplicadaID == id);
+
+            if (ventaNoAplicada == null)
+            {
+                TempData["toast"] = "Identificador de la venta incorrecto.";
+                return Json(new { Reiniciar = true, Error = true });
+            }
+
+            var ventasNoAplicadasDetalle = await _context.VentasNoAplicadasDetalle
+                .Where(v => v.VentaNoAplicadaID == id).ToListAsync();
+
+            if (ventasNoAplicadasDetalle == null || ventasNoAplicadasDetalle.Count == 0)
+                return Json(new { Estatus = "No hay registros para cancelar.", Error = true });
+
+            ventaNoAplicada.Fecha = DateTime.Now;
+            _context.Update(ventaNoAplicada);
+
+            Guid ventaCanceladaId = Guid.NewGuid();
+
+            VentaCancelada ventaCancelada = new VentaCancelada();
+            ventaCancelada = new VentaCancelada()
+            {
+                Fecha = DateTime.Now,
+                UsuarioID = token.UsuarioID,
+                VentaCanceladaID = ventaCanceladaId,
+                VentaCompleta = true
+            };
+
+            _context.VentasCanceladas.Add(ventaCancelada);
+
+            List <VentaCanceladaDetalle> ventasCanceladasDetalle = new List<VentaCanceladaDetalle>();
+            foreach(var item in ventasNoAplicadasDetalle)
+            {
+                VentaCanceladaDetalle ventaCanceladaDetalle = new VentaCanceladaDetalle()
+                {
+                    Cantidad = item.Cantidad,
+                    PrecioVenta = item.PrecioVenta,
+                    ProductoID = item.ProductoID,
+                    VentaCanceladaID = ventaCanceladaId,
+                    VentaCanceladaDetalleID = Guid.NewGuid()
+                };
+                
+                ventasCanceladasDetalle.Add(ventaCanceladaDetalle);
+                _context.VentasCanceladasDetalle.Add(ventaCanceladaDetalle);
+
+                _context.Remove(item);
+            }
+
+            VentaCanceladaViewModel ventaCanceladaViewModel = new VentaCanceladaViewModel()
+            {
+                VentasCanceladas = ventaCancelada,
+                VentasCanceladasDetalle = ventasCanceladasDetalle
+            };
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                await BitacoraAsync("SetCancelSale", ventaCanceladaViewModel, token.UsuarioID);
+
+                return Json(new { Error = false });
+            }
+            catch (Exception ex)
+            {
+                string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
+                await BitacoraAsync("SetCancelSale", ventaCanceladaViewModel, token.UsuarioID, excepcion);
+                return Json(new { Estatus = "Cancelación no realizada.", Error = true });
+            }
+        }
+
+        public async Task<IActionResult> SetSale(Guid? id, decimal importe)
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+            if (validateToken != null) { return Json(new { Reiniciar = true, Error = true }); }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return Json(new { Reiniciar = true, Error = true });
             }
 
             if (id == null || id == Guid.Empty)
@@ -161,19 +290,18 @@
             decimal? folio = await _context.Ventas.MaxAsync(v => (decimal?)v.Folio) ?? 0;
             if (folio == null)
                 folio = 0;
-
             folio += 1;
 
             //ca,biar informaciopn
             Guid almacenId = Guid.Parse("8706EF28-2EBA-463A-BAB4-62227965F03F");
+            DateTime fecha = DateTime.Now;
 
             Venta venta = new Venta()
             {
                 AlmacenID = almacenId,
                 ClienteID = Guid.Empty,
-                Fecha = ventaNoAplicada.Fecha,
-                FechaFinProceso = DateTime.Now,
-                Folio = (decimal)folio + 1,
+                Fecha = fecha,
+                Folio = (decimal)folio,
                 UsuarioID = token.UsuarioID,
                 VentaCierreID = Guid.Empty,
                 VentaID = (Guid)id
@@ -209,7 +337,7 @@
 
                 if (producto.Unidades.Pieza)
                 {
-                    cantidad = Convert.ToDecimal((int)cantidad);
+                    cantidad = Math.Round(cantidad);
                 }
 
                 if (producto.Unidades.Paquete)
@@ -219,7 +347,7 @@
                     
                     if(productoPieza != null)
                     {
-                        productoId = productoPieza.ProductoID;
+                        productoId = productoPieza.PiezaProductoID;
                         cantidad = cantidad * productoPieza.CantidadProductoxPaquete;
                     }
                 }
@@ -235,7 +363,7 @@
                         AlmacenID = almacenId,
                         ExistenciaEnAlmacen = cantidad * -1,
                         ExistenciaID = Guid.NewGuid(),
-                        ProductoID = item.ProductoID
+                        ProductoID = productoId
                     });
                 }
                 else
@@ -263,9 +391,9 @@
             {
                 AlmacenID = almacenId,
                 ClienteID = Guid.Empty,
-                Fecha = ventaNoAplicada.Fecha,
-                FechaFinProceso = DateTime.Now,
+                Fecha = fecha,
                 Folio = (decimal)folio,
+                ImporteCobro = importe,
                 ImporteTotal = importeTotal,
                 UsuarioID = token.UsuarioID,
                 VentaCierreID = Guid.Empty,
@@ -284,7 +412,9 @@
 
                 await _context.SaveChangesAsync();
                 await BitacoraAsync("SetSale", ventaViewModel);
-                return Json(new { Error = false });
+
+                //return Json(new { Error = false });
+                return PartialView(ventaViewModel);
             }
             catch (Exception ex)
             {
@@ -294,12 +424,86 @@
             }
         }
 
+        public async Task<IActionResult> SetSaveSale(Guid? id)
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+            if (validateToken != null) { return Json(new { Reiniciar = true, Error = true }); }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            {
+                return Json(new { Reiniciar = true, Error = true });
+            }
+
+            if (id == null || id == Guid.Empty)
+            {
+                TempData["toast"] = "Identificador de la venta incorrecto.";
+                return Json(new { Reiniciar = true, Error = true });
+            }
+            var ventaNoAplicada = await _context.VentasNoAplicadas
+                .FirstOrDefaultAsync(v => v.VentaNoAplicadaID == id);
+
+            if (ventaNoAplicada == null)
+            {
+                TempData["toast"] = "Identificador de la venta incorrecto.";
+                return Json(new { Reiniciar = true, Error = true });
+            }
+
+            var ventasNoAplicadasDetalle = await _context.VentasNoAplicadasDetalle
+                .Where(v => v.VentaNoAplicadaID == id).ToListAsync();
+
+            if (ventasNoAplicadasDetalle == null || ventasNoAplicadasDetalle.Count == 0)
+                return Json(new { Estatus = "No hay registros para almacenar.", Error = true });
+
+            var ventasConDetalle = await (from v in _context.VentasNoAplicadas
+                                          join d in _context.VentasNoAplicadasDetalle
+                                          on v.VentaNoAplicadaID equals d.VentaNoAplicadaID
+                                          where v.UsuarioID == token.UsuarioID
+                                          select v.VentaNoAplicadaID
+                                          ).Distinct().ToListAsync();
+
+            if(ventasConDetalle != null)
+            {
+                ventaNoAplicada = await _context.VentasNoAplicadas
+                    .FirstOrDefaultAsync(v => !ventasConDetalle.Contains(v.VentaNoAplicadaID) &&
+                                         v.UsuarioID == token.UsuarioID);
+            } 
+            
+            if(ventasConDetalle == null || ventaNoAplicada == null) {
+                ventaNoAplicada = new VentaNoAplicada()
+                {
+                    Fecha = DateTime.Now,
+                    UsuarioID = token.UsuarioID,
+                    VentaNoAplicadaID = Guid.NewGuid()
+                };
+
+                _context.VentasNoAplicadas.Add(ventaNoAplicada);
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception)
+                {
+                    return Json(new { Estatus = "La venta no puede ser inicializada.", Error = true });
+                }
+            }
+            
+            return Json(new { Error = false });
+        }
+
         private async Task BitacoraAsync(string accion, VentasViewModel venta, string excepcion = "")
         {
             string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
 
             await _getHelper.SetBitacoraAsync(token, accion, moduloId,
                 venta, venta.VentaID.ToString(), directorioBitacora, excepcion);
+        }
+        private async Task BitacoraAsync(string accion, VentaCanceladaViewModel ventaCancelada, Guid usuarioId, string excepcion = "")
+        {
+            string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
+
+            await _getHelper.SetBitacoraAsync(token, accion, moduloId,
+                ventaCancelada, usuarioId.ToString(), directorioBitacora, excepcion);
         }
     }
 }

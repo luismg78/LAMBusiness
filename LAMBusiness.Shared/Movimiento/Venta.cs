@@ -47,9 +47,5 @@
         [JsonIgnore]
         public virtual VentaCierre VentasCierre { get; set; }
 
-        [Display(Name = "Fecha fin del proceso")]
-        [DataType(DataType.Date)]
-        public DateTime FechaFinProceso { get; set; }
-
     }
 }

@@ -60,7 +60,7 @@ transparencia: rgba(255,65,82,.5)*/
 .bg-disabled {z-index:9999;}
 .bg-fixed {bottom:0;left:0;position:fixed;right:0;top:0;}
 .bg-absolute {bottom:0;left:0;position:absolute;right:0;top:0;}
-    .bg-absolute:hover {opacity:1;}
+    .bg-absolute:hover {opacity:1!important;}
 .bg-row{background-color:transparent;}
     .bg-row:hover{background-color:rgba(0,0,0,0.03);}
 .bg-selected {background-color:#fffecb!important;}
@@ -101,6 +101,8 @@ transparencia: rgba(255,65,82,.5)*/
 
 .flex-container{display:flex; flex-direction:column; height:100%;}
 .footer {bottom:0;line-height:60px;position:absolute;width:100%;white-space:nowrap;}
+
+.image-profile{width:7rem;}
 
 .list-registers{max-height:13.75rem;overflow-y:auto;}
 
@@ -221,6 +223,7 @@ transparencia: rgba(255,65,82,.5)*/
     .card-header-lam-d1{display:block;text-align:center;}
         .card-header-lam-d1 p.title{font-size:1.1rem;}
         .card-header-lam-d1 span.subtitle{font-size:0.7rem;}
+    .image-profile{width:5rem;}
     .mt-container{margin-top:4.5rem;}
     .process-with-spinner {background-color:#fff;}
     .text-deleteConfirm > p{font-size:1.3rem;}

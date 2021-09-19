@@ -21,8 +21,6 @@
         [JsonIgnore]
         public virtual Usuario Usuarios { get; set; }
 
-        [DataType(DataType.Date)]
-        [DisplayFormat(ApplyFormatInEditMode = false, DataFormatString = "{0:yyyy-MM-dd}")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public DateTime? Fecha { get; set; }
     }

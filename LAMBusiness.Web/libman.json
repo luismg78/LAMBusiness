@@ -5,6 +5,24 @@
     {
       "library": "twitter-bootstrap@5.1.0",
       "destination": "wwwroot/lib/twitter-bootstrap/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "signalr@latest",
+      "destination": "wwwroot/lib/signalr/",
+      "files": [
+        "jquery.signalR.js",
+        "jquery.signalR.min.js"
+      ]
+    },
+    {
+      "provider": "unpkg",
+      "library": "@microsoft/signalr@latest",
+      "destination": "wwwroot/lib/microsoft/signalr/",
+      "files": [
+        "dist/browser/signalr.js",
+        "dist/browser/signalr.min.js"
+      ]
     }
   ]
 }

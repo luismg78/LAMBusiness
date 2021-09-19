@@ -61,8 +61,39 @@
                 </div>
             </section>
             <div id="footer" class="bg-light position-relative border-top">
-                <div class="bg-base p-3 text-end d-block d-md-none">
-                    <h4 id="total-sm" class="fw-bold text-white">Total $0.00</h4>
+                <div class="bg-base p-2 text-end d-block d-md-none">
+                    <div class="row g-0 align-items-center">
+                        <div class="col-6 text-start">
+                            <a href="#" onclick="saleMode();">
+                                <div class="btn-icon px-2 py-1 rounded-circle d-inline-block">
+                                    <i class="fa fa-barcode text-white"></i>
+                                </div>
+                            </a>
+                            <a href="#" onclick="payMode();">
+                                <div class="btn-icon px-2 py-1 rounded-circle d-inline-block">
+                                    <i class="fa fa-dollar-sign text-white"></i>
+                                </div>
+                            </a>
+                            <a href="#" onclick="searchMode();">
+                                <div class="btn-icon px-2 py-1 rounded-circle d-inline-block">
+                                    <i class="fa fa-search text-white"></i>
+                                </div>
+                            </a>
+                            <a href="#" onclick="cancelSaleMode();">
+                                <div class="btn-icon px-2 py-1 rounded-circle d-inline-block">
+                                    <i class="fab fa-creative-commons-nc text-white"></i>
+                                </div>
+                            </a>
+                            <a href="#" onclick="getItBackSaleMode();">
+                                <div class="btn-icon px-2 py-1 rounded-circle d-inline-block">
+                                    <i class="fas fa-undo text-white"></i>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-6 text-end">
+                            <h4 id="total-sm" class="fw-bold text-white">Total @Model.ImporteTotal.ToString("$###,###,##0.00")</h4>
+                        </div>
+                    </div>
                 </div>
                 <div class="p-4 position-relative">
                     <div class="position-absolute" style="top:0.2rem;left:4rem;">
@@ -80,10 +111,11 @@
                                    data-input="codigo"
                                    class="rounded-pill px-4 py-2 border w-100"
                                    style="outline:none;font-size:1.4rem;"
+                                   placeholder="Código del producto."
                                    autofocus />
                         </div>
                         <a href="#"
-                           onclick="inputText(event);">
+                           onclick="setInputText(event);">
                             <div class="btn-icon rounded-circle d-inline-block">
                                 <i class="fa fa-check"></i>
                             </div>
@@ -96,10 +128,10 @@
     <div class="col-4 d-none d-md-block">
         <div class="flex-container">
             <section class="position-relative">
-                <div class="row g-0 text-center p-4">
-                    <div class="col-4">
+                <div class="row g-0 bg-absolute text-center p-4 overflow-auto">
+                    <div class="col-12 col-lg-6 col-xl-4 mb-2">
                         <a href="#" onclick="saleMode();" class="text-secondary">
-                            <div id="saleButton" class="bg-white bg-card border box-shadow-lam mx-2 rounded-lam-lg">
+                            <div id="saleButton" class="bg-base bg-card border box-shadow-lam mx-2 rounded-lam-lg selected">
                                 <div class="py-3 px-2 mb-3">
                                     <div class="text-center my-2">
                                         <h3 class="fas fa-barcode"></h3>
@@ -112,7 +144,7 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-4">
+                    <div class="col-12 col-lg-6 col-xl-4 mb-2">
                         <a href="#" onclick="payMode();" class="text-secondary">
                             <div id="payButton" class="bg-white bg-card border box-shadow-lam mx-2 rounded-lam-lg">
                                 <div class="py-3 px-2 mb-3">
@@ -127,7 +159,7 @@
                             </div>
                         </a>
                     </div>
-                    <div class="col-4">
+                    <div class="col-12 col-lg-6 col-xl-4 mb-2">
                         <a href="#" onclick="searchMode();" class="text-secondary">
                             <div id="searchButton" class="bg-white bg-card border box-shadow-lam mx-2 rounded-lam-lg">
                                 <div class="py-3 px-2 mb-3">
@@ -142,12 +174,71 @@
                             </div>
                         </a>
                     </div>
+                    <div class="col-12 col-lg-6 col-xl-4 mb-2">
+                        <a href="#" onclick="cancelSaleMode();" class="text-secondary">
+                            <div id="cancelSaleButton" class="bg-white bg-card border box-shadow-lam mx-2 rounded-lam-lg">
+                                <div class="py-3 px-2 mb-3">
+                                    <div class="text-center my-2">
+                                        <h3 class="fab fa-creative-commons-nc"></h3>
+                                    </div>
+                                    <div class="text-center">
+                                        <span class="fw-bold">CANCELAR</span>
+                                        <span class="fw-light d-block">[F3]</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12 col-lg-6 col-xl-4 mb-2">
+                        <a href="#" onclick="getItBackSaleMode();" class="text-secondary">
+                            <div id="getItBackSaleButton" class="bg-white bg-card border box-shadow-lam mx-2 rounded-lam-lg">
+                                <div class="py-3 px-2 mb-3">
+                                    <div class="text-center my-2">
+                                        <h3 class="fas fa-undo"></h3>
+                                    </div>
+                                    <div class="text-center">
+                                        <span class="fw-bold">RECUPERAR</span>
+                                        <span class="fw-light d-block">[F4]</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="row g-0 bg-absolute text-center p-4 overflow-auto d-none">
+                    <div class="col-12 col-lg-6 mb-2">
+                        <a href="#" onclick="withdrawCashMode(event);" class="text-secondary">
+                            <div id="withdrawCashButton" class="bg-white bg-card border box-shadow-lam mx-2 rounded-lam-lg">
+                                <div class="py-3 px-2 mb-3">
+                                    <div class="text-center my-2">
+                                        <h3 class="fas fa-cash-register"></h3>
+                                    </div>
+                                    <div class="text-center">
+                                        <span class="fw-bold">Retirar Efectivo</span>
+                                        <span class="fw-light d-block">[F7]</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-12 col-lg-6 mb-2">
+                        <a href="#" onclick="closeSalesMode();" class="text-secondary">
+                            <div id="closeSalesButton" class="bg-white bg-card border box-shadow-lam mx-2 rounded-lam-lg">
+                                <div class="py-3 px-2 mb-3">
+                                    <div class="text-center my-2">
+                                        <h3 class="fas fa-file-invoice-dollar"></h3>
+                                    </div>
+                                    <div class="text-center">
+                                        <span class="fw-bold">Corte de Caja</span>
+                                        <span class="fw-light d-block">[F8]</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </section>
             <div class="bg-light position-relative border-top border-start">
-                <div class="position-absolute" style="left:0.5rem;top:0.2rem;">
-                    <span id="payStatusLabel" class="text-muted">Total</span>
-                </div>
                 <div class="p-4 position-relative text-center">
                     <h1 id="total" class="fw-bold text-dark mt-2">@Model.ImporteTotal.ToString("$###,###,##0.00")</h1>
                 </div>
@@ -168,12 +259,15 @@
 
 @section Scripts{
     <script>
-        let urlSale = '@Url.Action("Index", "Ventas")';
+        let urlCancelSale = '@Url.Action("SetCancelSale", "Ventas")';
+        let urlGetItBackSale = '@Url.Action("GetItBackSale", "Ventas")';
         let urlMovement = '@Url.Action("Movimiento", "Menu")';
         let urlProductByCode = '@Url.Action("GetProductByCode", "Ventas")';
         let urlProductDetail = '@Url.Action("GetProductDetail", "Productos")';
         let urlProductDetailByCode = '@Url.Action("GetProductDetailByCode", "Productos")';
         let urlProductList = '@Url.Action("GetProductList", "Productos")';
+        let urlSale = '@Url.Action("Index", "Ventas")';
+        let urlSaveSale = '@Url.Action("SetSaveSale", "Ventas")';
         let urlSetSale = '@Url.Action("SetSale", "Ventas")';
     </script>
     <script src="~/js/sales.js"></script>

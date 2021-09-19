@@ -249,7 +249,7 @@
 
         private int GetCountVentas()
         {
-            return 0;
+            return _context.Ventas.Count();
         }
         #endregion        
     }

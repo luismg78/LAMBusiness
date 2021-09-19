@@ -3,28 +3,37 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
+    using Microsoft.AspNetCore.SignalR;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Data;
     using Helpers;
+    using Hub;
     using Shared.Aplicacion;
     using Shared.Catalogo;
+    using LAMBusiness.Shared.Movimiento;
 
     public class AlmacenesController : GlobalController
     {
         private readonly DataContext _context;
         private readonly IConfiguration _configuration;
         private readonly IGetHelper _getHelper;
+        private readonly IHubContext<ServerHub> _hubContext;
         private Guid moduloId = Guid.Parse("DA183D55-101E-4A06-9EC3-A1ED5729F0CB");
 
-        public AlmacenesController(DataContext context, IConfiguration configuration, IGetHelper getHelper)
+        public AlmacenesController(DataContext context, 
+            IConfiguration configuration, 
+            IGetHelper getHelper,
+            IHubContext<ServerHub> hubContext)
         {
             _context = context;
             _configuration = configuration;
             _getHelper = getHelper;
+            _hubContext = hubContext;
         }
 
         public async Task<IActionResult> Index()
@@ -124,7 +133,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AlmacenID,AlmacenNombre,AlmacenDescripcion")] Almacen almacen)
+        public async Task<IActionResult> Create([Bind("AlmacenID,AlmacenNombre,AlmacenDescripcion")] Almacen almacen, string HubID)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }
@@ -141,8 +150,37 @@
                 {
                     almacen.AlmacenID = Guid.NewGuid();
                     _context.Add(almacen);
+
+                    var productos = _context.Productos.Select(p => p.ProductoID);
+                    if (productos != null)
+                    {
+                        await _hubContext.Clients
+                            .Client(HubID)
+                            .SendAsync("Process", "Guardando información de almacén, por favor espere...");
+
+                        decimal registros = await productos.CountAsync();
+                        decimal records = 100 / registros;
+                        decimal cont = records;
+                        foreach (var item in productos)
+                        {
+                            _context.Existencias.Add(new Existencia()
+                            {
+                                AlmacenID = almacen.AlmacenID,
+                                ExistenciaEnAlmacen = 0,
+                                ExistenciaID = Guid.NewGuid(),
+                                ProductoID = item
+                            });
+
+                            await _hubContext.Clients
+                                .Client(HubID)
+                                .SendAsync("ProgressBar", cont);
+                            cont += records;
+                        }
+                    }
+
                     await _context.SaveChangesAsync();
                     await BitacoraAsync("Alta", almacen);
+
                     TempData["toast"] = "Los datos del almacén fueron almacenados correctamente.";
                     return RedirectToAction(nameof(Index));
                 }
@@ -236,7 +274,7 @@
             return View(almacen);
         }
 
-        public async Task<IActionResult> Delete(Guid? id)
+        public async Task<IActionResult> Delete(Guid? id, string hubId)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }
@@ -253,22 +291,41 @@
             }
 
             var almacen = await _context.Almacenes
-                               .FirstOrDefaultAsync(m => m.AlmacenID == id);
+                .Include(a => a.Existencias)
+                .FirstOrDefaultAsync(m => m.AlmacenID == id);
 
             if (almacen == null)
             {
                 TempData["toast"] = "Identificacor incorrecto, verifique.";
                 return RedirectToAction(nameof(Index));
             }
+            
+            bool removeProcess = false;
 
             if (almacen.Existencias != null)
             {
-                decimal existencias = almacen.Existencias.Sum(s => s.ExistenciaEnAlmacen);
+                decimal existencias = almacen.Existencias.Count(s => s.ExistenciaEnAlmacen > 0);
 
                 if (existencias > 0)
                 {
                     TempData["toast"] = $"El almacen no puede ser eliminado, tiene {existencias} producto(s) en existencia(s).";
                     return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    await _hubContext.Clients.All
+                        .SendAsync("Process", "Eliminando productos asignados al almacén, por favor espere...");
+
+                    decimal records = 100 / (decimal)almacen.Existencias.Count();
+                    decimal cont = records;
+                    foreach (var item in almacen.Existencias)
+                    {
+                        _context.Existencias.Remove(item);
+                        await _hubContext.Clients.All
+                                .SendAsync("ProgressBar", cont);
+                        cont += records;
+                    }
+                    removeProcess = true;
                 }
             }
 
@@ -284,6 +341,14 @@
                 string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                 TempData["toast"] = "[Error] Los datos del almacén no fueron eliminados.";
                 await BitacoraAsync("Baja", almacen, excepcion);
+            }
+            finally
+            {
+                if (removeProcess)
+                {
+                    await _hubContext.Clients.All
+                                .SendAsync("RemoveProcess");
+                }
             }
 
             return RedirectToAction(nameof(Index));
@@ -353,5 +418,39 @@
             await _getHelper.SetBitacoraAsync(token, accion, moduloId,
                 almacen, almacen.AlmacenID.ToString(), directorioBitacora, excepcion);
         }
+   
+        //private async Task Productos(string HubID)
+        //{
+        //    int registros = 10000;
+        //    decimal records = 100 / (decimal)registros;
+        //    decimal cont = records;
+        //    await _hubContext.Clients
+        //        .Client(HubID)
+        //        .SendAsync("Process", "Procesando 10,000 registros, por favor espere...");
+        //    Guid marcaId = Guid.Parse("620CEB37-D6A5-4649-9C6E-39581858EFD2");
+        //    Guid unidadId = Guid.Parse("401B9552-D654-11E9-8B00-8CDCD47D68A1");
+        //    Guid tasaId = Guid.Parse("ACBB8324-7514-4C38-8354-FA5147FA87E6");
+        //    for (int x = 1; x <= 10000; x++)
+        //    {
+        //        _context.Productos.Add(new Producto()
+        //        {
+        //            Activo = true,
+        //            Codigo = $"PROD{x.ToString("00000")}",
+        //            MarcaID = marcaId,
+        //            PrecioCosto = x,
+        //            PrecioVenta = x + 10,
+        //            ProductoDescripcion = $"PRODUCTO DESCRIPCIÓN {x.ToString("00000")}",
+        //            ProductoID = Guid.NewGuid(),
+        //            ProductoNombre = $"PRODUCTO {x.ToString("00000")}",
+        //            TasaID = tasaId,
+        //            UnidadID = unidadId
+        //        });
+
+        //        await _hubContext.Clients
+        //            .Client(HubID)
+        //            .SendAsync("ProgressBar", cont);
+        //        cont += records;
+        //    }
+        //}
     }
 }

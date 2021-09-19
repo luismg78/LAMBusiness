@@ -1,4 +1,8 @@
-﻿function addProcess(text, tiempo = 0, fondo = 'bg-transparent-dark') {
+﻿function audio() {
+    document.getElementById("audioNotification").play();
+}
+
+function addProcess(text, tiempo = 0, fondo = 'bg-transparent-dark') {
     if ($("#loader > div")[0] === undefined) {
         $("#loader").removeClass('d-none');
         var html = "" +
@@ -20,6 +24,33 @@
                 removeProcess();
             }, tiempo);
         }
+    }
+    $("#inputDisabled").focus();
+}
+
+function addProcessWithProgressBar(text) {
+    if ($("#loader > div")[0] === undefined) {
+        $("#loader").removeClass('d-none');
+        var html = "" +
+            '<div class="bg-fixed bg-transparent-dark bg-disabled w-100">' +
+            '	<div class="mx-auto position-relative text-center w-50" style="top:10rem;">' +
+            '		<div class="loader">' +
+            '           <div class="item-1"></div>' +
+            '           <div class="item-2"></div>' +
+            '           <div class="item-3"></div>' +
+            '           <div class="item-4"></div>' +
+            '           <div class="item-5"></div>' +
+            '       </div>' +
+            '		<h6 id="ProcesoText" class="mt-5 text-white">' + text + '</h6>' +
+            '	    <div class="py-2 text-start">' +
+            '	        <small class="fw-lighter text-white mb-2">Procesando</small>' +
+            '	        <div class="progress">' +
+            '	            <div id="progressBar" class="progress-bar" role="progressbar" style="width:0;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0"></div>' +
+            '	        </div>' +
+            '	    </div>' +
+            '	</div>' +
+            '</div>';
+        $("#loader").append(html);
     }
     $("#inputDisabled").focus();
 }
@@ -92,6 +123,13 @@ function formatCurrency(numero) {
     }
     return (valorNegativo ? '-$' : '$') +
         parseFloat(numero, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,').toString();
+}
+
+function notification() {
+    let notificationText = document.getElementById('LAMNotificationText');
+    let notificationIcon = document.getElementById('LAMNotificationIcon');
+    notificationText.classList.add('text-base');
+    notificationIcon.classList.add('blinking');
 }
 
 function removeProcess() {

@@ -56,6 +56,7 @@
         public DbSet<RetiroCaja> RetirosCaja { get; set; }
         public DbSet<Venta> Ventas { get; set; }
         public DbSet<VentaCancelada> VentasCanceladas { get; set; }
+        public DbSet<VentaCanceladaDetalle> VentasCanceladasDetalle { get; set; }
         public DbSet<VentaCierre> VentasCierre { get; set; }
         public DbSet<VentaCierreDetalle> VentasCierreDetalle { get; set; }
         public DbSet<VentaDetalle> VentasDetalle { get; set; }

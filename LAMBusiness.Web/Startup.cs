@@ -47,6 +47,8 @@ namespace LAMBusiness.Web
             services.AddScoped<IGetHelper, GetHelper>();
 
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,6 +78,7 @@ namespace LAMBusiness.Web
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapHub<Hub.ServerHub>("/serverHub");
             });
         }
     }

@@ -251,11 +251,17 @@ function deleteButtonProducto(e) {
     e.preventDefault();
     productoId.value = '';
     cantidad.value = '';
-    precioCosto.value = '';
-    precioVenta.value = '';
+    if (precioCosto) {
+        precioCosto.value = '';
+    }
+    if (precioVenta) {
+        precioVenta.value = '';
+    }
+    if (importe) {
+        importe.innerHTML = '$0.00';
+    }
     productoNombre.innerHTML = '';
     productoCodigo.innerHTML = '';
-    importe.innerHTML = '$0.00';
     productoDatos.classList.remove('d-block');
     productoDatos.classList.add('d-none');
     productoSearch.classList.remove('d-none');
@@ -367,15 +373,25 @@ function getProductoByCode(code) {
                     productoNombre.innerHTML = r.productoNombre;
                     productoCodigo.innerHTML = r.codigo;
                     cantidad.value = '1';
-                    precioCosto.value = r.precioCosto;
-                    precioVenta.value = r.precioVenta;
-                    importe.innerHTML = formatCurrency(r.precioCosto);
+                    if (precioCosto) {
+                        precioCosto.value = r.precioCosto;
+                    }
+                    if (precioVenta) {
+                        precioVenta.value = r.precioVenta;
+                    }
+                    if (importe) {
+                        importe.innerHTML = formatCurrency(r.precioCosto);
+                    }
                     productoSearch.classList.remove('d-block');
                     productoSearch.classList.add('d-none');
                     if (dRowProducto.children[0] !== undefined) {
                         dRowProducto.children[0].remove();
                     }
-                    precioVenta.focus();
+                    if (precioVenta) {
+                        precioVenta.focus();
+                    } else {
+                        cantidad.focus();
+                    }
                 } else {
                     alert(r.message);
                 }

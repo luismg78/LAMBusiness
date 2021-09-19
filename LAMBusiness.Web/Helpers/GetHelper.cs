@@ -1392,7 +1392,7 @@
 
         //Ventas
 
-        public async Task<Resultado<VentaNoAplicadaDetalle>> GetProductByCodeForSale(Guid? id, string codigo, decimal cantidad)
+        public async Task<Resultado<VentaNoAplicadaDetalle>> GetProductByCodeForSale(Guid? id, Guid usuarioId, string codigo, decimal cantidad)
         {
             Resultado<VentaNoAplicadaDetalle> resultado = new Resultado<VentaNoAplicadaDetalle>() {
                 Contenido = null,
@@ -1424,6 +1424,11 @@
             {
                 resultado.Mensaje = "Producto inexistente";
                 return resultado;
+            }
+
+            if (producto.Unidades.Pieza)
+            {
+                cantidad = Math.Round(cantidad);
             }
 
             if (cantidad < 0)
@@ -1479,16 +1484,28 @@
             }
             else
             {
+                Guid ventaCanceladaId = Guid.NewGuid();
+
                 VentaCancelada ventaCancelada = new VentaCancelada()
+                {
+                    Fecha = DateTime.Now,
+                    UsuarioID = usuarioId,
+                    VentaCanceladaID = ventaCanceladaId,
+                    VentaCompleta = false
+                };
+
+                _context.VentasCanceladas.Add(ventaCancelada);
+
+                VentaCanceladaDetalle ventaCanceladaDetalle = new VentaCanceladaDetalle()
                 {
                     Cantidad = Math.Abs(cantidad),
                     PrecioVenta = Convert.ToDecimal(producto.PrecioVenta),
                     ProductoID = producto.ProductoID,
-                    VentaCanceladaID = Guid.NewGuid(),
-                    VentaID = (Guid)id,
+                    VentaCanceladaID = ventaCanceladaId,
+                    VentaCanceladaDetalleID = Guid.NewGuid()
                 };
 
-                _context.VentasCanceladas.Add(ventaCancelada);
+                _context.VentasCanceladasDetalle.Add(ventaCanceladaDetalle);
             }
 
             try
