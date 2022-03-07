@@ -1,20 +1,19 @@
 ﻿namespace LAMBusiness.Web.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
     using Data;
     using Helpers;
+    using Interfaces;
+    using Models.ViewModels;
     using Shared.Aplicacion;
-    using Shared.Catalogo;
-    using Shared.Contacto;
     using Shared.Movimiento;
-    using Web.Models.ViewModels;
 
     public class EntradasController : GlobalController
     {
@@ -22,17 +21,20 @@
         private readonly IGetHelper _getHelper;
         private readonly IConverterHelper _converterHelper;
         private readonly IConfiguration _configuration;
+        private readonly IDashboard _dashboard;
         private Guid moduloId = Guid.Parse("B019EBF0-5A25-4CC3-BD72-34FDA134E5C1");
 
-        public EntradasController(DataContext context, 
+        public EntradasController(DataContext context,
             IGetHelper getHelper,
             IConverterHelper converterHelper,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IDashboard dashboard)
         {
             _context = context;
             _getHelper = getHelper;
             _converterHelper = converterHelper;
             _configuration = configuration;
+            _dashboard = dashboard;
         }
 
         public async Task<IActionResult> Index()
@@ -141,7 +143,7 @@
             }
 
             var entrada = await _getHelper.GetEntradaByIdAsync((Guid)id);
-            
+
             if (entrada == null)
             {
                 TempData["toast"] = "Identificador de la entrada inexistente.";
@@ -245,7 +247,7 @@
                 TempData["toast"] = "Identificador de la entrada inexistente.";
                 return RedirectToAction(nameof(Index));
             }
-            
+
             return View(entrada);
         }
 
@@ -307,7 +309,7 @@
                         TempData["toast"] = "[Error] Los datos de la entrada no fueron actualizados.";
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     TempData["toast"] = "[Error] Los datos de la entrada no fueron actualizados.";
@@ -338,7 +340,7 @@
             var entrada = await _context.Entradas
                 .Include(e => e.Proveedores)
                 .FirstOrDefaultAsync(m => m.EntradaID == id);
-            
+
             if (entrada == null)
             {
                 TempData["toast"] = "Identificador incorrecto, entrada inexistente.";
@@ -415,22 +417,23 @@
             _context.Update(entrada);
 
             var detalle = await _getHelper.GetEntradaDetalleByEntradaIdAsync(entrada.EntradaID);
-            if(detalle == null)
+            if (detalle == null)
             {
                 TempData["toast"] = "Por favor, ingrese al menos un movimiento.";
                 return RedirectToAction(nameof(Details), new { id });
             }
-            
-            var existencias = new List<ExistenciaViewModel>();
 
-            foreach(var item in detalle)
+            var existencias = new List<ExistenciaViewModel>();
+            Dictionary<Guid, decimal> importePorAlmacen = new Dictionary<Guid, decimal>();
+
+            foreach (var item in detalle)
             {
                 Guid _almacenId = (Guid)item.AlmacenID;
                 Guid _productoId = (Guid)item.ProductoID;
                 decimal _cantidad = (decimal)item.Cantidad;
                 decimal _precioCosto = (decimal)item.PrecioCosto;
 
-                if(item.Productos.Unidades.Pieza)
+                if (item.Productos.Unidades.Pieza)
                 {
                     _cantidad = (int)_cantidad;
                 }
@@ -445,12 +448,13 @@
                 item.Productos.PrecioVenta = (decimal)item.PrecioVenta;
 
                 var existencia = existencias
-                    .FirstOrDefault(e => e.ProductoID == _productoId && 
+                    .FirstOrDefault(e => e.ProductoID == _productoId &&
                                         e.AlmacenID == _almacenId);
 
-                if(existencia == null)
+                if (existencia == null)
                 {
-                    existencias.Add(new ExistenciaViewModel() {
+                    existencias.Add(new ExistenciaViewModel()
+                    {
                         AlmacenID = _almacenId,
                         ExistenciaEnAlmacen = _cantidad,
                         ExistenciaID = Guid.NewGuid(),
@@ -461,12 +465,33 @@
                 else
                 {
                     existencia.PrecioCosto = (
-                        (existencia.ExistenciaEnAlmacen * existencia.PrecioCosto) + 
+                        (existencia.ExistenciaEnAlmacen * existencia.PrecioCosto) +
                         (_cantidad * _precioCosto)
                         ) / (existencia.ExistenciaEnAlmacen + _cantidad);
                     existencia.ExistenciaEnAlmacen += _cantidad;
                 }
-                
+
+                if (!importePorAlmacen.ContainsKey(_almacenId))
+                {
+                    importePorAlmacen.Add(_almacenId, _cantidad * _precioCosto);
+                }
+                else
+                {
+                    importePorAlmacen[_almacenId] += _cantidad * _precioCosto;
+                }
+            }
+
+            foreach (KeyValuePair<Guid, decimal> keyValuePair in importePorAlmacen)
+            {
+                EstadisticaMovimientoViewModel estadisticaMovimiento = new EstadisticaMovimientoViewModel()
+                {
+                    AlmacenID = keyValuePair.Key,
+                    DB = _context,
+                    Importe = keyValuePair.Value,
+                    Movimiento = TipoMovimiento.Entrada
+                };
+
+                await _dashboard.GuardarEstadisticaDeMovimientoAsync(estadisticaMovimiento);
             }
 
             foreach (var item in existencias)
@@ -484,7 +509,7 @@
                         ExistenciaID = Guid.NewGuid(),
                         ProductoID = item.ProductoID
                     });
-                    
+
                 }
                 else
                 {
@@ -494,13 +519,15 @@
             }
 
             var productos = existencias.GroupBy(e => e.ProductoID)
-                .Select(g => new {
+                .Select(g => new
+                {
                     produdtoID = g.Key,
                     existencia = g.Sum(p => p.ExistenciaEnAlmacen),
-                    precioCosto = (g.Sum(p => p.ExistenciaEnAlmacen * p.PrecioCosto) / g.Sum(p => p.ExistenciaEnAlmacen)) })
+                    precioCosto = (g.Sum(p => p.ExistenciaEnAlmacen * p.PrecioCosto) / g.Sum(p => p.ExistenciaEnAlmacen))
+                })
                 .ToList();
 
-            foreach(var p in productos)
+            foreach (var p in productos)
             {
                 var producto = await _context.Productos
                     .FirstOrDefaultAsync(p => p.ProductoID == p.ProductoID);
@@ -566,7 +593,7 @@
                 TempData["toast"] = "Entrada aplicada no se permiten cambios.";
                 return RedirectToAction(nameof(Details), new { id });
             }
-            
+
             return View(new EntradaDetalle()
             {
                 EntradaID = (Guid)id,
@@ -641,19 +668,20 @@
                 {
                     entradaDetalle.EntradaDetalleID = Guid.NewGuid();
 
-                    if(producto.Unidades.Pieza)
+                    if (producto.Unidades.Pieza)
                     {
                         entradaDetalle.Cantidad = (int)entradaDetalle.Cantidad;
                     }
 
                     _context.Add(entradaDetalle);
 
-                    await _context.SaveChangesAsync();  
+                    await _context.SaveChangesAsync();
 
                     TempData["toast"] = "Los datos del producto fueron almacenados correctamente.";
                     await BitacoraAsync("Alta", entradaDetalle, entradaDetalle.EntradaID);
 
-                    return View(new EntradaDetalle() { 
+                    return View(new EntradaDetalle()
+                    {
                         AlmacenID = entradaDetalle.AlmacenID,
                         Almacenes = almacen,
                         EntradaID = entradaDetalle.EntradaID,
@@ -694,7 +722,7 @@
             }
 
             var detalle = await _getHelper.GetEntradaDetalleByIdAsync((Guid)id);
-            
+
             if (EntradaAplicada(detalle.EntradaID))
             {
                 TempData["toast"] = "Entrada aplicada no se permiten cambios.";
@@ -855,7 +883,7 @@
 
         private void ValidarDatosDelProducto(EntradaDetalle entradaDetalle)
         {
-            if(entradaDetalle.PrecioVenta == null || entradaDetalle.PrecioVenta <= 0)
+            if (entradaDetalle.PrecioVenta == null || entradaDetalle.PrecioVenta <= 0)
             {
                 TempData["toast"] = "Precio de venta incorrecto.";
                 ModelState.AddModelError("PrecioVenta", "Precio de venta incorrecto.");
@@ -872,6 +900,6 @@
                 TempData["toast"] = "Precio de costo incorrecto.";
                 ModelState.AddModelError("PrecioCosto", "Precio de venta incorrecto.");
             }
-        }        
+        }
     }
 }

@@ -9,11 +9,12 @@
         public void Configure(EntityTypeBuilder<Genero> builder)
         {
             builder.HasData(
-                new Genero { 
+                new Genero()
+                {
                     GeneroID = "F",
                     GeneroDescripcion = "FEMENINO"
                 },
-                new Genero
+                new Genero()
                 {
                     GeneroID = "M",
                     GeneroDescripcion = "MASCULINO"

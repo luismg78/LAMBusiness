@@ -108,7 +108,26 @@
 
             return View(contacto);
         }
-        
+
+        public async Task<IActionResult> Dashboard()
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "dashboard");
+            if (validateToken != null) { return validateToken; }
+
+            Guid moduloId = Guid.Parse("C803EECE-79A9-4B7F-955C-3A0CC70BFEDB");
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+            {
+                return RedirectToAction(nameof(Inicio));
+            }
+
+            var dashboard = new Dashboard()
+            {
+                ModulosMenu = await _getHelper.GetModulesByUsuarioIDAndModuloPadreID(token.UsuarioID, moduloId)
+            };
+
+            return View(dashboard);
+        }
+
         public async Task<IActionResult> Movimiento()
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");

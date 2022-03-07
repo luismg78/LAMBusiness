@@ -77,6 +77,24 @@
                 </li>
             }
 
+            <!-- menú dashboard-->
+            @if (Model.Administrador == "SA" || Model.Administrador == "GA" ||
+                 Model.UsuariosModulos.Contains(Guid.Parse("C803EECE-79A9-4B7F-955C-3A0CC70BFEDB")))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @if (menu == "dashboard")
+                {<text>fw-bold text-base</text>}
+                else
+                {<text>text-dark</text>} "
+                       asp-area="" asp-controller="Menu" asp-action="Dashboard">
+                        <div class="d-md-none btn-icon rounded-circle d-inline-block">
+                            <i class="fa fa-shopping-cart"></i>
+                        </div>
+                        <span class="ms-2 ms-md-0">Dashboard</span>
+                    </a>
+                </li>
+            }
+
             <!-- menú aplicación-->
             @if (Model.Administrador == "SA")
             {

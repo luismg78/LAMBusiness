@@ -50,7 +50,7 @@
                 foreach (var s in sesiones)
                 {
                     _context.Remove(s);
-                    rutaSesion = $"{directorio}//{s.SessionID}.config";
+                    rutaSesion = Path.Combine(directorio, $"{s.SessionID}.config");
                     if (System.IO.File.Exists(rutaSesion))
                         System.IO.File.Delete(rutaSesion);
                 }
@@ -99,17 +99,17 @@
             {
                 Directory.CreateDirectory(directorioImagenPerfil);
             }
-            if (!Directory.Exists($"{directorioImagenPerfil}//Perfil//"))
+            if (!Directory.Exists(Path.Combine(directorioImagenPerfil,"Perfil")))
             {
-                Directory.CreateDirectory($"{directorioImagenPerfil}//Perfil//");
+                Directory.CreateDirectory(Path.Combine(directorioImagenPerfil, "Perfil"));
             }
-            if (!Directory.Exists($"{directorioImagenPerfil}//Mediana//"))
+            if (!Directory.Exists(Path.Combine(directorioImagenPerfil, "Mediana")))
             {
-                Directory.CreateDirectory($"{directorioImagenPerfil}//Mediana//");
+                Directory.CreateDirectory(Path.Combine(directorioImagenPerfil, "Mediana"));
             }
-            if (!Directory.Exists($"{directorioImagenPerfil}//Original//"))
+            if (!Directory.Exists(Path.Combine(directorioImagenPerfil, "Original")))
             {
-                Directory.CreateDirectory($"{directorioImagenPerfil}//Original//");
+                Directory.CreateDirectory(Path.Combine(directorioImagenPerfil, "Original"));
             }
 
             try
@@ -122,15 +122,15 @@
                     switch (x)
                     {
                         case 1:
-                            path = Path.Combine($"{directorioImagenPerfil}//Perfil//", colaboradorId);
+                            path = Path.Combine(directorioImagenPerfil, "Perfil", colaboradorId);
                             tamaño = 95;
                             break;
                         case 2:
-                            path = Path.Combine($"{directorioImagenPerfil}//Mediana//", colaboradorId);
+                            path = Path.Combine(directorioImagenPerfil,"Mediana", colaboradorId);
                             tamaño = 380;
                             break;
                         case 3:
-                            path = Path.Combine($"{directorioImagenPerfil}//Original//", colaboradorId);
+                            path = Path.Combine(directorioImagenPerfil, "Original", colaboradorId);
                             tamaño = 760;
                             break;
                     }
@@ -146,7 +146,7 @@
             }
             catch (Exception)
             {
-                return Json(new { Estatus = "Error: Imagen de perfil no actualizada" + "[" + path + "]", Error = true });
+                return Json(new { Estatus = $"Error: Imagen de perfil no actualizada [{path}]", Error = true });
                 //Session["result"] = "Error: Imagen de perfil no actualizada";
             }
         }
@@ -241,7 +241,6 @@
             }
 
             string ruta = Path.Combine(directorioImagenPerfil,tipo,$"{id}.png");
-            //string ruta = $"{directorioImagenPerfil}//{tipo}//{id.ToString()}.png";
 
             if (!System.IO.File.Exists(ruta))
             {

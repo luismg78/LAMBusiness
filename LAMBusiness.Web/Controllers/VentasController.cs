@@ -1,6 +1,7 @@
 ﻿namespace LAMBusiness.Web.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
@@ -8,10 +9,10 @@
     using Microsoft.Extensions.Configuration;
     using Data;
     using Helpers;
+    using Interfaces;
     using Models.ViewModels;
+    using Shared.Aplicacion;
     using Shared.Movimiento;
-    using System.Collections.Generic;
-    using LAMBusiness.Shared.Aplicacion;
 
     public class VentasController : GlobalController
     {
@@ -19,16 +20,19 @@
         private readonly IGetHelper _getHelper;
         private readonly IConverterHelper _converterHelper;
         private readonly IConfiguration _configuration;
+        private readonly IDashboard _dashboard;
         private Guid moduloId = Guid.Parse("a0ca4d51-b518-4a65-b1e3-f0a03b1caff8");
 
         public VentasController(DataContext context, IGetHelper getHelper,
             IConverterHelper converterHelper,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IDashboard dashboard)
         {
             _context = context;
             _getHelper = getHelper;
             _converterHelper = converterHelper;
             _configuration = configuration;
+            _dashboard = dashboard;
         }
 
         public async Task<IActionResult> Index(Guid? id)
@@ -401,6 +405,16 @@
                 VentasDetalle = ventasDetalle,
                 VentasImportes = ventasImporte
             };
+
+            EstadisticaMovimientoViewModel estadisticaMovimiento = new EstadisticaMovimientoViewModel()
+            {
+                AlmacenID = almacenId,
+                DB = _context,
+                Importe = importeTotal,
+                Movimiento = TipoMovimiento.Venta
+            };
+
+            await _dashboard.GuardarEstadisticaDeMovimientoAsync(estadisticaMovimiento);
 
             try
             {

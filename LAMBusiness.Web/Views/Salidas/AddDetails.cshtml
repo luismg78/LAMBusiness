@@ -37,7 +37,7 @@
                                    placeholder="Ingrese nombre del almacén..."
                                    autofocus autocomplete="off"
                                    onkeyup="positionCursorWithArrowKey(event);"
-                                   onkeypress="getAlmacen(event);" />
+                                   onkeydown="getAlmacen(event);" />
                             <button id="AlmacenSearchButton" class="btn btn-light border"
                                     type="button" onclick="searchAlmacen(event);">
                                 <span id="SpinListAlmacen" class="d-flex align-items-center">
@@ -83,7 +83,7 @@
                                    placeholder="Ingrese código o nombre..."
                                    autofocus autocomplete="off"
                                    onkeyup="positionCursorWithArrowKey(event);"
-                                   onkeypress="getProducto(event);" />
+                                   onkeydown="getProducto(event);" />
                             <button id="ProductoSearchButton" class="btn btn-light border"
                                     type="button" onclick="searchProducto(event);">
                                 <span id="SpinList" class="d-flex align-items-center">

@@ -29,9 +29,15 @@
         [JsonIgnore]
         public virtual Producto Productos { get; set; }
 
+        [Column(TypeName = "decimal(18,4)")]
+        [Display(Name = "Cantidad")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public decimal Cantidad { get; set; }
 
+        [Column(TypeName = "decimal(18,2)")]
+        [Display(Name = "Precio (Venta)")]
+        [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = true)]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public decimal PrecioVenta { get; set; }
     }

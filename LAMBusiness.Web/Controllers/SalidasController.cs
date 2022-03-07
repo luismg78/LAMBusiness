@@ -10,9 +10,9 @@
     using Microsoft.Extensions.Configuration;
     using Data;
     using Helpers;
+    using Interfaces;
     using Models.ViewModels;
     using Shared.Aplicacion;
-    using Shared.Catalogo;
     using Shared.Movimiento;
 
     public class SalidasController : GlobalController
@@ -22,19 +22,22 @@
         private readonly IGetHelper _getHelper;
         private readonly IConverterHelper _converterHelper;
         private readonly IConfiguration _configuration;
+        private readonly IDashboard _dashboard;
         private Guid moduloId = Guid.Parse("D6DC97D9-C3DE-4920-A0B1-B63D7685BB6A");
 
         public SalidasController(DataContext context,
             ICombosHelper combosHelper,
             IGetHelper getHelper,
             IConverterHelper converterHelper,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IDashboard dashboard)
         {
             _context = context;
             _combosHelper = combosHelper;
             _getHelper = getHelper;
             _converterHelper = converterHelper;
             _configuration = configuration;
+            _dashboard = dashboard;
         }
 
         public async Task<IActionResult> Index()
@@ -421,6 +424,7 @@
             }
 
             var _salidasDetalle = new List<SalidaDetalle>();
+            Dictionary<Guid, decimal> importePorAlmacen = new Dictionary<Guid, decimal>();
 
             foreach (var item in detalle)
             {
@@ -460,10 +464,34 @@
                 else
                 {
                     _salidaDetalle.Cantidad += item.Cantidad;
-                }                
+                }
+
+                decimal importe = Convert.ToDecimal(item.Cantidad) * Convert.ToDecimal(item.PrecioCosto);
+
+                if (!importePorAlmacen.ContainsKey(_almacenId))
+                {
+                    importePorAlmacen.Add(_almacenId, importe);
+                }
+                else
+                {
+                    importePorAlmacen[_almacenId] += importe;
+                }
             }
 
-            foreach(var s in _salidasDetalle)
+            foreach (KeyValuePair<Guid, decimal> keyValuePair in importePorAlmacen)
+            {
+                EstadisticaMovimientoViewModel estadisticaMovimiento = new EstadisticaMovimientoViewModel()
+                {
+                    AlmacenID = keyValuePair.Key,
+                    DB = _context,
+                    Importe = keyValuePair.Value,
+                    Movimiento = TipoMovimiento.Salida
+                };
+
+                await _dashboard.GuardarEstadisticaDeMovimientoAsync(estadisticaMovimiento);
+            }
+
+            foreach (var s in _salidasDetalle)
             {
                 var existencia = _context.Existencias
                     .FirstOrDefault(e => e.ProductoID == s.ProductoID && e.AlmacenID == s.AlmacenID);
@@ -612,7 +640,13 @@
                                 s.AlmacenID == salidaDetalle.AlmacenID)
                     .SumAsync(s => s.Cantidad);
 
-                if(existencia == null || 
+                if (salidaDetalle.Cantidad <= 0)
+                {
+                    ModelState.AddModelError("Cantidad", "La cantidad debe ser mayor a cero.");
+                    return View(salidaDetalle);
+                }
+
+                if (existencia == null || 
                   (existencia.ExistenciaEnAlmacen - (cantidadTotalPorProducto + salidaDetalle.Cantidad)) < 0)
                 {
                     ModelState.AddModelError("Cantidad", "La cantidad excede a la cantidad en inventario.");

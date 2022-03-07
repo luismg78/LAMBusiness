@@ -30,9 +30,12 @@
         public virtual Producto Productos { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido.")]
+        [Column(TypeName = "decimal(18,4)")]
         public decimal Cantidad { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido.")]
+        [Column(TypeName = "decimal(18,2)")]
+        [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = false)]
         public decimal PrecioVenta { get; set; }
 
     }

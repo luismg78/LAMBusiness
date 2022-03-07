@@ -37,11 +37,10 @@ if (dRowProducto) {
     dRowProducto.addEventListener('scroll', (event) => {
         if (dRowProducto.getAttribute('data-rows-next') === "1" &&
             dRowProducto.getAttribute('data-charging') === "0" &&
-            dRowProducto.children.length % 50 === 0) {
-            let scrollHeight = document.height();
-            let scrollPosition = window.height() + window.scrollTop();
-            let result = (scrollHeight - scrollPosition) / scrollHeight;
-            if (result <= 0.0005) {
+            dRowProducto.getElementsByClassName('product').length % 50 === 0) {
+            let scrollHeight = dRowProducto.scrollHeight;
+            let scrollPosition = dRowProducto.offsetHeight + dRowProducto.scrollTop;
+            if (scrollPosition >= scrollHeight) {
                 skip += 50;
                 addRowsNextProducto(skip);
             }
@@ -52,13 +51,12 @@ if (dRowAlmacen) {
     dRowAlmacen.addEventListener('scroll', (event) => {
         if (dRowAlmacen.getAttribute('data-rows-next') === "1" &&
             dRowAlmacen.getAttribute('data-charging') === "0" &&
-            dRowAlmacen.children.length % 50 === 0) {
-            let scrollHeight = document.height();
-            let scrollPosition = window.height() + window.scrollTop();
-            let result = (scrollHeight - scrollPosition) / scrollHeight;
-            if (result <= 0.0005) {
+            dRowAlmacen.getElementsByClassName('almacen') % 50 === 0) {
+            let scrollHeight = dRowAlmacen.scrollHeight;
+            let scrollPosition = dRowAlmacen.offsetHeight + dRowAlmacen.scrollTop;
+            if (scrollPosition >= scrollHeight) {
                 skip += 50;
-                addRowsNextProducto(skip);
+                addRowsNextAlmacen(skip);
             }
         }
     });
@@ -67,13 +65,12 @@ if (dRowProveedor) {
     dRowProveedor.addEventListener('scroll', (event) => {
         if (dRowProveedor.getAttribute('data-rows-next') === "1" &&
             dRowProveedor.getAttribute('data-charging') === "0" &&
-            dRowProveedor.children.length % 50 === 0) {
-            let scrollHeight = document.height();
-            let scrollPosition = window.height() + window.scrollTop();
-            let result = (scrollHeight - scrollPosition) / scrollHeight;
-            if (result <= 0.0005) {
+            dRowProveedor.getElementsByClassName('proveedor') % 50 === 0) {
+            let scrollHeight = dRowProveedor.scrollHeight;
+            let scrollPosition = dRowProveedor.offsetHeight + dRowProveedor.scrollTop;
+            if (scrollPosition >= scrollHeight) {
                 skip += 50;
-                addRowsNextProducto(skip);
+                addRowsNextProveedor(skip);
             }
         }
     });
@@ -102,7 +99,7 @@ function addProduct(e) {
 function addProveedor(e) {
     e.preventDefault();
     let proveedor = document.querySelector('li.proveedor');
-    getProveedorByRFC(e.currentTarget.dataset.search);
+    getProveedorByRFC(proveedor.dataset.search);
 }
 
 function addRowsNextAlmacen(skip, inicio = false) {
@@ -128,8 +125,8 @@ function addRowsNextAlmacen(skip, inicio = false) {
         success: function (r) {
             if (inicio) { dRowAlmacen.innerHTML = ''; }
             if (r !== null && r.trim() !== '') {
-                dRowAlmacen.innerHTML = r;
-                //dRowAlmacen.slideDown();
+                dRowAlmacen.innerHTML += r;
+                dRowAlmacen.scrollTop -= 100;
                 almacenSearchInput.focus();
             } else {
                 dRowAlmacen.setAttribute('data-rows-next', "0");
@@ -168,8 +165,8 @@ function addRowsNextProducto(skip, inicio = false) {
         success: function (r) {
             if (inicio) { dRowProducto.innerHTML = ''; }
             if (r !== null && r.trim() !== '') {
-                dRowProducto.innerHTML = r;
-                //dRowProducto.slideDown();
+                dRowProducto.innerHTML += r;
+                dRowProducto.scrollTop -= 100;
                 productoSearchInput.focus();
             } else {
                 dRowProducto.setAttribute('data-rows-next', "0");
@@ -208,7 +205,8 @@ function addRowsNextProveedor(skip, inicio = false) {
         success: function (r) {
             if (inicio) { dRowProveedor.innerHTML = ''; }
             if (r !== null && r.trim() !== '') {
-                dRowProveedor.innerHTML = r;
+                dRowProveedor.innerHTML += r;
+                dRowProveedor.scrollTop -= 100;
                 ProveedorSearchInput.focus();
             } else {
                 dRowProveedor.setAttribute('data-rows-next', "0");
@@ -297,9 +295,21 @@ function deleteRegister(e) {
 }
 
 function getAlmacen(e) {
-    if (e.keyCode === 13) {
-        e.preventDefault();
-        getAlmacenByName(almacenSearchInput.value);
+    switch (e.keyCode) {
+        case 13: //Enter
+            e.preventDefault();
+            if (dRowProducto.children[0] !== undefined) {
+                dRowProducto.children[0].remove();
+            }
+            getAlmacenByName(almacenSearchInput.value);
+            break;
+        case 27: //ESC
+            e.preventDefault();
+            almacenSearchInput.value = "";
+            if (dRowAlmacen.children[0] !== undefined) {
+                dRowAlmacen.children[0].remove();
+            }
+            break;
     }
 }
 
@@ -342,19 +352,38 @@ function getAlmacenByName(name) {
 }
 
 function getProducto(e) {
-    if (e.keyCode === 13) {
-        e.preventDefault();
-        getProductoByCode(productoSearchInput.value);
+    switch (e.keyCode) {
+        case 13: //Enter
+            e.preventDefault();
+            if (dRowAlmacen.children[0] !== undefined) {
+                dRowAlmacen.children[0].remove();
+            }
+            getProductoByCode(productoSearchInput.value);
+            break;
+        case 27: //ESC
+            e.preventDefault();
+            productoSearchInput.value = "";
+            if (dRowProducto.children[0] !== undefined) {
+                dRowProducto.children[0].remove();
+            }
+            break;
     }
-
 }
 
 function getProveedor(e) {
-    if (e.keyCode === 13) {
-        e.preventDefault();
-        getProveedorByRFC(proveedorSearchInput.value);
+    switch (e.keyCode) {
+        case 13: //Enter
+            e.preventDefault();
+            getProveedorByRFC(proveedorSearchInput.value);
+            break;
+        case 27: //ESC
+            e.preventDefault();
+            proveedorSearchInput.value = "";
+            if (dRowProveedor.children[0] !== undefined) {
+                dRowProveedor.children[0].remove();
+            }
+            break;
     }
-
 }
 
 function getProductoByCode(code) {
@@ -471,6 +500,9 @@ function searchAlmacen(e) {
     e.preventDefault();
     if (almacenSearchInput.value !== '') {
         skip = 0;
+        if (dRowProducto.children[0] !== undefined) {
+            dRowProducto.children[0].remove();
+        }
         addRowsNextAlmacen(skip, true);
     }
 }
@@ -479,6 +511,9 @@ function searchProducto(e) {
     e.preventDefault();
     if (productoSearchInput.value !== '') {
         skip = 0;
+        if (dRowAlmacen.children[0] !== undefined) {
+            dRowAlmacen.children[0].remove();
+        }
         addRowsNextProducto(skip, true);
     }
 }

@@ -797,7 +797,7 @@
 
             string productoId = $"{Guid.NewGuid()}.png";
             string directorioImagenProducto = _configuration.GetValue<string>("DirectorioImagenProducto");
-            string directorioImagenProductoID = $"{directorioImagenProducto}//{producto.ProductoID}//";
+            string directorioImagenProductoID = Path.Combine(directorioImagenProducto, producto.ProductoID.ToString());
 
             if (!Directory.Exists(directorioImagenProducto))
             {
@@ -807,22 +807,23 @@
             {
                 Directory.CreateDirectory(directorioImagenProductoID);
             }
-            if (!Directory.Exists($"{directorioImagenProductoID}//sm//"))
+            if (!Directory.Exists(Path.Combine(directorioImagenProductoID, "sm")))
             {
-                Directory.CreateDirectory($"{directorioImagenProductoID}//sm//");
+                Directory.CreateDirectory(Path.Combine(directorioImagenProductoID, "sm"));
             }
-            if (!Directory.Exists($"{directorioImagenProductoID}//md//"))
+            if (!Directory.Exists(Path.Combine(directorioImagenProductoID, "md")))
             {
-                Directory.CreateDirectory($"{directorioImagenProductoID}//md//");
+                Directory.CreateDirectory(Path.Combine(directorioImagenProductoID, "md"));
             }
-            if (!Directory.Exists($"{directorioImagenProductoID}//lg//"))
+            if (!Directory.Exists(Path.Combine(directorioImagenProductoID, "lg")))
             {
-                Directory.CreateDirectory($"{directorioImagenProductoID}//lg//");
+                Directory.CreateDirectory(Path.Combine(directorioImagenProductoID, "lg"));
             }
 
-            if(!System.IO.File.Exists($"{directorioImagenProductoID}//lg//{producto.ProductoID}.png"))
+            string nameProduct = $"{producto.ProductoID}.png";
+            if(!System.IO.File.Exists(Path.Combine(directorioImagenProductoID, "lg", nameProduct)))
             {
-                productoId = $"{producto.ProductoID}.png";
+                productoId = nameProduct;
             }
 
             try

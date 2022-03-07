@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewData["Title"] = "Dashboard de Movimientos";
+}
+
+<div class="modal-content border-0 box-shadow">
+    <div class="modal-header pb-0 align-items-baseline">
+        <div class="ms-3">
+            <h3 class="modal-title" id="exampleModalLabel">Dashboard de Movimientos</h3>
+            <ul class="breadcrumb bg-transparent p-0 small">
+                <li class="breadcrumb-item"><a asp-action="Dashboard" asp-controller="Menu">Dashboard</a></li>
+                <li class="breadcrumb-item"><a asp-action="Movimientos" asp-controller="Dashboard">Movimientos</a></li>
+                <li class="breadcrumb-item active text-muted">Estadísticas</li>
+            </ul>
+        </div>
+        <div class="d-flex align-items-center">
+            @*<a class="btn-help text-secondary me-3" href="/" onclick="help('ViewIndex', event);">
+                <i class="fa fa-question-circle"></i>
+            </a>*@
+            <a asp-action="Dashboard" asp-controller="Menu" class="btn-close me-md-1" aria-label="Close"></a>
+        </div>
+    </div>
+    <div class="modal-body pt-4" data-module="Dashboard">
+        <div id="chart"></div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="~/js/dashboard.js"></script>
+
+    <script>
+        AreaCharts('Estadísticas de Ventas','Total de ventas 2022');
+    </script>
+}

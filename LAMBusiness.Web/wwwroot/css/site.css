@@ -12,7 +12,7 @@ a {
     a.navbar-brand {text-align:center;white-space:normal;word-break:break-all;}
 body {background-color:#eaedef;margin-bottom:60px;}
 button.accept-policy {font-size: 1rem;line-height: inherit;}
-html {font-size:14px;min-height:100%;position:relative;}
+html {font-size:16px;min-height:100%;position:relative;}
 input[type=checkbox], input[type=radio] {cursor:pointer;height:1.5rem;width:1.4rem;}
 input.form-control, select.form-select, textarea.form-control{font-weight:500;margin-bottom:1rem;padding:0.75rem;}
 label.control-label{color:#6c757d!important;margin-bottom:.35rem;margin-top:.25rem;}
@@ -68,6 +68,7 @@ transparencia: rgba(255,65,82,.5)*/
 .bg-transparent-white {background-color:rgba(255, 255, 255, 0.5)!important}
 .bg-transparent-white-ligth {background-color:rgba(255, 255, 255, 0.03)!important}
 
+.box-responsive{max-width:35%;}
 .box-shadow {box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);}
 
 .btn-icon {color:#bcbcbc;font-size:1.2rem;display:inline-block;
@@ -195,16 +196,9 @@ transparencia: rgba(255,65,82,.5)*/
 }
 
 /*Render*/
-@media screen and (min-width: 1024px) {
-    .box-responsive{max-width:50%;}
-}
-
-@media screen and (min-width: 768px) {
-    html {font-size: 16px;}
-}
-
 @media screen and (max-width: 1024px) {
     #UpButton{right:0;}
+    .box-responsive{max-width:50%;}
 }
 
 @media screen and (max-width: 768px) {
