@@ -143,6 +143,7 @@
             {
                 Devoluciones = GetCountDevoluciones(),
                 Entradas = GetCountEntradas(),
+                RetiroDeCaja = GetCountRetiros(),
                 Salidas = GetCountSalidas(),
                 Ventas = GetCountVentas(),
                 ModulosMenu = await _getHelper.GetModulesByUsuarioIDAndModuloPadreID(token.UsuarioID, moduloId)
@@ -260,12 +261,14 @@
         {
             return _context.Entradas.Count();
         }
-
+        private int GetCountRetiros()
+        {
+            return _context.RetirosCaja.Where(r => r.VentaCierreID == Guid.Empty).Count();
+        }
         private int GetCountSalidas()
         {
             return _context.Salidas.Count();
         }
-
         private int GetCountVentas()
         {
             return _context.Ventas.Count();

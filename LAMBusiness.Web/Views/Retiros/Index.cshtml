@@ -1,0 +1,51 @@
+﻿@model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Web.Models.ViewModels.RetirosViewModel>>
+
+@{
+    ViewData["Title"] = "Retiros de caja";
+}
+
+<div class="modal-content border-0 box-shadow">
+    <div class="modal-header pb-0 align-items-baseline">
+        <div class="ms-3">
+            <h3 class="modal-title" id="exampleModalLabel">Retiros de caja</h3>
+            <ul class="breadcrumb bg-transparent p-0 small">
+                <li class="breadcrumb-item"><a asp-action="Movimiento" asp-controller="Menu">Movimientos</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Retiros">Retiros</a></li>
+                <li class="breadcrumb-item active text-muted">Lista</li>
+            </ul>
+        </div>
+        <div class="d-flex align-items-center">
+            <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewIndex', event);">
+                <i class="fa fa-question-circle"></i>
+            </a>
+            <a asp-action="Movimiento" asp-controller="Menu" class="btn-close me-md-1" aria-label="Close"></a>
+        </div>
+    </div>
+    <div class="modal-body pt-4" data-module="Retiros">
+        <div class="row px-md-3">
+            <div class="col-12 col-lg-7 pr-0 pr-md-3">
+                <div class="input-group mb-3 search">
+                    <input type="search" id="RetiroSearchInput" class="form-control" placeholder="Buscar..." onkeypress="searchRetiros(event);">
+                    <button class="btn btn-light border" type="button" onclick="searchRetiros(event);"><i class="fa fa-search"></i></button>
+                </div>
+            </div>
+            <div class="col-12 col-lg-5 text-end">
+                @*<a asp-action="Create" class="btn btn-base"><span class="d-none d-md-inline-block ms-2">Nuevo Registro</span></a>*@
+                <button id="RetiroTodosButton" class="btn btn-outline-base" onclick="changeRetiros(event, '1');">Todos</button>
+                <button id="RetiroPendientesButton" class="btn btn-base" onclick="changeRetiros(event, '0');">Pendientes<span class="d-none d-md-inline-block"> de Cierre</span></button>
+            </div>
+        </div>
+        <div>
+            <partial name="_AddRowsNextAsync" model="Model" />
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        let urlRetiros = '@Url.Action("_AddRowsNext", "Retiros")';
+    </script>
+    <script src="~/js/movements.js"></script>
+}

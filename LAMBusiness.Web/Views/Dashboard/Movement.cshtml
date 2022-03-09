@@ -1,4 +1,5 @@
-﻿
+﻿@model LAMBusiness.Web.Models.ViewModels.EstadisticaMovimientoChartViewModel
+
 @{
     ViewData["Title"] = "Dashboard de Movimientos";
 }
@@ -31,6 +32,8 @@
     <script src="~/js/dashboard.js"></script>
 
     <script>
-        AreaCharts('Estadísticas de Ventas','Total de ventas 2022');
+        let urlMenu = '@Url.Action("Dashboard", "Menu")';
+        let urlMovement = '@Url.Action("GetMovement", "Dashboard")';
+        AreaCharts('Total de ventas 2022');
     </script>
 }

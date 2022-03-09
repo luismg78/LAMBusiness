@@ -6,6 +6,11 @@ let almacenDescripcion = document.getElementById('AlmacenDescripcion');
 let almacenDatos = document.getElementById('AlmacenDatos');
 let almacenSearch = document.getElementById('AlmacenSearch');
 
+let dRowRetiro = document.getElementById('dRowRetiro');
+let retiroSearchInput = document.getElementById('RetiroSearchInput');
+let retiroTodosButton = document.getElementById('RetiroTodosButton');
+let retiroPendientesButton = document.getElementById('RetiroPendientesButton');
+
 let dRowProducto = document.getElementById('dRowProducto');
 let productoSearchInput = document.getElementById('ProductoSearchInput');
 
@@ -142,6 +147,47 @@ function addRowsNextAlmacen(skip, inicio = false) {
     });
 }
 
+function addRowsNextRetiros(skip, todos, inicio = false) {
+    addProcessWithSpinnerInList('SpinListAlmacen', 'fa-search');
+    dRowRetiro.setAttribute('data-charging', "1");
+    var searchBy = retiroSearchInput === undefined ? "" : retiroSearchInput.value;
+    //if (searchBy === '') {
+    //    dRowRetiro.setAttribute('data-rows-next', "0");
+    //    dRowRetiro.setAttribute('data-charging', "0");
+    //    removeProcessWithSpinnerInList('SpinListAlmacen', 'fa-search');
+    //    return false;
+    //}
+    $.ajax({
+        url: urlRetiros,
+        method: 'POST',
+        datatype: 'text',
+        data: {
+            filtro: {
+                Patron: searchBy,
+                Skip: skip
+            },
+            todos: todos === '1' ? true : false
+        },
+        success: function (r) {
+            if (inicio) { dRowRetiro.innerHTML = ''; }
+            if (r !== null && r.trim() !== '') {
+                dRowRetiro.innerHTML += r;
+                dRowRetiro.scrollTop -= 100;
+                retiroSearchInput.focus();
+            } else {
+                dRowRetiro.setAttribute('data-rows-next', "0");
+            }
+            dRowRetiro.setAttribute('data-charging', "0");
+            removeProcessWithSpinnerInList('SpinListAlmacen', 'fa-search');
+        },
+        error: function (r) {
+            dRowRetiro.setAttribute('data-charging', "0");
+            removeProcessWithSpinnerInList('SpinListAlmacen', 'fa-search');
+        },
+        cache: false
+    });
+}
+
 function addRowsNextProducto(skip, inicio = false) {
     addProcessWithSpinnerInList('SpinList', 'fa-search');
     dRowProducto.setAttribute('data-charging', "1");
@@ -227,6 +273,20 @@ function apply(e) {
     url = url.replace('paramId', itemToApply);
 
     window.location.href = url;
+}
+
+function changeRetiros(e, value) {
+    dRowRetiro.setAttribute('data-retiros', value);
+    if (e.currentTarget.id === 'RetiroTodosButton') {
+        retiroPendientesButton.classList.remove('btn-base');
+        retiroPendientesButton.classList.add('btn-outline-base');
+    } else {
+        retiroTodosButton.classList.remove('btn-base');
+        retiroTodosButton.classList.add('btn-outline-base');
+    }
+    e.currentTarget.classList.remove('btn-outline-base');
+    e.currentTarget.classList.add('btn-base');
+    searchRetiros(event);
 }
 
 function deleteButtonAlmacen(e) {
@@ -504,6 +564,15 @@ function searchAlmacen(e) {
             dRowProducto.children[0].remove();
         }
         addRowsNextAlmacen(skip, true);
+    }
+}
+
+function searchRetiros(e) {
+    if (e.keyCode === 13 || e.type === 'click') {
+        e.preventDefault();
+        skip = 0;
+        let todos = dRowRetiro.getAttribute('data-retiros');
+        addRowsNextRetiros(skip, todos, true);
     }
 }
 

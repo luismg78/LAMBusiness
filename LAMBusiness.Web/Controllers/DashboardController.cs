@@ -35,17 +35,33 @@
             _configuration = configuration;
         }
 
-        public async Task<IActionResult> Movimientos()
+        public IActionResult Movement()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> GetMovement()
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "dashboard");
-            if (validateToken != null) { return validateToken; }
+            if (validateToken != null) { return Json(new { error = true, mensaje = "Ingrese de nuevo sus credenciales." }); }
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+                return Json(new { error = true, mensaje = "Lo sentimos, su cuenta no tiene privilegios para consultar estadísticas de movimientos." });
+
+            List<int> años = new List<int>() { 2022 };
+            EstadisticaMovimientoChartViewModel estadisticaMovimiento = await _getHelper.GetMovementsDashboardAsync(años);
+
+            if (estadisticaMovimiento != null)
             {
-                return RedirectToAction("Inicio", "Menu");
+                return Json(
+                    new
+                    {
+                        datos = estadisticaMovimiento.TotalVentasPorAño,
+                        error = false
+                    });
             }
 
-            return View();
+            return Json(new { error = true, mensaje = "Por el momento no tenemos registros de ventas en el sistema." });
         }
     }
 }

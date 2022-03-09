@@ -1,4 +1,4 @@
-﻿    namespace LAMBusiness.Web.Helpers
+﻿namespace LAMBusiness.Web.Helpers
 {
     using System;
     using System.Collections.Generic;
@@ -129,7 +129,7 @@
         }
 
         //Aplicación
-        
+
         private string GetHostName()
         {
             string localIP = string.Empty;
@@ -184,7 +184,7 @@
 
         //Bitácora
 
-        public async Task SetBitacoraAsync(Token token, string accion, Guid moduloId, object clase, 
+        public async Task SetBitacoraAsync(Token token, string accion, Guid moduloId, object clase,
             string parametroId, string directorio, string excepcion = "")
         {
             Guid bitacoraId = Guid.NewGuid();
@@ -411,6 +411,46 @@
             return await _context.ProveedorContactos.FirstOrDefaultAsync(c => c.ProveedorID == id);
         }
 
+        //Dashboard
+        public async Task<EstadisticaMovimientoChartViewModel> GetMovementsDashboardAsync(List<int> años)
+        {
+            if (años.Count > 0)
+            {
+                List<TotalVentasPorAñoViewModel> totalVentasPorAño = new List<TotalVentasPorAñoViewModel>();
+                Guid almacenId = Guid.Parse("8706EF28-2EBA-463A-BAB4-62227965F03F");
+                foreach (var año in años)
+                {
+                    var estadisticas = await _context.EstadisticasMovimientosMensual
+                        .Where(e => e.AlmacenID == almacenId && e.Año == año)
+                        .ToListAsync();
+                    if(estadisticas != null && estadisticas.Count > 0)
+                    {
+                        List<decimal> importe = new List<decimal>();
+                        for (byte i = 1; i <= 12; i++)
+                        {
+                            var estadistica = estadisticas.FirstOrDefault(e => e.Mes == i);
+                            if(estadistica != null)
+                                importe.Add((decimal)estadistica.VentasImporte);
+                            else
+                                importe.Add(0);
+                        }
+
+                        totalVentasPorAño.Add(new TotalVentasPorAñoViewModel()
+                        {
+                            Name = $"Total Venta {año}",
+                            Data = importe
+                        });
+                    } 
+                }
+
+                return new EstadisticaMovimientoChartViewModel()
+                {
+                    TotalVentasPorAño = totalVentasPorAño
+                };
+            }
+            return null;
+        }
+
         //Estado
 
         /// <summary>
@@ -634,7 +674,8 @@
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<Paquete> GetPaqueteByPieceID(Guid id) {
+        public async Task<Paquete> GetPaqueteByPieceID(Guid id)
+        {
             return await _context.Paquetes.FirstOrDefaultAsync(p => p.PiezaProductoID == id);
         }
 
@@ -895,7 +936,7 @@
         /// <param name="directorio"></param>
         /// <param name="minutosCerrarSesion"></param>
         /// <returns></returns>
-        public async Task<Resultado<Token>> GetTokenBySessionIdAndUsuarioIDAsync(string sessionId, 
+        public async Task<Resultado<Token>> GetTokenBySessionIdAndUsuarioIDAsync(string sessionId,
            string directorio)
         {
             //initialize token class
@@ -912,7 +953,7 @@
                 SessionID = "",
                 UsuarioID = Guid.Empty
             };
-            
+
             //validate session directory
             if (!Directory.Exists(directorio))
             {
@@ -921,7 +962,8 @@
             string ruta = $"{directorio}//{sessionId}.config";
 
             //initialize result class
-            Resultado<Token> resultado = new Resultado<Token> { 
+            Resultado<Token> resultado = new Resultado<Token>
+            {
                 Contenido = null,
                 Error = false,
                 Mensaje = ""
@@ -943,19 +985,19 @@
                     resultado.Error = true;
                     resultado.Mensaje = "Sesión no inicilizada (Redireccionar a página de inicio de aplicación)";
                 }
-                
+
                 if (resultado.Error)
                 {
-                    if(sesion != null)
+                    if (sesion != null)
                     {
                         List<Sesion> sesiones = await _context.Sesiones
                             .Where(s => s.UsuarioID == sesion.UsuarioID).ToListAsync();
-                        
+
                         string rutaSesion = "";
 
                         if (sesiones != null)
                         {
-                            foreach(var s in sesiones)
+                            foreach (var s in sesiones)
                             {
                                 _context.Remove(s);
                                 rutaSesion = $"{directorio}//{s.SessionID}.config";
@@ -974,7 +1016,7 @@
                     }
                     else
                     {
-                        if(File.Exists(ruta))
+                        if (File.Exists(ruta))
                             File.Delete(ruta);
                     }
 
@@ -984,7 +1026,7 @@
 
             if (!File.Exists(ruta))
             {
-                if(sesion == null)
+                if (sesion == null)
                 {
                     return new Resultado<Token>()
                     {
@@ -1076,7 +1118,8 @@
 
                 if (token.UsuariosModulos == null)
                 {
-                    return new Resultado<Token>() {
+                    return new Resultado<Token>()
+                    {
                         Contenido = null,
                         Error = true,
                         Mensaje = "No tiene privilegios de acceso a la aplicación"
@@ -1108,7 +1151,7 @@
                     };
                 }
             }
-            
+
             return resultado;
         }
 
@@ -1128,7 +1171,7 @@
             {
                 Activo = false,
                 Administrador = "",
-                ColaboradorID = Guid.Empty,               
+                ColaboradorID = Guid.Empty,
                 HostName = "",
                 IPPrivada = "",
                 IPPublica = "",
@@ -1204,7 +1247,7 @@
             {
                 var sesion = await _context.Sesiones.FirstOrDefaultAsync(s => s.SessionID == sessionId);
                 if (sesion != null)
-                { 
+                {
                     _context.Remove(sesion);
                 }
                 else
@@ -1227,7 +1270,8 @@
 
                 Guid sesionId = Guid.NewGuid();
 
-                _context.Add(new Sesion() { 
+                _context.Add(new Sesion()
+                {
                     Fecha = DateTime.Now,
                     SesionID = sesionId,
                     SessionID = sessionId,
@@ -1296,10 +1340,10 @@
                 if (token.Administrador != "SA" && token.Administrador != "GA")
                 {
                     token.UsuariosModulos = await (from m in _context.Modulos
-                                                   join u in _context.UsuariosModulos 
+                                                   join u in _context.UsuariosModulos
                                                    on m.ModuloID equals u.ModuloID
-                                                   where m.Activo == true && 
-                                                         u.PermisoLectura == true && 
+                                                   where m.Activo == true &&
+                                                         u.PermisoLectura == true &&
                                                          u.UsuarioID == usuarioId &&
                                                          m.ModuloPadreID != Guid.Empty
                                                    select m.ModuloPadreID).Distinct().ToListAsync();
@@ -1320,10 +1364,10 @@
                 token.IPPublica = GetIPPublica();
 
                 resultado.Contenido = token;
-                
+
                 //actualizar fecha de último acceso a la aplicación por el usuario.
                 var usuario = await _context.Usuarios.FindAsync(usuarioId);
-                if(usuario != null)
+                if (usuario != null)
                 {
                     usuario.FechaUltimoAcceso = DateTime.Now;
                     _context.Update(usuario);
@@ -1349,7 +1393,7 @@
                         Mensaje = "Error al cargar archivo de sesión"
                     };
                 }
-            }            
+            }
 
             return resultado;
         }
@@ -1369,12 +1413,12 @@
         public async Task<List<Guid>> GetModulesByUsuarioIDAndModuloPadreID(Guid usuarioId, Guid moduloPadreId)
         {
             var usuario = _context.Usuarios.Find(usuarioId);
-            if(usuario == null)
+            if (usuario == null)
             {
                 return null;
             }
 
-            if(usuario.AdministradorID == "SA" || usuario.AdministradorID == "GA")
+            if (usuario.AdministradorID == "SA" || usuario.AdministradorID == "GA")
             {
                 return await _context.Modulos
                     .Where(m => m.ModuloPadreID == moduloPadreId && m.Activo == true)
@@ -1394,7 +1438,8 @@
 
         public async Task<Resultado<VentaNoAplicadaDetalle>> GetProductByCodeForSale(Guid? id, Guid usuarioId, string codigo, decimal cantidad)
         {
-            Resultado<VentaNoAplicadaDetalle> resultado = new Resultado<VentaNoAplicadaDetalle>() {
+            Resultado<VentaNoAplicadaDetalle> resultado = new Resultado<VentaNoAplicadaDetalle>()
+            {
                 Contenido = null,
                 Error = true,
                 Mensaje = ""
@@ -1404,7 +1449,7 @@
             if (id == null || id == Guid.Empty)
             {
                 resultado.Mensaje = "reinciar";
-                return resultado ;
+                return resultado;
             }
 
             if (cantidad == 0)

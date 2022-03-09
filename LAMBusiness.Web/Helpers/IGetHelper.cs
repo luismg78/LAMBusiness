@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Models.ViewModels;
     using Shared.Aplicacion;
     using Shared.Catalogo;
     using Shared.Contacto;
@@ -35,6 +36,7 @@
         Task<List<Marca>> GetMarcasByPatternAsync(string pattern, int skip);
         Task<List<Guid>> GetModulesByUsuarioIDAndModuloPadreID(Guid usuarioId, Guid moduloPadreId);
         Task<Modulo> GetModuloByIdAsync(Guid id);
+        Task<EstadisticaMovimientoChartViewModel> GetMovementsDashboardAsync(List<int> años);
         Task<Municipio> GetMunicipioByIdAsync(int id);
         Task<List<Municipio>> GetMunicipiosByEstadoIdAsync(short id);
         Task<Paquete> GetPaqueteByIdAsync(Guid id);
