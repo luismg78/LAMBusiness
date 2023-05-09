@@ -1,5 +1,6 @@
 namespace LAMBusiness.Web
 {
+    using System;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,6 @@ namespace LAMBusiness.Web
     using Microsoft.Extensions.Hosting;
     using Data;
     using Helpers;
-    using System;
 
     public class Startup
     {
