@@ -35,11 +35,11 @@
         @if (Model.ModulosMenu.Contains(Guid.Parse("aa3e3482-0ec5-40b8-8c48-7e567da135f6")))
         {
             <div class="btn-lam col-xl-4 col-md-6">
-                <a asp-action="PaginaEnConstruccion" asp-controller="Home" class="text-decoration-none">
+                <a asp-action="Index" asp-controller="Retiros" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
                             <i class="fas fa-cash-register display-4 text-secondary"></i>
-                            <h4 class="mt-4">Retiro de caja</h4>
+                            <h4 class="mt-4"><span class="text-secondary">@Model.RetiroDeCaja</span> Retiro de caja</h4>
                             <p class="mb-3">Retiro de efectivo parcial</p>
                         </div>
                     </div>

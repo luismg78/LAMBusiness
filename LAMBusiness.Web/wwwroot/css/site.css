@@ -12,7 +12,7 @@ a {
     a.navbar-brand {text-align:center;white-space:normal;word-break:break-all;}
 body {background-color:#eaedef;margin-bottom:60px;}
 button.accept-policy {font-size: 1rem;line-height: inherit;}
-html {font-size:14px;min-height:100%;position:relative;}
+html {font-size:16px;min-height:100%;position:relative;}
 input[type=checkbox], input[type=radio] {cursor:pointer;height:1.5rem;width:1.4rem;}
 input.form-control, select.form-select, textarea.form-control{font-weight:500;margin-bottom:1rem;padding:0.75rem;}
 label.control-label{color:#6c757d!important;margin-bottom:.35rem;margin-top:.25rem;}
@@ -68,6 +68,7 @@ transparencia: rgba(255,65,82,.5)*/
 .bg-transparent-white {background-color:rgba(255, 255, 255, 0.5)!important}
 .bg-transparent-white-ligth {background-color:rgba(255, 255, 255, 0.03)!important}
 
+.box-responsive{max-width:40%;}
 .box-shadow {box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);}
 
 .btn-icon {color:#bcbcbc;font-size:1.2rem;display:inline-block;
@@ -87,6 +88,11 @@ transparencia: rgba(255,65,82,.5)*/
         .btn-lam:hover .bg-card > i{font-size:4.5rem;}
         .btn-lam .bg-card > img{transition:width .2s;-webkit-transition:width .2s;-o-transition:width .2s;-moz-transition:width .2s;}
         .btn-lam:hover .bg-card > img{transition:width .2s;-webkit-transition:width .2s;-o-transition:width .2s;-moz-transition:width .2s;width:8rem!important;}
+
+.btn-lam-75 {
+    margin-bottom: 0;
+    margin-right: 0.75rem;
+}
 
 .card-lam-d1{text-align:left;}
     .card-header-lam-d1{align-items:flex-start;display:flex;flex:0 0 100%;max-width:100%;padding:1rem 0!important;text-align:left;}
@@ -195,16 +201,9 @@ transparencia: rgba(255,65,82,.5)*/
 }
 
 /*Render*/
-@media screen and (min-width: 1024px) {
-    .box-responsive{max-width:50%;}
-}
-
-@media screen and (min-width: 768px) {
-    html {font-size: 16px;}
-}
-
 @media screen and (max-width: 1024px) {
     #UpButton{right:0;}
+    .box-responsive{max-width:50%;}
 }
 
 @media screen and (max-width: 768px) {
@@ -220,11 +219,12 @@ transparencia: rgba(255,65,82,.5)*/
 @media screen and (max-width: 425px) {
     .box-responsive{max-width:100%;}
     .btn-icon {padding:0.3rem;}
+    .btn-lam-75 {margin-bottom:0.75rem; padding:0.75rem;}
     .card-header-lam-d1{display:block;text-align:center;}
         .card-header-lam-d1 p.title{font-size:1.1rem;}
         .card-header-lam-d1 span.subtitle{font-size:0.7rem;}
     .image-profile{width:5rem;}
-    .mt-container{margin-top:4.5rem;}
+    .mt-container{margin-top:5.5rem;}
     .process-with-spinner {background-color:#fff;}
     .text-deleteConfirm > p{font-size:1.3rem;}
 }

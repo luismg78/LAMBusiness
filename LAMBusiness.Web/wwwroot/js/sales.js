@@ -22,49 +22,75 @@ window.addEventListener('resize', function () {
 });
 
 document.getElementById('inputText').addEventListener('keydown', function (e) {
-    switch (e.which) {
-        case 13: //enter
-            setInputText(e);
-            break;
-        case 27: //ESC            
-            saleMode();
-            break;
-        case 106: //*
-            if (isNaN(inputText.value) || parseFloat(inputText.value) === 0) {
-                cant = '1';
-                message.innerHTML = 'Cantidad incorrecta';
-                message.style.display = 'block';
-            } else {
-                message.style.display = 'none';
-                cant = inputText.value;
-            }
-            inputText.value = '';
-            e.cancelable = true;
-            e.preventDefault();
-            break;
-        case 112: //F1
-            e.preventDefault();
-            searchMode();
-            break;
-        case 114: //F3    
-            e.preventDefault();
-            cancelSaleMode();
-            break;
-        case 115: //F4
-            e.preventDefault();
-            getItBackSaleMode();
-            break;
-        case 116: //F5
-            e.preventDefault();
-            payMode();
-            break;
-        case 118: //F7 retiro de efectivo
-            withdrawCashMode(event);
-            break;
-        case 119: //F8
-            e.preventDefault();
-            closeSalesMode();
-            break;
+    let key = e.which;
+    let isShift = !!e.shiftKey;
+    if (isShift) {
+        switch (key) {
+            case 16:
+                break;
+            case 56: //*
+            case 187:
+                if (isNaN(inputText.value) || parseFloat(inputText.value) === 0) {
+                    cant = '1';
+                    message.innerHTML = 'Cantidad incorrecta';
+                    message.style.display = 'block';
+                } else {
+                    message.style.display = 'none';
+                    cant = inputText.value;
+                }
+                inputText.value = '';
+                e.cancelable = true;
+                e.preventDefault();
+                break;
+            default:
+                alert(key);
+                break;
+        }
+    } else {
+        switch (key) {
+            case 13: //enter
+                setInputText(e);
+                break;
+            case 27: //ESC            
+                saleMode();
+                break;
+            case 106: //*
+                if (isNaN(inputText.value) || parseFloat(inputText.value) === 0) {
+                    cant = '1';
+                    message.innerHTML = 'Cantidad incorrecta';
+                    message.style.display = 'block';
+                } else {
+                    message.style.display = 'none';
+                    cant = inputText.value;
+                }
+                inputText.value = '';
+                e.cancelable = true;
+                e.preventDefault();
+                break;
+            case 112: //F1
+                e.preventDefault();
+                searchMode();
+                break;
+            case 114: //F3    
+                e.preventDefault();
+                cancelSaleMode();
+                break;
+            case 115: //F4
+                e.preventDefault();
+                getItBackSaleMode();
+                break;
+            case 116: //F5
+                e.preventDefault();
+                payMode();
+                break;
+            case 118: //F7 retiro de efectivo
+                withdrawCashMode(event);
+                break;
+            case 119: //F8
+                e.preventDefault();
+                closeSalesMode();
+                break;
+        }
     }
 });
 
@@ -73,7 +99,55 @@ modalElement.addEventListener('hidden.bs.modal', function (event) {
     inputText.focus();
 })
 
-function addProduct(e){
+let offCanvasBody = document.getElementsByClassName('offcanvas-body');
+if (offCanvasBody) {
+    offCanvasBody[0].addEventListener('scroll', (event) => {
+        var dRowProducto = document.getElementById('dRowProducto');
+        if (dRowProducto.getAttribute('data-rows-next') === "1" &&
+            dRowProducto.getAttribute('data-charging') === "0" &&
+            dRowProducto.getElementsByClassName('product').length % 50 === 0) {
+            let scrollHeight = offCanvasBody[0].scrollHeight;
+            let scrollPosition = offCanvasBody[0].scrollTop + offCanvasBody[0].offsetHeight;
+            if (scrollPosition >= scrollHeight) {
+                skip += 50;
+                addRowsNextProducto(skip);
+            }
+        }
+    });
+}
+
+function addRowsNextProducto(skip, inicio = false) {
+    addProcessWithSpinnerInList('SpinList', 'fa-search');
+    dRowProducto.setAttribute('data-charging', "1");
+    $.ajax({
+        url: urlProductList,
+        method: 'POST',
+        datatype: 'text',
+        data: {
+            filtro: {
+                Patron: inputText.value,
+                Skip: skip
+            }
+        },
+        success: function (r) {
+            if (inicio) { dRowProducto.innerHTML = ''; }
+            if (r !== null && r.trim() !== '') {
+                dRowProducto.children[0].innerHTML += r;
+                dRowProducto.scrollTop -= 100;
+            } else {
+                dRowProducto.setAttribute('data-rows-next', "0");
+            }
+            dRowProducto.setAttribute('data-charging', "0");
+            removeProcessWithSpinnerInList('SpinList', 'fa-search');
+        },
+        error: function (r) {
+            dRowProducto.setAttribute('data-charging', "0");
+            removeProcessWithSpinnerInList('SpinList', 'fa-search');
+        },
+        cache: false
+    });
+}
+function addProduct(e) {
     let product = e.currentTarget;
     inputText.value = product.dataset.search;
     getProductByCode();
@@ -138,9 +212,9 @@ function closeSalesMode() {
     inputText.focus();
 }
 function getItBackSale(e) {
-    e.preventDefault();    
+    e.preventDefault();
 }
-function getItBackSaleMode() {    
+function getItBackSaleMode() {
     $.ajax({
         url: urlGetItBackSale,
         method: 'POST',
@@ -354,7 +428,7 @@ function resetMode(button) {
             break;
     }
 }
-function resetSale(r) {    
+function resetSale(r) {
     let modalHelpLabel = document.getElementById('ModalHelpLabel');
     let myModal = new bootstrap.Modal(document.getElementById('ModalHelp'), {
         keyboard: true
@@ -372,8 +446,8 @@ function saveSale(e) {
         url: urlSaveSale,
         method: 'POST',
         datatype: 'text',
-        data: { id : ventaId.value },
-        success: function (result) {            
+        data: { id: ventaId.value },
+        success: function (result) {
             if (result.error !== undefined && result.error !== null && result.error) {
                 if (result.reiniciar) {
                     window.location.href = urlMovement;
@@ -432,7 +506,7 @@ function searchMode() {
 }
 function searchProduct() {
     $.ajax({
-        url: urlProductList ,
+        url: urlProductList,
         method: 'POST',
         datatype: 'text',
         data: {
@@ -444,17 +518,23 @@ function searchProduct() {
         },
         success: function (r) {
             if (r !== null && r.trim() !== '') {
+                var elementNode = document.createElement('div');
+                elementNode.id = 'dRowProducto';
+                elementNode.setAttribute('data-charging', '0');
+                elementNode.setAttribute('data-rows-next', '1');
+                elementNode.innerHTML = r;
                 let myOffCanvasLabel = document.getElementById('offcanvasRightLabel');
                 myOffCanvasLabel.innerHTML = "Productos";
                 let myOffCanvasBody = document.getElementsByClassName('offcanvas-body');
-                myOffCanvasBody[0].innerHTML = r;
+                myOffCanvasBody[0].innerHTML = '';
+                myOffCanvasBody[0].appendChild(elementNode);
                 bsOffcanvas.show();
             } else {
                 message.innerHTML = 'Código inexistente...';
                 message.style.display = 'block';
             }
             inputText.value = '';
-            removeProcessWithSpinnerInList('SpinList', 'fa-search');            
+            removeProcessWithSpinnerInList('SpinList', 'fa-search');
         },
         error: function (r) {
             removeProcessWithSpinnerInList('SpinList', 'fa-search');
@@ -483,7 +563,7 @@ function setInputText(e) {
             break;
     }
 }
-function validateSale(e){
+function validateSale(e) {
     var box = document.getElementById('datos');
     if (box.children[0].children !== undefined && box.children[0].children.length > 0) {
         message.innerHTML = "";

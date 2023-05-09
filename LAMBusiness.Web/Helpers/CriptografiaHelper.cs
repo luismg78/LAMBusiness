@@ -53,14 +53,18 @@
         }
         public string GenerateSHA512String(string inputString)
         {
-            StringBuilder stringBuilder = null;
-            SHA512 sha512 = SHA512Managed.Create();
-            byte[] bytes = Encoding.UTF8.GetBytes(inputString);
-            byte[] hash = sha512.ComputeHash(bytes);
-            stringBuilder = new System.Text.StringBuilder();
-            foreach (var b in hash)
-                stringBuilder.Append(b.ToString("x2"));
-            return stringBuilder.ToString();
+            var message = Encoding.UTF8.GetBytes(inputString);
+            using (var sha512 = SHA512.Create())
+            {
+                string hex = "";
+
+                var hashValue = sha512.ComputeHash(message);
+                foreach (byte x in hashValue)
+                {
+                    hex += String.Format("{0:x2}", x);
+                }
+                return hex;
+            }
         }
     }
 }

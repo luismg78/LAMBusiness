@@ -28,6 +28,7 @@
         public DateTime? Fecha { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido.")]
+        [Column(TypeName = "decimal(18,0)")]
         public decimal Folio { get; set; }
 
         [ForeignKey("Almacen")]

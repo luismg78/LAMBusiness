@@ -7,6 +7,7 @@
     using Shared.Catalogo;
     using Shared.Contacto;
     using Shared.Movimiento;
+    using Shared.Dashboard.Entidades;
 
     public class DataContext: DbContext
     {
@@ -45,6 +46,10 @@
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<UsuarioModulo> UsuariosModulos { get; set; }
 
+        #endregion
+        #region Dashboard
+        public DbSet<EstadisticasMovimientosDiario> EstadisticasMovimientosDiario { get; set; }
+        public DbSet<EstadisticasMovimientosMensual> EstadisticasMovimientosMensual { get; set; }
         #endregion
         #region Movimiento
         public DbSet<Entrada> Entradas { get; set; }
@@ -108,6 +113,11 @@
 
             modelBuilder.Entity<Proveedor>()
                 .HasIndex(p => new { p.RFC })
+                .IsUnique(true);
+
+            //Dashboard (Atributos con valores únicos)
+            modelBuilder.Entity<EstadisticasMovimientosDiario>()
+                .HasIndex(e => new { e.Fecha })
                 .IsUnique(true);
 
             //Precargar entidades, ver configuraciones en /Data/Entities

@@ -8,7 +8,9 @@ namespace LAMBusiness.Web
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Data;
+    using Interfaces;
     using Helpers;
+    using Services;
 
     public class Startup
     {
@@ -45,6 +47,7 @@ namespace LAMBusiness.Web
             services.AddScoped<IConverterHelper, ConverterHelper>();
             services.AddScoped<ICriptografiaHelper, CriptografiaHelper>();
             services.AddScoped<IGetHelper, GetHelper>();
+            services.AddScoped<IDashboard, Dashboard>();
 
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
 

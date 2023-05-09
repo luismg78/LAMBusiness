@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30503.244
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LAMBusiness.Shared", "LAMBusiness.Shared\LAMBusiness.Shared.csproj", "{4D07C8DE-3912-4C77-AC92-01F703A2CBB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LAMBusiness.Shared", "LAMBusiness.Shared\LAMBusiness.Shared.csproj", "{4D07C8DE-3912-4C77-AC92-01F703A2CBB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LAMBusiness.Web", "LAMBusiness.Web\LAMBusiness.Web.csproj", "{DA7DC743-9E68-4729-8701-A14C03AD3680}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LAMBusiness.Web", "LAMBusiness.Web\LAMBusiness.Web.csproj", "{DA7DC743-9E68-4729-8701-A14C03AD3680}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -30,6 +30,8 @@
         [JsonIgnore]
         public virtual FormaPago FormasPago { get; set; }
 
+        [Column(TypeName = "decimal(18,2)")]
+        [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = true)]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public decimal Importe { get; set; }
     }
