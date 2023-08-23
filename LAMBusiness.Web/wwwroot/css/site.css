@@ -1,7 +1,9 @@
 ﻿@charset "UTF-8";
+@import "comun.css";
+
 /*!
  * Ing. Luis Martínez
- * 2020 - 2021 LAMBusiness
+ * 2020 LAMBusiness
  */
 
 /*Html*/
@@ -26,33 +28,33 @@ button:not(:disabled), a.btn {
 }
 
 /*IDs*/
-#UpButton{background-color:transparent;border:0;bottom:4rem;color:#ff4152;display:none;
+#UpButton{background-color:transparent;border:0;bottom:4rem;color:var(--lm-primary);display:none;
           font-size:3rem;outline:none;position:fixed;right:2rem;z-index:99999;}
-    #UpButton:hover, #UpButton:focus{color:rgba(255,65,82,.5);}
+    #UpButton:hover, #UpButton:focus{color:var(--lm-bg-transparency);}
 
 /*Colores Base
-color base: #ff4152;
-border: #fe1b30;
-transparencia: rgba(255,65,82,.5)*/
-.bg-base {color:#fff;background-color:#ff4152;}
-    a.bg-base.focus, a.bg-base:focus {outline:0;box-shadow:0 0 0 0.2rem rgba(255,65,82,.5);}
-    a.bg-base:focus, a.bg-base:hover {color:#fff;background-color:#fe1b30;}
+color base: var(--lm-primary);
+border: var(--lm-border);
+transparencia: var(--lm-bg-transparency)*/
+.bg-base {color:#fff;background-color:var(--lm-primary);}
+    a.bg-base.focus, a.bg-base:focus {outline:0;box-shadow:0 0 0 0.2rem var(--lm-bg-transparency);}
+    a.bg-base:focus, a.bg-base:hover {color:#fff;background-color:var(--lm-border);}
 
-.btn-base {color:#fff;background-color:#ff4152;border-color:#fe1b30;}
-    .btn-base.focus, .btn-base:focus {box-shadow:0 0 0 0.2rem rgba(255,65,82,.5);}
-    .btn-base:hover {color:#fff;background-color:#fe1b30;}
+.btn-base {color:#fff;background-color:var(--lm-primary);border-color:var(--lm-border);}
+    .btn-base.focus, .btn-base:focus {box-shadow:0 0 0 0.2rem var(--lm-bg-transparency);}
+    .btn-base:hover {color:#fff;background-color:var(--lm-border);}
     .btn-base:not(:disabled):not(.disabled).active, 
     .btn-base:not(:disabled):not(.disabled):active, 
-    .show > .btn-base.dropdown-toggle {color:#fff;background-color:#ff4152;border-color:#fe1b30;}
+    .show > .btn-base.dropdown-toggle {color:#fff;background-color:var(--lm-primary);border-color:var(--lm-border);}
 
-.btn-outline-base {color:#ff4152;border-color:#ff4152;}
-    .btn-outline-base:hover {color:#fff!important;background-color:#ff4152;border-color:#ff4152;}
-    .btn-outline-base.focus, .btn-outline-base:focus {box-shadow:0 0 0 0.2rem rgba(255,65,82,.5);}
+.btn-outline-base {color:var(--lm-primary);border-color:var(--lm-primary);}
+    .btn-outline-base:hover {color:#fff!important;background-color:var(--lm-primary);border-color:var(--lm-primary);}
+    .btn-outline-base.focus, .btn-outline-base:focus {box-shadow:0 0 0 0.2rem var(--lm-bg-transparency);}
     .btn-outline-base:not(:disabled):not(.disabled).active, 
     .btn-outline-base:not(:disabled):not(.disabled):active, 
-    .show > .btn-outline-base.dropdown-toggle {color:#fff;background-color:#ff4152;
-                                               border-color:#ff4152;}
-.text-base{color:#ff4152!important;}
+    .show > .btn-outline-base.dropdown-toggle {color:#fff;background-color:var(--lm-primary);
+                                               border-color:var(--lm-primary);}
+.text-base{color:var(--lm-primary)!important;}
 
 /*Class*/
 .bg-card{box-shadow:initial;}
@@ -68,12 +70,12 @@ transparencia: rgba(255,65,82,.5)*/
 .bg-transparent-white {background-color:rgba(255, 255, 255, 0.5)!important}
 .bg-transparent-white-ligth {background-color:rgba(255, 255, 255, 0.03)!important}
 
-.box-responsive{max-width:35%;}
+.box-responsive{max-width:40%;}
 .box-shadow {box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);}
 
 .btn-icon {color:#bcbcbc;font-size:1.2rem;display:inline-block;
            padding:6px 9px;text-decoration:none!important;text-align:center;}
-    .btn-icon:hover, .btn-icon:focus {color:#ff4152;background-color:rgba(0, 0, 0, 0.1)!important;}
+    .btn-icon:hover, .btn-icon:focus {color:var(--lm-primary);background-color:rgba(0, 0, 0, 0.1)!important;}
     .btn-icon > i{height:20px;width:20px;}
     .btn-icon > img{border-radius:50%;width:1.8rem;}
 
@@ -88,6 +90,11 @@ transparencia: rgba(255,65,82,.5)*/
         .btn-lam:hover .bg-card > i{font-size:4.5rem;}
         .btn-lam .bg-card > img{transition:width .2s;-webkit-transition:width .2s;-o-transition:width .2s;-moz-transition:width .2s;}
         .btn-lam:hover .bg-card > img{transition:width .2s;-webkit-transition:width .2s;-o-transition:width .2s;-moz-transition:width .2s;width:8rem!important;}
+
+.btn-lam-75 {
+    margin-bottom: 0;
+    margin-right: 0.75rem;
+}
 
 .card-lam-d1{text-align:left;}
     .card-header-lam-d1{align-items:flex-start;display:flex;flex:0 0 100%;max-width:100%;padding:1rem 0!important;text-align:left;}
@@ -174,25 +181,25 @@ transparencia: rgba(255,65,82,.5)*/
 
 
 /*Css bootstrap replace values*/
-.tooltip-inner {background-color:#ff4152;}
+.tooltip-inner {background-color:var(--lm-primary);}
 
 .bs-tooltip-top .tooltip-arrow::before, 
 .bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before {
-    border-top-color: #ff4152;
+    border-top-color: var(--lm-primary);
 }
 
 .bs-tooltip-end .tooltip-arrow::before, 
 .bs-tooltip-auto[data-popper-placement^=right] .tooltip-arrow::before {
-    border-right-color: #ff4152;
+    border-right-color: var(--lm-primary);
 }
 
 .bs-tooltip-bottom .tooltip-arrow::before, 
 .bs-tooltip-auto[data-popper-placement^=bottom] .tooltip-arrow::before {
-    border-bottom-color: #ff4152;
+    border-bottom-color: var(--lm-primary);
 }
 .bs-tooltip-start .tooltip-arrow::before, 
 .bs-tooltip-auto[data-popper-placement^=left] .tooltip-arrow::before {
-    border-left-color: #ff4152;
+    border-left-color: var(--lm-primary);
 }
 
 /*Render*/
@@ -214,11 +221,12 @@ transparencia: rgba(255,65,82,.5)*/
 @media screen and (max-width: 425px) {
     .box-responsive{max-width:100%;}
     .btn-icon {padding:0.3rem;}
+    .btn-lam-75 {margin-bottom:0.75rem; padding:0.75rem;}
     .card-header-lam-d1{display:block;text-align:center;}
         .card-header-lam-d1 p.title{font-size:1.1rem;}
         .card-header-lam-d1 span.subtitle{font-size:0.7rem;}
     .image-profile{width:5rem;}
-    .mt-container{margin-top:4.5rem;}
+    .mt-container{margin-top:5.5rem;}
     .process-with-spinner {background-color:#fff;}
     .text-deleteConfirm > p{font-size:1.3rem;}
 }

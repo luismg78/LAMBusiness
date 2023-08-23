@@ -92,6 +92,7 @@
                 if (resultado.Error)
                 {
                     ModelState.AddModelError(string.Empty, resultado.Mensaje);
+                    TempData["toast"] = resultado.Mensaje;
                     return View(inicioSesionViewModel);
                 }
 
