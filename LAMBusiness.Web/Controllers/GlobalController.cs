@@ -101,6 +101,9 @@
             string sessionId = HttpContext.Session.GetString("LAMBusiness");
             string directorioSesion = configuration.GetValue<string>("DirectorioSesion");
 
+            if (sessionId == null)
+                return null;
+
             var resultado = await getHelper
                 .GetTokenBySessionIdAndUsuarioIDAsync(sessionId, directorioSesion);
 
