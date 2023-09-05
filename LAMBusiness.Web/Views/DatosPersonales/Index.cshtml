@@ -1,4 +1,4 @@
-﻿@model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Shared.Contacto.Colaborador>>
+﻿@model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Shared.Contacto.DatoPersonal>>
 
 @{
     ViewData["Title"] = "Colaboradores";
@@ -9,7 +9,7 @@
         <div class="ms-3">
             <h3 class="modal-title" id="exampleModalLabel">Colaboradores</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
-                <li class="breadcrumb-item"><a asp-action="Contacto" asp-controller="Menu">Contactos</a></li>
+                <li class="breadcrumb-item"><a asp-action="Contacto" asp-controller="Home">Contactos</a></li>
                 <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Colaboradores">Colaboradores</a></li>
                 <li class="breadcrumb-item active text-muted">Lista</li>
             </ul>
@@ -18,7 +18,7 @@
             <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewIndex', event);">
                 <i class="fa fa-question-circle"></i>
             </a>
-            <a asp-action="Contacto" asp-controller="Menu" class="btn-close me-md-1" aria-label="Close"></a>
+            <a asp-action="Contacto" asp-controller="Home" class="btn-close me-md-1" aria-label="Close"></a>
         </div>
     </div>
     <div class="modal-body pt-4" data-module="Colaboradores">

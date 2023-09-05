@@ -12,12 +12,12 @@
                 new Genero()
                 {
                     GeneroID = "F",
-                    GeneroDescripcion = "FEMENINO"
+                    Nombre = "FEMENINO"
                 },
                 new Genero()
                 {
                     GeneroID = "M",
-                    GeneroDescripcion = "MASCULINO"
+                    Nombre = "MASCULINO"
                 }
             );
         }

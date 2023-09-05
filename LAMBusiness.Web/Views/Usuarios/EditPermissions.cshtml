@@ -10,12 +10,12 @@
             <div>
                 <h3 class="modal-title" id="exampleModalLabel">Permisos a módulos</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
-                    <li class="breadcrumb-item"><a asp-action="Contacto" asp-controller="Menu">Contactos</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Contacto" asp-controller="Home">Contactos</a></li>
                     <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Usuarios">Usuarios</a></li>
                     <li class="breadcrumb-item">
                         <a asp-action="Details" asp-controller="Usuarios" asp-route-id="@Model.UsuarioID" class="text-capitalize">
-                            @Model.Colaborador.Nombre.Trim().ToLower()
-                            @Model.Colaborador.PrimerApellido.Trim().ToLower()
+                            @Model.Nombre.Trim().ToLower()
+                            @Model.PrimerApellido.Trim().ToLower()
                         </a>
                     </li>
                     <li class="breadcrumb-item active">Permisos</li>

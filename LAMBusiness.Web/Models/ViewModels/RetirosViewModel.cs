@@ -4,7 +4,7 @@
 
     public class RetirosViewModel
     {
-        public Guid ColaboradorID { get; set; }
+        public Guid UsuarioID { get; set; }
         public string Nombre { get; set; }
         public string PrimerApellido { get; set; }
         public string SegundoApellido { get; set; }

@@ -15,6 +15,9 @@
     using Shared.Contacto;
     using Shared.Movimiento;
     using System.Drawing.Imaging;
+    using SkiaSharp;
+    using BarcodeStandard;
+    using Microsoft.IdentityModel.Tokens;
 
     public class ConverterHelper : IConverterHelper
     {
@@ -32,21 +35,21 @@
         }
 
         #region Image
-        public FileContentResult GenerateBarcode(String _data, BarcodeLib.TYPE t)
-        {
-            BarcodeLib.Barcode barcode = new BarcodeLib.Barcode()
-            {
-                IncludeLabel = false,
-                Alignment = BarcodeLib.AlignmentPositions.CENTER,
-                Width = 400,
-                Height = 200,
-                RotateFlipType = RotateFlipType.RotateNoneFlipNone,
-                BackColor = Color.White,
-                ForeColor = Color.Black,
-            };
-            Image img = barcode.Encode(t, _data);
-            return new FileContentResult(ImageToByte(img), "image/png");
-        }
+        //public FileContentResult GenerateBarcode(String _data, BarcodeStandard.Type t)
+        //{
+        //    Barcode barcode = new Barcode()
+        //    {
+        //        IncludeLabel = false,
+        //        Alignment = BarcodeStandard.AlignmentPositions.Center,
+        //        Width = 400,
+        //        Height = 200,
+        //        //RotateFlipType = RotateFlipType.RotateNoneFlipNone,
+        //        //BackColor = Color.White,
+        //        //ForeColor = Color.Black,
+        //    };
+        //    SKImage img = barcode.Encode(t, _data);
+        //    return new FileContentResult(ImageToByte(img), "image/png");
+        //}
         public byte[] ImageToByte(Image image)
         {
             using (MemoryStream memoryStream = new MemoryStream())
@@ -175,112 +178,100 @@
             return clienteViewModel;
         }
 
-        //Colaboradores
+        //Datos Personales
 
         /// <summary>
-        /// Convertir clase colaboradorViewModel a colaborador
+        /// Convertir clase DatoPersonalViewModel a datoPersonal
         /// </summary>
-        /// <param name="colaboradorViewModel"></param>
+        /// <param name="datoPersonalViewModel"></param>
         /// <param name="isNew"></param>
-        /// <returns>Colaborador(class)</returns>
-        public async Task<Resultado<Colaborador>> ToColaboradorAsync(ColaboradorViewModel colaboradorViewModel, bool isNew)
+        /// <returns>DatoPersonal(class)</returns>
+        public async Task<Resultado<DatoPersonal>> ToDatoPersonalAsync(DatoPersonalViewModel datoPersonalViewModel, bool isNew)
         {
-            Resultado<Colaborador> resultado = new Resultado<Colaborador>() {
+            Resultado<DatoPersonal> resultado = new()
+            {
                 Contenido = null,
                 Error = true,
                 Mensaje = ""
             };
 
-            if (!string.IsNullOrEmpty(colaboradorViewModel.CURP))
+            if (!string.IsNullOrEmpty(datoPersonalViewModel.CURP))
             {
-                colaboradorViewModel.CURP = colaboradorViewModel.CURP.Trim().ToUpper();
-                
+                datoPersonalViewModel.CURP = datoPersonalViewModel.CURP.Trim().ToUpper();
+
                 //Validar fecha de nacimiento
-                var fechaNacimiento = $"{colaboradorViewModel.CURP.Substring(8, 2)}-{colaboradorViewModel.CURP.Substring(6, 2)}-{colaboradorViewModel.CURP.Substring(4, 2)}";
-                colaboradorViewModel.FechaNacimiento = Convert.ToDateTime(fechaNacimiento);
+                var fechaNacimiento = $"{datoPersonalViewModel.CURP.Substring(8, 2)}-{datoPersonalViewModel.CURP.Substring(6, 2)}-{datoPersonalViewModel.CURP.Substring(4, 2)}";
+                datoPersonalViewModel.FechaNacimiento = Convert.ToDateTime(fechaNacimiento);
 
                 //validar género
-                colaboradorViewModel.GeneroID = colaboradorViewModel.CURP.Substring(10, 1);
-                switch (colaboradorViewModel.GeneroID)
+                datoPersonalViewModel.GeneroID = datoPersonalViewModel.CURP.Substring(10, 1);
+                switch (datoPersonalViewModel.GeneroID)
                 {
                     case "H":
-                        colaboradorViewModel.GeneroID = "M";
+                        datoPersonalViewModel.GeneroID = "M";
                         break;
                     case "M":
-                        colaboradorViewModel.GeneroID = "F";
+                        datoPersonalViewModel.GeneroID = "F";
                         break;
                     default:
                         resultado.Mensaje = "Error en el valor del género [CURP]";
                         return resultado;
                 }
-                
+
                 //validar Estado de nacimiento
-                colaboradorViewModel.EstadoNacimientoID = 0;
-                var estadoNacimiento = colaboradorViewModel.CURP.Substring(11, 2);
-                var estado = await _context.Estados.FirstOrDefaultAsync(e => e.EstadoClave == estadoNacimiento);
+                datoPersonalViewModel.EstadoNacimientoID = 0;
+                var estadoNacimiento = datoPersonalViewModel.CURP.Substring(11, 2);
+                var estado = await _context.Estados.FirstOrDefaultAsync(e => e.Clave == estadoNacimiento);
                 if (estado == null)
                 {
                     resultado.Mensaje = "Error en el valor del estado de nacimiento [CURP].";
                     return resultado;
                 }
-                    
-                colaboradorViewModel.EstadoNacimientoID = estado.EstadoID;
+
+                datoPersonalViewModel.EstadoNacimientoID = estado.EstadoID;
             }
-            
+
             var fechaActualizacion = DateTime.Now;
             if (isNew)
             {
                 resultado.Error = false;
-                resultado.Contenido = new Colaborador()
+                resultado.Contenido = new DatoPersonal()
                 {
-                    Activo = colaboradorViewModel.Activo,
-                    ColaboradorID = Guid.NewGuid(),
-                    CodigoPostal = colaboradorViewModel.CodigoPostal,
-                    Colonia = colaboradorViewModel.Colonia.Trim().ToUpper(),
-                    CURP = colaboradorViewModel.CURP,
-                    Domicilio = colaboradorViewModel.Domicilio.Trim().ToUpper(),
-                    Email = colaboradorViewModel.Email.Trim().ToLower(),
-                    EstadoCivilID = colaboradorViewModel.EstadoCivilID,
-                    EstadoNacimientoID = colaboradorViewModel.EstadoNacimientoID,
+                    UsuarioID = Guid.NewGuid(),
+                    CodigoPostal = datoPersonalViewModel.CodigoPostal,
+                    Colonia = datoPersonalViewModel.Colonia.Trim().ToUpper(),
+                    CURP = datoPersonalViewModel.CURP,
+                    Domicilio = datoPersonalViewModel.Domicilio.Trim().ToUpper(),
+                    EstadoCivilID = datoPersonalViewModel.EstadoCivilID,
+                    EstadoNacimientoID = datoPersonalViewModel.EstadoNacimientoID,
                     FechaActualizacion = fechaActualizacion,
-                    FechaNacimiento = colaboradorViewModel.FechaNacimiento,
+                    FechaNacimiento = datoPersonalViewModel.FechaNacimiento,
                     FechaRegistro = fechaActualizacion,
-                    GeneroID = colaboradorViewModel.GeneroID,
-                    MunicipioID = colaboradorViewModel.MunicipioID,
-                    Municipios = await _getHelper.GetMunicipioByIdAsync((int)colaboradorViewModel.MunicipioID),
-                    Nombre = colaboradorViewModel.Nombre.Trim().ToUpper(),
-                    PrimerApellido = colaboradorViewModel.PrimerApellido.Trim().ToUpper(),
-                    PuestoID = colaboradorViewModel.PuestoID,
-                    SegundoApellido = colaboradorViewModel.SegundoApellido == null ? "" : colaboradorViewModel.SegundoApellido.Trim().ToUpper(),
-                    Telefono = colaboradorViewModel.Telefono,
-                    TelefonoMovil = colaboradorViewModel.TelefonoMovil
+                    GeneroID = datoPersonalViewModel.GeneroID,
+                    MunicipioID = datoPersonalViewModel.MunicipioID,
+                    Municipios = await _getHelper.GetMunicipioByIdAsync((int)datoPersonalViewModel.MunicipioID),
+                    PuestoID = datoPersonalViewModel.PuestoID,
+                    Telefono = datoPersonalViewModel.Telefono,
                 };
             }
             else
             {
-                var employee = await _context.Colaboradores.FindAsync(colaboradorViewModel.ColaboradorID);
+                var employee = await _context.DatosPersonales.FindAsync(datoPersonalViewModel.UsuarioID);
                 if (employee != null)
                 {
-                    employee.Activo = colaboradorViewModel.Activo;
-                    employee.CodigoPostal = colaboradorViewModel.CodigoPostal;
-                    employee.Colonia = colaboradorViewModel.Colonia.Trim().ToUpper();
-                    employee.CURP = colaboradorViewModel.CURP;
-                    employee.Domicilio = colaboradorViewModel.Domicilio.Trim().ToUpper();
-                    employee.Email = colaboradorViewModel.Email.Trim().ToLower();
-                    employee.EstadoCivilID = colaboradorViewModel.EstadoCivilID;
-                    employee.EstadoNacimientoID = colaboradorViewModel.EstadoNacimientoID;
+                    employee.CodigoPostal = datoPersonalViewModel.CodigoPostal;
+                    employee.Colonia = datoPersonalViewModel.Colonia.Trim().ToUpper();
+                    employee.CURP = datoPersonalViewModel.CURP;
+                    employee.Domicilio = datoPersonalViewModel.Domicilio.Trim().ToUpper();
+                    employee.EstadoCivilID = datoPersonalViewModel.EstadoCivilID;
+                    employee.EstadoNacimientoID = datoPersonalViewModel.EstadoNacimientoID;
                     employee.FechaActualizacion = fechaActualizacion;
-                    employee.FechaNacimiento = colaboradorViewModel.FechaNacimiento;
-                    employee.GeneroID = colaboradorViewModel.GeneroID;
-                    employee.MunicipioID = colaboradorViewModel.MunicipioID;
-                    employee.Municipios = await _getHelper.GetMunicipioByIdAsync((int)colaboradorViewModel.MunicipioID);
-                    employee.Nombre = colaboradorViewModel.Nombre.Trim().ToUpper();
-                    employee.PrimerApellido = colaboradorViewModel.PrimerApellido.Trim().ToUpper();
-                    employee.PuestoID = colaboradorViewModel.PuestoID;
-                    employee.SegundoApellido = colaboradorViewModel.SegundoApellido == null ? "" : colaboradorViewModel.SegundoApellido.Trim().ToUpper();
-                    employee.Telefono = colaboradorViewModel.Telefono;
-                    employee.TelefonoMovil = colaboradorViewModel.TelefonoMovil;
-
+                    employee.FechaNacimiento = datoPersonalViewModel.FechaNacimiento;
+                    employee.GeneroID = datoPersonalViewModel.GeneroID;
+                    employee.MunicipioID = datoPersonalViewModel.MunicipioID;
+                    employee.Municipios = await _getHelper.GetMunicipioByIdAsync((int)datoPersonalViewModel.MunicipioID);
+                    employee.PuestoID = datoPersonalViewModel.PuestoID;
+                    employee.Telefono = datoPersonalViewModel.Telefono;
                     resultado.Contenido = employee;
                     resultado.Error = false;
                 }
@@ -296,41 +287,35 @@
         /// <summary>
         /// Convertir clase colaborador a colaboradorViewModel.
         /// </summary>
-        /// <param name="colaborador"></param>
+        /// <param name="datoPersonal"></param>
         /// <returns>ColaboradorViewModel(class)</returns>
-        public async Task<ColaboradorViewModel> ToColaboradorViewModelAsync(Colaborador colaborador)
+        public async Task<DatoPersonalViewModel> ToDatoPersonalViewModelAsync(DatoPersonal datoPersonal)
         {
-            var _colaborador = await _context.Colaboradores.FindAsync(colaborador.ColaboradorID);
+            var _colaborador = await _context.DatosPersonales.FindAsync(datoPersonal.UsuarioID);
 
-            var colaboradorViewModel = new ColaboradorViewModel()
+            var colaboradorViewModel = new DatoPersonalViewModel()
             {
-                Activo = colaborador.Activo,
-                ColaboradorID = colaborador.ColaboradorID,
-                CodigoPostal = colaborador.CodigoPostal,
-                Colonia = colaborador.Colonia.Trim().ToUpper(),
-                CURP = colaborador.CURP.Trim().ToUpper(),
-                Domicilio = colaborador.Domicilio.Trim().ToUpper(),
-                Email = colaborador.Email.Trim().ToLower(),
-                EstadoID = colaborador.Municipios.EstadoID,
+                UsuarioID = datoPersonal.UsuarioID,
+                CodigoPostal = datoPersonal.CodigoPostal,
+                Colonia = datoPersonal.Colonia.Trim().ToUpper(),
+                CURP = datoPersonal.CURP.Trim().ToUpper(),
+                Domicilio = datoPersonal.Domicilio.Trim().ToUpper(),
+                EstadoID = datoPersonal.Municipios.EstadoID,
                 EstadosDDL = await _combosHelper.GetComboEstadosAsync(),
-                EstadoCivilID = colaborador.EstadoCivilID,
+                EstadoCivilID = datoPersonal.EstadoCivilID,
                 EstadosCivilesDDL = await _combosHelper.GetComboEstadosCivilesAsync(),
-                EstadoNacimientoID = colaborador.EstadoNacimientoID,
+                EstadoNacimientoID = datoPersonal.EstadoNacimientoID,
                 EstadosNacimientoDDL = await _combosHelper.GetComboEstadosAsync(),
-                FechaNacimiento = colaborador.FechaNacimiento,
-                GeneroID = colaborador.GeneroID,
+                FechaNacimiento = datoPersonal.FechaNacimiento,
+                GeneroID = datoPersonal.GeneroID,
                 GenerosDDL = await _combosHelper.GetComboGenerosAsync(),
                 FechaRegistro = _colaborador == null ? DateTime.Now : _colaborador.FechaRegistro,
-                MunicipioID = colaborador.MunicipioID,
-                Municipios = colaborador.Municipios,
-                MunicipiosDDL = await _combosHelper.GetComboMunicipiosAsync(colaborador.Municipios.EstadoID),
-                Nombre = colaborador.Nombre.Trim().ToUpper(),
-                PrimerApellido = colaborador.PrimerApellido.Trim().ToUpper(),
-                PuestoID = colaborador.PuestoID,
+                MunicipioID = datoPersonal.MunicipioID,
+                Municipios = datoPersonal.Municipios,
+                MunicipiosDDL = await _combosHelper.GetComboMunicipiosAsync(datoPersonal.Municipios.EstadoID),
+                PuestoID = datoPersonal.PuestoID,
                 PuestosDDL = await _combosHelper.GetComboPuestosAsync(),
-                SegundoApellido = colaborador.SegundoApellido == null ? "" : colaborador.SegundoApellido.Trim().ToUpper(),
-                Telefono = colaborador.Telefono,
-                TelefonoMovil = colaborador.TelefonoMovil
+                Telefono = datoPersonal.Telefono,
             };
 
             return colaboradorViewModel;
@@ -448,9 +433,9 @@
                 MarcaID = productoViewModel.MarcaID,
                 PrecioCosto = isNew ? 0 : productoViewModel.PrecioCosto,
                 PrecioVenta = productoViewModel.PrecioVenta,
-                ProductoDescripcion = productoViewModel.ProductoDescripcion.Trim().ToUpper(),
+                Descripcion = productoViewModel.Descripcion.Trim().ToUpper(),
                 ProductoID = isNew ? Guid.NewGuid() : productoViewModel.ProductoID,
-                ProductoNombre = productoViewModel.ProductoNombre.Trim().ToUpper(),
+                Nombre = productoViewModel.Nombre.Trim().ToUpper(),
                 TasaID = productoViewModel.TasaID,
                 UnidadID = productoViewModel.UnidadID,
                 Paquete = null
@@ -490,9 +475,9 @@
                 Marcas = producto.Marcas,
                 PrecioCosto = producto.PrecioCosto,
                 PrecioVenta = producto.PrecioVenta,
-                ProductoDescripcion = producto.ProductoDescripcion,
+                Descripcion = producto.Descripcion,
                 ProductoID = producto.ProductoID,
-                ProductoNombre = producto.ProductoNombre,
+                Nombre = producto.Nombre,
                 TasaID = producto.TasaID,
                 TasasImpuestos = producto.TasasImpuestos,
                 TasasImpuestosDDL = await _combosHelper.GetComboTasaImpuestosAsync(),
@@ -531,9 +516,9 @@
                 Marcas = producto.Marcas,
                 PrecioCosto = producto.PrecioCosto,
                 PrecioVenta = producto.PrecioVenta,
-                ProductoDescripcion = producto.ProductoDescripcion,
+                Descripcion = producto.Descripcion,
                 ProductoID = producto.ProductoID,
-                ProductoNombre = producto.ProductoNombre,
+                Nombre = producto.Nombre,
                 TasaID = producto.TasaID,
                 TasasImpuestos = producto.TasasImpuestos,
                 Unidades = producto.Unidades,
@@ -552,7 +537,7 @@
                     {
                         ProductoID = productoAsignado.ProductoID,
                         Codigo = productoAsignado.Codigo,
-                        Descripcion = productoAsignado.ProductoNombre,
+                        Descripcion = productoAsignado.Nombre,
                         Cantidad = productoDetailsViewModel.Paquete.CantidadProductoxPaquete
                     };
                     productosAsignados.Add(productoAsignadoViewModel);
@@ -570,7 +555,7 @@
                                                                               {
                                                                                   ProductoID = p.ProductoID,
                                                                                   Codigo = p.Codigo,
-                                                                                  Descripcion = p.ProductoNombre,
+                                                                                  Descripcion = p.Nombre,
                                                                                   Cantidad = pa.CantidadProductoxPaquete
                                                                               }).ToListAsync();
 
@@ -725,10 +710,14 @@
                 {
                     Activo = usuarioViewModel.Activo,
                     AdministradorID = usuarioViewModel.AdministradorID,
-                    ColaboradorID = usuarioViewModel.ColaboradorID,
                     FechaInicio = usuarioViewModel.FechaInicio.AddHours(0).AddMinutes(0).AddSeconds(0),
                     FechaTermino = usuarioViewModel.FechaTermino.AddHours(23).AddMinutes(59).AddSeconds(59),
                     FechaUltimoAcceso = usuarioViewModel.FechaUltimoAcceso,
+                    Email= string.IsNullOrEmpty(usuarioViewModel.Email) ? "" : usuarioViewModel.Email.ToLower(),
+                    Nombre= string.IsNullOrEmpty(usuarioViewModel.Nombre) ? "" : usuarioViewModel.Nombre.ToUpper(),
+                    PrimerApellido= string.IsNullOrEmpty(usuarioViewModel.PrimerApellido) ? "" : usuarioViewModel.PrimerApellido.ToUpper(),
+                    SegundoApellido= string.IsNullOrEmpty(usuarioViewModel.SegundoApellido) ? "" : usuarioViewModel.SegundoApellido.ToUpper(),
+                    TelefonoMovil = string.IsNullOrEmpty(usuarioViewModel.TelefonoMovil) ? "" : usuarioViewModel.TelefonoMovil,
                     Password = "",
                     UsuarioID = Guid.NewGuid()
                 };
@@ -741,6 +730,11 @@
 
                 usuario.Activo = usuarioViewModel.Activo;
                 usuario.AdministradorID = usuarioViewModel.AdministradorID;
+                usuario.Email = usuarioViewModel.Email;
+                usuario.Nombre = usuarioViewModel.Nombre;
+                usuario.PrimerApellido = usuarioViewModel.PrimerApellido;
+                usuario.SegundoApellido = usuarioViewModel.SegundoApellido;
+                usuario.TelefonoMovil= usuarioViewModel.TelefonoMovil;
                 usuario.FechaInicio = usuarioViewModel.FechaInicio.AddHours(0).AddMinutes(0).AddSeconds(0);
                 usuario.FechaTermino = usuarioViewModel.FechaTermino.AddHours(23).AddMinutes(59).AddSeconds(59);
 
@@ -748,6 +742,11 @@
             }
 
         }
+
+        //public FileContentResult GenerateBarcode(string _data, Type t)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         #endregion
     }

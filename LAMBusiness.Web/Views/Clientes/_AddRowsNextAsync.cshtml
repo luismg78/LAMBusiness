@@ -27,8 +27,8 @@
                                     @Html.DisplayFor(modelItem => item.Domicilio),
                                     @Html.DisplayFor(modelItem => item.Colonia)&nbsp;
                                     @Html.DisplayFor(modelItem => item.CodigoPostal),
-                                    @Html.DisplayFor(modelItem => item.Municipios.MunicipioDescripcion),
-                                    @Html.DisplayFor(modelItem => item.Municipios.Estados.EstadoDescripcion)
+                                    @Html.DisplayFor(modelItem => item.Municipios.Nombre),
+                                    @Html.DisplayFor(modelItem => item.Municipios.Estados.Nombre)
                                 </small>
                                 <small class="d-block text-muted">Contactos: @item.ClienteContactos.Count</small>
                                 @if (!item.Activo)

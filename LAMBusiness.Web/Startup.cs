@@ -1,16 +1,16 @@
 namespace LAMBusiness.Web
 {
-    using System;
+    using Data;
+    using Helpers;
+    using Interfaces;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using Data;
-    using Interfaces;
-    using Helpers;
     using Services;
+    using System;
 
     public class Startup
     {
@@ -24,7 +24,7 @@ namespace LAMBusiness.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DataContext>( config =>
+            services.AddDbContext<DataContext>(config =>
             {
                 config.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
@@ -35,7 +35,7 @@ namespace LAMBusiness.Web
             });
 
             services.AddHttpContextAccessor();
-            
+
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(60);
@@ -52,6 +52,7 @@ namespace LAMBusiness.Web
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
             services.AddSignalR();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

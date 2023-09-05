@@ -34,12 +34,12 @@
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
             {
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
             var estados = _context.Estados
                 .Include(e => e.Municipios)
-                .OrderBy(e => e.EstadoDescripcion);
+                .OrderBy(e => e.Nombre);
 
             var filtro = new Filtro<List<Estado>>()
             {
@@ -76,13 +76,13 @@
                         if (query == null)
                         {
                             query = _context.Estados.Include(e => e.Municipios)
-                                    .Where(e => e.EstadoClave.Contains(w) ||
-                                           e.EstadoDescripcion.Contains(w));
+                                    .Where(e => e.Clave.Contains(w) ||
+                                           e.Nombre.Contains(w));
                         }
                         else
                         {
-                            query = query.Where(e => e.EstadoClave.Contains(w) ||
-                                                e.EstadoDescripcion.Contains(w));
+                            query = query.Where(e => e.Clave.Contains(w) ||
+                                                e.Nombre.Contains(w));
                         }
                     }
                 }
@@ -94,7 +94,7 @@
 
             filtro.Registros = await query.CountAsync();
 
-            filtro.Datos = await query.OrderBy(m => m.EstadoDescripcion)
+            filtro.Datos = await query.OrderBy(m => m.Nombre)
                 .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
@@ -140,7 +140,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(short id, [Bind("EstadoID,EstadoClave,EstadoDescripcion")] Estado estado)
+        public async Task<IActionResult> Edit(short id, [Bind("EstadoID,Clave,Nombre")] Estado estado)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }

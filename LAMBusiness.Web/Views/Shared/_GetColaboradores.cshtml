@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LAMBusiness.Shared.Contacto.Colaborador>
+﻿@model IEnumerable<LAMBusiness.Shared.Contacto.DatoPersonal>
 
 @if (Model.Any())
 {
@@ -7,14 +7,14 @@
             @foreach (var item in Model.OrderBy(p => p.CURP))
             {
                 <li class="list-group-item list-group-item-action"
-                    data-id="@item.ColaboradorID"
+                    data-id="@item.UsuarioID"
                     data-search="@item.CURP"
-                    data-nombre="@item.Nombre @item.PrimerApellido @item.SegundoApellido"
+                    @*data-nombre="@item.Nombre @item.PrimerApellido @item.SegundoApellido"*@
                     onclick="addColaborador(event);">
                     <span class="d-block">
-                        @item.PrimerApellido
+                        @*@item.PrimerApellido
                         @item.SegundoApellido
-                        @item.Nombre
+                        @item.Nombre*@
                     </span>
                     <small class="text-muted">@item.CURP</small>
                 </li>

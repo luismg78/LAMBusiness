@@ -2,9 +2,7 @@
 {
     using System;
     using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
 
-    [Table("Modulos", Schema = "Aplicacion")]
     public class Modulo
     {
         [Key]
@@ -15,7 +13,7 @@
         [MaxLength(50, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public string Descripcion { get; set; }
-        
+
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public bool Activo { get; set; }
 

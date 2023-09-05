@@ -10,7 +10,7 @@
             <div>
                 <h3 class="modal-title" id="exampleModalLabel">Productos</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
-                    <li class="breadcrumb-item"><a asp-action="Catalogo" asp-controller="Menu">Catálogos</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Catalogo" asp-controller="Home">Catálogos</a></li>
                     <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Productos">Productos</a></li>
                     <li class="breadcrumb-item active">Nuevo Registro</li>
                 </ul>
@@ -33,16 +33,16 @@
                 </div>
                 <div class="col-12 col-md-8">
                     <div class="form-group">
-                        <label asp-for="ProductoNombre" class="control-label required"></label>
-                        <input asp-for="ProductoNombre" class="form-control" />
-                        <span asp-validation-for="ProductoNombre" class="text-danger"></span>
+                        <label asp-for="Nombre" class="control-label required"></label>
+                        <input asp-for="Nombre" class="form-control" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-sm-12">
                     <div class="form-group">
-                        <label asp-for="ProductoDescripcion" class="control-label required"></label>
-                        <textarea asp-for="ProductoDescripcion" class="form-control"></textarea>
-                        <span asp-validation-for="ProductoDescripcion" class="text-danger"></span>
+                        <label asp-for="Descripcion" class="control-label required"></label>
+                        <textarea asp-for="Descripcion" class="form-control"></textarea>
+                        <span asp-validation-for="Descripcion" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -97,8 +97,8 @@
                             <a href="#" onclick="deleteButtonMarca(event);"><span>&times;</span></a>
                         </div>
                         <hr class="my-2" />
-                        <small id="MarcaNombre" class="d-block"></small>
-                        <small id="MarcaDescripcion" class="text-muted"></small>
+                        <small id="Nombre" class="d-block"></small>
+                        <small id="Descripcion" class="text-muted"></small>
                         <hr />
                     </div>
                 </div>
@@ -204,8 +204,8 @@
     function deleteButtonMarca(e) {
         e.preventDefault();
         $('#MarcaID').val('');
-        $('#MarcaNombre')[0].innerText = '';
-        $('#MarcaDescripcion')[0].innerText = '';
+        $('#Nombre')[0].innerText = '';
+        $('#Descripcion')[0].innerText = '';
         $('#MarcaDatos').removeClass('d-block').addClass('d-none');
         $('#MarcaSearch').removeClass('d-none').addClass('d-block');
         $('#MarcasLista > div').remove();
@@ -232,8 +232,8 @@
                     if (!r.error) {
                         $('#MarcaDatos').removeClass('d-none').addClass('d-block');
                         $('#MarcaID').val(r.marcaID);
-                        $('#MarcaNombre')[0].innerText = r.marcaNombre;
-                        $('#MarcaDescripcion')[0].innerText = r.marcaDescripcion;
+                        $('#Nombre')[0].innerText = r.marcaNombre;
+                        $('#Descripcion')[0].innerText = r.marcaDescripcion;
                         $('#MarcaSearch').removeClass('d-block').addClass('d-none');
                         $('#dRowListBox > div').remove();
                         $('#Activo').focus();

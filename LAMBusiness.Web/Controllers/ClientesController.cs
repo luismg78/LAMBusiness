@@ -44,7 +44,7 @@
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
             {
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
             var clientes = _context.Clientes
@@ -92,8 +92,8 @@
                                     .Include(c => c.Municipios)
                                     .Where(p => p.RFC.Contains(w) ||
                                                 p.Nombre.Contains(w) ||
-                                                p.Municipios.Estados.EstadoDescripcion.Contains(w) ||
-                                                p.Municipios.MunicipioDescripcion.Contains(w));
+                                                p.Municipios.Estados.Nombre.Contains(w) ||
+                                                p.Municipios.Nombre.Contains(w));
                         }
                         else
                         {
@@ -103,8 +103,8 @@
                                 .Include(c => c.Municipios)
                                 .Where(c => c.RFC.Contains(w) ||
                                                 c.Nombre.Contains(w) ||
-                                                c.Municipios.Estados.EstadoDescripcion.Contains(w) ||
-                                                c.Municipios.MunicipioDescripcion.Contains(w));
+                                                c.Municipios.Estados.Nombre.Contains(w) ||
+                                                c.Municipios.Nombre.Contains(w));
                         }
                     }
                 }

@@ -1,12 +1,10 @@
 ﻿namespace LAMBusiness.Shared.Catalogo
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using Newtonsoft.Json;
 
-    [Table("TasasImpuestos", Schema = "Catalogo")]
     public class TasaImpuesto
     {
         [Key]
@@ -16,15 +14,15 @@
         [Display(Name = "Tasa (Impuesto)")]
         [MaxLength(45, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public string Tasa { get; set; }
+        public string Nombre { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        [Range(0,100,ErrorMessage = "Valor incorrecto, rango permitido de {1} a {2}.")]
+        [Range(0, 100, ErrorMessage = "Valor incorrecto, rango permitido de {1} a {2}.")]
         public short? Porcentaje { get; set; }
 
         [Display(Name = "Descripción")]
         [MaxLength(150, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
-        public string TasaDescripcion { get; set; }
+        public string Descripcion { get; set; }
 
         public ICollection<Producto> Productos { get; set; }
     }

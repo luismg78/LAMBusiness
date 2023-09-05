@@ -9,7 +9,7 @@
         <div class="ms-3">
             <h3 class="modal-title" id="exampleModalLabel">Entradas</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
-                <li class="breadcrumb-item"><a asp-action="Movimiento" asp-controller="Menu">Movimientos</a></li>
+                <li class="breadcrumb-item"><a asp-action="Movimiento" asp-controller="Home">Movimientos</a></li>
                 <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Entradas">Entradas</a></li>
                 <li class="breadcrumb-item active">Detalle</li>
             </ul>
@@ -35,8 +35,8 @@
                                     @Html.DisplayFor(model => model.Proveedores.Domicilio),
                                     @Html.DisplayFor(model => model.Proveedores.Colonia),
                                     @Html.DisplayFor(model => model.Proveedores.CodigoPostal),
-                                    @Html.DisplayFor(model => model.Proveedores.Municipios.MunicipioDescripcion),
-                                    @Html.DisplayFor(model => model.Proveedores.Municipios.Estados.EstadoDescripcion)
+                                    @Html.DisplayFor(model => model.Proveedores.Municipios.Nombre),
+                                    @Html.DisplayFor(model => model.Proveedores.Municipios.Estados.Nombre)
                                 </span>
                             </div>
                             <div class="col-12 col-md-4 text-md-end">
@@ -83,7 +83,7 @@
                                     <i class="fas fa-user-check display-4"></i>
                                     <div class="ms-3">
                                         <div class="text-muted small line-height-1">Responsable Aplicar Movimiento</div>
-                                        <h6 class="text-capitalize">@Html.DisplayFor(model => model.Usuarios.Colaborador.NombreCompleto)</h6>
+                                        <h6 class="text-capitalize">@Html.DisplayFor(model => model.Usuarios.NombreCompleto)</h6>
                                     </div>
                                 }
                                 else
@@ -91,7 +91,7 @@
                                     <i class="fas fa-user-edit display-4"></i>
                                     <div class="ms-3">
                                         <div class="text-muted small line-height-1">Responsable Última Actualización</div>
-                                        <h6 class="text-capitalize">@Html.DisplayFor(model => model.Usuarios.Colaborador.NombreCompleto)</h6>
+                                        <h6 class="text-capitalize">@Html.DisplayFor(model => model.Usuarios.NombreCompleto)</h6>
                                     </div>
                                 }
                             </div>
@@ -172,14 +172,14 @@
                                             <img class="rounded-circle" style="width:2rem;" src="@Url.Action("GetProductImages", "Productos", new { productoId = item.ProductoID, imageId = item.ProductoID, tipo = "sm" })" alt="Image Product" />
                                         </div>
                                         <div>
-                                            <span class="d-block">@item.Productos.ProductoNombre</span>
+                                            <span class="d-block">@item.Productos.Nombre</span>
                                             <a href="#" class="d-block small" onclick="getProductoDetail('@item.ProductoID');">@item.Productos.Codigo</a>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-2">
                                     <span class="fw-bold d-block d-md-none">Almacén</span>
-                                    <span class="d-block">@item.Almacenes.AlmacenNombre</span>
+                                    <span class="d-block">@item.Almacenes.Nombre</span>
                                 </div>
                                 <div class="col-12 col-md-2 text-md-end">
                                     <span class="fw-bold d-block d-md-none">Cantidad x Precio</span>

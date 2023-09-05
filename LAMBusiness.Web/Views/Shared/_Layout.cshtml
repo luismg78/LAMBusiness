@@ -24,9 +24,9 @@
 <body>
     @{
         string menu = "";
-        if (TempData.ContainsKey("menu") == true)
+        if (TempData.ContainsKey("Home") == true)
         {
-            menu = TempData["menu"].ToString().ToLower();
+            menu = TempData["Home"].ToString().ToLower();
         }
     }
     <header class="fixed-top">
@@ -61,7 +61,7 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link"
-                               asp-area="" asp-controller="Menu" asp-action="Sesion">
+                               asp-area="" asp-controller="Home" asp-action="Sesion">
                                 <div class="d-inline-block">
                                     <img src="@Url.Action("GetProfilePicture", "Sesion", new { id = ViewBag.Id, tipo = "profile" })" class="rounded-circle" style="width:2.5rem;" alt="Image Profile" />
                                 </div>

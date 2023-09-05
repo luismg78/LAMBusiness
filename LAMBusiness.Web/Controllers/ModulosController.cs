@@ -42,7 +42,7 @@
 
             if (token.Administrador != "SA") {
                 TempData["toast"] = "No tiene privilegios de acceso en el módulo";
-                return RedirectToAction("Inicio", "Menu"); 
+                return RedirectToAction("Inicio", "Home"); 
             }
 
             var modulos = _context.Modulos.OrderBy(m => m.Descripcion);
@@ -69,7 +69,7 @@
             if (token.Administrador != "SA")
             {
                 TempData["toast"] = "No tiene privilegios de acceso en el módulo";
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
             IQueryable<Modulo> query = null;
@@ -124,7 +124,7 @@
             if (token.Administrador != "SA")
             {
                 TempData["toast"] = "No tiene privilegios de acceso en el módulo";
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
             var moduloViewModel = new ModuloViewModel()
@@ -145,7 +145,7 @@
             if (token.Administrador != "SA")
             {
                 TempData["toast"] = "No tiene privilegios de acceso en el módulo";
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
             if (ModelState.IsValid)
@@ -178,7 +178,7 @@
             if (token.Administrador != "SA")
             {
                 TempData["toast"] = "No tiene privilegios de acceso en el módulo";
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
             if (id == null)
@@ -209,7 +209,7 @@
             if (token.Administrador != "SA")
             {
                 TempData["toast"] = "No tiene privilegios de acceso en el módulo";
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
             if (id != moduloViewModel.ModuloID)
@@ -255,7 +255,7 @@
             if (token.Administrador != "SA")
             {
                 TempData["toast"] = "No tiene privilegios de acceso en el módulo";
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
             if (id == null)

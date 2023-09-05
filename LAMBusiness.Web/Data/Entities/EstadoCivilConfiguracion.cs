@@ -11,12 +11,12 @@
                 new EstadoCivil
                 {
                     EstadoCivilID = 1,
-                    EstadoCivilDescripcion = "SOLTERO"
+                    Nombre = "SOLTERO"
                 },
                 new EstadoCivil
                 {
                     EstadoCivilID = 2,
-                    EstadoCivilDescripcion = "CASADO"
+                    Nombre = "CASADO"
                 }
             );
         }

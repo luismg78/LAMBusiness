@@ -34,12 +34,12 @@
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
             {
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
             var tasaImpuesto = _context.TasasImpuestos
                 .Include(t => t.Productos)
-                .OrderBy(t => t.Tasa);
+                .OrderBy(t => t.Nombre);
 
             var filtro = new Filtro<List<TasaImpuesto>>()
             {
@@ -78,14 +78,14 @@
                         {
                             query = _context.TasasImpuestos
                                     .Include(t => t.Productos)
-                                    .Where(t => t.Tasa.Contains(w) ||
-                                           t.TasaDescripcion.Contains(w));
+                                    .Where(t => t.Nombre.Contains(w) ||
+                                           t.Descripcion.Contains(w));
                         }
                         else
                         {
                             query = query.Include(t => t.Productos)
-                                    .Where(t => t.Tasa.Contains(w) ||
-                                           t.TasaDescripcion.Contains(w));
+                                    .Where(t => t.Nombre.Contains(w) ||
+                                           t.Descripcion.Contains(w));
                         }
                     }
                 }
@@ -97,7 +97,7 @@
 
             filtro.Registros = await query.CountAsync();
 
-            filtro.Datos = await query.OrderBy(t => t.Tasa)
+            filtro.Datos = await query.OrderBy(t => t.Nombre)
                 .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
@@ -129,7 +129,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TasaID,Tasa,Porcentaje,TasaDescripcion")] TasaImpuesto tasaImpuesto)
+        public async Task<IActionResult> Create([Bind("TasaID,Nombre,Porcentaje,Descripcion")] TasaImpuesto tasaImpuesto)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }
@@ -190,7 +190,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("TasaID,Tasa,Porcentaje,TasaDescripcion")] TasaImpuesto tasaImpuesto)
+        public async Task<IActionResult> Edit(Guid id, [Bind("TasaID,Nombre,Porcentaje,Descripcion")] TasaImpuesto tasaImpuesto)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }

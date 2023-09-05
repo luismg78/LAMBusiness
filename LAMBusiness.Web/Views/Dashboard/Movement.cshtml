@@ -9,7 +9,7 @@
         <div class="ms-3">
             <h3 class="modal-title" id="exampleModalLabel">Dashboard de Movimientos</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
-                <li class="breadcrumb-item"><a asp-action="Dashboard" asp-controller="Menu">Dashboard</a></li>
+                <li class="breadcrumb-item"><a asp-action="Dashboard" asp-controller="Home">Dashboard</a></li>
                 <li class="breadcrumb-item"><a asp-action="Movimientos" asp-controller="Dashboard">Movimientos</a></li>
                 <li class="breadcrumb-item active text-muted">Estadísticas</li>
             </ul>
@@ -18,7 +18,7 @@
             @*<a class="btn-help text-secondary me-3" href="/" onclick="help('ViewIndex', event);">
                 <i class="fa fa-question-circle"></i>
             </a>*@
-            <a asp-action="Dashboard" asp-controller="Menu" class="btn-close me-md-1" aria-label="Close"></a>
+            <a asp-action="Dashboard" asp-controller="Home" class="btn-close me-md-1" aria-label="Close"></a>
         </div>
     </div>
     <div class="modal-body pt-4" data-module="Dashboard">
@@ -32,7 +32,7 @@
     <script src="~/js/dashboard.js"></script>
 
     <script>
-        let urlMenu = '@Url.Action("Dashboard", "Menu")';
+        let urlMenu = '@Url.Action("Dashboard", "Home")';
         let urlMovement = '@Url.Action("GetMovement", "Dashboard")';
         AreaCharts('Total de ventas 2022');
     </script>

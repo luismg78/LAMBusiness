@@ -33,7 +33,7 @@
                                                     <img class="rounded-circle" style="width:2rem;" src="@Url.Action("GetProductImages", "Productos", new { productoId = item.ProductoID, imageId = item.ProductoID, tipo = "sm" })" alt="Image Product" />
                                                 </div>
                                                 <div>
-                                                    <h5 class="fw-bold d-block @textDanger @textDecoration">@item.Productos.ProductoNombre</h5>
+                                                    <h5 class="fw-bold d-block @textDanger @textDecoration">@item.Productos.Nombre</h5>
                                                     <a href="#" class="d-block small" onclick="getProduct('@item.ProductoID');">@item.Productos.Codigo</a>
                                                 </div>
                                             </div>
@@ -261,7 +261,7 @@
     <script>
         let urlCancelSale = '@Url.Action("SetCancelSale", "Ventas")';
         let urlGetItBackSale = '@Url.Action("GetItBackSale", "Ventas")';
-        let urlMovement = '@Url.Action("Movimiento", "Menu")';
+        let urlMovement = '@Url.Action("Movimiento", "Home")';
         let urlProductByCode = '@Url.Action("GetProductByCode", "Ventas")';
         let urlProductDetail = '@Url.Action("GetProductDetail", "Productos")';
         let urlProductDetailByCode = '@Url.Action("GetProductDetailByCode", "Productos")';

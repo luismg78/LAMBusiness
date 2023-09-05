@@ -4,7 +4,6 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using Newtonsoft.Json;
 
-    [Table("Municipios", Schema = "Catalogo")]
     public class Municipio
     {
         [Key]
@@ -22,11 +21,11 @@
         [Display(Name = "Clave")]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public short MunicipioClave { get; set; }
+        public short Clave { get; set; }
 
         [Display(Name = "Municipio")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         [MaxLength(75, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
-        public string MunicipioDescripcion { get; set; }        
+        public string Nombre { get; set; }        
     }
 }

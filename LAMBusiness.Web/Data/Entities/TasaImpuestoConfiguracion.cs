@@ -16,15 +16,15 @@
                 new TasaImpuesto { 
                     TasaID = Guid.Parse("ACBB8324-7514-4C38-8354-FA5147FA87E6"),
                     Porcentaje = 0,
-                    Tasa = "TASA UNO",
-                    TasaDescripcion = "INFORMACIÓN DE APOYO (MODIFICAR INFORMACIÓN)."
+                    Nombre = "TASA UNO",
+                    Descripcion = "INFORMACIÓN DE APOYO (MODIFICAR INFORMACIÓN)."
                 },
                 new TasaImpuesto
                 {
                     TasaID = Guid.Parse("89E98CD2-85DF-401A-9F1D-308027A75558"),
                     Porcentaje = 16,
-                    Tasa = "TASA DOS",
-                    TasaDescripcion = "INFORMACIÓN DE APOYO (MODIFICAR INFORMACIÓN)."
+                    Nombre = "TASA DOS",
+                    Descripcion = "INFORMACIÓN DE APOYO (MODIFICAR INFORMACIÓN)."
                 }
             );
         }

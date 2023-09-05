@@ -14,7 +14,7 @@
                 <li class="breadcrumb-item active text-base">Imagen de perfil</li>
             </ul>
         </div>
-        <a asp-action="Sesion" asp-controller="Menu" class="btn-close me-md-1" aria-label="Close"></a>
+        <a asp-action="Sesion" asp-controller="Home" class="btn-close me-md-1" aria-label="Close"></a>
     </div>
     <div class="col-12 text-center text-md-end mt-1 px-2" id="actions">
         <div class="docs-buttons">
@@ -122,7 +122,7 @@
                     if (r.Error) {
                         alert('Error al actualizar la imagen de perfil');
                     } else {
-                        window.location.href = '@Url.Action("Sesion", "Menu")';
+                        window.location.href = '@Url.Action("Sesion", "Home")';
                     }
                 },
                 error: function (result) {

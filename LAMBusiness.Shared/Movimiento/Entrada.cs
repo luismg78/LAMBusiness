@@ -6,7 +6,6 @@
     using Contacto;
     using Newtonsoft.Json;
 
-    [Table("Entradas", Schema = "Movimiento")]
     public class Entrada
     {
         [Key]

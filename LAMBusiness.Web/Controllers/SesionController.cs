@@ -62,12 +62,12 @@
                         HttpContext.Session.Remove("LAMBusiness");
                     }
                     await _context.SaveChangesAsync();
-                    await BitacoraAsync("CerrarSesion", token, token.ColaboradorID);
+                    await BitacoraAsync("CerrarSesion", token, token.UsuarioID);
                 }
                 catch (Exception ex)
                 {
                     string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
-                    await BitacoraAsync("CerrarSesion", token, token.ColaboradorID, excepcion);
+                    await BitacoraAsync("CerrarSesion", token, token.UsuarioID, excepcion);
                 }
             }
 
@@ -92,7 +92,7 @@
             int tamaño = 0;
 
             //Guid usuarioId = token.UsuarioID;
-            string colaboradorId = $"{token.ColaboradorID.ToString()}.png";
+            string UsuarioID = $"{token.UsuarioID.ToString()}.png";
             string directorioImagenPerfil = _configuration.GetValue<string>("DirectorioImagenPerfil");
 
             if (!Directory.Exists(directorioImagenPerfil))
@@ -122,15 +122,15 @@
                     switch (x)
                     {
                         case 1:
-                            path = Path.Combine(directorioImagenPerfil, "Perfil", colaboradorId);
+                            path = Path.Combine(directorioImagenPerfil, "Perfil", UsuarioID);
                             tamaño = 95;
                             break;
                         case 2:
-                            path = Path.Combine(directorioImagenPerfil,"Mediana", colaboradorId);
+                            path = Path.Combine(directorioImagenPerfil,"Mediana", UsuarioID);
                             tamaño = 380;
                             break;
                         case 3:
-                            path = Path.Combine(directorioImagenPerfil, "Original", colaboradorId);
+                            path = Path.Combine(directorioImagenPerfil, "Original", UsuarioID);
                             tamaño = 760;
                             break;
                     }
@@ -200,7 +200,7 @@
                         await _context.SaveChangesAsync();
                         TempData["toast"] = "Su contraseña ha sido actualizada con éxito.";
 
-                        return RedirectToAction("Sesion", "Menu");
+                        return RedirectToAction("Sesion", "Home");
                     }
                     catch (Exception)
                     {

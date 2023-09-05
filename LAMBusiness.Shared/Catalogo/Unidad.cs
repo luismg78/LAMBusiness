@@ -1,12 +1,10 @@
 ﻿namespace LAMBusiness.Shared.Catalogo
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using Newtonsoft.Json;
 
-    [Table("Unidades", Schema = "Catalogo")]
     public class Unidad
     {
         [Key]
@@ -15,12 +13,12 @@
         [Display(Name = "Unidad")]
         [MaxLength(25, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public string UnidadNombre { get; set; }
+        public string Nombre { get; set; }
 
         [Display(Name = "Descripción")]
         [MaxLength(150, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public string UnidadDescripcion { get; set; }
+        public string Descripcion { get; set; }
 
         public bool Pieza { get; set; }
 

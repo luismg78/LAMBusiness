@@ -34,7 +34,7 @@
                     .Where(a => !administradorTipo.Contains(a.AdministradorID))
                     .Select(a => new SelectListItem()
                     {
-                        Text = a.AdministradorNombre,
+                        Text = a.Nombre,
                         Value = a.AdministradorID.ToString()
                     }).OrderBy(e => e.Text).ToListAsync();
             }
@@ -53,7 +53,7 @@
         {
             var list = await _context.Estados.Select(e => new SelectListItem()
             {
-                Text = e.EstadoDescripcion,
+                Text = e.Nombre,
                 Value = e.EstadoID.ToString()
             }).OrderBy(e => e.Text).ToListAsync();
 
@@ -71,7 +71,7 @@
         {
             var list = await _context.EstadosCiviles.Select(e => new SelectListItem()
             {
-                Text = e.EstadoCivilDescripcion,
+                Text = e.Nombre,
                 Value = e.EstadoCivilID.ToString()
             }).OrderBy(e => e.Text).ToListAsync();
 
@@ -89,7 +89,7 @@
         {
             var list = await _context.Generos.Select(e => new SelectListItem()
             {
-                Text = e.GeneroDescripcion,
+                Text = e.Nombre,
                 Value = e.GeneroID.ToString()
             }).OrderBy(e => e.Text).ToListAsync();
 
@@ -129,7 +129,7 @@
                 .Where(m=> m.EstadoID == estadoId)
                 .Select(m => new SelectListItem()
             {
-                Text = m.MunicipioDescripcion,
+                Text = m.Nombre,
                 Value = m.MunicipioID.ToString()
             }).OrderBy(m => m.Text).ToListAsync();
 
@@ -147,7 +147,7 @@
         {
             var list = await _context.Puestos.Select(e => new SelectListItem()
             {
-                Text = e.PuestoNombre,
+                Text = e.Nombre,
                 Value = e.PuestoID.ToString()
             }).OrderBy(e => e.Text).ToListAsync();
 
@@ -165,7 +165,7 @@
         {
             var list = await _context.SalidasTipo.Select(e => new SelectListItem()
             {
-                Text = e.SalidaTipoDescripcion,
+                Text = e.Nombre,
                 Value = e.SalidaTipoID.ToString()
             }).OrderBy(e => e.Text).ToListAsync();
 
@@ -183,7 +183,7 @@
         {
             var list = await _context.TasasImpuestos.Select(t => new SelectListItem()
             {
-                Text = t.Tasa,
+                Text = t.Nombre,
                 Value = t.TasaID.ToString()
             }).OrderBy(t => t.Text).ToListAsync();
 
@@ -201,7 +201,7 @@
         {
             var list = await _context.Unidades.Select(u => new SelectListItem()
             {
-                Text = u.UnidadNombre,
+                Text = u.Nombre,
                 Value = u.UnidadID.ToString()
             }).OrderBy(t => t.Text).ToListAsync();
 

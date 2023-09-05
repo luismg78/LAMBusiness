@@ -1,11 +1,9 @@
 ﻿namespace LAMBusiness.Shared.Catalogo
 {
+    using Newtonsoft.Json;
     using System;
     using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using Newtonsoft.Json;
 
-    [Table("Marcas", Schema = "Catalogo")]
     public class Marca
     {
         [Key]
@@ -14,10 +12,10 @@
         [Display(Name = "Marca")]
         [MaxLength(50, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public string MarcaNombre { get; set; }
+        public string Nombre { get; set; }
 
         [Display(Name = "Descripción")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public string MarcaDescripcion { get; set; }
+        public string Descripcion { get; set; }
     }
 }

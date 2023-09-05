@@ -94,7 +94,7 @@
                 VentasNoAplicadasDetalle = ventaDetalle
             };
 
-            ViewBag.Id = token.ColaboradorID;
+            ViewBag.Id = token.UsuarioID;
 
             try
             {

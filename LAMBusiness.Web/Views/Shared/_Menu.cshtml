@@ -2,9 +2,9 @@
 
 @{
     string menu = "";
-    if (TempData.ContainsKey("menu") == true)
+    if (TempData.ContainsKey("Home") == true)
     {
-        menu = TempData["menu"].ToString().ToLower();
+        menu = TempData["Home"].ToString().ToLower();
     }
 }
 
@@ -13,7 +13,7 @@
         <!-- menú inicio -->
         <li class="nav-item">
             <a class="nav-link @if (menu == "home") {<text>fw-bold text-base</text>} else {<text>text-dark</text>} "
-               asp-area="" asp-controller="Menu" asp-action="Inicio">
+               asp-area="" asp-controller="Home" asp-action="Inicio">
                 <div class="d-md-none btn-icon rounded-circle d-inline-block">
                     <i class="fa fa-store"></i>
                 </div>
@@ -32,7 +32,7 @@
                 {<text>fw-bold text-base</text>}
                 else
                 {<text>text-dark</text>} "
-                       asp-area="" asp-controller="Menu" asp-action="Catalogo">
+                       asp-area="" asp-controller="Home" asp-action="Catalogo">
                         <div class="d-md-none btn-icon rounded-circle d-inline-block">
                             <i class="fa fa-th"></i>
                         </div>
@@ -50,7 +50,7 @@
                 {<text>fw-bold text-base</text>}
                 else
                 {<text>text-dark</text>} "
-                       asp-area="" asp-controller="Menu" asp-action="Contacto">
+                       asp-area="" asp-controller="Home" asp-action="Contacto">
                         <div class="d-md-none btn-icon rounded-circle d-inline-block">
                             <i class="fa fa-users"></i>
                         </div>
@@ -68,7 +68,7 @@
                 {<text>fw-bold text-base</text>}
                 else
                 {<text>text-dark</text>} "
-                       asp-area="" asp-controller="Menu" asp-action="Movimiento">
+                       asp-area="" asp-controller="Home" asp-action="Movimiento">
                         <div class="d-md-none btn-icon rounded-circle d-inline-block">
                             <i class="fa fa-shopping-cart"></i>
                         </div>
@@ -86,7 +86,7 @@
                 {<text>fw-bold text-base</text>}
                 else
                 {<text>text-dark</text>} "
-                       asp-area="" asp-controller="Menu" asp-action="Dashboard">
+                       asp-area="" asp-controller="Home" asp-action="Dashboard">
                         <div class="d-md-none btn-icon rounded-circle d-inline-block">
                             <i class="fa fa-shopping-cart"></i>
                         </div>
@@ -103,7 +103,7 @@
                 {<text>fw-bold text-base</text>}
                 else
                 {<text>text-dark</text>} "
-                       asp-area="" asp-controller="Menu" asp-action="Aplicacion">
+                       asp-area="" asp-controller="Home" asp-action="Aplicacion">
                         <div class="d-md-none btn-icon rounded-circle d-inline-block">
                             <i class="fa fa-user-cog"></i>
                         </div>

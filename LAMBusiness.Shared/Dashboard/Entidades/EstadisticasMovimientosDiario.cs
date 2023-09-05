@@ -5,7 +5,6 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using Newtonsoft.Json;
 
-    [Table("EstadisticasMovimientosDiario", Schema = "Dashboard")]
     public class EstadisticasMovimientosDiario
     {
         [Key]

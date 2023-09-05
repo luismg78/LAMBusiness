@@ -34,13 +34,13 @@
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
             {
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
             var municipios = _context.Municipios
                 .Include(m => m.Estados)
                 .OrderBy(m => m.EstadoID)
-                .ThenBy(m => m.MunicipioDescripcion);
+                .ThenBy(m => m.Nombre);
 
             var filtro = new Filtro<List<Municipio>>()
             {
@@ -77,13 +77,13 @@
                         if (query == null)
                         {
                             query = _context.Municipios.Include(m => m.Estados)
-                                    .Where(m => m.MunicipioDescripcion.Contains(w) ||
-                                           m.Estados.EstadoDescripcion.Contains(w));
+                                    .Where(m => m.Nombre.Contains(w) ||
+                                           m.Estados.Nombre.Contains(w));
                         }
                         else
                         {
-                            query = query.Where(m => m.MunicipioDescripcion.Contains(w) ||
-                                                m.Estados.EstadoDescripcion.Contains(w));
+                            query = query.Where(m => m.Nombre.Contains(w) ||
+                                                m.Estados.Nombre.Contains(w));
                         }
                     }
                 }
@@ -97,7 +97,7 @@
             filtro.Registros = await query.CountAsync();
 
             filtro.Datos = await query.OrderBy(m => m.EstadoID)
-                .ThenBy(m => m.MunicipioDescripcion)
+                .ThenBy(m => m.Nombre)
                 .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
@@ -146,7 +146,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MunicipioID,EstadoID,MunicipioClave,MunicipioDescripcion")] Municipio municipio)
+        public async Task<IActionResult> Edit(int id, [Bind("MunicipioID,EstadoID,Clave,Nombre")] Municipio municipio)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }
@@ -169,7 +169,7 @@
             TempData["toast"] = "Falta información en algún campo, verifique.";
             if (ModelState.IsValid)
             {
-                municipioUpdate.MunicipioDescripcion = municipio.MunicipioDescripcion.Trim().ToUpper();
+                municipioUpdate.Nombre = municipio.Nombre.Trim().ToUpper();
                 try
                 {
                     _context.Update(municipioUpdate);

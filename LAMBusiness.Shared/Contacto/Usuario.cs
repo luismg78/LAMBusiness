@@ -5,20 +5,37 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using Newtonsoft.Json;
 
-    [Table("Usuarios", Schema = "Contacto")]
     public class Usuario
     {
         [Key]
         [Display(Name = "Usuario")]
         public Guid UsuarioID { get; set; }
 
-        [Display(Name = "Colaborador")]
-        [ForeignKey("Colaboradores")]
+        [MaxLength(75, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public Guid? ColaboradorID { get; set; }
+        public string Nombre { get; set; }
 
-        [JsonIgnore]
-        public virtual Colaborador Colaborador { get; set; }
+        [Display(Name = "Primer Apellido")]
+        [MaxLength(75, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
+        [Required(ErrorMessage = "El campo {0} es requerido.")]
+        public string PrimerApellido { get; set; }
+
+        [MaxLength(75, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
+        [Display(Name = "Segundo Apellido")]
+        public string SegundoApellido { get; set; }
+
+        [DataType(DataType.PhoneNumber)]
+        [Display(Name = "Telefono (Móvil)")]
+        [MaxLength(15, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
+        [RegularExpression(@"^[0-9]+$", ErrorMessage = "Formato Incorrecto.")]
+        [Required(ErrorMessage = "El campo {0} es requerido.")]
+        public string TelefonoMovil { get; set; }
+
+        [DataType(DataType.EmailAddress)]
+        [Display(Name = "Correo Electrónico")]
+        [MaxLength(100, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
+        [Required(ErrorMessage = "El campo {0} es requerido.")]
+        public string Email { get; set; }
 
         [JsonIgnore]
         public string Password { get; set; }
@@ -44,5 +61,11 @@
 
         [JsonIgnore]
         public virtual Administrador Administrador { get; set; }
+
+        [NotMapped]
+        public string NombreCompleto => $"{PrimerApellido} {SegundoApellido} {Nombre}".ToLower();
+
+
+        public virtual DatoPersonal DatosPersonales { get; set; }
     }
 }

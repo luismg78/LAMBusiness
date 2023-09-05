@@ -7,7 +7,6 @@
     using Newtonsoft.Json;
     using Shared.Contacto;
 
-    [Table("Salidas", Schema = "Movimiento")]
     public class Salida
     {
         [Key]

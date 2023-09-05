@@ -16,10 +16,9 @@
         Task<Almacen> GetAlmacenByNombreAsync(string almacen);
         Task<Filtro<List<Almacen>>> GetAlmacenesByPatternAsync(Filtro<List<Almacen>> filtro);
         Task<Cliente> GetClienteByIdAsync(Guid id);
-        Task<Colaborador> GetColaboradorByCURPAsync(string curp);
-        Task<Colaborador> GetColaboradorByIdAsync(Guid id);
-        Task<List<Colaborador>> GetColaboradoresByPatternAsync(string pattern, int skip);
-        Task<List<Colaborador>> GetColaboradoresSinCuentaUsuarioByPatternAsync(string pattern, int skip);
+        Task<DatoPersonal> GetDatosPersonalesByCURPAsync(string curp);
+        Task<DatoPersonal> GetDatosPersonalesByIdAsync(Guid id);
+        Task<List<Usuario>> GetUsuariosByPatternAsync(string pattern, int skip);
         Task<ClienteContacto> GetContactoClienteByClienteIdAsync(Guid id);
         Task<ClienteContacto> GetContactoClienteByIdAsync(Guid id);
         Task<ProveedorContacto> GetContactoProveedorByIdAsync(Guid id);

@@ -4,15 +4,15 @@
 {
     <div>
         <ul class="list-group">
-            @foreach (var item in Model.OrderBy(p => p.MarcaNombre))
+            @foreach (var item in Model.OrderBy(p => p.Nombre))
             {
                 <li class="list-group-item list-group-item-action"
                     data-id="@item.MarcaID"
-                    data-search="@item.MarcaNombre"
-                    data-nombre="@item.MarcaDescripcion"
+                    data-search="@item.Nombre"
+                    data-nombre="@item.Descripcion"
                     onclick="addMarca(event);">
-                    <span class="d-block">@item.MarcaNombre</span>
-                    <small class="text-muted">@item.MarcaDescripcion</small>
+                    <span class="d-block">@item.Nombre</span>
+                    <small class="text-muted">@item.Descripcion</small>
                 </li>
             }
         </ul>

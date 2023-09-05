@@ -1,22 +1,20 @@
 ﻿namespace LAMBusiness.Web.Helpers
 {
-    using System.Drawing;
-    using System.Threading.Tasks;
-    using BarcodeLib;
     using LAMBusiness.Shared.Aplicacion;
     using LAMBusiness.Shared.Contacto;
     using LAMBusiness.Shared.Movimiento;
     using Microsoft.AspNetCore.Mvc;
     using Models.ViewModels;
     using Shared.Catalogo;
+    using System.Threading.Tasks;
 
     public interface IConverterHelper
     {
-        FileContentResult GenerateBarcode(string _data, TYPE t);
+        //FileContentResult GenerateBarcode(string _data, Type t);
         Task<Cliente> ToClienteAsync(ClienteViewModel clienteViewModel, bool isNew);
         Task<ClienteViewModel> ToClienteViewModelAsync(Cliente cliente);
-        Task<Resultado<Colaborador>> ToColaboradorAsync(ColaboradorViewModel colaboradorViewModel, bool isNew);
-        Task<ColaboradorViewModel> ToColaboradorViewModelAsync(Colaborador colaborador);
+        Task<Resultado<DatoPersonal>> ToDatoPersonalAsync(DatoPersonalViewModel datoPersonalViewModel, bool isNew);
+        Task<DatoPersonalViewModel> ToDatoPersonalViewModelAsync(DatoPersonal datoPersonal);
         Task<Entrada> ToEntradaAsync(EntradaViewModel entradaViewModel, bool isNew);
         Task<EntradaViewModel> ToEntradaViewModelAsync(Entrada entrada);
         FileContentResult ToImageBase64(string path);

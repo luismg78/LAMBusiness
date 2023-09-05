@@ -43,13 +43,14 @@
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
             {
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
             var usuarios = _context.Usuarios
-                .Include(e => e.Colaborador)
                 .Where(e => e.AdministradorID != "SA")
-                .OrderBy(e => e.Colaborador.CURP);
+                .OrderBy(e => e.PrimerApellido)
+                .ThenBy(e => e.SegundoApellido)
+                .ThenBy(e => e.Nombre);
 
             var filtro = new Filtro<List<Usuario>>()
             {
@@ -87,36 +88,30 @@
                         if (query == null)
                         {
                             query = _context.Usuarios
-                                    .Include(c => c.Colaborador)
                                     .Where(c => c.AdministradorID != "AS" &&
-                                                (c.Colaborador.CURP.Contains(w) ||
-                                                 c.Colaborador.Nombre.Contains(w) ||
-                                                 c.Colaborador.PrimerApellido.Contains(w) ||
-                                                 c.Colaborador.SegundoApellido.Contains(w)));
+                                                (c.Nombre.Contains(w) ||
+                                                 c.PrimerApellido.Contains(w) ||
+                                                 c.SegundoApellido.Contains(w)));
                         }
                         else
                         {
                             query = query
-                                .Include(c => c.Colaborador)
                                 .Where(c => c.AdministradorID != "SA" &&
-                                            (c.Colaborador.CURP.Contains(w) ||
-                                             c.Colaborador.Nombre.Contains(w) ||
-                                             c.Colaborador.PrimerApellido.Contains(w) ||
-                                             c.Colaborador.SegundoApellido.Contains(w)));
+                                            (c.Nombre.Contains(w) ||
+                                             c.PrimerApellido.Contains(w) ||
+                                             c.SegundoApellido.Contains(w)));
                         }
                     }
                 }
             }
             if (query == null)
             {
-                query = _context.Usuarios
-                    .Include(c => c.Colaborador)
-                    .Where(c => c.AdministradorID != "SA");
+                query = _context.Usuarios.Where(c => c.AdministradorID != "SA");
             }
 
             filtro.Registros = await query.CountAsync();
 
-            filtro.Datos = await query.OrderBy(c => c.Colaborador.CURP)
+            filtro.Datos = await query.OrderBy(c => c.NombreCompleto)
                 .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
@@ -151,7 +146,6 @@
 
             var usuario = await _context.Usuarios
                 .Include(c => c.Administrador)
-                .Include(c => c.Colaborador)
                 .FirstOrDefaultAsync(u => u.UsuarioID == id);
 
             if (usuario == null)
@@ -174,13 +168,11 @@
                 Activo = usuario.Activo,
                 Administrador = usuario.Administrador,
                 AdministradorID = usuario.AdministradorID,
-                Colaborador = usuario.Colaborador,
-                ColaboradorID = usuario.ColaboradorID,
+                UsuarioID = usuario.UsuarioID,
                 FechaInicio = usuario.FechaInicio,
                 FechaTermino = usuario.FechaTermino,
                 FechaUltimoAcceso = usuario.FechaUltimoAcceso,
                 PermisoEscritura = permisosModulo.PermisoEscritura,
-                UsuarioID = usuario.UsuarioID,
                 UsuarioModulos = usuarioModulos
             };
 
@@ -274,12 +266,11 @@
             var usuarioViewModel = new UsuarioViewModel()
             {
                 Activo = usuario.Activo,
-                ColaboradorID = usuario.ColaboradorID,
+                UsuarioID = usuario.UsuarioID,
                 FechaInicio = usuario.FechaInicio,
                 FechaTermino = usuario.FechaTermino,
                 AdministradorID = usuario.AdministradorID,
                 AdministradoresDDL = await _combosHelper.GetComboAdministradoresAsync(token.UsuarioID),
-                UsuarioID = usuario.UsuarioID
             };
 
             return View(usuarioViewModel);
@@ -406,63 +397,63 @@
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> GetColaborador(string curp)
-        {
-            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
-            if (validateToken != null) { return null; }
+        //public async Task<IActionResult> GetColaborador(string curp)
+        //{
+        //    var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+        //    if (validateToken != null) { return null; }
 
-            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
-            {
-                return null;
-            }
+        //    if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+        //    {
+        //        return null;
+        //    }
 
-            if (curp == null || curp == "")
-            {
-                return null;
-            }
+        //    if (curp == null || curp == "")
+        //    {
+        //        return null;
+        //    }
 
-            var colaborador = await _getHelper.GetColaboradorByCURPAsync(curp);
-            if (colaborador != null)
-            {
-                return Json(
-                    new
-                    {
-                        colaborador.ColaboradorID,
-                        colaborador.PrimerApellido,
-                        colaborador.SegundoApellido,
-                        colaborador.Nombre,
-                        error = false
-                    });
-            }
+        //    var colaborador = await _getHelper.GetDatosPersonalesByCURPAsync(curp);
+        //    if (colaborador != null)
+        //    {
+        //        return Json(
+        //            new
+        //            {
+        //                colaborador.UsuarioID,
+        //                colaborador.PrimerApellido,
+        //                colaborador.SegundoApellido,
+        //                colaborador.Nombre,
+        //                error = false
+        //            });
+        //    }
 
-            return Json(new { error = true, message = "Colaborador inexistente" });
+        //    return Json(new { error = true, message = "Colaborador inexistente" });
 
-        }
+        //}
 
-        public async Task<IActionResult> GetColaboradores(string pattern, int? skip)
-        {
-            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
-            if (validateToken != null) { return null; }
+        //public async Task<IActionResult> GetColaboradores(string pattern, int? skip)
+        //{
+        //    var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+        //    if (validateToken != null) { return null; }
 
-            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
-            {
-                return null;
-            }
+        //    if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+        //    {
+        //        return null;
+        //    }
 
-            if (pattern == null || pattern == "" || skip == null)
-            {
-                return null;
-            }
+        //    if (pattern == null || pattern == "" || skip == null)
+        //    {
+        //        return null;
+        //    }
 
-            var colaboradores = await _getHelper.GetColaboradoresSinCuentaUsuarioByPatternAsync(pattern, (int)skip);
+        //    var colaboradores = await _getHelper.GetColaboradoresSinCuentaUsuarioByPatternAsync(pattern, (int)skip);
 
-            return new PartialViewResult
-            {
-                ViewName = "_GetColaboradores",
-                ViewData = new ViewDataDictionary
-                            <List<Colaborador>>(ViewData, colaboradores)
-            };
-        }
+        //    return new PartialViewResult
+        //    {
+        //        ViewName = "_GetColaboradores",
+        //        ViewData = new ViewDataDictionary
+        //                    <List<DatoPersonal>>(ViewData, colaboradores)
+        //    };
+        //}
 
         //Edit Permissions
         public async Task<IActionResult> EditPermissions(Guid id)
@@ -477,7 +468,6 @@
 
             var usuario = await _context.Usuarios
                 .Include(c => c.Administrador)
-                .Include(c => c.Colaborador)
                 .FirstOrDefaultAsync(u => u.UsuarioID == id);
 
             if (usuario == null)
@@ -529,12 +519,10 @@
                 Activo = usuario.Activo,
                 Administrador = usuario.Administrador,
                 AdministradorID = usuario.AdministradorID,
-                Colaborador = usuario.Colaborador,
-                ColaboradorID = usuario.ColaboradorID,
+                UsuarioID = usuario.UsuarioID,
                 FechaInicio = usuario.FechaInicio,
                 FechaTermino = usuario.FechaTermino,
                 FechaUltimoAcceso = usuario.FechaUltimoAcceso,
-                UsuarioID = usuario.UsuarioID,
                 UsuarioModulos = usuarioModulos.OrderBy(m => m.Modulo.Descripcion).ToList()
             };
 
@@ -628,7 +616,6 @@
 
             var usuario = await _context.Usuarios
                 .Include(c => c.Administrador)
-                .Include(c => c.Colaborador)
                 .FirstOrDefaultAsync(u => u.UsuarioID == usuarioDetailsViewModelUsuario.UsuarioID);
 
             if (usuario == null)
@@ -642,12 +629,10 @@
                 Activo = usuario.Activo,
                 Administrador = usuario.Administrador,
                 AdministradorID = usuario.AdministradorID,
-                Colaborador = usuario.Colaborador,
-                ColaboradorID = usuario.ColaboradorID,
+                UsuarioID = usuario.UsuarioID,
                 FechaInicio = usuario.FechaInicio,
                 FechaTermino = usuario.FechaTermino,
                 FechaUltimoAcceso = usuario.FechaUltimoAcceso,
-                UsuarioID = usuario.UsuarioID,
                 UsuarioModulos = usuarioDetailsViewModelUsuario.UsuarioModulos
             };
 
@@ -659,7 +644,7 @@
             string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
 
             await _getHelper.SetBitacoraAsync(token, accion, moduloId,
-                usuario, usuario.ColaboradorID.ToString(), directorioBitacora, excepcion);
+                usuario, usuario.UsuarioID.ToString(), directorioBitacora, excepcion);
         }
         private async Task BitacoraAsync(string accion, List<UsuarioModulo> usuarioModulo, string usuarioId, string excepcion = "")
         {

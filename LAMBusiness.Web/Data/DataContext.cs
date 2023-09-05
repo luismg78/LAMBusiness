@@ -40,7 +40,7 @@
         #region Contacto
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<ClienteContacto> ClienteContactos { get; set; }
-        public DbSet<Colaborador> Colaboradores { get; set; }
+        public DbSet<DatoPersonal> DatosPersonales { get; set; }
         public DbSet<Proveedor> Proveedores { get; set; }
         public DbSet<ProveedorContacto> ProveedorContactos { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
@@ -79,7 +79,7 @@
 
             //Catálogo (Atributos con valores únicos)
             modelBuilder.Entity<Estado>()
-                .HasIndex(e => new { e.EstadoClave })
+                .HasIndex(e => new { e.Clave })
                 .IsUnique(true);
 
             modelBuilder.Entity<Producto>()
@@ -87,19 +87,19 @@
                 .IsUnique(true);
 
             modelBuilder.Entity<Marca>()
-                .HasIndex(m => new { m.MarcaNombre })
+                .HasIndex(m => new { m.Nombre })
                 .IsUnique(true);
 
             modelBuilder.Entity<Puesto>()
-                .HasIndex(p => new { p.PuestoNombre })
+                .HasIndex(p => new { p.Nombre })
                 .IsUnique(true);
 
             modelBuilder.Entity<TasaImpuesto>()
-                .HasIndex(t => new { t.Tasa })
+                .HasIndex(t => new { t.Nombre })
                 .IsUnique(true);
 
             modelBuilder.Entity<Unidad>()
-                .HasIndex(u => new { u.UnidadNombre })
+                .HasIndex(u => new { u.Nombre })
                 .IsUnique(true);
 
             //Contacto (Atributos con valores únicos)
@@ -107,7 +107,7 @@
                 .HasIndex(c => new { c.RFC })
                 .IsUnique(true);
             
-            modelBuilder.Entity<Colaborador>()
+            modelBuilder.Entity<DatoPersonal>()
                 .HasIndex(c => new { c.CURP })
                 .IsUnique(true);
 
@@ -134,9 +134,15 @@
             modelBuilder.ApplyConfiguration(new ProductoConfiguracion());
             modelBuilder.ApplyConfiguration(new PaqueteConfiguracion());
             //Contacto
-            modelBuilder.ApplyConfiguration(new ColaboradorConfiguracion());
+            modelBuilder.ApplyConfiguration(new AdministradorConfiguracion());
+            modelBuilder.ApplyConfiguration(new UsuarioConfiguracion());
             //Movimiento
             modelBuilder.ApplyConfiguration(new ExistenciaConfiguracion());
+
+            //Configuración
+            modelBuilder.ApplyConfiguration(new ModuloConfiguracion());
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

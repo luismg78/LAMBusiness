@@ -10,7 +10,7 @@
             <div>
                 <h3 class="modal-title" id="exampleModalLabel">Detalle de Salidas</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
-                    <li class="breadcrumb-item"><a asp-action="Movimiento" asp-controller="Menu">Movimientos</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Movimiento" asp-controller="Home">Movimientos</a></li>
                     <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Salidas">Salidas</a></li>
                     <li class="breadcrumb-item"><a asp-action="Details" asp-controller="Salidas" asp-route-id="@Model.SalidaID">Detalle de Salida</a></li>
                     <li class="breadcrumb-item active">Editar Registro</li>
@@ -58,16 +58,16 @@
                             <a href="#" onclick="deleteButtonAlmacen(event);"><span>&times;</span></a>
                         </div>
                         <hr class="my-2" />
-                        <small id="AlmacenNombre" class="d-block">
+                        <small id="Nombre" class="d-block">
                             @if (Model.Almacenes != null)
                             {
-                                <text>@Model.Almacenes.AlmacenNombre</text>
+                                <text>@Model.Almacenes.Nombre</text>
                             }
                         </small>
-                        <small id="AlmacenDescripcion" class="text-muted">
+                        <small id="Descripcion" class="text-muted">
                             @if (Model.Almacenes != null)
                             {
-                                <text>@Model.Almacenes.AlmacenDescripcion</text>
+                                <text>@Model.Almacenes.Descripcion</text>
                             }
                         </small>
                         <hr />
@@ -104,10 +104,10 @@
                             <a href="#" onclick="deleteButtonProducto(event);"><span>&times;</span></a>
                         </div>
                         <hr class="my-2" />
-                        <small id="ProductoNombre" class="d-block">
+                        <small id="Nombre" class="d-block">
                             @if (Model.Productos != null)
                             {
-                                <text>@Model.Productos.ProductoNombre</text>
+                                <text>@Model.Productos.Nombre</text>
                             }
                         </small>
                         <small id="ProductoCodigo" class="text-muted">

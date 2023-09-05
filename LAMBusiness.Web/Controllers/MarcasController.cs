@@ -34,11 +34,11 @@
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
             {
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
             var marcas = _context.Marcas
-                .OrderBy(p => p.MarcaNombre);
+                .OrderBy(p => p.Nombre);
 
             var filtro = new Filtro<List<Marca>>()
             {
@@ -75,13 +75,13 @@
                         if (query == null)
                         {
                             query = _context.Marcas
-                                    .Where(p => p.MarcaNombre.Contains(w) ||
-                                           p.MarcaDescripcion.Contains(w));
+                                    .Where(p => p.Nombre.Contains(w) ||
+                                           p.Descripcion.Contains(w));
                         }
                         else
                         {
-                            query = query.Where(p => p.MarcaNombre.Contains(w) ||
-                                                p.MarcaDescripcion.Contains(w));
+                            query = query.Where(p => p.Nombre.Contains(w) ||
+                                                p.Descripcion.Contains(w));
                         }
                     }
                 }
@@ -93,7 +93,7 @@
 
             filtro.Registros = await query.CountAsync();
 
-            filtro.Datos = await query.OrderBy(m => m.MarcaNombre)
+            filtro.Datos = await query.OrderBy(m => m.Nombre)
                 .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
@@ -125,7 +125,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MarcaID,MarcaNombre,MarcaDescripcion")] Marca marca)
+        public async Task<IActionResult> Create([Bind("MarcaID,Nombre,Descripcion")] Marca marca)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }
@@ -186,7 +186,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("MarcaID,MarcaNombre,MarcaDescripcion")] Marca marca)
+        public async Task<IActionResult> Edit(Guid id, [Bind("MarcaID,Nombre,Descripcion")] Marca marca)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }

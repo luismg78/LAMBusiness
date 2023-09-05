@@ -7,7 +7,6 @@
     using LAMBusiness.Shared.Catalogo;
     using Newtonsoft.Json;
 
-    [Table("Proveedores", Schema = "Contacto")]
     public class Proveedor
     {
         [Key]

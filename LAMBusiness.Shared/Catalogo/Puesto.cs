@@ -1,13 +1,11 @@
 ﻿namespace LAMBusiness.Shared.Catalogo
 {
+    using Contacto;
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using Contacto;
-    using Newtonsoft.Json;
 
-    [Table("Puestos", Schema = "Catalogo")]
     public class Puesto
     {
         [Key]
@@ -16,13 +14,13 @@
         [Display(Name = "Puesto")]
         [MaxLength(50, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public string PuestoNombre { get; set; }
+        public string Nombre { get; set; }
 
         [Display(Name = "Descripción")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public string PuestoDescripcion { get; set; }
+        public string Descripcion { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<Colaborador> Colaboradores { get; set; }
+        public virtual ICollection<DatoPersonal> Colaboradores { get; set; }
     }
 }
