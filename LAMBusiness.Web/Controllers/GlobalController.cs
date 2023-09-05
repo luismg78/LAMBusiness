@@ -28,18 +28,18 @@
         {
             if (TempData != null)
             {
-                if (TempData.ContainsKey("menu"))
+                if (TempData.ContainsKey("Home"))
                 {
-                    TempData["menu"] = value;
+                    TempData["Home"] = value;
                 }
                 else
                 {
-                    TempData.Add("menu", value);
+                    TempData.Add("Home", value);
                 }
             }
             else
             {
-                TempData.Add("menu", value);
+                TempData.Add("Home", value);
             }
         }
     
@@ -117,7 +117,7 @@
             {
                 token = resultado.Contenido;
                 ViewData["token"] = token;
-                ViewBag.Id = token.ColaboradorID;
+                ViewBag.Id = token.UsuarioID;
             }
 
             return resultado.Contenido;

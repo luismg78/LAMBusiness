@@ -62,7 +62,7 @@
             almacen = string.IsNullOrEmpty(almacen) ? "" : almacen.Trim().ToUpper();
 
             return await _context.Almacenes
-                .FirstOrDefaultAsync(p => p.AlmacenNombre == almacen);
+                .FirstOrDefaultAsync(p => p.Nombre == almacen);
         }
 
         /// <summary>
@@ -83,13 +83,13 @@
                         if (query == null)
                         {
                             query = _context.Almacenes
-                                .Where(a => a.AlmacenNombre.Contains(w) ||
-                                            a.AlmacenDescripcion.Contains(w));
+                                .Where(a => a.Nombre.Contains(w) ||
+                                            a.Descripcion.Contains(w));
                         }
                         else
                         {
-                            query = query.Where(a => a.AlmacenNombre.Contains(w) ||
-                                                a.AlmacenDescripcion.Contains(w));
+                            query = query.Where(a => a.Nombre.Contains(w) ||
+                                                a.Descripcion.Contains(w));
                         }
                     }
                 }
@@ -102,7 +102,7 @@
             filtro.Registros = await query.CountAsync();
 
             filtro.Datos = await query
-                .OrderBy(p => p.AlmacenNombre)
+                .OrderBy(p => p.Nombre)
                 .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
@@ -251,115 +251,34 @@
             }
         }
 
-        //Colaborador
+        //DatosPersonales
 
         /// <summary>
-        /// Obtener colaborador por ID.
+        /// Obtener datos personales por ID.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<Colaborador> GetColaboradorByIdAsync(Guid id)
+        public async Task<DatoPersonal> GetDatosPersonalesByIdAsync(Guid id)
         {
-            return await _context.Colaboradores
+            return await _context.DatosPersonales
                 .Include(c => c.Estados)
                 .Include(c => c.EstadosCiviles)
                 .Include(c => c.Generos)
                 .Include(c => c.Municipios)
                 .Include(c => c.Puestos)
-                .FirstOrDefaultAsync(p => p.ColaboradorID == id);
+                .FirstOrDefaultAsync(p => p.UsuarioID == id);
         }
 
         /// <summary>
-        /// Obtener lista de colaboradores de acuerdo al patrón solicitado
-        /// </summary>
-        /// <param name="pattern"></param>
-        /// <returns></returns>
-        public async Task<List<Colaborador>> GetColaboradoresByPatternAsync(string pattern, int skip)
-        {
-            string[] patterns = pattern.Trim().Split(' ');
-            IQueryable<Colaborador> query = null;
-            foreach (var p in patterns)
-            {
-                string _pattern = p.Trim();
-                if (_pattern != "")
-                {
-                    if (query == null)
-                    {
-                        query = _context.Colaboradores
-                            .Where(c => c.PrimerApellido.Contains(_pattern) ||
-                                        c.SegundoApellido.Contains(_pattern) ||
-                                        c.Nombre.Contains(_pattern));
-                    }
-                    else
-                    {
-                        query = query.Where(c => c.PrimerApellido.Contains(_pattern) ||
-                                                 c.SegundoApellido.Contains(_pattern) ||
-                                                 c.Nombre.Contains(_pattern));
-                    }
-                }
-            }
-
-            if (query == null)
-            {
-                query = _context.Colaboradores;
-            }
-
-            return await query.OrderBy(e => e.CURP).Skip(skip).Take(50).ToListAsync();
-        }
-
-        /// <summary>
-        /// Obtener lista de colaboradores que no tienen cuenta de usuario de acuerdo al patrón solicitado
-        /// </summary>
-        /// <param name="pattern"></param>
-        /// <param name="skip"></param>
-        /// <returns></returns>
-        public async Task<List<Colaborador>> GetColaboradoresSinCuentaUsuarioByPatternAsync(string pattern, int skip)
-        {
-            string[] patterns = pattern.Trim().Split(' ');
-            IQueryable<Colaborador> query = null;
-            foreach (var p in patterns)
-            {
-                string _pattern = p.Trim();
-                if (_pattern != "")
-                {
-                    if (query == null)
-                    {
-                        query = _context.Colaboradores
-                            .Where(c => c.PrimerApellido.Contains(_pattern) ||
-                                        c.SegundoApellido.Contains(_pattern) ||
-                                        c.Nombre.Contains(_pattern));
-                    }
-                    else
-                    {
-                        query = query.Where(c => c.PrimerApellido.Contains(_pattern) ||
-                                                 c.SegundoApellido.Contains(_pattern) ||
-                                                 c.Nombre.Contains(_pattern));
-                    }
-                }
-            }
-
-            if (query == null)
-            {
-                query = _context.Colaboradores;
-            }
-
-            var usuarios = await _context.Usuarios.Select(u => u.ColaboradorID).ToListAsync();
-
-            return await query.Where(q => !usuarios.Contains(q.ColaboradorID))
-                .OrderBy(e => e.CURP).Skip(skip).Take(50).ToListAsync();
-        }
-
-
-        /// <summary>
-        /// Obtener proveedor por CURP.
+        /// Obtener datgos personales por CURP.
         /// </summary>
         /// <param name="curp"></param>
         /// <returns></returns>
-        public async Task<Colaborador> GetColaboradorByCURPAsync(string curp)
+        public async Task<DatoPersonal> GetDatosPersonalesByCURPAsync(string curp)
         {
             curp = string.IsNullOrEmpty(curp) ? "" : curp.Trim().ToUpper();
 
-            return await _context.Colaboradores
+            return await _context.DatosPersonales
                 .FirstOrDefaultAsync(c => c.CURP == curp);
         }
 
@@ -474,7 +393,7 @@
         {
             return await _context.Entradas
                 .Include(e => e.Usuarios)
-                .ThenInclude(e => e.Colaborador)
+                .ThenInclude(e => e.DatosPersonales)
                 .Include(e => e.Proveedores)
                 .ThenInclude(e => e.Municipios)
                 .ThenInclude(e => e.Estados)
@@ -512,8 +431,8 @@
                 .Include(e => e.Productos)
                 .ThenInclude(e => e.Existencias)
                 .Where(m => m.EntradaID == id)
-                .OrderBy(m => m.Productos.ProductoNombre)
-                .ThenBy(m => m.Almacenes.AlmacenNombre)
+                .OrderBy(m => m.Productos.Nombre)
+                .ThenBy(m => m.Almacenes.Nombre)
                 .ToListAsync();
         }
 
@@ -588,13 +507,13 @@
                     if (query == null)
                     {
                         query = _context.Marcas
-                            .Where(p => p.MarcaDescripcion.Contains(_pattern) ||
-                                        p.MarcaNombre.Contains(_pattern));
+                            .Where(p => p.Descripcion.Contains(_pattern) ||
+                                        p.Nombre.Contains(_pattern));
                     }
                     else
                     {
-                        query = query.Where(p => p.MarcaDescripcion.Contains(_pattern) ||
-                                                 p.MarcaNombre.Contains(_pattern));
+                        query = query.Where(p => p.Descripcion.Contains(_pattern) ||
+                                                 p.Nombre.Contains(_pattern));
                     }
                 }
             }
@@ -604,7 +523,7 @@
                 query = _context.Marcas;
             }
 
-            return await query.OrderBy(m => m.MarcaNombre).Skip(skip).Take(50).ToListAsync();
+            return await query.OrderBy(m => m.Nombre).Skip(skip).Take(50).ToListAsync();
         }
 
         /// <summary>
@@ -617,7 +536,7 @@
             marca = string.IsNullOrEmpty(marca) ? "" : marca.Trim().ToUpper();
 
             return await _context.Marcas
-                .FirstOrDefaultAsync(p => p.MarcaNombre == marca);
+                .FirstOrDefaultAsync(p => p.Nombre == marca);
         }
 
         //Módulos
@@ -653,7 +572,7 @@
         public async Task<List<Municipio>> GetMunicipiosByEstadoIdAsync(short id)
         {
             return await _context.Municipios.Where(m => m.EstadoID == id)
-                .OrderBy(m => m.MunicipioDescripcion)
+                .OrderBy(m => m.Nombre)
                 .ToListAsync();
         }
 
@@ -734,14 +653,14 @@
                         {
                             query = _context.Productos
                                     .Where(p => p.Codigo.Contains(w) ||
-                                                p.ProductoNombre.Contains(w) ||
-                                                p.ProductoDescripcion.Contains(w));
+                                                p.Nombre.Contains(w) ||
+                                                p.Descripcion.Contains(w));
                         }
                         else
                         {
                             query = query.Where(p => p.Codigo.Contains(w) ||
-                                                p.ProductoNombre.Contains(w) ||
-                                                p.ProductoDescripcion.Contains(w));
+                                                p.Nombre.Contains(w) ||
+                                                p.Descripcion.Contains(w));
                         }
                     }
                 }
@@ -758,7 +677,7 @@
                 .Include(p => p.TasasImpuestos)
                 .Include(p => p.Unidades)
                 .Include(p => p.Paquete)
-                .OrderBy(p => p.ProductoNombre)
+                .OrderBy(p => p.Nombre)
                 .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
@@ -851,7 +770,7 @@
         {
             return await _context.Salidas
                 .Include(e => e.Usuarios)
-                .ThenInclude(e => e.Colaborador)
+                .ThenInclude(e => e.DatosPersonales)
                 .Include(e => e.SalidaTipo)
                 .FirstOrDefaultAsync(m => m.SalidaID == id);
         }
@@ -886,8 +805,8 @@
                 .ThenInclude(s => s.Existencias)
                 .Include(s => s.Salidas)
                 .Where(s => s.SalidaID == id)
-                .OrderBy(s => s.Productos.ProductoNombre)
-                .ThenBy(s => s.Almacenes.AlmacenNombre)
+                .OrderBy(s => s.Productos.Nombre)
+                .ThenBy(s => s.Almacenes.Nombre)
                 .ToListAsync();
         }
 
@@ -924,7 +843,7 @@
         public async Task<Usuario> GetUsuarioByIdAsync(Guid id)
         {
             return await _context.Usuarios
-                .Include(c => c.Colaborador)
+                .Include(c => c.DatosPersonales)
                 .FirstOrDefaultAsync(c => c.UsuarioID == id);
         }
 
@@ -943,7 +862,6 @@
             var token = new Token()
             {
                 Administrador = "",
-                ColaboradorID = Guid.Empty,
                 HostName = "",
                 IPPrivada = "",
                 IPPublica = "",
@@ -1049,19 +967,17 @@
                 }
 
                 token = await (from u in _context.Usuarios
-                               join c in _context.Colaboradores on u.ColaboradorID equals c.ColaboradorID
                                join a in _context.Administradores on u.AdministradorID equals a.AdministradorID
                                where u.UsuarioID == sesion.UsuarioID
                                select new Token()
                                {
                                    Activo = u.Activo,
                                    Administrador = a.AdministradorID,
-                                   ColaboradorID = c.ColaboradorID,
                                    FechaInicio = u.FechaInicio,
                                    FechaTermino = u.FechaTermino,
-                                   Nombre = c.Nombre,
-                                   PrimerApellido = c.PrimerApellido,
-                                   SegundoApellido = c.SegundoApellido,
+                                   Nombre = u.Nombre,
+                                   PrimerApellido = u.PrimerApellido,
+                                   SegundoApellido = u.SegundoApellido,
                                    SessionID = sessionId,
                                    UsuarioID = u.UsuarioID
                                }).FirstOrDefaultAsync();
@@ -1171,7 +1087,6 @@
             {
                 Activo = false,
                 Administrador = "",
-                ColaboradorID = Guid.Empty,
                 HostName = "",
                 IPPrivada = "",
                 IPPublica = "",
@@ -1279,19 +1194,17 @@
                 });
 
                 token = await (from u in _context.Usuarios
-                               join c in _context.Colaboradores on u.ColaboradorID equals c.ColaboradorID
                                join a in _context.Administradores on u.AdministradorID equals a.AdministradorID
                                where u.UsuarioID == usuarioId
                                select new Token()
                                {
                                    Activo = u.Activo,
                                    Administrador = a.AdministradorID,
-                                   ColaboradorID = c.ColaboradorID,
                                    FechaInicio = u.FechaInicio,
                                    FechaTermino = u.FechaTermino,
-                                   Nombre = c.Nombre,
-                                   PrimerApellido = c.PrimerApellido,
-                                   SegundoApellido = c.SegundoApellido,
+                                   Nombre = u.Nombre,
+                                   PrimerApellido = u.PrimerApellido,
+                                   SegundoApellido = u.SegundoApellido,
                                    SessionID = sessionId,
                                    UsuarioID = u.UsuarioID
                                }).FirstOrDefaultAsync();
@@ -1396,6 +1309,44 @@
             }
 
             return resultado;
+        }
+
+        /// <summary>
+        /// Obtener lista de usuarios de acuerdo al patrón solicitado
+        /// </summary>
+        /// <param name="pattern"></param>
+        /// <returns></returns>
+        public async Task<List<Usuario>> GetUsuariosByPatternAsync(string pattern, int skip)
+        {
+            string[] patterns = pattern.Trim().Split(' ');
+            IQueryable<Usuario> query = null;
+            foreach (var p in patterns)
+            {
+                string _pattern = p.Trim();
+                if (_pattern != "")
+                {
+                    if (query == null)
+                    {
+                        query = _context.Usuarios
+                            .Where(c => c.PrimerApellido.Contains(_pattern) ||
+                                        c.SegundoApellido.Contains(_pattern) ||
+                                        c.Nombre.Contains(_pattern));
+                    }
+                    else
+                    {
+                        query = query.Where(c => c.PrimerApellido.Contains(_pattern) ||
+                                                 c.SegundoApellido.Contains(_pattern) ||
+                                                 c.Nombre.Contains(_pattern));
+                    }
+                }
+            }
+
+            if (query == null)
+            {
+                query = _context.Usuarios;
+            }
+
+            return await query.OrderBy(e => e.NombreCompleto).Skip(skip).Take(50).ToListAsync();
         }
 
         /// <summary>

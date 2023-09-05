@@ -1,14 +1,12 @@
 ﻿namespace LAMBusiness.Web.Models.ViewModels
 {
+    using Microsoft.AspNetCore.Mvc.Rendering;
+    using Shared.Contacto;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Mvc.Rendering;
-    using Shared.Contacto;
 
-    public class ColaboradorViewModel: Colaborador
+    public class DatoPersonalViewModel : DatoPersonal
     {
         [Display(Name = "Estado")]
         [Range(1, int.MaxValue, ErrorMessage = "Seleccionar un registro del campo {0}.")]

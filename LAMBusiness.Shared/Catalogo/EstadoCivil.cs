@@ -4,7 +4,6 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using Newtonsoft.Json;
 
-    [Table("EstadosCiviles", Schema = "Catalogo")]
     public class EstadoCivil
     {
         [Key]
@@ -14,6 +13,6 @@
         [Display(Name = "Estado Civil")]
         [MaxLength(25, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public string EstadoCivilDescripcion { get; set; }
+        public string Nombre { get; set; }
     }
 }

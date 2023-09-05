@@ -33,10 +33,10 @@
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
             {
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
-            var generos = _context.Generos.OrderBy(g => g.GeneroDescripcion);
+            var generos = _context.Generos.OrderBy(g => g.Nombre);
 
             var filtro = new Filtro<List<Genero>>()
             {
@@ -80,7 +80,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("GeneroID,GeneroDescripcion")] Genero genero)
+        public async Task<IActionResult> Edit(string id, [Bind("GeneroID,Nombre")] Genero genero)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }

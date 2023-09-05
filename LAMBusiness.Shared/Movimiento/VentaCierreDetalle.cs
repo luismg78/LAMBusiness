@@ -6,7 +6,6 @@
     using Catalogo;
     using Newtonsoft.Json;
 
-    [Table("VentasCierreDetalle", Schema = "Movimiento")]
     public class VentaCierreDetalle
     {
         [Key]

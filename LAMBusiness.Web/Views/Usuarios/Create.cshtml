@@ -10,7 +10,7 @@
             <div>
                 <h3 class="modal-title" id="exampleModalLabel">Usuarios</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
-                    <li class="breadcrumb-item"><a asp-action="Contacto" asp-controller="Menu">Contactos</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Contacto" asp-controller="Home">Contactos</a></li>
                     <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Usuarios">Usuarios</a></li>
                     <li class="breadcrumb-item active">Nuevo Registro</li>
                 </ul>
@@ -24,48 +24,55 @@
         </div>
         <div class="modal-body py-4">
             <div class="row px-md-3">
-                <div class="col-12">
-                    <div id="ColaboradorSearch" class="form-group">
-                        <input asp-for="ColaboradorID" type="hidden" />
-                        <label asp-for="ColaboradorID" class="control-label required"></label>
-                        <div class="input-group search">
-                            <input id="ColaboradorSearchInput" type="search" class="form-control"
-                                   data-bs-toggle="focus"
-                                   data-bs-target=".list-registers"
-                                   placeholder="Ingrese nombre, primer o segundo apellido del colaborador..."
-                                   autofocus autocomplete="off"
-                                   onkeyup="positionCursorWithArrowKey(event);"
-                                   onkeypress="getColaborador(event);" />
-                            <button id="ColaboradorSearchButton" class="btn btn-light border"
-                                    type="button" onclick="searchListBox(event);">
-                                <span id="SpinList" class="d-flex align-items-center">
-                                    <i class="fa fa-search"></i>
-                                </span>
-                            </button>
-                        </div>
-                        <span asp-validation-for="ColaboradorID" class="text-danger"></span>
-                        <div id="dRowListBox" class="mb-4 mt-1 list-registers" data-charging="0" data-rows-next="1">
-                        </div>
+                <!--Nombre-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Nombre" class="control-label required"></label>
+                        <input asp-for="Nombre" class="form-control" autofocus />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
                     </div>
                 </div>
-                <div id="ColaboradorDatos" class="col-12 py-2 d-none">
-                    <div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h6 class="fw-bold text-base">Datos del colaborador</h6>
-                            <a href="#" onclick="deleteButtonColaborador(event);"><span>&times;</span></a>
-                        </div>
-                        <hr class="my-2" />
-                        <small id="ColaboradorNombre" class="d-block"></small>
-                        <hr />
+                <!--Primer Apellido-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="PrimerApellido" class="control-label required"></label>
+                        <input asp-for="PrimerApellido" class="form-control" />
+                        <span asp-validation-for="PrimerApellido" class="text-danger"></span>
                     </div>
                 </div>
+                <!--Segundo Apellido-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="SegundoApellido" class="control-label"></label>
+                        <input asp-for="SegundoApellido" class="form-control" />
+                        <span asp-validation-for="SegundoApellido" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Correo Electrónico-->
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label required"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Teléfono Móvil-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="TelefonoMovil" class="control-label required"></label>
+                        <input asp-for="TelefonoMovil" class="form-control" />
+                        <span asp-validation-for="TelefonoMovil" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Fecha de inicio-->
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="form-group">
                         <label asp-for="FechaInicio" class="control-label required"></label>
-                        <input asp-for="FechaInicio" class="form-control" autofocus />
+                        <input asp-for="FechaInicio" class="form-control" />
                         <span asp-validation-for="FechaInicio" class="text-danger"></span>
                     </div>
                 </div>
+                <!--Fecha de término-->
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="form-group">
                         <label asp-for="FechaTermino" class="control-label required"></label>
@@ -73,6 +80,7 @@
                         <span asp-validation-for="FechaTermino" class="text-danger"></span>
                     </div>
                 </div>
+                <!--Administrador-->
                 <div class="col-12 col-lg-4">
                     <div class="form-group">
                         <label asp-for="AdministradorID" class="control-label required"></label>
@@ -80,6 +88,7 @@
                         <span asp-validation-for="AdministradorID" class="text-danger"></span>
                     </div>
                 </div>
+                <!--Activo-->
                 <div class="col-12 col-md-4">
                     <div class="form-group">
                         <label asp-for="Activo" class="control-label"></label>
@@ -147,7 +156,7 @@
 
     function deleteButtonColaborador(e) {
         e.preventDefault();
-        $('#ColaboradorID').val('');
+        $('#UsuarioID').val('');
         $('#ColaboradorNombre')[0].innerText = '';
         $('#ColaboradorDatos').removeClass('d-block').addClass('d-none');
         $('#ColaboradorSearch').removeClass('d-none').addClass('d-block');
@@ -174,7 +183,7 @@
                 success: function (r) {
                     if (!r.error) {
                         $('#ColaboradorDatos').removeClass('d-none').addClass('d-block');
-                        $('#ColaboradorID').val(r.colaboradorID);
+                        $('#UsuarioID').val(r.UsuarioID);
                         $('#ColaboradorNombre')[0].innerText = r.primerApellido + ' ' + r.segundoApellido + ' ' + r.nombre;
                         $('#ColaboradorSearch').removeClass('d-block').addClass('d-none');
                         $('#dRowListBox > div').remove();

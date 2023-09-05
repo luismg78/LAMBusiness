@@ -6,7 +6,6 @@
     using Shared.Catalogo;
     using Newtonsoft.Json;
 
-    [Table("EstadisticasMovimientosMensual", Schema = "Dashboard")]
     public class EstadisticasMovimientosMensual
     {
         [Key]

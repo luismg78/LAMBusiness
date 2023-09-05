@@ -10,7 +10,7 @@
             <div>
                 <h3 class="modal-title" id="exampleModalLabel">Tipos de salida</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
-                    <li class="breadcrumb-item"><a asp-action="Catalogo" asp-controller="Menu">Catálogos</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Catalogo" asp-controller="Home">Catálogos</a></li>
                     <li class="breadcrumb-item"><a asp-action="Index" asp-controller="SalidasTipo">Tipos de salida</a></li>
                     <li class="breadcrumb-item active">Nuevo Registro</li>
                 </ul>
@@ -26,9 +26,9 @@
             <div class="row px-md-3">
                 <div class="col">
                     <div class="form-group">
-                        <label asp-for="SalidaTipoDescripcion" class="control-label required"></label>
-                        <input asp-for="SalidaTipoDescripcion" class="form-control" autofocus/>
-                        <span asp-validation-for="SalidaTipoDescripcion" class="text-danger"></span>
+                        <label asp-for="Nombre" class="control-label required"></label>
+                        <input asp-for="Nombre" class="form-control" autofocus/>
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
                     </div>
                 </div>
             </div>

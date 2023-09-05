@@ -7,7 +7,6 @@
     {
         public string SessionID { get; set; }
         public Guid UsuarioID { get; set; }
-        public Guid ColaboradorID { get; set; }
         public string Nombre { get; set; }
         public string PrimerApellido { get; set; }
         public string SegundoApellido { get; set; }

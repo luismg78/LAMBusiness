@@ -12,14 +12,14 @@
             builder.HasData(
                 //new Marca { 
                 //    MarcaID = Guid.Empty,
-                //    MarcaNombre = "SIN MARCA",
-                //    MarcaDescripcion = "ETIQUETAR PRODUCTO SIN MARCA"
+                //    Nombre = "SIN MARCA",
+                //    Descripcion = "ETIQUETAR PRODUCTO SIN MARCA"
                 //},
                 new Marca
                 {
                     MarcaID = Guid.Parse("620ceb37-d6a5-4649-9c6e-39581858efd2"),
-                    MarcaNombre = "SIN MARCA",
-                    MarcaDescripcion = "PRODUCTO DE NUEVA CREACIÓN SIN MARCA REGISTRADA."
+                    Nombre = "SIN MARCA",
+                    Descripcion = "PRODUCTO DE NUEVA CREACIÓN SIN MARCA REGISTRADA."
                 }
             );
         }

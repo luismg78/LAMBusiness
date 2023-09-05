@@ -47,7 +47,7 @@
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
             {
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
             var salidas = _context.Salidas
@@ -91,14 +91,14 @@
                             query = _context.Salidas
                                 .Include(e => e.SalidaTipo)
                                 .Where(p => p.Folio.Contains(w) ||
-                                            p.SalidaTipo.SalidaTipoDescripcion.Contains(w));
+                                            p.SalidaTipo.Nombre.Contains(w));
                         }
                         else
                         {
                             query = query
                                 .Include(e => e.SalidaTipo)
                                 .Where(p => p.Folio.Contains(w) ||
-                                            p.SalidaTipo.SalidaTipoDescripcion.Contains(w));
+                                            p.SalidaTipo.Nombre.Contains(w));
                         }
                     }
                 }

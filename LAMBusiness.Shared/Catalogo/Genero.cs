@@ -1,10 +1,8 @@
 ﻿namespace LAMBusiness.Shared.Catalogo
 {
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
     using Newtonsoft.Json;
+    using System.ComponentModel.DataAnnotations;
 
-    [Table("Generos", Schema = "Catalogo")]
     public class Genero
     {
         [Key]
@@ -14,6 +12,6 @@
         [Display(Name = "Género")]
         [MaxLength(25, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public string GeneroDescripcion { get; set; }
+        public string Nombre { get; set; }
     }
 }

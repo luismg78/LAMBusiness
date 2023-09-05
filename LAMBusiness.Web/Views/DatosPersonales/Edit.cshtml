@@ -1,28 +1,29 @@
-﻿@model LAMBusiness.Web.Models.ViewModels.ColaboradorViewModel
+﻿@model LAMBusiness.Web.Models.ViewModels.DatoPersonalViewModel
 
 @{
     ViewData["Title"] = "Colaboradores";
 }
 
-<form asp-action="Create">
+<form asp-action="Edit">
     <div class="modal-content border-0 box-shadow">
         <div class="modal-header pb-0 align-items-baseline">
             <div>
                 <h3 class="modal-title" id="exampleModalLabel">Colaboradores</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
-                    <li class="breadcrumb-item"><a asp-action="Contacto" asp-controller="Menu">Contactos</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Contacto" asp-controller="Home">Contactos</a></li>
                     <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Colaboradores">Colaboradores</a></li>
-                    <li class="breadcrumb-item active">Nuevo Registro</li>
+                    <li class="breadcrumb-item active">Editar Registro</li>
                 </ul>
             </div>
             <div class="d-flex align-items-center">
-                <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewCreate', event);">
+                <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewEdit', event);">
                     <i class="fa fa-question-circle"></i>
                 </a>
                 <a asp-action="Index" asp-controller="Colaboradores" class="btn-close me-md-1" aria-label="Close"></a>
             </div>
         </div>
         <div class="modal-body py-4">
+            <input type="hidden" asp-for="UsuarioID" />
             <div class="row px-md-3">
                 <!--CURP-->
                 <div class="col-md-4">
@@ -33,31 +34,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row px-md-3">
-                <!--Nombre-->
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label asp-for="Nombre" class="control-label required"></label>
-                        <input asp-for="Nombre" class="form-control" />
-                        <span asp-validation-for="Nombre" class="text-danger"></span>
-                    </div>
-                </div>
-                <!--Primer Apellido-->
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label asp-for="PrimerApellido" class="control-label required"></label>
-                        <input asp-for="PrimerApellido" class="form-control" />
-                        <span asp-validation-for="PrimerApellido" class="text-danger"></span>
-                    </div>
-                </div>
-                <!--Segundo Apellido-->
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label asp-for="SegundoApellido" class="control-label"></label>
-                        <input asp-for="SegundoApellido" class="form-control" />
-                        <span asp-validation-for="SegundoApellido" class="text-danger"></span>
-                    </div>
-                </div>
+            <div class="row px-md-3">               
                 <!--Puesto-->
                 <div class="col-md-6">
                     <div class="form-group">
@@ -122,34 +99,11 @@
                         <span asp-validation-for="Telefono" class="text-danger"></span>
                     </div>
                 </div>
-                <!--Teléfono Móvil-->
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label asp-for="TelefonoMovil" class="control-label required"></label>
-                        <input asp-for="TelefonoMovil" class="form-control" />
-                        <span asp-validation-for="TelefonoMovil" class="text-danger"></span>
-                    </div>
-                </div>
-                <!--Correo Electrónico-->
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label asp-for="Email" class="control-label required"></label>
-                        <input asp-for="Email" class="form-control" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-                </div>
-                <!--Activo-->
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label asp-for="Activo" class="control-label"></label>
-                        <input class="d-block" asp-for="Activo" />
-                    </div>
-                </div>
             </div>
         </div>
         <div class="modal-footer justify-content-between">
             <div class="px-md-3">
-                <input type="submit" value="Guardar" class="btn btn-base" />
+                <input type="submit" value="Actualizar" class="btn btn-base" />
                 <a asp-action="Index" class="btn btn-outline-secondary">Regresar</a>
             </div>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -159,7 +113,7 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-<script>
+    <script>
     $('#EstadoID').change(function () {
         StateChange();
     });
@@ -186,5 +140,5 @@
             cache: false
         });
     }
-</script>
+    </script>
 }

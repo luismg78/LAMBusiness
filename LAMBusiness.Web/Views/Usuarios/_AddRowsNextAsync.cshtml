@@ -19,16 +19,16 @@
             {
                 <div class="row bg-row">
                     <div class="border-bottom col-2 col-lg-1 py-3 px-0 text-center">
-                        <img class="rounded-circle" style="width:3rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = item.ColaboradorID, tipo = "profile" })" alt="Image Profile" />
+                        <img class="rounded-circle" style="width:3rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = item.UsuarioID, tipo = "profile" })" alt="Image Profile" />
                     </div>
                     <div class="border-bottom col-10 col-md-7 col-lg-8 py-3 px-2 px-lg-1">
                         <span class="text-dark">
-                            @Html.DisplayFor(modelItem => item.Colaborador.PrimerApellido)
-                            @Html.DisplayFor(modelItem => item.Colaborador.SegundoApellido)
-                            @Html.DisplayFor(modelItem => item.Colaborador.Nombre)
+                            @Html.DisplayFor(modelItem => item.PrimerApellido)
+                            @Html.DisplayFor(modelItem => item.SegundoApellido)
+                            @Html.DisplayFor(modelItem => item.Nombre)
                         </span>
                         <div class="d-block">
-                            <small class="text-muted me-md-3">@Html.DisplayFor(modelItem => item.Colaborador.CURP)</small>
+                            <small class="text-muted me-md-3">@Html.DisplayFor(modelItem => item.DatosPersonales.CURP)</small>
                             @if (!item.Activo)
                             {
                                 <small class="badge bg-danger">No Disponible</small>

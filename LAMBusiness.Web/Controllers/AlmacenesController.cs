@@ -43,14 +43,14 @@
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
             {
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
             var almacenes = _context.Almacenes;
 
             var filtro = new Filtro<List<Almacen>>()
             {
-                Datos = await almacenes.OrderBy(p => p.AlmacenNombre).Take(50).ToListAsync(),
+                Datos = await almacenes.OrderBy(p => p.Nombre).Take(50).ToListAsync(),
                 Patron = "",
                 PermisoEscritura = permisosModulo.PermisoEscritura,
                 PermisoImprimir = permisosModulo.PermisoImprimir,
@@ -83,13 +83,13 @@
                         if (query == null)
                         {
                             query = _context.Almacenes
-                                    .Where(p => p.AlmacenNombre.Contains(w) ||
-                                           p.AlmacenDescripcion.Contains(w));
+                                    .Where(p => p.Nombre.Contains(w) ||
+                                           p.Descripcion.Contains(w));
                         }
                         else
                         {
-                            query = query.Where(p => p.AlmacenNombre.Contains(w) ||
-                                                p.AlmacenDescripcion.Contains(w));
+                            query = query.Where(p => p.Nombre.Contains(w) ||
+                                                p.Descripcion.Contains(w));
                         }
                     }
                 }
@@ -101,7 +101,7 @@
 
             filtro.Registros = await query.CountAsync();
 
-            filtro.Datos = await query.OrderBy(m => m.AlmacenNombre)
+            filtro.Datos = await query.OrderBy(m => m.Nombre)
                 .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
@@ -133,7 +133,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AlmacenID,AlmacenNombre,AlmacenDescripcion")] Almacen almacen, string HubID)
+        public async Task<IActionResult> Create([Bind("AlmacenID,Nombre,Descripcion")] Almacen almacen, string HubID)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }
@@ -223,7 +223,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("AlmacenID,AlmacenNombre,AlmacenDescripcion")] Almacen almacen)
+        public async Task<IActionResult> Edit(Guid id, [Bind("AlmacenID,Nombre,Descripcion")] Almacen almacen)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }
@@ -376,8 +376,8 @@
                     new
                     {
                         almacen.AlmacenID,
-                        almacen.AlmacenNombre,
-                        almacen.AlmacenDescripcion,
+                        almacen.Nombre,
+                        almacen.Descripcion,
                         error = false
                     });
             }
@@ -439,9 +439,9 @@
         //            MarcaID = marcaId,
         //            PrecioCosto = x,
         //            PrecioVenta = x + 10,
-        //            ProductoDescripcion = $"PRODUCTO DESCRIPCIÓN {x.ToString("00000")}",
+        //            Descripcion = $"PRODUCTO DESCRIPCIÓN {x.ToString("00000")}",
         //            ProductoID = Guid.NewGuid(),
-        //            ProductoNombre = $"PRODUCTO {x.ToString("00000")}",
+        //            Nombre = $"PRODUCTO {x.ToString("00000")}",
         //            TasaID = tasaId,
         //            UnidadID = unidadId
         //        });

@@ -34,7 +34,7 @@
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
             {
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
             var puestos = _context.Puestos.Include(p => p.Colaboradores);
@@ -74,13 +74,13 @@
                         if (query == null)
                         {
                             query = _context.Puestos.Include(m => m.Colaboradores)
-                                    .Where(p => p.PuestoNombre.Contains(w) ||
-                                           p.PuestoDescripcion.Contains(w));
+                                    .Where(p => p.Nombre.Contains(w) ||
+                                           p.Descripcion.Contains(w));
                         }
                         else
                         {
-                            query = query.Where(p => p.PuestoNombre.Contains(w) ||
-                                                p.PuestoDescripcion.Contains(w));
+                            query = query.Where(p => p.Nombre.Contains(w) ||
+                                                p.Descripcion.Contains(w));
                         }
                     }
                 }
@@ -92,7 +92,7 @@
 
             filtro.Registros = await query.CountAsync();
 
-            filtro.Datos = await query.OrderBy(m => m.PuestoNombre)
+            filtro.Datos = await query.OrderBy(m => m.Nombre)
                 .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
@@ -124,7 +124,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PuestoID,PuestoNombre,PuestoDescripcion")] Puesto puesto)
+        public async Task<IActionResult> Create([Bind("PuestoID,Nombre,Descripcion")] Puesto puesto)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }
@@ -174,7 +174,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("PuestoID,PuestoNombre,PuestoDescripcion")] Puesto puesto)
+        public async Task<IActionResult> Edit(Guid id, [Bind("PuestoID,Nombre,Descripcion")] Puesto puesto)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }

@@ -1,8 +1,8 @@
 ﻿let dRowAlmacen = document.getElementById('dRowAlmacen');
 let almacenSearchInput = document.getElementById('AlmacenSearchInput');
 let almacenId = document.getElementById('AlmacenID');
-let almacenNombre = document.getElementById('AlmacenNombre');
-let almacenDescripcion = document.getElementById('AlmacenDescripcion');
+let almacenNombre = document.getElementById('Nombre');
+let almacenDescripcion = document.getElementById('Descripcion');
 let almacenDatos = document.getElementById('AlmacenDatos');
 let almacenSearch = document.getElementById('AlmacenSearch');
 
@@ -18,7 +18,7 @@ let productoId = document.getElementById('ProductoID');
 let cantidad = document.getElementById('Cantidad');
 let precioCosto = document.getElementById('PrecioCosto');
 let precioVenta = document.getElementById('PrecioVenta');
-let productoNombre = document.getElementById('ProductoNombre');
+let productoNombre = document.getElementById('Nombre');
 let productoCodigo = document.getElementById('ProductoCodigo');
 let importe = document.getElementById('Importe');
 let productoDatos = document.getElementById('ProductoDatos');

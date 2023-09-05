@@ -6,7 +6,6 @@
     using Aplicacion;
     using Newtonsoft.Json;
 
-    [Table("UsuariosModulos", Schema = "Contacto")]
     public class UsuarioModulo
     {
         [Key]

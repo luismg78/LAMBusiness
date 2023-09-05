@@ -5,7 +5,6 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using Newtonsoft.Json;
 
-    [Table("BitacoraExcepciones", Schema = "Aplicacion")]
     public class BitacoraExcepciones
     {
         [Key]

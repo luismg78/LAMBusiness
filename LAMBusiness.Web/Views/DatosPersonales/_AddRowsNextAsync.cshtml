@@ -1,0 +1,18 @@
+﻿@model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Shared.Contacto.DatoPersonal>>
+
+@if (Model != null)
+{
+    <div id="dRows" data-charging="0" data-rows-next="1">
+        @if (Model.Skip == 0)
+        {
+            <div class="row px-md-3">
+                <div class="border-bottom col-8 p-3">
+                    <div class="fw-bold text-uppercase">Colaboradores</div>
+                </div>
+                <small class="border-bottom col-4 p-3 text-muted text-end">
+                    @Model.Registros.ToString("#,###,##0") Registro(s).
+                </small>
+            </div>
+        }
+    </div>
+}

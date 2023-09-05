@@ -12,8 +12,8 @@
             builder.HasData(
                 new Puesto { 
                     PuestoID = Guid.Parse("D6D5973B-FA59-4B0F-837A-35F83350A63E"),
-                    PuestoNombre = "PUESTO",
-                    PuestoDescripcion = "DESCRIPCIÓN DEL PUESTO"
+                    Nombre = "PUESTO",
+                    Descripcion = "DESCRIPCIÓN DEL PUESTO"
                 }
             );
         }

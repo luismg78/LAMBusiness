@@ -6,7 +6,6 @@
     using Catalogo;
     using Newtonsoft.Json;
 
-    [Table("Existencias", Schema = "Movimiento")]
     public class Existencia
     {
         public Guid ExistenciaID { get; set; }

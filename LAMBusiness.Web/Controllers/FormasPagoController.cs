@@ -34,14 +34,14 @@
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
             {
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
             var formasPago = _context.FormasPago;
 
             var filtro = new Filtro<List<FormaPago>>()
             {
-                Datos = await formasPago.OrderBy(f => f.FormaPagoDescripcion).Take(50).ToListAsync(),
+                Datos = await formasPago.OrderBy(f => f.Nombre).Take(50).ToListAsync(),
                 Patron = "",
                 PermisoEscritura = permisosModulo.PermisoEscritura,
                 PermisoImprimir = permisosModulo.PermisoImprimir,
@@ -74,11 +74,11 @@
                         if (query == null)
                         {
                             query = _context.FormasPago
-                                    .Where(f => f.FormaPagoDescripcion.Contains(w));
+                                    .Where(f => f.Nombre.Contains(w));
                         }
                         else
                         {
-                            query = query.Where(f => f.FormaPagoDescripcion.Contains(w));
+                            query = query.Where(f => f.Nombre.Contains(w));
                         }
                     }
                 }
@@ -90,7 +90,7 @@
 
             filtro.Registros = await query.CountAsync();
 
-            filtro.Datos = await query.OrderBy(m => m.FormaPagoDescripcion)
+            filtro.Datos = await query.OrderBy(m => m.Nombre)
                 .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
@@ -122,7 +122,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FormaPagoID,FormaPagoDescripcion,FormaPagoDefault")] FormaPago formaPago)
+        public async Task<IActionResult> Create([Bind("FormaPagoID,Nombre,ValorPorDefault")] FormaPago formaPago)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }
@@ -137,12 +137,12 @@
             {
                 try
                 {
-                    if (formaPago.FormaPagoDefault)
+                    if (formaPago.ValorPorDefault)
                     {
-                        var formaPagoPredeterminada = await _context.FormasPago.FirstOrDefaultAsync(f => f.FormaPagoDefault == true);
+                        var formaPagoPredeterminada = await _context.FormasPago.FirstOrDefaultAsync(f => f.ValorPorDefault == true);
                         if (formaPagoPredeterminada != null)
                         {
-                            formaPagoPredeterminada.FormaPagoDefault = false;
+                            formaPagoPredeterminada.ValorPorDefault = false;
                             _context.Update(formaPagoPredeterminada);
                         }
                     }
@@ -152,7 +152,7 @@
                     if (_formaPago == null)
                     {
                         formaPago.FormaPagoID = 1;
-                        formaPago.FormaPagoDefault = true;
+                        formaPago.ValorPorDefault = true;
                     }
                     else
                     {
@@ -204,7 +204,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(byte id, [Bind("FormaPagoID,FormaPagoDescripcion,FormaPagoDefault")] FormaPago formaPago)
+        public async Task<IActionResult> Edit(byte id, [Bind("FormaPagoID,Nombre,ValorPorDefault")] FormaPago formaPago)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }
@@ -224,14 +224,14 @@
             if (ModelState.IsValid)
             {
                 var formaPagoPredeterminada = await _context.FormasPago
-                    .FirstOrDefaultAsync(f => f.FormaPagoDefault == true && 
+                    .FirstOrDefaultAsync(f => f.ValorPorDefault == true && 
                                               f.FormaPagoID != formaPago.FormaPagoID);
 
-                if (formaPago.FormaPagoDefault)
+                if (formaPago.ValorPorDefault)
                 {
                     if (formaPagoPredeterminada != null)
                     {
-                        formaPagoPredeterminada.FormaPagoDefault = false;
+                        formaPagoPredeterminada.ValorPorDefault = false;
                         _context.Update(formaPagoPredeterminada);
                     }
                 }
@@ -239,7 +239,7 @@
                 {
                     if (formaPagoPredeterminada == null)
                     {
-                        formaPago.FormaPagoDefault = true;
+                        formaPago.ValorPorDefault = true;
                     }
                 }
 
@@ -302,14 +302,14 @@
             
             bool eliminar = true;
 
-            if (formaPago.FormaPagoDefault)
+            if (formaPago.ValorPorDefault)
             {
                 var formaPagoPredeterminada = await _context.FormasPago
                     .Where(f => f.FormaPagoID != formaPago.FormaPagoID)
                     .OrderBy(f => f.FormaPagoID).FirstOrDefaultAsync();
                 if (formaPagoPredeterminada != null)
                 {
-                    formaPagoPredeterminada.FormaPagoDefault = true;
+                    formaPagoPredeterminada.ValorPorDefault = true;
                     _context.Update(formaPagoPredeterminada);
                 }
                 else
@@ -318,8 +318,8 @@
                     {
                         _context.FormasPago.Add(new FormaPago()
                         {
-                            FormaPagoDefault = true,
-                            FormaPagoDescripcion = "EFECTIVO",
+                            ValorPorDefault = true,
+                            Nombre = "EFECTIVO",
                             FormaPagoID = 1
                         });
                     }

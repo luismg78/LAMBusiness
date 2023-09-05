@@ -1,9 +1,7 @@
 ﻿namespace LAMBusiness.Shared.Contacto
 {
     using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
 
-    [Table("Administradores", Schema = "Contacto")]
     public class Administrador
     {
         [Key]
@@ -15,11 +13,11 @@
         [Display(Name = "Administrador (Tipo)")]
         [MaxLength(75, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public string AdministradorNombre { get; set; }
+        public string Nombre { get; set; }
 
         [Display(Name = "Descripción")]
         [MaxLength(150, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public string AdministradorDescripcion { get; set; }
+        public string Descripcion { get; set; }
     }
 }

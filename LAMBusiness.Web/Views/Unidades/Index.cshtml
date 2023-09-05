@@ -9,7 +9,7 @@
         <div class="ms-3">
             <h3 class="modal-title" id="exampleModalLabel">Unidades</h3>
             <ul class="breadcrumb bg-transparent p-0 small">
-                <li class="breadcrumb-item"><a asp-action="Catalogo" asp-controller="Menu">Catálogos</a></li>
+                <li class="breadcrumb-item"><a asp-action="Catalogo" asp-controller="Home">Catálogos</a></li>
                 <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Unidades">Unidades</a></li>
                 <li class="breadcrumb-item active text-muted">Lista</li>
             </ul>
@@ -18,7 +18,7 @@
             <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewIndex', event);">
                 <i class="fa fa-question-circle"></i>
             </a>
-            <a asp-action="Catalogo" asp-controller="Menu" class="btn-close me-md-1" aria-label="Close"></a>
+            <a asp-action="Catalogo" asp-controller="Home" class="btn-close me-md-1" aria-label="Close"></a>
         </div>
     </div>
     <div class="modal-body pt-4">
@@ -35,9 +35,9 @@
                 @foreach (var item in Model)
                 {
                     <div class="bg-row border-bottom col-12 px-3 py-2">
-                        <span class="text-dark">@Html.DisplayFor(modelItem => item.UnidadNombre)</span>
+                        <span class="text-dark">@Html.DisplayFor(modelItem => item.Nombre)</span>
                         <small class="d-block text-muted">Productos asignados: @Html.DisplayFor(modelItem => item.Productos.Count)</small>
-                        <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.UnidadDescripcion)</small>
+                        <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.Descripcion)</small>
                     </div>
                 }
             </div>

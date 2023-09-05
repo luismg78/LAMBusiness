@@ -18,11 +18,11 @@
                 <li class="list-group-item list-group-item-action product"
                     data-id="@item.ProductoID"
                     data-search="@item.Codigo"
-                    data-nombre="@item.ProductoNombre"
+                    data-nombre="@item.Nombre"
                     onclick="addProduct(event);">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <span class="d-block">@item.ProductoNombre</span>
+                            <span class="d-block">@item.Nombre</span>
                             <small class="text-muted">@item.Codigo</small>
                         </div>
                         @if (Convert.ToBoolean(ViewBag.MostrarPrecioVenta))

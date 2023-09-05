@@ -7,7 +7,6 @@
     using Movimiento;
     using Newtonsoft.Json;
 
-    [Table("Productos", Schema = "Catalogo")]
     public class Producto
     {
         [Key]
@@ -21,13 +20,13 @@
         [Display(Name = "Nombre")]
         [MaxLength(75, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public string ProductoNombre { get; set; }
+        public string Nombre { get; set; }
 
         [Display(Name = "Descripción")]
         [DataType(DataType.MultilineText)]
         [MaxLength(500, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public string ProductoDescripcion { get; set; }
+        public string Descripcion { get; set; }
 
         [Display(Name = "Marca")]
         [JsonIgnore]

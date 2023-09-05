@@ -34,11 +34,11 @@
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
             {
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
             var salidaTipo = _context.SalidasTipo
-                .OrderBy(e => e.SalidaTipoDescripcion);
+                .OrderBy(e => e.Nombre);
 
             var filtro = new Filtro<List<SalidaTipo>>()
             {
@@ -75,11 +75,11 @@
                         if (query == null)
                         {
                             query = _context.SalidasTipo
-                                    .Where(e => e.SalidaTipoDescripcion.Contains(w));
+                                    .Where(e => e.Nombre.Contains(w));
                         }
                         else
                         {
-                            query = query.Where(e => e.SalidaTipoDescripcion.Contains(w));
+                            query = query.Where(e => e.Nombre.Contains(w));
                         }
                     }
                 }
@@ -91,7 +91,7 @@
 
             filtro.Registros = await query.CountAsync();
 
-            filtro.Datos = await query.OrderBy(m => m.SalidaTipoDescripcion)
+            filtro.Datos = await query.OrderBy(m => m.Nombre)
                 .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
@@ -123,7 +123,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SalidaTipoID,SalidaTipoDescripcion")] SalidaTipo salidaTipo)
+        public async Task<IActionResult> Create([Bind("SalidaTipoID,Nombre")] SalidaTipo salidaTipo)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }
@@ -184,7 +184,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("SalidaTipoID,SalidaTipoDescripcion")] SalidaTipo salidaTipo)
+        public async Task<IActionResult> Edit(Guid id, [Bind("SalidaTipoID,Nombre")] SalidaTipo salidaTipo)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }

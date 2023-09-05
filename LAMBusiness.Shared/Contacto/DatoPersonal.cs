@@ -6,29 +6,20 @@
     using Catalogo;
     using Newtonsoft.Json;
 
-    [Table("Colaboradores", Schema = "Contacto")]
-    public class Colaborador
+    public class DatoPersonal
     {
         [Key]
-        public Guid ColaboradorID { get; set; }
+        [Required(ErrorMessage = "El campo {0} es requerido.")]
+        public Guid UsuarioID { get; set; }
+
+        [JsonIgnore]
+        public virtual Usuario Usuarios { get; set; }
+
 
         [RegularExpression(@"^([a-zA-Z][AEIOUXaeioux][a-zA-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HMhm](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS|as|b[cs]|c[clmsh]|d[fg]|g[tr]|hg|jc|m[cns]|n[etl]|oc|pl|q[tr]|s[plr]|t[csl]|vz|yn|zs)(?:[B-DF-HJ-NP-TV-Z]|[b-df-hj-np-tv-z]){3}[a-zA-Z\d])(\d)$", ErrorMessage = "Formato Incorrecto.")]
         [MaxLength(18, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public string CURP { get; set; }
-
-        [MaxLength(75, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
-        [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public string Nombre { get; set; }
-
-        [Display(Name = "Primer Apellido")]
-        [MaxLength(75, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
-        [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public string PrimerApellido { get; set; }
-
-        [MaxLength(75, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
-        [Display(Name = "Segundo Apellido")]
-        public string SegundoApellido { get; set; }
 
         [ForeignKey("Puesto")]
         [Display(Name = "Puesto")]
@@ -89,19 +80,6 @@
         [RegularExpression(@"^[0-9]+$", ErrorMessage = "Formato Incorrecto.")]
         public string Telefono { get; set; }
 
-        [DataType(DataType.PhoneNumber)]
-        [Display(Name = "Telefono (Móvil)")]
-        [MaxLength(15, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
-        [RegularExpression(@"^[0-9]+$", ErrorMessage = "Formato Incorrecto.")]
-        [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public string TelefonoMovil { get; set; }
-
-        [DataType(DataType.EmailAddress)]
-        [Display(Name = "Correo Electrónico")]
-        [MaxLength(100, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
-        [Required(ErrorMessage = "El campo {0} es requerido.")]
-        public string Email { get; set; }
-
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0,dd/MM/yyyy}")]
         public DateTime FechaRegistro { get; set; }
@@ -109,11 +87,5 @@
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0,dd/MM/yyyy}")]
         public DateTime FechaActualizacion { get; set; }
-
-        public bool Activo { get; set; }
-
-        [NotMapped]
-        public string NombreCompleto => Nombre.ToLower() + " " + PrimerApellido.ToLower() + (SegundoApellido == null ? "" : " " + SegundoApellido.ToLower());
-
     }
 }

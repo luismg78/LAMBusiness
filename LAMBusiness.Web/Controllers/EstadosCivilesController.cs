@@ -29,10 +29,10 @@
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
             {
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
-            return View(_context.EstadosCiviles.OrderBy(e => e.EstadoCivilDescripcion));
+            return View(_context.EstadosCiviles.OrderBy(e => e.Nombre));
         }
         
     }

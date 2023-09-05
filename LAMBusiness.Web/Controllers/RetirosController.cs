@@ -41,23 +41,22 @@
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
             {
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
             var retiros = (from r in _context.RetirosCaja
                            join u in _context.Usuarios on r.UsuarioID equals u.UsuarioID
-                           join c in _context.Colaboradores on u.ColaboradorID equals c.ColaboradorID
                            where u.AdministradorID != "SA" &&
                                  r.VentaCierreID == Guid.Empty
                            orderby r.Fecha descending
                            select new RetirosViewModel()
                            {
-                               ColaboradorID = c.ColaboradorID,
+                               UsuarioID = u.UsuarioID,
                                Fecha = r.Fecha,
                                Importe = r.Importe,
-                               Nombre = c.Nombre,
-                               PrimerApellido = c.PrimerApellido,
-                               SegundoApellido = c.SegundoApellido,
+                               Nombre = u.Nombre,
+                               PrimerApellido = u.PrimerApellido,
+                               SegundoApellido = u.SegundoApellido,
                                VentaPendiente = r.VentaCierreID,
                            });
 
@@ -88,17 +87,16 @@
 
             IQueryable<RetirosViewModel> query = (from r in _context.RetirosCaja
                                                   join u in _context.Usuarios on r.UsuarioID equals u.UsuarioID
-                                                  join c in _context.Colaboradores on u.ColaboradorID equals c.ColaboradorID
                                                   where u.AdministradorID != "SA"
                                                   orderby r.Fecha descending
                                                   select new RetirosViewModel()
                                                   {
-                                                      ColaboradorID = c.ColaboradorID,
+                                                      UsuarioID = u.UsuarioID,
                                                       Fecha = r.Fecha,
                                                       Importe = r.Importe,
-                                                      Nombre = c.Nombre,
-                                                      PrimerApellido = c.PrimerApellido,
-                                                      SegundoApellido = c.SegundoApellido,
+                                                      Nombre = u.Nombre,
+                                                      PrimerApellido = u.PrimerApellido,
+                                                      SegundoApellido = u.SegundoApellido,
                                                       VentaPendiente = r.VentaCierreID,
                                                   });
 

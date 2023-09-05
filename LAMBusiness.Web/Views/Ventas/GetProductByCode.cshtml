@@ -16,7 +16,7 @@
                     <img class="rounded-circle" style="width:2rem;" src="@Url.Action("GetProductImages", "Productos", new { productoId = Model.ProductoID, imageId = Model.ProductoID, tipo = "sm" })" alt="Image Product" />
                 </div>
                 <div>
-                    <h5 class="fw-bold d-block @textDanger @textDecoration">@Model.Productos.ProductoNombre</h5>
+                    <h5 class="fw-bold d-block @textDanger @textDecoration">@Model.Productos.Nombre</h5>
                     <a href="#" class="d-block small" onclick="getProduct('@Model.ProductoID');">@Model.Productos.Codigo</a>
                 </div>
             </div>

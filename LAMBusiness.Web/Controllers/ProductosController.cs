@@ -51,7 +51,7 @@
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
             {
-                return RedirectToAction("Inicio", "Menu");
+                return RedirectToAction("Inicio", "Home");
             }
 
             var productos = _context.Productos
@@ -486,8 +486,8 @@
                     new
                     {
                         marca.MarcaID,
-                        marca.MarcaNombre,
-                        marca.MarcaDescripcion,
+                        marca.Nombre,
+                        marca.Descripcion,
                         error = false
                     });
             }
@@ -523,7 +523,8 @@
 
         public FileContentResult GetProductBarCode(string id)
         {
-            return _converterHelper.GenerateBarcode(id, TYPE.CODE128);
+            return null;
+            //return _converterHelper.GenerateBarcode(id, TYPE.CODE128);
         }
 
         public async Task<IActionResult> GetProductDetail(Guid? id, bool mostrarPrecioCosto = false)
@@ -625,7 +626,7 @@
                     {
                         producto.ProductoID,
                         producto.Codigo,
-                        producto.ProductoNombre,
+                        producto.Nombre,
                         producto.PrecioCosto,
                         producto.PrecioVenta,
                         error = false

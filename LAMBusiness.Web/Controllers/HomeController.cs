@@ -1,20 +1,20 @@
 ﻿namespace LAMBusiness.Web.Controllers
 {
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Threading.Tasks;
+    using Data;
+    using Helpers;
+    using LAMBusiness.Shared.Dashboard;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
-    using Data;
-    using Helpers;
     using Models;
     using Models.ViewModels;
     using Shared.Aplicacion;
     using Shared.Contacto;
     using System;
-    using Newtonsoft.Json;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public class HomeController : GlobalController
     {
@@ -23,7 +23,7 @@
         private readonly IConfiguration _configuration;
         private readonly IGetHelper _getHelper;
 
-        public HomeController(DataContext context, 
+        public HomeController(DataContext context,
             ICriptografiaHelper criptografia,
             IConfiguration configuration,
             IGetHelper getHelper)
@@ -31,7 +31,7 @@
             _context = context;
             _criptografia = criptografia;
             _configuration = configuration;
-            _getHelper = getHelper;;
+            _getHelper = getHelper;
         }
 
         public IActionResult ErrorDeConexion()
@@ -39,9 +39,16 @@
             return View();
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "home");
+            if (validateToken != null)
+            {
+                TempData["toast"] = "Ingrese sus credenciales";
+                return validateToken;
+            }
+
+            return View(token);
         }
 
         public async Task<IActionResult> SignIn()
@@ -62,25 +69,21 @@
             {
                 string email = inicioSesionViewModel.Email.Trim().ToLower();
 
-                Usuario usuario = await (from u in _context.Usuarios
-                                         join c in _context.Colaboradores 
-                                         on u.ColaboradorID equals c.ColaboradorID
-                                         where c.Email == email
-                                         select u).FirstOrDefaultAsync();
+                Usuario usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
 
-                if(usuario == null)
+                if (usuario == null)
                 {
                     TempData["toast"] = "Correo electrónico inexistente, verifique";
                     return View(inicioSesionViewModel);
                 }
 
                 var pwd = _criptografia.Encrypt(inicioSesionViewModel.Password);
-                if(usuario.Password != pwd)
+                if (usuario.Password != pwd)
                 {
                     TempData["toast"] = "Credenciales Incorrectas, verifique";
                     return View(inicioSesionViewModel);
                 }
-                
+
                 HttpContext.Session.SetString("LAMBusiness", HttpContext.Session.Id);
                 string sessionId = HttpContext.Session.GetString("LAMBusiness");
 
@@ -99,7 +102,7 @@
                 TempData["toast"] = "¡Qué gusto tenerte de vuelta!";
                 await BitacoraAsync("InicioSesion", resultado);
 
-                return RedirectToAction("Inicio", "menu");
+                return RedirectToAction(nameof(Index));
             }
 
             ModelState.AddModelError(string.Empty, "Credenciales Incorrectas");
@@ -113,6 +116,249 @@
             return View();
         }
 
+        public async Task<IActionResult> Aplicacion()
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "aplicacion");
+            if (validateToken != null) { return validateToken; }
+
+            if (token.Administrador != "SA")
+            {
+                TempData["toast"] = "No tiene privilegios de acceso en el módulo";
+                return RedirectToAction("Inicio", "Home");
+            }
+
+            Guid moduloId = Guid.Parse("37A8C12A-254F-44FB-BE68-67AF358B0610");
+
+            var aplicacion = new Aplicacion()
+            {
+                Modulos = GetCountModulos(),
+                ModulosMenu = await _getHelper.GetModulesByUsuarioIDAndModuloPadreID(token.UsuarioID, moduloId)
+            };
+
+            return View(aplicacion);
+        }
+
+        public async Task<IActionResult> Catalogo()
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            Guid moduloId = Guid.Parse("50B65B8C-1CBA-47E4-8327-5F1A34375394");
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var catalogo = new Catalogo()
+            {
+                Almacenes = GetCountAlmacenes(),
+                Generos = GetCountGeneros(),
+                EstadosCiviles = GetCountEstadosCiviles(),
+                Estados = GetCountEstados(),
+                FormasPago = GetCountFormasPago(),
+                Marcas = GetCountMarcas(),
+                Municipios = GetCountMunicipios(),
+                Productos = GetCountProductos(),
+                Puestos = GetCountPuestos(),
+                SalidasTipo = GetCountSalidasTipo(),
+                TasasImpuestos = GetCountTasasImpuestos(),
+                Unidades = GetCountUnidades(),
+                ModulosMenu = await _getHelper.GetModulesByUsuarioIDAndModuloPadreID(token.UsuarioID, moduloId)
+            };
+            return View(catalogo);
+        }
+
+        public async Task<IActionResult> Contacto()
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
+            if (validateToken != null) { return validateToken; }
+
+            Guid moduloId = Guid.Parse("25C76712-5552-44C5-93A1-298590F337FA");
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var contacto = new Contacto()
+            {
+                Clientes = GetCountClientes(),
+                Colaboradores = GetCountColaboradores(),
+                Proveedores = GetCountProveedores(),
+                Usuarios = GetCountUsuarios(),
+                ModulosMenu = await _getHelper.GetModulesByUsuarioIDAndModuloPadreID(token.UsuarioID, moduloId)
+
+            };
+
+            return View(contacto);
+        }
+
+        public async Task<IActionResult> Dashboard()
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "dashboard");
+            if (validateToken != null) { return validateToken; }
+
+            Guid moduloId = Guid.Parse("C803EECE-79A9-4B7F-955C-3A0CC70BFEDB");
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var dashboard = new Dashboard()
+            {
+                ModulosMenu = await _getHelper.GetModulesByUsuarioIDAndModuloPadreID(token.UsuarioID, moduloId)
+            };
+
+            return View(dashboard);
+        }
+
+        public async Task<IActionResult> Movimiento()
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+            if (validateToken != null) { return validateToken; }
+
+            Guid moduloId = Guid.Parse("4BA5D993-8BEB-48AF-A45F-4813825A658F");
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var movimiento = new Movimiento()
+            {
+                Devoluciones = GetCountDevoluciones(),
+                Entradas = GetCountEntradas(),
+                RetiroDeCaja = GetCountRetiros(),
+                Salidas = GetCountSalidas(),
+                Ventas = GetCountVentas(),
+                ModulosMenu = await _getHelper.GetModulesByUsuarioIDAndModuloPadreID(token.UsuarioID, moduloId)
+            };
+
+            return View(movimiento);
+        }
+
+        public async Task<IActionResult> Sesion()
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "sesion");
+            if (validateToken != null) { return validateToken; }
+
+            return View();
+        }
+
+        #region Aplicacation's counts
+        private int GetCountModulos()
+        {
+            return _context.Modulos.Count();
+        }
+        #endregion
+
+        #region Category's counts
+        private int GetCountAlmacenes()
+        {
+            return _context.Almacenes.Count();
+        }
+
+        private int GetCountGeneros()
+        {
+            return _context.Generos.Count();
+        }
+        private int GetCountEstados()
+        {
+            return _context.Estados.Count();
+        }
+
+        private int GetCountEstadosCiviles()
+        {
+            return _context.EstadosCiviles.Count();
+        }
+
+        private int GetCountFormasPago()
+        {
+            return _context.FormasPago.Count();
+        }
+
+        private int GetCountMarcas()
+        {
+            return _context.Marcas.Count();
+        }
+
+        private int GetCountMunicipios()
+        {
+            return _context.Municipios.Count();
+        }
+
+        private int GetCountProductos()
+        {
+            return _context.Productos.Count();
+        }
+
+        private int GetCountPuestos()
+        {
+            return _context.Puestos.Count();
+        }
+
+        private int GetCountSalidasTipo()
+        {
+            return _context.SalidasTipo.Count();
+        }
+
+        private int GetCountTasasImpuestos()
+        {
+            return _context.TasasImpuestos.Count();
+        }
+
+        private int GetCountUnidades()
+        {
+            return _context.Unidades.Count();
+        }
+        #endregion
+
+        #region Contact's counts
+        private int GetCountClientes()
+        {
+            return _context.Clientes.Count();
+        }
+
+        private int GetCountColaboradores()
+        {
+            return _context.DatosPersonales.Where(c => c.CURP != "CURP781227HCSRNS00").Count();
+        }
+
+        private int GetCountProveedores()
+        {
+            return _context.Proveedores.Count();
+        }
+
+        private int GetCountUsuarios()
+        {
+            return _context.Usuarios.Where(u => u.AdministradorID != "SA").Count();
+        }
+
+        #endregion
+
+        #region Movimiento's counts
+        private int GetCountDevoluciones()
+        {
+            //cambiar entradas por devoluciones
+            return _context.Entradas.Count();
+        }
+        private int GetCountEntradas()
+        {
+            return _context.Entradas.Count();
+        }
+        private int GetCountRetiros()
+        {
+            return _context.RetirosCaja.Where(r => r.VentaCierreID == Guid.Empty).Count();
+        }
+        private int GetCountSalidas()
+        {
+            return _context.Salidas.Count();
+        }
+        private int GetCountVentas()
+        {
+            return _context.Ventas.Count();
+        }
+        #endregion        
+
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -125,7 +371,7 @@
             string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
 
             await _getHelper.SetBitacoraAsync(token.Contenido, accion, moduloId,
-                token, token.Contenido.ColaboradorID.ToString(), directorioBitacora, excepcion);
+                token, token.Contenido.UsuarioID.ToString(), directorioBitacora, excepcion);
         }
     }
 }

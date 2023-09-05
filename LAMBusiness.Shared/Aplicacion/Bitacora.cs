@@ -6,7 +6,6 @@
     using LAMBusiness.Shared.Contacto;
     using Newtonsoft.Json;
 
-    [Table("Bitacora", Schema = "Aplicacion")]
     public class Bitacora
     {
         [Key]

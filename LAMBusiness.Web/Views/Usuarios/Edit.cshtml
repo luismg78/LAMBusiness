@@ -10,7 +10,7 @@
             <div>
                 <h3 class="modal-title" id="exampleModalLabel">Usuarios</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
-                    <li class="breadcrumb-item"><a asp-action="Contacto" asp-controller="Menu">Contactos</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Contacto" asp-controller="Home">Contactos</a></li>
                     <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Usuarios">Usuarios</a></li>
                     <li class="breadcrumb-item active">Editar Registro</li>
                 </ul>
@@ -25,7 +25,47 @@
         <div class="modal-body py-4">
             <div class="row px-md-3">
                 <input asp-for="UsuarioID" type="hidden" />
-                <input asp-for="ColaboradorID" type="hidden" />
+
+                <!--Nombre-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Nombre" class="control-label required"></label>
+                        <input asp-for="Nombre" class="form-control" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Primer Apellido-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="PrimerApellido" class="control-label required"></label>
+                        <input asp-for="PrimerApellido" class="form-control" />
+                        <span asp-validation-for="PrimerApellido" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Segundo Apellido-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="SegundoApellido" class="control-label"></label>
+                        <input asp-for="SegundoApellido" class="form-control" />
+                        <span asp-validation-for="SegundoApellido" class="text-danger"></span>
+                    </div>
+                </div>
+                 <!--Teléfono Móvil-->
+               <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="TelefonoMovil" class="control-label required"></label>
+                        <input asp-for="TelefonoMovil" class="form-control" />
+                        <span asp-validation-for="TelefonoMovil" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Correo Electrónico-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label required"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="form-group">
                         <label asp-for="FechaInicio" class="control-label required"></label>
