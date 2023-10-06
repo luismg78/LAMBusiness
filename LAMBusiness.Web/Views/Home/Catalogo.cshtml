@@ -23,9 +23,10 @@
                 <a asp-action="Index" asp-controller="Almacenes" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
-                            <i class="fas fa-warehouse display-4 text-dark"></i>
-                            <h4 class="mt-4"><span class="text-dark">@Model.Almacenes</span> Almacenes</h4>
-                            <p class="mb-3">Catálogo de almacenes</p>
+                            <i class="fas fa-warehouse display-4 text-dark mb-3"></i>
+                            <h4 class="mb-0">Almacenes</h4>
+                            <p class="mb-2">Catálogo de almacenes</p>
+                            <span class="badge bg-light border text-dark fw-normal">@Model.Almacenes registro(s)</span>
                         </div>
                     </div>
                 </a>
@@ -33,7 +34,7 @@
         }
 
         <!--Géneros-->
-        @if (Model.ModulosMenu.Contains(Guid.Parse("10acc48b-ad98-4500-bda5-d6a76e3e9dc9")))
+       @* @if (Model.ModulosMenu.Contains(Guid.Parse("10acc48b-ad98-4500-bda5-d6a76e3e9dc9")))
         {
             <div class="btn-lam col-xl-4 col-md-6">
                 <a asp-action="Index" asp-controller="Generos" class="text-decoration-none">
@@ -46,10 +47,10 @@
                     </div>
                 </a>
             </div>
-        }
+        }*@
 
         <!--Estados Civiles-->
-        @if (Model.ModulosMenu.Contains(Guid.Parse("08f4e254-ebbe-46eb-b005-9c6815d7f803")))
+        @*@if (Model.ModulosMenu.Contains(Guid.Parse("08f4e254-ebbe-46eb-b005-9c6815d7f803")))
         {
             <div class="btn-lam col-xl-4 col-md-6">
                 <a asp-action="Index" asp-controller="EstadosCiviles" class="text-decoration-none">
@@ -62,10 +63,10 @@
                     </div>
                 </a>
             </div>
-        }
+        }*@
 
         <!--Estados-->
-        @if (Model.ModulosMenu.Contains(Guid.Parse("f2c4db86-8c15-46bd-b8de-fb64de3bfcff")))
+        @*@if (Model.ModulosMenu.Contains(Guid.Parse("f2c4db86-8c15-46bd-b8de-fb64de3bfcff")))
         {
             <div class="btn-lam col-xl-4 col-md-6">
                 <a asp-action="Index" asp-controller="Estados" class="text-decoration-none">
@@ -78,7 +79,7 @@
                     </div>
                 </a>
             </div>
-        }
+        }*@
 
         <!--Formas de pago-->
         @if (Model.ModulosMenu.Contains(Guid.Parse("1f1a8a70-239b-432c-afcd-71dff20d042c")))
@@ -87,9 +88,10 @@
                 <a asp-action="Index" asp-controller="FormasPago" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
-                            <i class="fas fa-money-check-alt display-4 text-base"></i>
-                            <h4 class="mt-4"><span class="text-base">@Model.FormasPago</span> Formas de Pago</h4>
-                            <p class="mb-3">Catálogo de formas de pago</p>
+                            <i class="fas fa-money-check-alt display-4 mb-3 text-base"></i>
+                            <h4 class="mb-0">Formas de Pago</h4>
+                            <p class="mb-2">Catálogo de formas de pago</p>
+                            <span class="badge bg-light border text-dark fw-normal">@Model.FormasPago registro(s)</span>
                         </div>
                     </div>
                 </a>
@@ -103,9 +105,10 @@
                 <a asp-action="Index" asp-controller="Marcas" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
-                            <i class="fas fa-copyright display-4 text-success"></i>
-                            <h4 class="mt-4"><span class="text-success">@Model.Marcas</span> Marcas</h4>
-                            <p class="mb-3">Catálogo de marcas de productos</p>
+                            <i class="fas fa-copyright display-4 mb-3 text-success"></i>
+                            <h4 class="mb-0">Marcas</h4>
+                            <p class="mb-2">Catálogo de marcas de productos</p>
+                            <span class="badge bg-light border text-dark fw-normal">@Model.Marcas registro(s)</span>
                         </div>
                     </div>
                 </a>
@@ -113,7 +116,7 @@
         }
 
         <!--Municipios-->
-        @if (Model.ModulosMenu.Contains(Guid.Parse("46fdcc81-6ac7-4be4-84f3-4abae3a40ebb")))
+        @*@if (Model.ModulosMenu.Contains(Guid.Parse("46fdcc81-6ac7-4be4-84f3-4abae3a40ebb")))
         {
             <div class="btn-lam col-xl-4 col-md-6">
                 <a asp-action="Index" asp-controller="Municipios" class="text-decoration-none">
@@ -126,7 +129,7 @@
                     </div>
                 </a>
             </div>
-        }
+        }*@
 
         <!--Productos-->
         @if (Model.ModulosMenu.Contains(Guid.Parse("a549419c-89bd-49ce-ba93-4d73afba37ce")))
@@ -135,9 +138,10 @@
                 <a asp-action="Index" asp-controller="Productos" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
-                            <i class="fab fa-product-hunt display-4 text-success"></i>
-                            <h4 class="mt-4"><span class="text-success">@Model.Productos</span> Productos</h4>
-                            <p class="mb-3">Catálogo de productos</p>
+                            <i class="fab fa-product-hunt display-4 mb-3 text-info"></i>
+                            <h4 class="mb-0">Productos</h4>
+                            <p class="mb-2">Catálogo de productos</p>
+                            <span class="badge bg-light border text-dark fw-normal">@Model.Productos registro(s)</span>
                         </div>
                     </div>
                 </a>
@@ -151,9 +155,10 @@
                 <a asp-action="Index" asp-controller="Puestos" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
-                            <i class="fas fa-user-cog display-4 text-warning"></i>
-                            <h4 class="mt-4"><span class="text-warning">@Model.Puestos</span> Puestos</h4>
-                            <p class="mb-3">Puestos de los colaboradores</p>
+                            <i class="fas fa-user-cog display-4 mb-3 text-warning"></i>
+                            <h4 class="mb-0">Puestos</h4>
+                            <p class="mb-2">Puestos de los colaboradores</p>
+                            <span class="badge bg-light border text-dark fw-normal">@Model.Puestos registro(s)</span>
                         </div>
                     </div>
                 </a>
@@ -167,9 +172,11 @@
                 <a asp-action="Index" asp-controller="TasasImpuestos" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
-                            <i class="fas fa-percentage display-4 text-base"></i>
-                            <h4 class="mt-4"><span class="text-base">@Model.TasasImpuestos</span> Tasas de Impuestos</h4>
-                            <p class="mb-3">Aplica solo en el país de origen</p>
+                            <i class="fas fa-percentage display-4 mb-3 text-primary"></i>
+                            <h4 class="mb-0">Tasas de Impuestos</h4>
+                            <p class="mb-2">Aplica solo en el país de origen</p>
+                            <span class="badge bg-light border text-dark fw-normal">@Model.TasasImpuestos registro(s)</span>
+                            @*<span class="badge bg-light border text-dark fw-normal">@Model.TasasImpuestos registro(s)</span>*@
                         </div>
                     </div>
                 </a>
@@ -183,9 +190,10 @@
                 <a asp-action="Index" asp-controller="SalidasTipo" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
-                            <i class="fas fa-arrow-alt-circle-up display-4 text-base"></i>
-                            <h4 class="mt-4"><span class="text-base">@Model.SalidasTipo</span> Tipos de Salida</h4>
-                            <p class="mb-3">Catálogo de tipos de salida</p>
+                            <i class="fas fa-arrow-alt-circle-up display-4 mb-3 text-danger"></i>
+                            <h4 class="mb-0">Tipos de Salida</h4>
+                            <p class="mb-2">Catálogo de tipos de salida</p>
+                            <span class="badge bg-light border text-dark fw-normal">@Model.SalidasTipo registro(s)</span>
                         </div>
                     </div>
                 </a>
@@ -193,7 +201,7 @@
         }
 
         <!--Unidades-->
-        @if (Model.ModulosMenu.Contains(Guid.Parse("a01ed3a4-101e-4d64-b57e-ddb8f94f8680")))
+        @*@if (Model.ModulosMenu.Contains(Guid.Parse("a01ed3a4-101e-4d64-b57e-ddb8f94f8680")))
         {
             <div class="btn-lam col-xl-4 col-md-6">
                 <a asp-action="Index" asp-controller="Unidades" class="text-decoration-none">
@@ -206,6 +214,6 @@
                     </div>
                 </a>
             </div>
-        }
+        }*@
     </div>
 </div>

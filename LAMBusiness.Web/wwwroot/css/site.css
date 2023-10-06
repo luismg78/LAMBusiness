@@ -16,7 +16,7 @@ body {background-color:#eaedef;margin-bottom:60px;}
 button.accept-policy {font-size: 1rem;line-height: inherit;}
 html {font-size:16px;min-height:100%;position:relative;}
 input[type=checkbox], input[type=radio] {cursor:pointer;height:1.5rem;width:1.4rem;}
-input.form-control, select.form-select, textarea.form-control{font-weight:500;margin-bottom:1rem;padding:0.75rem;}
+input.form-control, select.form-select, textarea.form-control{font-weight:500;padding:0.75rem;}
 label.control-label{color:#6c757d!important;margin-bottom:.35rem;margin-top:.25rem;}
 ul li.selected{background-color:#f8f9fa;color:#000;font-weight:bold;}
 

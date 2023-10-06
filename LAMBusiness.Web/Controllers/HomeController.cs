@@ -152,17 +152,17 @@
             var catalogo = new Catalogo()
             {
                 Almacenes = GetCountAlmacenes(),
-                Generos = GetCountGeneros(),
-                EstadosCiviles = GetCountEstadosCiviles(),
-                Estados = GetCountEstados(),
+                //Generos = GetCountGeneros(),
+                //EstadosCiviles = GetCountEstadosCiviles(),
+                //Estados = GetCountEstados(),
                 FormasPago = GetCountFormasPago(),
                 Marcas = GetCountMarcas(),
-                Municipios = GetCountMunicipios(),
+                //Municipios = GetCountMunicipios(),
                 Productos = GetCountProductos(),
                 Puestos = GetCountPuestos(),
                 SalidasTipo = GetCountSalidasTipo(),
                 TasasImpuestos = GetCountTasasImpuestos(),
-                Unidades = GetCountUnidades(),
+                //Unidades = GetCountUnidades(),
                 ModulosMenu = await _getHelper.GetModulesByUsuarioIDAndModuloPadreID(token.UsuarioID, moduloId)
             };
             return View(catalogo);
