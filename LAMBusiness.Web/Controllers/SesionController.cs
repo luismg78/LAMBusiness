@@ -20,8 +20,8 @@
         private readonly ICriptografiaHelper _criptografiaHelper;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private Guid moduloId = Guid.Parse("CAED13FC-E9FF-4E0C-8D3D-9ECE76196EA2");
-        public SesionController(DataContext context, 
-            IConfiguration configuration, 
+        public SesionController(DataContext context,
+            IConfiguration configuration,
             IConverterHelper converterHelper,
             IGetHelper getHelper,
             ICriptografiaHelper criptografiaHelper,
@@ -57,7 +57,7 @@
 
                 try
                 {
-                    if(HttpContext.Session.Keys.Any(x => x.Contains("LAMBusiness")))
+                    if (HttpContext.Session.Keys.Any(x => x.Contains("LAMBusiness")))
                     {
                         HttpContext.Session.Remove("LAMBusiness");
                     }
@@ -83,23 +83,24 @@
         }
 
         [HttpPost]
-        public async Task<JsonResult> ChangeProfilePicture(string img)
+        public async Task<JsonResult> ChangeProfilePicture(string imagen)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "home");
             if (validateToken != null) { return null; }
 
+            if(string.IsNullOrEmpty(imagen))
+                return Json(new { Estatus = $"Error: Imagen de perfil no actualizada.", Error = true });
+
             string path = "";
             int tamaño = 0;
-
-            //Guid usuarioId = token.UsuarioID;
-            string UsuarioID = $"{token.UsuarioID.ToString()}.png";
+            string UsuarioID = $"{token.UsuarioID}.png";
             string directorioImagenPerfil = _configuration.GetValue<string>("DirectorioImagenPerfil");
 
             if (!Directory.Exists(directorioImagenPerfil))
             {
                 Directory.CreateDirectory(directorioImagenPerfil);
             }
-            if (!Directory.Exists(Path.Combine(directorioImagenPerfil,"Perfil")))
+            if (!Directory.Exists(Path.Combine(directorioImagenPerfil, "Perfil")))
             {
                 Directory.CreateDirectory(Path.Combine(directorioImagenPerfil, "Perfil"));
             }
@@ -114,8 +115,8 @@
 
             try
             {
-                var index = img.IndexOf(',') + 1;
-                img = img.Substring(index);
+                var index = imagen.IndexOf(',') + 1;
+                imagen = imagen.Substring(index);
 
                 for (byte x = 1; x <= 3; x++)
                 {
@@ -126,7 +127,7 @@
                             tamaño = 95;
                             break;
                         case 2:
-                            path = Path.Combine(directorioImagenPerfil,"Mediana", UsuarioID);
+                            path = Path.Combine(directorioImagenPerfil, "Mediana", UsuarioID);
                             tamaño = 380;
                             break;
                         case 3:
@@ -135,7 +136,7 @@
                             break;
                     }
 
-                    byte[] bi = _converterHelper.UploadImageBase64(img, tamaño);
+                    byte[] bi = _converterHelper.UploadImageBase64(imagen, tamaño);
                     using (var fs = new FileStream(path, FileMode.Create, FileAccess.Write))
                     {
                         fs.Write(bi, 0, bi.Length);
@@ -178,14 +179,14 @@
 
             if (ModelState.IsValid)
             {
-                if(changePasswordViewModel.PasswordEncrypt != changePasswordViewModel.ConfirmPasswordEncrypt)
+                if (changePasswordViewModel.PasswordEncrypt != changePasswordViewModel.ConfirmPasswordEncrypt)
                 {
                     TempData["toast"] = "Contraseñas distintas, verifique su información";
                     band = false;
                 }
-                
+
                 var usuario = await _context.Usuarios.FindAsync(token.UsuarioID);
-                if(usuario == null)
+                if (usuario == null)
                 {
                     TempData["toast"] = "Identificador incorrecto, usuario inexistente.";
                     band = false;
@@ -197,6 +198,8 @@
                     {
                         usuario.Password = _criptografiaHelper.Encrypt(changePasswordViewModel.PasswordEncrypt);
                         _context.Update(usuario);
+                        usuario.CambiarPassword = false;
+
                         await _context.SaveChangesAsync();
                         TempData["toast"] = "Su contraseña ha sido actualizada con éxito.";
 
@@ -221,6 +224,40 @@
             return View(changePasswordViewModel);
         }
 
+        public async Task<IActionResult> ResetPassword(Guid id)
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
+            if (validateToken != null) { return validateToken; }
+
+            var rand = new Random();
+
+            int pwd = rand.Next(1000, 10000);
+
+            var usuario = await _context.Usuarios.FindAsync(id);
+            if (usuario == null)
+            {
+                TempData["toast"] = "Contraseñas distintas, verifique su información";
+                return RedirectToAction("Index", "Usuarios");
+            }
+
+            string pwdSha512 = _criptografiaHelper.GenerateSHA512String(pwd.ToString());
+            try
+            {
+                usuario.Password = _criptografiaHelper.Encrypt(pwdSha512);
+                usuario.CambiarPassword = true;
+                _context.Update(usuario);
+                await _context.SaveChangesAsync();
+
+                TempData["toast"] = $"La contraseña ha sido reiniciada con éxito. Contraseña temporal: {pwd}";
+            }
+            catch (Exception)
+            {
+                TempData["toast"] = "Error al reiniciar la contraseña.";
+            }
+            
+            return RedirectToAction("Index", "Usuarios");
+        }
+
         public async Task<FileContentResult> GetProfilePicture(Guid id, string tipo)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "home");
@@ -240,11 +277,11 @@
                     break;
             }
 
-            string ruta = Path.Combine(directorioImagenPerfil,tipo,$"{id}.png");
+            string ruta = Path.Combine(directorioImagenPerfil, tipo, $"{id}.png");
 
             if (!System.IO.File.Exists(ruta))
             {
-                ruta = Path.Combine(_webHostEnvironment.WebRootPath, "images", "perfil" ,"user-slash.png");
+                ruta = Path.Combine(_webHostEnvironment.WebRootPath, "images", "perfil", "user-slash.png");
             }
 
             return _converterHelper.ToImageBase64(ruta);

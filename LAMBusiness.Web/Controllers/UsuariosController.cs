@@ -43,7 +43,7 @@
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
             {
-                return RedirectToAction("Inicio", "Home");
+                return RedirectToAction("Index", "Home");
             }
 
             var usuarios = _context.Usuarios
@@ -168,11 +168,16 @@
                 Activo = usuario.Activo,
                 Administrador = usuario.Administrador,
                 AdministradorID = usuario.AdministradorID,
-                UsuarioID = usuario.UsuarioID,
+                Email = usuario.Email,
                 FechaInicio = usuario.FechaInicio,
                 FechaTermino = usuario.FechaTermino,
                 FechaUltimoAcceso = usuario.FechaUltimoAcceso,
+                Nombre= usuario.Nombre,
+                PrimerApellido= usuario.PrimerApellido,
                 PermisoEscritura = permisosModulo.PermisoEscritura,
+                SegundoApellido= usuario.SegundoApellido,
+                TelefonoMovil = usuario.TelefonoMovil,
+                UsuarioID = usuario.UsuarioID,
                 UsuarioModulos = usuarioModulos
             };
 
@@ -213,6 +218,7 @@
             }
 
             usuarioViewModel.Password = "";
+            usuarioViewModel.CambiarPassword = true;
             usuarioViewModel.FechaUltimoAcceso = DateTime.Now;
 
             TempData["toast"] = "Falta información en algún campo.";
@@ -266,11 +272,16 @@
             var usuarioViewModel = new UsuarioViewModel()
             {
                 Activo = usuario.Activo,
-                UsuarioID = usuario.UsuarioID,
-                FechaInicio = usuario.FechaInicio,
-                FechaTermino = usuario.FechaTermino,
                 AdministradorID = usuario.AdministradorID,
                 AdministradoresDDL = await _combosHelper.GetComboAdministradoresAsync(token.UsuarioID),
+                Email= usuario.Email,
+                Nombre= usuario.Nombre,
+                FechaInicio = usuario.FechaInicio,
+                FechaTermino = usuario.FechaTermino,
+                PrimerApellido= usuario.PrimerApellido,
+                SegundoApellido= usuario.SegundoApellido,
+                TelefonoMovil = usuario.TelefonoMovil,
+                UsuarioID = usuario.UsuarioID
             };
 
             return View(usuarioViewModel);
@@ -517,6 +528,10 @@
             var usuarioDetails = new UsuarioDetailsViewModelUsuario()
             {
                 Activo = usuario.Activo,
+                Email= usuario.Email,
+                Nombre = usuario.Nombre,
+                PrimerApellido= usuario.PrimerApellido,
+                SegundoApellido= usuario.SegundoApellido,
                 Administrador = usuario.Administrador,
                 AdministradorID = usuario.AdministradorID,
                 UsuarioID = usuario.UsuarioID,

@@ -77,7 +77,7 @@ function addProcessWithSpinnerInList(obj, icon) {
 function addButtonWithSpinner(text, container, buttonDisabled, time = 0) {
     if ($(container)[0] !== undefined && $('#button-with-spinner')[0] === undefined) {
         var html = '';
-        html += '<a id="button-with-spinner" class="btn btn-secondary btn-lam-75 text-white col-12 col-md-auto">';
+        html += '<a id="button-with-spinner" class="btn btn-secondary btn-lam-75 text-white col-12 col-md-auto ps-2">';
         html += '   <div class="d-flex justify-content-center align-item-center">';
         html += '       <div class="ps-0 pe-3"><div class="spinner"></div></div>';
         html += '       <div class="">'+text+'</div>';

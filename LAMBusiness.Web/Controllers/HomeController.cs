@@ -102,7 +102,10 @@
                 TempData["toast"] = "¡Qué gusto tenerte de vuelta!";
                 await BitacoraAsync("InicioSesion", resultado);
 
-                return RedirectToAction(nameof(Index));
+                if (usuario.CambiarPassword)
+                    return RedirectToAction("ChangePassword", "Sesion");
+                else
+                    return RedirectToAction(nameof(Index));
             }
 
             ModelState.AddModelError(string.Empty, "Credenciales Incorrectas");
@@ -124,7 +127,7 @@
             if (token.Administrador != "SA")
             {
                 TempData["toast"] = "No tiene privilegios de acceso en el módulo";
-                return RedirectToAction("Inicio", "Home");
+                return RedirectToAction("Index", "Home");
             }
 
             Guid moduloId = Guid.Parse("37A8C12A-254F-44FB-BE68-67AF358B0610");

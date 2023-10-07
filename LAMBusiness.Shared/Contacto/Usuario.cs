@@ -39,6 +39,9 @@
 
         [JsonIgnore]
         public string Password { get; set; }
+        
+        [JsonIgnore]
+        public bool CambiarPassword { get; set; }
 
         public bool Activo { get; set; }
 

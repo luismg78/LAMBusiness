@@ -47,10 +47,10 @@
                     <div class="row g-0 row-bordered border">
                         <div class="bg-row d-flex col-lg align-items-center">
                             <div class="card-body d-flex align-items-center">
-                                <i class="fas fa-user-tag display-4"></i>
+                                <i class="fas fa-envelope display-4"></i>
                                 <div class="ms-3">
-                                    <div class="text-muted small">@Html.DisplayNameFor(model => model.DatosPersonales.CURP)</div>
-                                    <h5>@Html.DisplayFor(model => model.DatosPersonales.CURP)</h5>
+                                    <div class="text-muted small">@Html.DisplayNameFor(model => model.Email)</div>
+                                    <h5>@Html.DisplayFor(model => model.Email)</h5>
                                 </div>
                             </div>
                         </div>
@@ -67,6 +67,54 @@
                             </div>
                         }
                         <div class="bg-row d-flex col-lg-4 col-lg align-items-center">
+                            <div class="card-body d-flex align-items-center">
+                                <i class="fas fa-phone display-4"></i>
+                                <div class="ms-3">
+                                    <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.TelefonoMovil)</div>
+                                    <h5><a href="tel:@Html.DisplayFor(model => model.TelefonoMovil)">@Html.DisplayFor(model => model.TelefonoMovil)</a></h5>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-0 row-bordered border border-top-0">
+                        <div class="bg-row d-flex col-lg-3 col-lg align-items-center">
+                            <div class="card-body d-flex align-items-center">
+                                <i class="fas fa-calendar display-4"></i>
+                                <div class="ms-3">
+                                    <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.FechaInicio)</div>
+                                    <h6>
+                                        @Model.FechaInicio.ToString("dd MMMM, yyyy")
+                                        <small class="ms-1 text-muted">@Model.FechaInicio.ToString("HH:mm")</small>
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-row d-flex col-lg-3 col-lg align-items-center">
+                            <div class="card-body d-flex align-items-center">
+                                <i class="fas fa-calendar display-4"></i>
+                                <div class="ms-3">
+                                    <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.FechaTermino)</div>
+                                    <h6>
+                                        @Model.FechaTermino.ToString("dd MMMM, yyyy")
+                                        <small class="ms-1 text-muted">@Model.FechaTermino.ToString("HH:mm")</small>
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-row d-flex col-lg-3 col-lg align-items-center">
+                            <div class="card-body d-flex align-items-center">
+                                <i class="fas fa-calendar display-4"></i>
+                                <div class="ms-3">
+                                    <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.FechaUltimoAcceso)</div>
+                                    <h6>
+                                        @Model.FechaUltimoAcceso.ToString("dd MMMM, yyyy")
+                                        <small class="ms-1 text-muted">@Model.FechaUltimoAcceso.ToString("HH:mm")</small>
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-row d-flex col-lg-3 col-lg align-items-center">
                             <div class="card-body d-flex align-items-center">
                                 @if (Model.Activo)
                                 {
@@ -87,127 +135,92 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row g-0 row-bordered border border-top-0">
-                        <div class="bg-row d-flex col-lg-4 col-lg align-items-center">
-                            <div class="card-body d-flex align-items-center">
-                                <i class="fas fa-calendar display-4"></i>
-                                <div class="ms-3">
-                                    <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.FechaInicio)</div>
-                                    <h5>
-                                        @Model.FechaInicio.ToString("dd MMMM, yyyy")
-                                        <small class="ms-1 text-muted">@Model.FechaInicio.ToString("HH:mm")</small>
-                                    </h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-row d-flex col-lg-4 col-lg align-items-center">
-                            <div class="card-body d-flex align-items-center">
-                                <i class="fas fa-calendar display-4"></i>
-                                <div class="ms-3">
-                                    <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.FechaTermino)</div>
-                                    <h5>
-                                        @Model.FechaTermino.ToString("dd MMMM, yyyy")
-                                        <small class="ms-1 text-muted">@Model.FechaTermino.ToString("HH:mm")</small>
-                                    </h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-row d-flex col-lg-4 col-lg align-items-center">
-                            <div class="card-body d-flex align-items-center">
-                                <i class="fas fa-calendar display-4"></i>
-                                <div class="ms-3">
-                                    <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.FechaUltimoAcceso)</div>
-                                    <h5>
-                                        @Model.FechaUltimoAcceso.ToString("dd MMMM, yyyy")
-                                        <small class="ms-1 text-muted">@Model.FechaUltimoAcceso.ToString("HH:mm")</small>
-                                    </h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-                <div class="card-footer-lam-d1 mt-4">
-                    @if (Model.PermisoEscritura)
-                    {
-                        <a asp-action="EditPermissions" asp-controller="Usuarios" asp-route-id="@Model.UsuarioID" class="btn btn-sm btn-base float-end"><i class="fas fa-edit"></i> Editar Permisos</a>
-                    }
-                    @if (Model.UsuarioModulos != null)
-                    {
-                        <p class="fw-bold text-base">Permisos asignados al usuario</p>
-                        <hr class="mb-0" />
-                        <div class="row g-0 py-1 d-none d-md-flex border-bottom">
-                            <div class="col-md-6">
-                                <span class="fw-bold d-block">Módulo</span>
-                            </div>
-                            <div class="col-md-2 text-md-center">
-                                <span class="fw-bold d-block">Lectura</span>
-                            </div>
-                            <div class="col-md-2 text-md-center">
-                                <span class="fw-bold d-block">Escritura</span>
-                            </div>
-                            <div class="col-md-2 text-md-center">
-                                <span class="fw-bold d-block">Imprimir</span>
-                            </div>
-                        </div>
-                        foreach (var item in Model.UsuarioModulos)
+                @if (Model.AdministradorID == "NA")
+                {
+                    <div class="card-footer-lam-d1 mt-4">
+                        @if (Model.PermisoEscritura)
                         {
-                            <div class="bg-row row align-items-center border-bottom py-2 px-2 g-0">
-                                <div class="col-12 col-md-6">
-                                    @*<span class="fw-bold d-block d-md-none">Módulo</span>*@
-                                    <span class="d-block">@item.Modulo.Descripcion</span>
+                            <a asp-action="EditPermissions" asp-controller="Usuarios" asp-route-id="@Model.UsuarioID" class="btn btn-sm btn-base float-end"><i class="fas fa-edit"></i> Editar Permisos</a>
+                        }
+                        @if (Model.UsuarioModulos != null)
+                        {
+                            <p class="fw-bold text-base">Permisos asignados al usuario</p>
+                            <hr class="mb-0" />
+                            <div class="row g-0 py-1 d-none d-md-flex border-bottom">
+                                <div class="col-md-6">
+                                    <span class="fw-bold d-block">Módulo</span>
                                 </div>
-                                <div class="col-4 col-md-2 text-center">
-                                    <span class="d-block d-md-none">Lectura</span>
-                                    <span class="d-block">
-                                        @if (item.PermisoLectura)
-                                        {
-                                            <i class="fa fa-check"></i>
-                                        }
-                                        else
-                                        {
-                                            <i class="fa fa-times text-muted"></i>
-                                        }
-                                    </span>
+                                <div class="col-md-2 text-md-center">
+                                    <span class="fw-bold d-block">Lectura</span>
                                 </div>
-                                <div class="col-4 col-md-2 text-center">
-                                    <span class="d-block d-md-none">Escritura</span>
-                                    <span class="d-block">
-                                        @if (item.PermisoEscritura)
-                                        {
-                                            <i class="fa fa-check"></i>
-                                        }
-                                        else
-                                        {
-                                            <i class="fa fa-times text-muted"></i>
-                                        }
-                                    </span>
+                                <div class="col-md-2 text-md-center">
+                                    <span class="fw-bold d-block">Escritura</span>
                                 </div>
-                                <div class="col-4 col-md-2 text-center">
-                                    <span class="d-block d-md-none">Imprimir</span>
-                                    <span class="d-block">
-                                        @if (item.PermisoImprimir)
-                                        {
-                                            <i class="fa fa-check"></i>
-                                        }
-                                        else
-                                        {
-                                            <i class="fa fa-times text-muted"></i>
-                                        }
-                                    </span>
+                                <div class="col-md-2 text-md-center">
+                                    <span class="fw-bold d-block">Imprimir</span>
+                                </div>
+                            </div>
+                            foreach (var item in Model.UsuarioModulos)
+                            {
+                                <div class="bg-row row align-items-center border-bottom py-2 px-2 g-0">
+                                    <div class="col-12 col-md-6">
+                                        @*<span class="fw-bold d-block d-md-none">Módulo</span>*@
+                                        <span class="d-block">@item.Modulo.Descripcion</span>
+                                    </div>
+                                    <div class="col-4 col-md-2 text-center">
+                                        <span class="d-block d-md-none">Lectura</span>
+                                        <span class="d-block">
+                                            @if (item.PermisoLectura)
+                                            {
+                                                <i class="fa fa-check"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fa fa-times text-muted"></i>
+                                            }
+                                        </span>
+                                    </div>
+                                    <div class="col-4 col-md-2 text-center">
+                                        <span class="d-block d-md-none">Escritura</span>
+                                        <span class="d-block">
+                                            @if (item.PermisoEscritura)
+                                            {
+                                                <i class="fa fa-check"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fa fa-times text-muted"></i>
+                                            }
+                                        </span>
+                                    </div>
+                                    <div class="col-4 col-md-2 text-center">
+                                        <span class="d-block d-md-none">Imprimir</span>
+                                        <span class="d-block">
+                                            @if (item.PermisoImprimir)
+                                            {
+                                                <i class="fa fa-check"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fa fa-times text-muted"></i>
+                                            }
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                            <div class="row g-0 pt-4">
+                                <div class="col-12 col-md-6 order-2 text-center text-md-start pt-3 pt-md-0 order-md-1">
+                                    <a asp-action="Index" class="btn btn-outline-secondary text-decoration-none">Regresar</a>
                                 </div>
                             </div>
                         }
-                        <div class="row g-0 pt-4">
-                            <div class="col-12 col-md-6 order-2 text-center text-md-start pt-3 pt-md-0 order-md-1">
-                                <a asp-action="Index" class="btn btn-outline-secondary text-decoration-none">Regresar</a>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <p class="fw-bold text-base">Sin registro de permisos asignados al usuario.</p>
-                    }
-                </div>
+                        else
+                        {
+                            <p class="fw-bold text-base">Sin registro de permisos asignados al usuario.</p>
+                        }
+                    </div>
+                }
             </div>
         </div>
     </div>

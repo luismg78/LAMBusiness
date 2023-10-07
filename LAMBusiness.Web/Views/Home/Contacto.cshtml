@@ -23,9 +23,10 @@
                 <a asp-action="Index" asp-controller="Usuarios" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
-                            <i class="fas fa-user display-4 text-primary"></i>
-                            <h4 class="mt-4"><span class="text-primary">@Model.Usuarios</span> Usuarios</h4>
-                            <p class="mb-3">Catálogo de usuarios del sistema</p>
+                            <i class="fas fa-user display-4 text-primary mb-3"></i>
+                            <h4 class="mb-0">Usuarios</h4>
+                            <p class="mb-2">Catálogo de usuarios del sistema</p>
+                            <span class="badge bg-light border text-dark fw-normal">@Model.Usuarios registro(s)</span>
                         </div>
                     </div>
                 </a>
@@ -39,9 +40,10 @@
                 <a asp-action="Index" asp-controller="Colaboradores" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
-                            <i class="fas fa-users-cog display-4 text-base"></i>
-                            <h4 class="mt-4"><span class="text-base">@Model.Colaboradores</span> Colaboradores</h4>
-                            <p class="mb-3">Catálogo de colaboradores</p>
+                            <i class="fas fa-users-cog display-4 text-base mb-3"></i>
+                            <h4 class="mb-0">Colaboradores</h4>
+                            <p class="mb-2">Catálogo de colaboradores</p>
+                            <span class="badge bg-light border text-dark fw-normal">@Model.Colaboradores registro(s)</span>
                         </div>
                     </div>
                 </a>
@@ -55,9 +57,10 @@
                 <a asp-action="Index" asp-controller="Clientes" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
-                            <i class="fas fa-user-friends display-4 text-info"></i>
-                            <h4 class="mt-4"><span class="text-info">@Model.Clientes</span> Clientes</h4>
-                            <p class="mb-3">Catálogos de clientes</p>
+                            <i class="fas fa-user-friends display-4 text-info mb-3"></i>
+                            <h4 class="mb-0">Clientes</h4>
+                            <p class="mb-2">Catálogos de clientes</p>
+                            <span class="badge bg-light border text-dark fw-normal">@Model.Clientes registro(s)</span>
                         </div>
                     </div>
                 </a>
@@ -71,9 +74,10 @@
                 <a asp-action="Index" asp-controller="Proveedores" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
-                            <i class="fas fa-people-carry display-4 text-success"></i>
-                            <h4 class="mt-4"><span class="text-success">@Model.Proveedores</span> Proveedores</h4>
-                            <p class="mb-3">Catálogo de productos</p>
+                            <i class="fas fa-people-carry display-4 text-success mb-3"></i>
+                            <h4 class="mb-0">Proveedores</h4>
+                            <p class="mb-2">Catálogo de productos</p>
+                            <span class="badge bg-light border text-dark fw-normal">@Model.Proveedores registro(s)</span>
                         </div>
                     </div>
                 </a>

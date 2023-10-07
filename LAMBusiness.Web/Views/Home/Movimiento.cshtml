@@ -22,9 +22,10 @@
                 <a asp-action="Index" asp-controller="Ventas" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
-                            <i class="fas fa-shopping-cart display-4 text-success"></i>
-                            <h4 class="mt-4"><span class="text-success">@Model.Ventas</span> Ventas</h4>
-                            <p class="mb-3">Movimiento de ventas</p>
+                            <i class="fas fa-shopping-cart display-4 text-success mb-3"></i>
+                            <h4 class="mb-0">Ventas</h4>
+                            <p class="mb-2">Movimiento de ventas</p>
+                            <span class="badge bg-light border text-dark fw-normal">@Model.Ventas registro(s)</span>
                         </div>
                     </div>
                 </a>
@@ -38,9 +39,10 @@
                 <a asp-action="Index" asp-controller="Retiros" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
-                            <i class="fas fa-cash-register display-4 text-secondary"></i>
-                            <h4 class="mt-4"><span class="text-secondary">@Model.RetiroDeCaja</span> Retiro de caja</h4>
-                            <p class="mb-3">Retiro de efectivo parcial</p>
+                            <i class="fas fa-cash-register display-4 text-secondary mb-3"></i>
+                            <h4 class="mb-0">Retiro de caja</h4>
+                            <p class="mb-2">Retiro de efectivo parcial</p>
+                            <span class="badge bg-light border text-dark fw-normal">@Model.RetiroDeCaja registro(s)</span>
                         </div>
                     </div>
                 </a>
@@ -54,9 +56,10 @@
                 <a asp-action="PaginaEnConstruccion" asp-controller="Home" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
-                            <i class="fas fa-file-invoice-dollar display-4 text-primary"></i>
-                            <h4 class="mt-4">Corte de caja</h4>
-                            <p class="mb-3">Finaliza y reinicia las ventas del día</p>
+                            <i class="fas fa-file-invoice-dollar display-4 text-primary mb-3"></i>
+                            <h4 class="mb-0">Corte de caja</h4>
+                            <p class="mb-2">Finaliza y reinicia las ventas del día</p>
+                            <span class="badge bg-light border text-dark fw-normal">0 registro(s)</span>
                         </div>
                     </div>
                 </a>
@@ -70,9 +73,10 @@
                 <a asp-action="Index" asp-controller="Entradas" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
-                            <i class="fas fa-arrow-alt-circle-down display-4 text-info"></i>
-                            <h4 class="mt-4"><span class="text-info">@Model.Entradas</span> Entradas</h4>
-                            <p class="mb-3">Movimiento de entradas</p>
+                            <i class="fas fa-arrow-alt-circle-down display-4 text-info mb-3"></i>
+                            <h4 class="mb-0">Entradas</h4>
+                            <p class="mb-2">Movimiento de entradas</p>
+                            <span class="badge bg-light border text-dark fw-normal">@Model.Entradas registro(s)</span>
                         </div>
                     </div>
                 </a>
@@ -86,9 +90,10 @@
                 <a asp-action="Index" asp-controller="Salidas" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
-                            <i class="fas fa-arrow-alt-circle-up display-4 text-base"></i>
-                            <h4 class="mt-4"><span class="text-base">@Model.Salidas</span> Salidas</h4>
-                            <p class="mb-3">Movimiento de salidas</p>
+                            <i class="fas fa-arrow-alt-circle-up display-4 text-base mb-3"></i>
+                            <h4 class="mb-0">Salidas</h4>
+                            <p class="mb-2">Movimiento de salidas</p>
+                            <span class="badge bg-light border text-dark fw-normal">@Model.Salidas registro(s)</span>
                         </div>
                     </div>
                 </a>
@@ -102,9 +107,10 @@
                 <a asp-action="PaginaEnConstruccion" asp-controller="Home" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
-                            <i class="fas fa-exchange-alt display-4 text-warning"></i>
-                            <h4 class="mt-4"><span class="text-warning">@Model.Devoluciones</span> Devoluciones</h4>
-                            <p class="mb-3">Devoluciones de productos</p>
+                            <i class="fas fa-exchange-alt display-4 text-warning mb-3"></i>
+                            <h4 class="mb-0">Devoluciones</h4>
+                            <p class="mb-2">Devoluciones de productos</p>
+                            <span class="badge bg-light border text-dark fw-normal">@Model.Devoluciones registro(s)</span>
                         </div>
                     </div>
                 </a>

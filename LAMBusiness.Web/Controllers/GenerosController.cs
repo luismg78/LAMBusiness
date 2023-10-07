@@ -33,7 +33,7 @@
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
             {
-                return RedirectToAction("Inicio", "Home");
+                return RedirectToAction("Index", "Home");
             }
 
             var generos = _context.Generos.OrderBy(g => g.Nombre);

@@ -28,10 +28,16 @@
                             @Html.DisplayFor(modelItem => item.Nombre)
                         </span>
                         <div class="d-block">
-                            <small class="text-muted me-md-3">@Html.DisplayFor(modelItem => item.DatosPersonales.CURP)</small>
-                            @if (!item.Activo)
+                            <a href="tel:@item.TelefonoMovil" class="badge bg-light border text-dark fw-normal">
+                                <i class="fas fa-phone me-2"></i>@Html.DisplayFor(modelItem => item.TelefonoMovil)
+                            </a>
+                            @if (item.Activo)
                             {
-                                <small class="badge bg-danger">No Disponible</small>
+                                <small class="badge bg-success fw-normal">Activo</small>
+                            }
+                            else
+                            {
+                                <small class="badge bg-danger fw-normal">No Disponible</small>
                             }
                         </div>
                     </div>
@@ -43,6 +49,11 @@
                         </a>
                         @if (Model.PermisoEscritura)
                         {
+                            <a href="#" data-id="@item.UsuarioID" class="deleteConfirm text-decoration-none" data-bs-toggle="modal" data-bs-target="#changePasswordConfirm">
+                                <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="restablecer contraseña">
+                                    <i class="fa fa-key"></i>
+                                </div>
+                            </a>
                             <a asp-action="Edit" asp-route-id="@item.UsuarioID" class="text-decoration-none">
                                 <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar registro">
                                     <i class="fa fa-edit"></i>

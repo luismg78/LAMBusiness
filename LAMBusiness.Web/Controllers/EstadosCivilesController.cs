@@ -29,7 +29,7 @@
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
             {
-                return RedirectToAction("Inicio", "Home");
+                return RedirectToAction("Index", "Home");
             }
 
             return View(_context.EstadosCiviles.OrderBy(e => e.Nombre));

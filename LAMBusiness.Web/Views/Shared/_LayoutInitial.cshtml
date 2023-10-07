@@ -42,15 +42,16 @@
                         <ul class="navbar-nav flex-grow-1">
                             <li class="nav-item">
                                 <a class="nav-link @if (menu == "home") {<text>fw-bold text-base</text>} else {<text>text-dark</text>} "
-                                   asp-area="" asp-controller="Home" asp-action="Inicio">Inicio</a>
+                                   asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
                             </li>
                         </ul>
                     </div>*@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1 justify-content-end">
                         <li class="nav-item float-end">
-                            <a class="nav-link fw-bold text-uppercase @if (menu == "signin") {<text>text-base</text>} else {<text>text-primary</text>} "
-                               asp-area="" asp-controller="Home" asp-action="Inicio">Inicio de Sesión</a>
+                            @*<a class="nav-link fw-bold text-uppercase @if (menu == "signin") {<text>text-base</text>} else {<text>text-primary</text>} "
+                               asp-area="" asp-controller="Home" asp-action="Index">Inicio de Sesión</a>*@
+                            <span class="fw-bold text-uppercase text-base">Inicio de Sesión</span>
                         </li>
                     </ul>
                 </div>
@@ -76,7 +77,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            LAMBusiness &copy; 2020 - <a asp-area="" asp-controller="Home" asp-action="inicio" class="text-decoration-none">Inicio de Sesión</a>
+            LAMBusiness &copy; 2023 - <span class="text-base">Inicio de Sesión</span>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

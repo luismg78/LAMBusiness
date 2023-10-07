@@ -20,7 +20,7 @@
         private readonly IConverterHelper _converterHelper;
         private readonly IGetHelper _getHelper;
         private readonly IConfiguration _configuration;
-        private Guid moduloId = Guid.Parse("0C36B7F4-02DF-459A-9606-CAEEB137D9B1");
+        private Guid moduloId = Guid.Parse("AA3E3482-0EC5-40B8-8C48-7E567DA135F6");
 
         public RetirosController(DataContext context,
             ICombosHelper combosHelper,
@@ -41,7 +41,7 @@
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
             {
-                return RedirectToAction("Inicio", "Home");
+                return RedirectToAction("Index", "Home");
             }
 
             var retiros = (from r in _context.RetirosCaja

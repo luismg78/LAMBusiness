@@ -45,4 +45,14 @@
 @if (Model.PermisoEscritura)
 {
     <partial name="_DeleteConfirmDialog" />
+    <partial name="_ChangePasswordConfirmDialog" />
 }
+
+<script>
+    function changePassword(e) {
+        var url = '@Url.Action("ResetPassword", "Sesion", new { id = "paramId" })';
+        url = url.replace('paramId', itemToDelete);
+
+        window.location.href = url;
+    }
+</script>

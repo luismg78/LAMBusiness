@@ -110,23 +110,24 @@
         function cambiarImagenPerfil(e) {
             e.preventDefault();
             addProcess("Actualizando imagen de perfil");
-            var image = ($("canvas")[0]).toDataURL("image/png");
+            var img = ($("canvas")[0]).toDataURL("image/png");
             $.ajax({
                 url: '@Url.Action("ChangeProfilePicture", "Sesion")',
                 method: 'POST',
-                dataType: 'text',
-                data: { img: image },
-                success: function (result) {
-                    var r = JSON.parse(result);
-                    removeProcess(r.estatus);
-                    if (r.Error) {
+                dataType: 'json',
+                data: { imagen: img },
+                success: function (r) {
+                    //var r = JSON.parse(result);
+                    //removeProcess();
+                    if (r.error) {
                         alert('Error al actualizar la imagen de perfil');
+                        window.location.href = '@Url.Action("ChangeProfilePicture", "Sesion")';
                     } else {
                         window.location.href = '@Url.Action("Sesion", "Home")';
                     }
                 },
                 error: function (result) {
-                    removeProcess(r.estatus);
+                    //removeProcess();
                     alert(result);
                 },
                 cache: false
