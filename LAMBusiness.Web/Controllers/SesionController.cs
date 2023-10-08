@@ -83,6 +83,7 @@
         }
 
         [HttpPost]
+        [DisableRequestSizeLimit, RequestFormLimits(MultipartBodyLengthLimit = int.MaxValue, ValueLengthLimit = int.MaxValue)]
         public async Task<JsonResult> ChangeProfilePicture(string imagen)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "home");

@@ -15,11 +15,11 @@ modalHelp.addEventListener('hidden.bs.modal', function (event) {
     window.location.href = urlSale;
 })
 
-screenResize();
+/*screenResize();*/
 resetMode('saleButton');
-window.addEventListener('resize', function () {
-    screenResize();
-});
+//window.addEventListener('resize', function () {
+//    screenResize();
+//});
 
 document.getElementById('inputText').addEventListener('keydown', function (e) {
     let key = e.which;
@@ -155,7 +155,18 @@ function addProduct(e) {
 }
 function addSale(e) {
     let sale = e.currentTarget;
-    window.location.href = urlSale + '?id=' + sale.dataset.id;
+    window.location.href = `${urlGetItBackSaleById}?id=${sale.dataset.id}`;
+}
+function buttonOptions(value) {
+    var opcionVentas = document.getElementById('botones-ventas');
+    var opcionAplicar = document.getElementById('botones-aplicar');
+    if (value) {
+        opcionAplicar.classList.add('d-none');
+        opcionVentas.classList.remove('d-none');
+    } else {
+        opcionVentas.classList.add('d-none');
+        opcionAplicar.classList.remove('d-none');
+    }
 }
 function cancelSale(e) {
     e.preventDefault();
@@ -188,7 +199,8 @@ function cancelSale(e) {
     });
 }
 function cancelSaleMode() {
-    if (!validateSale()) { return; }
+    if (validateWithdrawCash() || !validateSale()) { return; }
+    buttonOptions(true);
     resetMode('cancelSaleButton');
     let myOffCanvasLabel = document.getElementById('offcanvasRightLabel');
     myOffCanvasLabel.innerHTML = "Cancelar Venta";
@@ -204,6 +216,14 @@ function cancelSaleMode() {
     inputText.focus();
 }
 function closeSalesMode() {
+    //validar si hay una venta en proceso
+    if (validateSale()) {
+        message.innerHTML = "Opción no aprobada, venta en proceso.";
+        message.style.display = 'block';
+        return false;
+    }
+    if (validateWithdrawCash()) { return; }
+    buttonOptions(true);
     resetMode('closeSalesButton');
     inputText.setAttribute('type', 'password');
     inputText.dataset.input = 'corteCaja';
@@ -215,6 +235,12 @@ function getItBackSale(e) {
     e.preventDefault();
 }
 function getItBackSaleMode() {
+    if (validateMove()) {
+        message.innerHTML = 'Opción no aprobada, movimiento en proceso.'
+        message.style.display = 'block';
+        return;
+    }
+    buttonOptions(true);
     $.ajax({
         url: urlGetItBackSale,
         method: 'POST',
@@ -223,6 +249,7 @@ function getItBackSaleMode() {
                 if (result.reiniciar) {
                     window.location.href = urlMovement;
                 } else {
+                    saleMode();
                     message.innerHTML = result.estatus;
                     message.style.display = 'block';
                 }
@@ -355,6 +382,7 @@ function makeSale(e) {
 }
 function payMode() {
     if (!validateSale()) { return; }
+    buttonOptions(true);
     resetMode('payButton');
     inputText.setAttribute('type', 'number');
     inputText.dataset.input = 'importe';
@@ -470,14 +498,8 @@ function saveSale(e) {
     });
 }
 function saleMode() {
-    if (inputText.dataset.input === 'retiroEfectivo') {
-        var box = document.getElementById('datos');
-        if (box.children[0].children !== undefined && box.children[0].children.length > 0) {
-            message.innerHTML = 'Opción no aprobada, retiro de efectivo en proceso.'
-            message.style.display = 'block';
-            return false;
-        }
-    }
+    if (validateWithdrawCash()) { return; }
+    buttonOptions(true);
     resetMode('saleButton');
     cant = '1';
     inputText.setAttribute('type', 'text');
@@ -489,14 +511,9 @@ function saleMode() {
     message.style.display = 'none';
     inputText.focus();
 }
-function screenResize() {
-    var height = $(window).height();
-    var heightH = $('header').height();
-    var heightF = $('#footer').height();
-
-    $('section').height(height - heightH - heightF - 1);
-}
 function searchMode() {
+    if (inputText.dataset.input !== 'codigo') return false;
+    buttonOptions(true);
     resetMode('searchButton');
     inputText.setAttribute('type', 'text');
     inputText.dataset.input = 'buscar';
@@ -563,27 +580,76 @@ function setInputText(e) {
             break;
     }
 }
-function validateSale(e) {
+function validateMove() {
     var box = document.getElementById('datos');
     if (box.children[0].children !== undefined && box.children[0].children.length > 0) {
         message.innerHTML = "";
         message.style.display = 'none';
         return true;
     }
+    return false;
+}
+function validateSale(e) {
+    if (validateMove()) { return true; }
+    saleMode();
     message.innerHTML = "No hay registros de ventas para procesar";
     message.style.display = 'block';
     return false;
 }
-function withdrawCashMode(e) {
-    e.preventDefault();
-    if (inputText.dataset.input === 'codigo') {
-        var box = document.getElementById('datos');
-        if (box.children[0].children !== undefined && box.children[0].children.length > 0) {
-            message.innerHTML = 'Opción no aprobada, venta en proceso.'
+function validateWithdrawCash() {
+    if (inputText.dataset.input === 'retiroEfectivo') {
+        if (validateMove()) { 
+            message.innerHTML = 'Opción no aprobada, retiro de efectivo en proceso.'
             message.style.display = 'block';
-            return false;
+            return true;
         }
     }
+
+    message.innerHTML = "";
+    message.style.display = 'none';
+    return false;
+}
+function withdrawCashCancel(e) {
+    e.preventDefault();
+    var box = document.getElementById('datos');
+    box.children[0].innerHTML = "";
+    buttonOptions(true);
+    saleMode();
+}
+function withdrawCashMode(e) {
+    e.preventDefault();
+    //validar si hay una venta en proceso
+    if (validateSale()) {
+        message.innerHTML = "Opción no aprobada, venta en proceso.";
+        message.style.display = 'block';
+        return false;
+    }
+    $.ajax({
+        url: urlWithdrawCashInit,
+        method: 'POST',
+        datatype: 'json',
+        success: function (result) {
+            if (result.error !== undefined && result.error !== null && result.error) {
+                if (result.reiniciar) {
+                    window.location.href = urlMovement;
+                } else {
+                    message.innerHTML = result.estatus;
+                    message.style.display = 'block';
+                    removeProcessWithSpinner();
+                    bsOffcanvas.hide();
+                    inputText.focus();
+                }
+            } else {
+                window.location.href = urlSale;
+            }
+        },
+        error: function (r) {
+            alert(r);
+            removeProcessWithSpinner();
+        },
+        cache: false
+    });
+    buttonOptions(false);
     resetMode('withdrawCashButton');
     inputText.setAttribute('type', 'number');
     inputText.dataset.input = 'retiroEfectivo';
@@ -618,4 +684,34 @@ function withdrawCashSale() {
     }
     cant = '1';
     inputText.value = '';
+}
+function withdrawCashApply(e) {
+    e.preventDefault();
+    addProcessWithSpinner('Aplicando movimiento de retiro de efectivo...');
+    $.ajax({
+        url: urlWithdrawCashApply,
+        method: 'POST',
+        datatype: 'text',
+        data: { id: ventaId.value },
+        success: function (result) {
+            if (result.error !== undefined && result.error !== null && result.error) {
+                if (result.reiniciar) {
+                    window.location.href = urlMovement;
+                } else {
+                    message.innerHTML = result.estatus;
+                    message.style.display = 'block';
+                    removeProcessWithSpinner();
+                    bsOffcanvas.hide();
+                    inputText.focus();
+                }
+            } else {
+                window.location.href = urlSale;
+            }
+        },
+        error: function (r) {
+            alert(r);
+            removeProcessWithSpinner();
+        },
+        cache: false
+    });
 }

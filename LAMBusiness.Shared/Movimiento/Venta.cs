@@ -38,7 +38,7 @@
         [JsonIgnore]
         public virtual Almacen Almacenes { get; set; }
 
-        public Guid? ClienteID { get; set; }        
+        public Guid? ClienteID { get; set; }
 
         [ForeignKey("VentaCierre")]
         [Display(Name = "Cierre de ventas")]

@@ -47,7 +47,7 @@
             var retiros = (from r in _context.RetirosCaja
                            join u in _context.Usuarios on r.UsuarioID equals u.UsuarioID
                            where u.AdministradorID != "SA" &&
-                                 r.VentaCierreID == Guid.Empty
+                                 (r.VentaCierreID == Guid.Empty || r.VentaCierreID == null)
                            orderby r.Fecha descending
                            select new RetirosViewModel()
                            {
@@ -101,7 +101,7 @@
                                                   });
 
             if (!todos)
-                query = query.Where(q => q.VentaPendiente == Guid.Empty);
+                query = query.Where(q => q.VentaPendiente == Guid.Empty || q.VentaPendiente == null);
 
             if (filtro.Patron != null && filtro.Patron != "")
             {

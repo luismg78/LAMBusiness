@@ -112,6 +112,8 @@ transparencia: var(--lm-bg-transparency)*/
 
 .image-profile{width:7rem;}
 
+.list-box-sale{height: calc(100vh - 12.25rem);overflow:hidden;}
+    .list-box-sale:hover{overflow:auto;}
 .list-registers{max-height:13.75rem;overflow-y:auto;}
 
 .modal-footer{padding:1.2rem .75rem;}

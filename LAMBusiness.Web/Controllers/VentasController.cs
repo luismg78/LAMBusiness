@@ -35,7 +35,7 @@
             _dashboard = dashboard;
         }
 
-        public async Task<IActionResult> Index(Guid? id)
+        public async Task<IActionResult> Index()
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
             if (validateToken != null) { return validateToken; }
@@ -45,20 +45,13 @@
                 return RedirectToAction(nameof(Index));
             }
 
-            VentaNoAplicada ventaNoAplicada = new VentaNoAplicada();
+            VentaNoAplicada ventaNoAplicada = null;
+            List<VentaNoAplicada> ventasNoAplicadas = await _context.VentasNoAplicadas
+                .Where(v => v.UsuarioID == token.UsuarioID)
+                .ToListAsync();
 
-            if(id == null)
-            {
-                ventaNoAplicada = await _context.VentasNoAplicadas
-                    .OrderByDescending(v => v.Fecha)
-                    .FirstOrDefaultAsync(v => v.UsuarioID == token.UsuarioID);
-            }
-            else
-            {
-                ventaNoAplicada = await _context.VentasNoAplicadas
-                    .OrderByDescending(v => v.Fecha)
-                    .FirstOrDefaultAsync(v => v.VentaNoAplicadaID == id);
-            }
+            if (ventasNoAplicadas != null && ventasNoAplicadas.Any())
+                ventaNoAplicada = ventasNoAplicadas.OrderByDescending(v => v.Fecha).FirstOrDefault();
 
             if (ventaNoAplicada == null)
             {
@@ -70,6 +63,47 @@
                 };
 
                 _context.VentasNoAplicadas.Add(ventaNoAplicada);
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception)
+                {
+                    TempData["toast"] = "La venta no puede ser inicializada.";
+                    return RedirectToAction("Index", "Movimiento");
+                }
+            }
+
+            VentasNoAplicadasViewModel venta = new VentasNoAplicadasViewModel()
+            {
+                Fecha = ventaNoAplicada.Fecha,
+                ImporteTotal = 0,
+                UsuarioID = token.UsuarioID,
+                VentaNoAplicadaID = ventaNoAplicada.VentaNoAplicadaID,
+                VentasNoAplicadasDetalle = null,
+                TotalDeRegistrosPendientes = ventasNoAplicadas.Count - 1,
+            };
+
+            ViewBag.Id = token.UsuarioID;
+            return View(venta);
+        }
+
+        public async Task<IActionResult> GetItBackSaleById(Guid? id)
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+            if (validateToken != null) { return validateToken; }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+                return RedirectToAction(nameof(Index));
+
+            VentaNoAplicada ventaNoAplicada = await _context.VentasNoAplicadas
+                    .OrderByDescending(v => v.Fecha)
+                    .FirstOrDefaultAsync(v => v.VentaNoAplicadaID == id);
+
+            if (ventaNoAplicada == null)
+            {
+                TempData["toast"] = "El identificador de la venta es incorrecta.";
+                return RedirectToAction("Index", "Movimiento");
             }
 
             decimal total = 0;
@@ -77,9 +111,9 @@
                                     .Include(v => v.Productos)
                                     .Where(v => v.VentaNoAplicadaID == ventaNoAplicada.VentaNoAplicadaID)
                                     .ToListAsync();
-            if(ventaDetalle != null)
+            if (ventaDetalle != null)
             {
-                foreach(var item in ventaDetalle)
+                foreach (var item in ventaDetalle)
                 {
                     total += item.Cantidad * item.PrecioVenta;
                 }
@@ -99,7 +133,7 @@
             try
             {
                 await _context.SaveChangesAsync();
-                return View(venta);
+                return View(nameof(Index), venta);
             }
             catch (Exception)
             {
@@ -124,7 +158,7 @@
                                      orderby v.Fecha descending
                                      where v.UsuarioID == token.UsuarioID
                                      select v).Distinct();
-            
+
             int registros = await ventasNoAplicadas.CountAsync();
             if (registros == 0)
                 return Json(new { Estatus = "No existe registro de ventas pendientes por aplicar.", Error = true });
@@ -150,19 +184,20 @@
                 switch (resultado.Mensaje.Trim().ToLower())
                 {
                     case "buscarproducto":
-                        return Json(new { BuscarProducto = true, Error = true});
+                        return Json(new { BuscarProducto = true, Error = true });
                     case "reiniciar":
                         TempData["toast"] = "Identificador de la venta incorrecto.";
-                        return Json(new { Reiniciar = true, Error = true});
+                        return Json(new { Reiniciar = true, Error = true });
                     default:
-                        return Json(new { Estatus = resultado.Mensaje, Error = true});
+                        return Json(new { Estatus = resultado.Mensaje, Error = true });
                 }
             }
 
             return PartialView(resultado.Contenido);
         }
 
-        public async Task<IActionResult> SetCancelSale(Guid? id) {
+        public async Task<IActionResult> SetCancelSale(Guid? id)
+        {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
             if (validateToken != null) { return Json(new { Reiniciar = true, Error = true }); }
 
@@ -191,13 +226,12 @@
             if (ventasNoAplicadasDetalle == null || ventasNoAplicadasDetalle.Count == 0)
                 return Json(new { Estatus = "No hay registros para cancelar.", Error = true });
 
-            ventaNoAplicada.Fecha = DateTime.Now;
-            _context.Update(ventaNoAplicada);
+            //ventaNoAplicada.Fecha = DateTime.Now;
+            //_context.Update(ventaNoAplicada);
 
             Guid ventaCanceladaId = Guid.NewGuid();
 
-            VentaCancelada ventaCancelada = new VentaCancelada();
-            ventaCancelada = new VentaCancelada()
+            VentaCancelada ventaCancelada = new()
             {
                 Fecha = DateTime.Now,
                 UsuarioID = token.UsuarioID,
@@ -207,10 +241,10 @@
 
             _context.VentasCanceladas.Add(ventaCancelada);
 
-            List <VentaCanceladaDetalle> ventasCanceladasDetalle = new List<VentaCanceladaDetalle>();
-            foreach(var item in ventasNoAplicadasDetalle)
+            List<VentaCanceladaDetalle> ventasCanceladasDetalle = new List<VentaCanceladaDetalle>();
+            foreach (var item in ventasNoAplicadasDetalle)
             {
-                VentaCanceladaDetalle ventaCanceladaDetalle = new VentaCanceladaDetalle()
+                VentaCanceladaDetalle ventaCanceladaDetalle = new()
                 {
                     Cantidad = item.Cantidad,
                     PrecioVenta = item.PrecioVenta,
@@ -218,12 +252,14 @@
                     VentaCanceladaID = ventaCanceladaId,
                     VentaCanceladaDetalleID = Guid.NewGuid()
                 };
-                
+
                 ventasCanceladasDetalle.Add(ventaCanceladaDetalle);
                 _context.VentasCanceladasDetalle.Add(ventaCanceladaDetalle);
 
                 _context.Remove(item);
             }
+
+            _context.Remove(ventaNoAplicada);
 
             VentaCanceladaViewModel ventaCanceladaViewModel = new VentaCanceladaViewModel()
             {
@@ -263,8 +299,8 @@
             }
             var ventaNoAplicada = await _context.VentasNoAplicadas
                 .FirstOrDefaultAsync(v => v.VentaNoAplicadaID == id);
-            
-            if(ventaNoAplicada == null)
+
+            if (ventaNoAplicada == null)
             {
                 TempData["toast"] = "Identificador de la venta incorrecto.";
                 return Json(new { Reiniciar = true, Error = true });
@@ -288,7 +324,7 @@
                 }).ToList();
 
             decimal importeTotal = ventasNoAplicadasDetalleAgrupada.Sum(v => v.Importe);
-            if(importeTotal > importe)
+            if (importeTotal > importe)
                 return Json(new { Estatus = "Importe inferior al total.", Error = true });
 
             decimal? folio = await _context.Ventas.MaxAsync(v => (decimal?)v.Folio) ?? 0;
@@ -307,7 +343,7 @@
                 Fecha = fecha,
                 Folio = (decimal)folio,
                 UsuarioID = token.UsuarioID,
-                VentaCierreID = Guid.Empty,
+                VentaCierreID = null,
                 VentaID = (Guid)id
             };
 
@@ -327,10 +363,10 @@
 
             List<VentaDetalle> ventasDetalle = new List<VentaDetalle>();
 
-            foreach(var item in ventasNoAplicadasDetalleAgrupada)
+            foreach (var item in ventasNoAplicadasDetalleAgrupada)
             {
                 var producto = await _getHelper.GetProductByIdAsync(item.ProductoID);
-                if(producto == null)
+                if (producto == null)
                 {
                     TempData["toast"] = "Producto incorrecto, venta no realizada";
                     return Json(new { Reiniciar = true, Error = true });
@@ -348,8 +384,8 @@
                 {
                     var productoPieza = await _context.Paquetes
                         .FirstOrDefaultAsync(p => p.ProductoID == item.ProductoID);
-                    
-                    if(productoPieza != null)
+
+                    if (productoPieza != null)
                     {
                         productoId = productoPieza.PiezaProductoID;
                         cantidad = cantidad * productoPieza.CantidadProductoxPaquete;
@@ -360,7 +396,7 @@
                     .FirstOrDefaultAsync(e => e.ProductoID == productoId &&
                                               e.AlmacenID == almacenId);
 
-                if(existencia == null)
+                if (existencia == null)
                 {
                     _context.Existencias.Add(new Existencia()
                     {
@@ -390,7 +426,7 @@
 
                 _context.VentasDetalle.Add(ventaDetalle);
             }
-            
+
             VentasViewModel ventaViewModel = new VentasViewModel()
             {
                 AlmacenID = almacenId,
@@ -400,7 +436,7 @@
                 ImporteCobro = importe,
                 ImporteTotal = importeTotal,
                 UsuarioID = token.UsuarioID,
-                VentaCierreID = Guid.Empty,
+                VentaCierreID = null,
                 VentaID = (Guid)id,
                 VentasDetalle = ventasDetalle,
                 VentasImportes = ventasImporte
@@ -475,14 +511,15 @@
                                           select v.VentaNoAplicadaID
                                           ).Distinct().ToListAsync();
 
-            if(ventasConDetalle != null)
+            if (ventasConDetalle != null)
             {
                 ventaNoAplicada = await _context.VentasNoAplicadas
                     .FirstOrDefaultAsync(v => !ventasConDetalle.Contains(v.VentaNoAplicadaID) &&
                                          v.UsuarioID == token.UsuarioID);
-            } 
-            
-            if(ventasConDetalle == null || ventaNoAplicada == null) {
+            }
+
+            if (ventasConDetalle == null || ventaNoAplicada == null)
+            {
                 ventaNoAplicada = new VentaNoAplicada()
                 {
                     Fecha = DateTime.Now,
@@ -501,8 +538,34 @@
                     return Json(new { Estatus = "La venta no puede ser inicializada.", Error = true });
                 }
             }
-            
+
             return Json(new { Error = false });
+        }
+
+        public async Task<IActionResult> GetWithdrawCashInit()
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+            if (validateToken != null) { return Json(new { Reiniciar = true, Error = true }); }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+                return Json(new { Reiniciar = true, Error = true });
+
+            RetiroCaja retiro = await _context.RetirosCaja.FirstOrDefaultAsync(r => r.UsuarioID == token.UsuarioID && r.Aplicado == false);
+
+            if(retiro == null)
+            {
+                retiro = new()
+                {
+                    Aplicado = false,
+                    Fecha = DateTime.Now,
+                    Importe = 0,
+                    RetiroCajaID = Guid.NewGuid(),
+                    UsuarioID = Guid.NewGuid(),
+                    VentaCierreID = null
+                };
+            }
+
+            return Json(new {Total = 0, Id = });
         }
 
         private async Task BitacoraAsync(string accion, VentasViewModel venta, string excepcion = "")
