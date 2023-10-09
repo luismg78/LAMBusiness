@@ -15,11 +15,7 @@ modalHelp.addEventListener('hidden.bs.modal', function (event) {
     window.location.href = urlSale;
 })
 
-/*screenResize();*/
 resetMode('saleButton');
-//window.addEventListener('resize', function () {
-//    screenResize();
-//});
 
 document.getElementById('inputText').addEventListener('keydown', function (e) {
     let key = e.which;
@@ -215,6 +211,36 @@ function cancelSaleMode() {
     bsOffcanvas.show();
     inputText.focus();
 }
+function closeSales(e) {
+    e.preventDefault();
+    addProcessWithSpinner('Procesando...');
+    $.ajax({
+        url: urlCloseSales,
+        method: 'POST',
+        datatype: 'text',
+        success: function (result) {
+            if (result.error !== undefined && result.error !== null && result.error) {
+                if (result.reiniciar) {
+                    window.location.href = urlMovement;
+                } else {
+                    message.innerHTML = result.estatus;
+                    message.style.display = 'block';
+                    removeProcessWithSpinner();
+                    bsOffcanvas.hide();
+                    button.setAttribute('onclick', 'withdrawCashApply(event);');
+                    inputText.focus();
+                }
+            } else {
+                resetSale('Corte de caja', result);
+            }
+        },
+        error: function (r) {
+            alert(r);
+            removeProcessWithSpinner();
+        },
+        cache: false
+    });
+}
 function closeSalesMode() {
     //validar si hay una venta en proceso
     if (validateSale()) {
@@ -366,6 +392,8 @@ function getTotalSum() {
     }
     document.getElementById('total').innerHTML = formatCurrency(total);
     document.getElementById('total-sm').innerHTML = 'Total ' + formatCurrency(total);
+
+    return total;
 }
 function offcanvas(e) {
     bsOffcanvas.show();
@@ -414,7 +442,7 @@ function paySale(e) {
                     message.style.display = 'block';
                 }
             } else {
-                resetSale(result);
+                resetSale('Ventas', result);
             }
         },
         error: function (r) {
@@ -456,13 +484,13 @@ function resetMode(button) {
             break;
     }
 }
-function resetSale(r) {
+function resetSale(title, r) {
     let modalHelpLabel = document.getElementById('ModalHelpLabel');
     let myModal = new bootstrap.Modal(document.getElementById('ModalHelp'), {
         keyboard: true
     })
     myModal.show(modalHelp);
-    modalHelpLabel.innerHTML = 'Ventas';
+    modalHelpLabel.innerHTML = title;
     modalHelp.querySelectorAll('div.modal-dialog')[0].classList.remove('modal-lg');
     modalHelp.querySelectorAll('div.modal-dialog')[0].classList.add('modal-md');
     modalHelp.querySelectorAll('div.modal-body')[0].innerHTML = r;
@@ -512,7 +540,10 @@ function saleMode() {
     inputText.focus();
 }
 function searchMode() {
-    if (inputText.dataset.input !== 'codigo') return false;
+    if (inputText.dataset.input !== 'codigo') {
+        inputText.focus();
+        return false;
+    }
     buttonOptions(true);
     resetMode('searchButton');
     inputText.setAttribute('type', 'text');
@@ -569,8 +600,7 @@ function setInputText(e) {
             makeSale(e);
             break;
         case 'corteCaja':
-            //closeSale(e);
-            alert('Corte de caja');
+            closeSales(e);
             break;
         case 'importe':
             paySale(e);
@@ -619,42 +649,21 @@ function withdrawCashCancel(e) {
 function withdrawCashMode(e) {
     e.preventDefault();
     //validar si hay una venta en proceso
-    if (validateSale()) {
+    if (validateMove()) {
         message.innerHTML = "Opción no aprobada, venta en proceso.";
         message.style.display = 'block';
         return false;
     }
-    $.ajax({
-        url: urlWithdrawCashInit,
-        method: 'POST',
-        datatype: 'json',
-        success: function (result) {
-            if (result.error !== undefined && result.error !== null && result.error) {
-                if (result.reiniciar) {
-                    window.location.href = urlMovement;
-                } else {
-                    message.innerHTML = result.estatus;
-                    message.style.display = 'block';
-                    removeProcessWithSpinner();
-                    bsOffcanvas.hide();
-                    inputText.focus();
-                }
-            } else {
-                window.location.href = urlSale;
-            }
-        },
-        error: function (r) {
-            alert(r);
-            removeProcessWithSpinner();
-        },
-        cache: false
-    });
     buttonOptions(false);
     resetMode('withdrawCashButton');
     inputText.setAttribute('type', 'number');
     inputText.dataset.input = 'retiroEfectivo';
     icon.classList.remove('fa-barcode', 'fa-search', 'fa-dollar-sign', 'fa-file-invoice-dollar');
     icon.classList.add('fa-cash-register');
+    var button = document.getElementById('buttonWithdrawCashApply');
+    if (!button.hasAttribute('onclick')) {
+        button.setAttribute('onclick', 'withdrawCashApply(event);');
+    }
     inputText.focus();
 }
 function withdrawCashRemove(e) {
@@ -687,12 +696,15 @@ function withdrawCashSale() {
 }
 function withdrawCashApply(e) {
     e.preventDefault();
-    addProcessWithSpinner('Aplicando movimiento de retiro de efectivo...');
+    addProcessWithSpinner('Procesando...');
+    var button = document.getElementById('buttonWithdrawCashApply');
+    button.removeAttribute('onclick');
+    var total = getTotalSum();
     $.ajax({
         url: urlWithdrawCashApply,
         method: 'POST',
         datatype: 'text',
-        data: { id: ventaId.value },
+        data: { total: total },
         success: function (result) {
             if (result.error !== undefined && result.error !== null && result.error) {
                 if (result.reiniciar) {
@@ -702,6 +714,7 @@ function withdrawCashApply(e) {
                     message.style.display = 'block';
                     removeProcessWithSpinner();
                     bsOffcanvas.hide();
+                    button.setAttribute('onclick', 'withdrawCashApply(event);');
                     inputText.focus();
                 }
             } else {

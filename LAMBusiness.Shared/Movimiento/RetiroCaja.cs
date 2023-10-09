@@ -30,8 +30,5 @@
         public decimal Importe { get; set; }
 
         public Guid? VentaCierreID { get; set; }
-        
-        public bool Aplicado { get; set; }
-
     }
 }

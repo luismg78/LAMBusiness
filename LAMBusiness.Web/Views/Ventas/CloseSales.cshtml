@@ -1,0 +1,28 @@
+﻿@model LAMBusiness.Web.Models.ViewModels.CorteDeCajaViewModel
+
+<div class="p-2">
+    @if (Model != null)
+    {
+        <div class="row g-2">
+            <div class="col-12 mb-4">
+                <h4>Importes:</h4>
+            </div>
+            <div class="col-6 mb-3">Sistema</div>
+            <div class="col-6 mb-3 text-end">@Model.ImporteDelSistema</div>
+            @if (Model.ImporteDelSistemaDetalle != null && Model.ImporteDelSistemaDetalle.Any())
+            {
+                foreach (var item in Model.ImporteDelSistemaDetalle)
+                {
+                    <div class="col-6 mb-3 text-muted">@item.FormaDePago</div>
+                    <div class="col-6 mb-3 text-muted text-end">@item.Importe.ToString("$###,###,##0.00")</div>
+                }
+            }
+            <div class="col-6 mb-3">Sistema</div>
+            <div class="col-6 mb-3 text-end">@Model.ImporteDelSistema</div>
+        </div>
+    }
+    else
+    {
+        <span>No hay registro</span>
+    }
+</div>

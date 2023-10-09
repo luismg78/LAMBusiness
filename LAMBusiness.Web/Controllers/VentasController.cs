@@ -13,6 +13,9 @@
     using Models.ViewModels;
     using Shared.Aplicacion;
     using Shared.Movimiento;
+    using NuGet.Packaging.Core;
+    using Microsoft.AspNetCore.Mvc.Abstractions;
+    using System.Collections.Immutable;
 
     public class VentasController : GlobalController
     {
@@ -86,6 +89,99 @@
 
             ViewBag.Id = token.UsuarioID;
             return View(venta);
+        }
+
+        public async Task<IActionResult> CloseSales()
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+            if (validateToken != null) { return Json(new { Reiniciar = true, Error = true }); }
+
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+                return Json(new { Reiniciar = true, Error = true });
+
+            Guid ventaDeCierreId = Guid.NewGuid();
+
+            var importesDelSistema = await (from v in _context.Ventas
+                                            join vi in _context.VentasImportes on v.VentaID equals vi.VentaID
+                                            join fp in _context.FormasPago on vi.FormaPagoID equals fp.FormaPagoID
+                                            where v.UsuarioID == token.UsuarioID && (v.VentaCierreID == null || v.VentaCierreID == Guid.Empty)
+                                            group new { fp, vi } by new { fp.FormaPagoID, fp.Nombre } into g
+                                            select new ImporteDelSistemaDetalle()
+                                            {
+                                                FormaDePagoId = g.Key.FormaPagoID,
+                                                FormaDePago = g.Key.Nombre,
+                                                Importe = g.Sum(a => a.vi.Importe)
+                                            }).ToListAsync();
+
+            var ventas = await (from v in _context.Ventas
+                                join vi in _context.VentasImportes on v.VentaID equals vi.VentaID
+                                join fp in _context.FormasPago on vi.FormaPagoID equals fp.FormaPagoID
+                                where v.UsuarioID == token.UsuarioID && (v.VentaCierreID == null || v.VentaCierreID == Guid.Empty)
+                                select v).ToListAsync();
+
+            if (ventas == null || !ventas.Any())
+                return Json(new { Error = true, Estatus = "Proceso no realizado, no hay registro de ventas con ese identificador de usuario." });
+            
+            foreach (var venta in ventas)
+            {
+                venta.VentaCierreID = ventaDeCierreId;
+                _context.Update(venta);
+            }
+
+            var importeDelUsuario = await _context.RetirosCaja
+                .Where(r => r.UsuarioID == token.UsuarioID && (r.VentaCierreID == null || r.VentaCierreID == Guid.Empty)).ToListAsync();
+
+            if (importeDelUsuario == null || !importeDelUsuario.Any())
+                return Json(new { Error = true, Estatus = "Proceso no realizado, ingrese al menos un retiro de caja." });
+
+            foreach (var retiro in importeDelUsuario)
+            {
+                retiro.VentaCierreID = ventaDeCierreId;
+                _context.Update(retiro);
+            }
+
+            _context.VentasCierre.Add(new VentaCierre()
+            {
+                Fecha = DateTime.Now,
+                ImporteSistema = importesDelSistema.Sum(i => i.Importe),
+                ImporteUsuario = importeDelUsuario.Sum(r => r.Importe),
+                UsuarioCajaID = token.UsuarioID,
+                UsuarioID = token.UsuarioID,
+                VentaCierreID = ventaDeCierreId
+            });
+
+            if (importesDelSistema != null && importesDelSistema.Any())
+            {
+                foreach (var item in importesDelSistema)
+                {
+                    _context.VentasCierreDetalle.Add(new VentaCierreDetalle()
+                    {
+                        FormaPagoID = item.FormaDePagoId,
+                        Importe = item.Importe,
+                        VentaCierreDetalleID = Guid.NewGuid(),
+                        VentaCierreID = ventaDeCierreId
+                    });
+                }
+            }
+
+            decimal totalSistema = importesDelSistema.Sum(i => i.Importe);
+            decimal totalUsuario = importeDelUsuario.Sum(r => r.Importe);
+            var corteDeCaja = new CorteDeCajaViewModel()
+            {
+                ImporteDelSistema = totalSistema.ToString("$###,###,##0.00"),
+                ImporteDelUsuario = totalUsuario.ToString("$###,###,##0.00"),
+                ImporteDelSistemaDetalle = importesDelSistema
+            };
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return PartialView(corteDeCaja);
+            }
+            catch (Exception)
+            {
+                return Json(new { Error = true, Estatus = "Error. Proceso no realizado." });
+            }
         }
 
         public async Task<IActionResult> GetItBackSaleById(Guid? id)
@@ -542,7 +638,7 @@
             return Json(new { Error = false });
         }
 
-        public async Task<IActionResult> GetWithdrawCashInit()
+        public async Task<IActionResult> GetWithdrawCashApply(decimal total)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
             if (validateToken != null) { return Json(new { Reiniciar = true, Error = true }); }
@@ -550,22 +646,29 @@
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
                 return Json(new { Reiniciar = true, Error = true });
 
-            RetiroCaja retiro = await _context.RetirosCaja.FirstOrDefaultAsync(r => r.UsuarioID == token.UsuarioID && r.Aplicado == false);
+            if (total <= 0)
+                return Json(new { Error = true, Estatus = "Total incorrecto, tiene que ser superior a cero." });
 
-            if(retiro == null)
+            RetiroCaja retiro = new()
             {
-                retiro = new()
-                {
-                    Aplicado = false,
-                    Fecha = DateTime.Now,
-                    Importe = 0,
-                    RetiroCajaID = Guid.NewGuid(),
-                    UsuarioID = Guid.NewGuid(),
-                    VentaCierreID = null
-                };
-            }
+                Fecha = DateTime.Now,
+                Importe = total,
+                RetiroCajaID = Guid.NewGuid(),
+                UsuarioID = token.UsuarioID,
+                VentaCierreID = null
+            };
+            _context.Add(retiro);
 
-            return Json(new {Total = 0, Id = });
+            try
+            {
+                await _context.SaveChangesAsync();
+                TempData["toast"] = "Proceso finalizado con éxito.";
+                return Json(new { Error = false });
+            }
+            catch (Exception)
+            {
+                return Json(new { Error = true, Estatus = "Error de servidor, proceso no realizado." });
+            }
         }
 
         private async Task BitacoraAsync(string accion, VentasViewModel venta, string excepcion = "")

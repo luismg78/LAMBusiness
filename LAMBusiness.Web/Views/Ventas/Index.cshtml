@@ -183,6 +183,7 @@
                         </div>
                     </div>
                     <div id="botones-aplicar" class="row g-2 d-none">
+                        <!-- etiqueta de retiro de efectivo -->
                         <div class="col-12 mb-1">
                             <div>
                                 <div class="bg-base bg-card border box-shadow-lam rounded-lam-lg">
@@ -198,8 +199,8 @@
                             </div>
                         </div>
                         <div class="col-6 mb-1">
-                            <a href="#" onclick="buttonOptions(true);" class="text-secondary">
-                                <div id="buttonOptions" class="bg-white bg-card border box-shadow-lam rounded-lam-lg">
+                            <a role="button" id="buttonWithdrawCashApply" href="#" class="text-secondary" onclick="withdrawCashApply(event);">
+                                <div class="bg-white bg-card border box-shadow-lam rounded-lam-lg">
                                     <div class="p-2 mb-2">
                                         <div class="text-center mt-2">
                                             <h3 class="fas fa-check text-success"></h3>
@@ -213,7 +214,7 @@
                         </div>
                         <div class="col-6 mb-1">
                             <a href="#" onclick="withdrawCashCancel(event);" class="text-secondary">
-                                <div id="buttonOptions" class="bg-white bg-card border box-shadow-lam rounded-lam-lg">
+                                <div class="bg-white bg-card border box-shadow-lam rounded-lam-lg">
                                     <div class="p-2 mb-2">
                                         <div class="text-center mt-2">
                                             <h3 class="fas fa-times text-danger"></h3>
@@ -321,6 +322,7 @@
 @section Scripts{
     <script>
         let urlCancelSale = '@Url.Action("SetCancelSale", "Ventas")';
+        let urlCloseSales = '@Url.Action("CloseSales", "Ventas")';
         let urlGetItBackSaleById = '@Url.Action("GetItBackSaleById", "Ventas")';
         let urlGetItBackSale = '@Url.Action("GetItBackSale", "Ventas")';
         let urlMovement = '@Url.Action("Movimiento", "Home")';
@@ -331,7 +333,7 @@
         let urlSale = '@Url.Action("Index", "Ventas")';
         let urlSaveSale = '@Url.Action("SetSaveSale", "Ventas")';
         let urlSetSale = '@Url.Action("SetSale", "Ventas")';
-        let urlWithdrawCashInit = '@Url.Action("GetWithdrawCashInit", "Ventas")';
+        let urlWithdrawCashApply = '@Url.Action("GetWithdrawCashApply", "Ventas")';
     </script>
     <script src="~/js/sales.js"></script>
 }
