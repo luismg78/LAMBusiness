@@ -1464,6 +1464,19 @@
                 }
             }
 
+            var ventaNoAplicada = await _context.VentasNoAplicadas.FindAsync(id);
+            if(ventaNoAplicada== null)
+            {
+                ventaNoAplicada = new VentaNoAplicada()
+                {
+                    Fecha = DateTime.Now,
+                    UsuarioID = usuarioId,
+                    VentaNoAplicadaID = (Guid)id
+                };
+
+                _context.VentasNoAplicadas.Add(ventaNoAplicada);
+            }
+
             VentaNoAplicadaDetalle ventaDetalle = new VentaNoAplicadaDetalle()
             {
                 Cantidad = cantidad,

@@ -6,6 +6,7 @@
     {
         public decimal ImporteTotal { get; set; }
         public int TotalDeRegistrosPendientes { get; set; }
+        public bool HayVentasPorCerrar { get; set; }
         public ICollection<VentaNoAplicadaDetalle> VentasNoAplicadasDetalle { get; set; }
     }
 }

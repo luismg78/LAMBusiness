@@ -149,10 +149,24 @@
                                 </div>
                             </a>
                         </div>
+                        <input type="hidden" asp-for="HayVentasPorCerrar" />
+                        @{
+                            var retiroEfectivoClick = "";
+                            var corteDeCajaClick = "";
+                            var fondo = "bg-opacity-25";
+                            var cursor = "not-allowed";
+                            if (Model.HayVentasPorCerrar)
+                            {
+                                corteDeCajaClick = "closeSalesMode();";
+                                retiroEfectivoClick = "withdrawCashMode(event);";
+                                fondo = "bg-white";
+                                cursor = "init";
+                            }
+                        }
                         <!-- retiro de efectivo -->
                         <div class="col-6 mb-1">
-                            <a href="#" onclick="withdrawCashMode(event);" class="text-secondary">
-                                <div id="withdrawCashButton" class="bg-white bg-card border box-shadow-lam rounded-lam-lg">
+                            <a href="#" onclick="@retiroEfectivoClick" class="text-secondary" style="cursor:@cursor;">
+                                <div id="withdrawCashButton" class="@fondo bg-card border box-shadow-lam rounded-lam-lg">
                                     <div class="p-2 mb-2">
                                         <div class="text-center mt-2">
                                             <h3 class="fas fa-cash-register"></h3>
@@ -167,8 +181,8 @@
                         </div>
                         <!-- corte de caja -->
                         <div class="col-6 mb-1">
-                            <a href="#" onclick="closeSalesMode();" class="text-secondary">
-                                <div id="closeSalesButton" class="bg-white bg-card border box-shadow-lam rounded-lam-lg">
+                            <a href="#" onclick="@corteDeCajaClick" class="text-secondary" style="cursor:@cursor;">
+                                <div id="closeSalesButton" class="@fondo bg-card border box-shadow-lam rounded-lam-lg">
                                     <div class="p-2 mb-2">
                                         <div class="text-center mt-2">
                                             <h3 class="fas fa-file-invoice-dollar"></h3>

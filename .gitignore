@@ -349,3 +349,7 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+No migrar los archivos de bitácora.
+Bitacora/
+Sesiones/

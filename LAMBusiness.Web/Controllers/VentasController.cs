@@ -48,6 +48,41 @@
                 return RedirectToAction(nameof(Index));
             }
 
+            var hayVentasPorCerrar = await _context.Ventas.AnyAsync(v => v.VentaCierreID == null || v.VentaCierreID == Guid.Empty);
+
+            int totalDeVentasNoAplicadas = 0;
+            VentaNoAplicada ventaNoAplicada = await InitializeSalesAsync();
+            
+            if (ventaNoAplicada == null)
+            {
+                TempData["toast"] = "La venta no puede ser inicializada.";
+                return RedirectToAction("Index", "Movimiento");
+            }
+            else
+            {
+                totalDeVentasNoAplicadas = await (from v in _context.VentasNoAplicadas
+                                                  join d in _context.VentasNoAplicadasDetalle on v.VentaNoAplicadaID equals d.VentaNoAplicadaID
+                                                  where v.UsuarioID == token.UsuarioID
+                                                  select v).CountAsync();
+            }
+
+            VentasNoAplicadasViewModel venta = new()
+            {
+                Fecha = ventaNoAplicada.Fecha,
+                HayVentasPorCerrar = hayVentasPorCerrar,
+                ImporteTotal = 0,
+                UsuarioID = token.UsuarioID,
+                VentaNoAplicadaID = ventaNoAplicada.VentaNoAplicadaID,
+                VentasNoAplicadasDetalle = null,
+                TotalDeRegistrosPendientes = totalDeVentasNoAplicadas,
+            };
+
+            ViewBag.Id = token.UsuarioID;
+            return View(venta);
+        }
+
+        private async Task<VentaNoAplicada> InitializeSalesAsync()
+        {
             VentaNoAplicada ventaNoAplicada = null;
             List<VentaNoAplicada> ventasNoAplicadas = await _context.VentasNoAplicadas
                 .Where(v => v.UsuarioID == token.UsuarioID)
@@ -73,22 +108,10 @@
                 catch (Exception)
                 {
                     TempData["toast"] = "La venta no puede ser inicializada.";
-                    return RedirectToAction("Index", "Movimiento");
                 }
             }
-
-            VentasNoAplicadasViewModel venta = new VentasNoAplicadasViewModel()
-            {
-                Fecha = ventaNoAplicada.Fecha,
-                ImporteTotal = 0,
-                UsuarioID = token.UsuarioID,
-                VentaNoAplicadaID = ventaNoAplicada.VentaNoAplicadaID,
-                VentasNoAplicadasDetalle = null,
-                TotalDeRegistrosPendientes = ventasNoAplicadas.Count - 1,
-            };
-
-            ViewBag.Id = token.UsuarioID;
-            return View(venta);
+            
+            return ventaNoAplicada;
         }
 
         public async Task<IActionResult> CloseSales()
@@ -280,12 +303,12 @@
                 switch (resultado.Mensaje.Trim().ToLower())
                 {
                     case "buscarproducto":
-                        return Json(new { BuscarProducto = true, Error = true });
+                        return Json(new { BuscarProducto = true, Error = true, Reiniciar = false });
                     case "reiniciar":
                         TempData["toast"] = "Identificador de la venta incorrecto.";
                         return Json(new { Reiniciar = true, Error = true });
                     default:
-                        return Json(new { Estatus = resultado.Mensaje, Error = true });
+                        return Json(new { Estatus = resultado.Mensaje, Error = true, Reiniciar = true });
                 }
             }
 

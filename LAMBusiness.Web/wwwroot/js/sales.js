@@ -3,6 +3,7 @@ let ventaId = document.getElementById('VentaNoAplicadaID');
 let inputText = document.getElementById('inputText');
 let icon = document.getElementById('icon');
 let message = document.getElementById('messageLabel');
+let hayVentasPorCerrar = document.getElementById('HayVentasPorCerrar');
 
 let myOffcanvas = document.getElementById('offcanvasRight');
 let bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas);
@@ -80,11 +81,15 @@ document.getElementById('inputText').addEventListener('keydown', function (e) {
                 payMode();
                 break;
             case 118: //F7 retiro de efectivo
-                withdrawCashMode(event);
+                if (hayVentasPorCerrar.value === 'True') {
+                    withdrawCashMode(event);
+                }
                 break;
             case 119: //F8
                 e.preventDefault();
-                closeSalesMode();
+                if (hayVentasPorCerrar.value === 'True') {
+                    closeSalesMode();
+                }
                 break;
         }
     }
