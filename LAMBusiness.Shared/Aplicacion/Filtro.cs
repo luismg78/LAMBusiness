@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
 namespace LAMBusiness.Shared.Aplicacion
 {
@@ -6,6 +6,8 @@ namespace LAMBusiness.Shared.Aplicacion
     {
         public T Datos { get; set; }
         public string Patron { get; set; }
+        public DateTime FechaInicio { get; set; }
+        public DateTime FechaFin { get; set; }
         public int Registros { get; set; }
         public int Skip { get; set; }
         public bool PermisoLectura { get; set; }

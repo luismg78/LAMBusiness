@@ -227,6 +227,7 @@
 
             var movimiento = new Movimiento()
             {
+                CorteDeCaja = GetCountCortesDeCajas(),
                 Devoluciones = GetCountDevoluciones(),
                 Entradas = GetCountEntradas(),
                 RetiroDeCaja = GetCountRetiros(),
@@ -338,6 +339,10 @@
         #endregion
 
         #region Movimiento's counts
+        private int GetCountCortesDeCajas()
+        {
+            return 0; //_context.corte.Where(r => r.VentaCierreID == Guid.Empty).Count();
+        }
         private int GetCountDevoluciones()
         {
             //cambiar entradas por devoluciones
@@ -360,7 +365,6 @@
             return _context.Ventas.Count();
         }
         #endregion        
-
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

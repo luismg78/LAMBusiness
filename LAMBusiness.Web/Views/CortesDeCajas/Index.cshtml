@@ -1,0 +1,81 @@
+﻿@model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Shared.Movimiento.VentaCierre>>
+
+@{
+    ViewData["Title"] = "Cortes de cajas";
+}
+
+<div class="modal-content border-0 box-shadow">
+    <div class="modal-header pb-0 align-items-baseline">
+        <div class="ms-3">
+            <h3 class="modal-title" id="exampleModalLabel">Cortes de cajas</h3>
+            <ul class="breadcrumb bg-transparent p-0 small">
+                <li class="breadcrumb-item"><a asp-action="Movimiento" asp-controller="Home">Movimientos</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index" asp-controller="CortesDeCajas">Cortes de cajas</a></li>
+                <li class="breadcrumb-item active text-muted">Lista</li>
+            </ul>
+        </div>
+        <div class="d-flex align-items-center">
+            <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewIndex', event);">
+                <i class="fa fa-question-circle"></i>
+            </a>
+            <a asp-action="Movimiento" asp-controller="Home" class="btn-close me-md-1" aria-label="Close"></a>
+        </div>
+    </div>
+    <div class="modal-body pt-4" data-module="CortesDeCajas">
+        <div class="row px-md-3">
+            <div class="col-9 col-md-8 pr-0 pr-md-3 d-inline-flex">
+                <div class="input-group mb-3 search">
+                    <input type="search" id="SearchInput" class="form-control" placeholder="Buscar..." onkeypress="searchWithDates(event);">
+                    <button class="btn btn-light border" type="button" onclick="searchWithDates(event);"><i class="fa fa-search"></i></button>
+                </div>
+                <button class="btn btn-light border rounded-circle mb-3 px-3 ms-2" data-bs-toggle="modal" data-bs-target="#filtrarFechasModal">
+                    <i class="fas fa-calendar"></i>
+                </button>
+            </div>
+            <div class="col-3 col-md-4 text-end">
+                @if (Model.PermisoEscritura)
+                {
+                    <a asp-action="Create" class="btn btn-base"><i class="fas fa-file-invoice-dollar"></i><span class="d-none d-md-inline-block ms-2">Corte de caja</span></a>
+                }
+            </div>
+            <div class="col-12">
+                <span class="badge bg-light border text-dark fw-normal">
+                    filtro:
+                    <span id="fechaInicioLabel">@Model.FechaInicio.ToShortDateString()</span> - 
+                    <span id="fechaFinLabel">@Model.FechaFin.ToShortDateString()</span>
+                </span>
+            </div>
+        </div>
+        <div>
+            <partial name="_AddRowsNextAsync" model="Model" />
+        </div>
+    </div>
+    <div>
+        <!-- Modal -->
+        <div class="modal fade" id="filtrarFechasModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Fechas</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label asp-for="FechaInicio" class="control-label">Fecha Inicio</label>
+                            <input asp-for="FechaInicio" type="date" class="form-control" autofocus />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="FechaFin" class="control-label">Fecha Inicio</label>
+                            <input asp-for="FechaFin" type="date" class="form-control" autofocus />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-base" data-bs-dismiss="modal" onclick="searchWithDates(event);">Aplicar filtro</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

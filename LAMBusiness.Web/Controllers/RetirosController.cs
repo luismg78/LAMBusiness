@@ -1,36 +1,29 @@
 ﻿namespace LAMBusiness.Web.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
+    using Data;
+    using Helpers;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
-    using Data;
-    using Helpers;
     using Models.ViewModels;
     using Shared.Aplicacion;
-    using Shared.Contacto;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
     public class RetirosController : GlobalController
     {
         private readonly DataContext _context;
-        private readonly ICombosHelper _combosHelper;
-        private readonly IConverterHelper _converterHelper;
         private readonly IGetHelper _getHelper;
         private readonly IConfiguration _configuration;
         private Guid moduloId = Guid.Parse("AA3E3482-0EC5-40B8-8C48-7E567DA135F6");
 
         public RetirosController(DataContext context,
-            ICombosHelper combosHelper,
-            IConverterHelper converterHelper,
             IGetHelper getHelper,
             IConfiguration configuration)
         {
             _context = context;
-            _combosHelper = combosHelper;
-            _converterHelper = converterHelper;
             _getHelper = getHelper;
             _configuration = configuration;
         }
@@ -110,9 +103,9 @@
                 {
                     if (w.Trim() != "")
                     {
-                            query = query.Where(c => c.Nombre.Contains(w) ||
-                                                     c.PrimerApellido.Contains(w) ||
-                                                     c.SegundoApellido.Contains(w));
+                        query = query.Where(c => c.Nombre.Contains(w) ||
+                                                 c.PrimerApellido.Contains(w) ||
+                                                 c.SegundoApellido.Contains(w));
                     }
                 }
             }
