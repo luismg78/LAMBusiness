@@ -2,7 +2,7 @@
 
 @if (Model != null)
 {
-    <div id="dRows" data-charging="0" data-rows-next="1">
+    <div id="dRowCorteDeCaja" data-charging="0" data-rows-next="1" data-cortesdecaja="1">
         @if (Model.Skip == 0)
         {
             <div class="row px-md-3">
@@ -17,46 +17,60 @@
         <div class="px-md-3">
             @foreach (var item in Model.Datos)
             {
+                string columnas = "col-md-7 col-lg-8";
+                if (!Model.PermisoEscritura)
+                {
+                    columnas = "col-lg-11";
+                }
                 <div class="row bg-row">
                     <div class="border-bottom col-2 col-lg-1 py-3 px-0 text-center">
                         <img class="rounded-circle" style="width:3rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = item.UsuarioID, tipo = "profile" })" alt="Image Profile" />
                     </div>
-                    <div class="border-bottom col-10 col-lg-11 py-3 px-2 px-lg-1">
+                    <div class="border-bottom col-10 @columnas py-3 px-2 px-lg-1">
                         <span class="text-dark">
                             @Html.DisplayFor(modelItem => item.Usuarios.PrimerApellido)
                             @Html.DisplayFor(modelItem => item.Usuarios.SegundoApellido)
                             @Html.DisplayFor(modelItem => item.Usuarios.Nombre)
                             <span class="text-muted ms-md-2" style="font-size:0.75rem;">@item.Fecha</span>
                         </span>
-                        <div class="text-truncate">
-                            <small class="badge bg-secondaryary border fw-normal text-dark">
-                                realizado por:
-                                <img class="rounded-circle" style="width:1rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = item.UsuarioCajaID, tipo = "profile" })" alt="Image Profile" />
-                                @Html.DisplayFor(modelItem => item.UsuarioCaja.PrimerApellido)
-                                @Html.DisplayFor(modelItem => item.UsuarioCaja.SegundoApellido)
-                                @Html.DisplayFor(modelItem => item.UsuarioCaja.Nombre)
-                            </small>
-                        </div>
-                        <div>
-                            @{
-                                decimal diferencia = item.ImporteSistema - item.ImporteUsuario;
-                                string bg = "bg-success";
-                                string color = "text-white";
-                                if (diferencia > 0)
-                                {
-                                    bg = "bg-warning";
-                                    color = "text-dark";
+                        @if (Model.PermisoLectura)
+                        {
+                            <div class="text-truncate">
+                                <small class="badge bg-secondaryary border fw-normal text-dark">
+                                    realizado por:
+                                    <img class="rounded-circle" style="width:1rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = item.UsuarioCajaID, tipo = "profile" })" alt="Image Profile" />
+                                    @Html.DisplayFor(modelItem => item.UsuarioCaja.PrimerApellido)
+                                    @Html.DisplayFor(modelItem => item.UsuarioCaja.SegundoApellido)
+                                    @Html.DisplayFor(modelItem => item.UsuarioCaja.Nombre)
+                                </small>
+                            </div>
+                            <div>
+                                @{
+                                    decimal diferencia = item.ImporteSistema - item.ImporteUsuario;
+                                    string bg = "bg-success";
+                                    string color = "text-white";
+                                    if (diferencia > 0)
+                                    {
+                                        bg = "bg-warning";
+                                        color = "text-dark";
+                                    }
+                                    else if (diferencia < 0)
+                                    {
+                                        bg = "bg-danger";
+                                    }
                                 }
-                                else if (diferencia < 0)
-                                {
-                                    bg = "bg-danger";
-                                }
-                            }
-                            <small class="badge bg-secondaryary border text-dark">Sistema: @item.ImporteSistema</small>
-                            <small class="badge bg-secondaryary border text-dark">Retiros: @item.ImporteUsuario</small>
-                            <small class="badge bg-secondaryary @color @bg">Diferencia: @diferencia</small>
-                        </div>
+                                <small class="badge bg-secondaryary border text-dark">Sistema: @item.ImporteSistema</small>
+                                <small class="badge bg-secondaryary border text-dark">Retiros: @item.ImporteUsuario</small>
+                                <small class="badge bg-secondaryary @color @bg">Diferencia: @diferencia</small>
+                            </div>
+                        }
                     </div>
+                    @if (Model.PermisoEscritura)
+                    {
+                        <div class="border-bottom col-12 col-md-3 py-2 p-md-3 text-end">
+                            <a href="#" class="">aplicar</a>
+                        </div>
+                    }
                 </div>
             }
         </div>

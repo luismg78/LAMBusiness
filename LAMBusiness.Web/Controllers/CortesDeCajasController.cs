@@ -41,7 +41,7 @@ namespace LAMBusiness.Web.Controllers
             }
 
             var f = DateTime.Now;
-            var fechaInicio = new DateTime(f.Year, f.Month, f.Day, 0, 0, 0);
+            var fechaInicio = new DateTime(f.Year, f.Month - 1, 1, 0, 0, 0);
             var fechaFin = new DateTime(f.Year, f.Month, f.Day, 23, 59, 59);
 
             var cierres = _context.VentasCierre
@@ -80,23 +80,53 @@ namespace LAMBusiness.Web.Controllers
             if (validateToken != null) { return null; }
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
-            {
                 return null;
+
+            var esAdministrador = await EsAdministradorAsync();
+            IQueryable<VentaCierre> query;
+
+            if (todos)
+            {
+                var fi = filtro.FechaInicio;
+                var ff = filtro.FechaFin;
+                var fechaInicio = new DateTime(fi.Year, fi.Month, fi.Day, 0, 0, 0);
+                var fechaFin = new DateTime(ff.Year, ff.Month, ff.Day, 23, 59, 59);
+
+                query = _context.VentasCierre
+                    .Include(u => u.Usuarios)
+                    .Include(u => u.UsuarioCaja)
+                    .Where(u => u.Fecha >= fechaInicio && u.Fecha <= fechaFin
+                             && u.Usuarios.AdministradorID != "SA")
+                    .AsQueryable();
+
+                filtro.PermisoLectura = true;
+                filtro.PermisoEscritura = false;
+            }
+            else
+            {
+                var usuarios = await _context.Ventas
+                    .Where(u => u.Usuarios.AdministradorID != "SA" && (u.VentaCierreID == null || u.VentaCierreID == Guid.Empty))
+                    .Select(u => u.UsuarioID).Distinct().ToListAsync();
+
+                query = _context.Usuarios
+                    .Where(u => usuarios.Contains(u.UsuarioID))
+                    .Select(u => new VentaCierre()
+                    {
+                        Fecha = DateTime.Now,
+                        ImporteSistema = 0,
+                        ImporteUsuario= 0,
+                        UsuarioCajaID = u.UsuarioID, 
+                        UsuarioCaja = u,
+                        UsuarioID = u.UsuarioID,
+                        Usuarios = u,
+                        VentaCierreID = Guid.NewGuid(),
+                    }).AsQueryable();
+
+                filtro.PermisoLectura = false;
+                filtro.PermisoEscritura = true;
             }
 
-            var fi = filtro.FechaInicio;
-            var ff = filtro.FechaFin;
-            var fechaInicio = new DateTime(fi.Year, fi.Month, fi.Day, 0, 0, 0);
-            var fechaFin = new DateTime(ff.Year, ff.Month, ff.Day, 23, 59, 59);
-
-            IQueryable<VentaCierre> query = _context.VentasCierre
-                .Include(u => u.Usuarios)
-                .Include(u => u.UsuarioCaja)
-                .Where(u => u.Fecha >= fechaInicio && u.Fecha <= fechaFin 
-                         && u.Usuarios.AdministradorID != "SA")
-                .AsQueryable();
-
-            if (!await EsAdministradorAsync())
+            if (!esAdministrador)
                 query = query.Where(c => c.UsuarioID == token.UsuarioID);
 
             if (filtro.Patron != null && filtro.Patron != "")
@@ -112,7 +142,7 @@ namespace LAMBusiness.Web.Controllers
                     }
                 }
             }
-                
+
             filtro.Registros = await query.CountAsync();
             filtro.Datos = await query.OrderByDescending(q => q.Fecha)
                 .ThenByDescending(u => u.Usuarios.PrimerApellido)
@@ -121,7 +151,7 @@ namespace LAMBusiness.Web.Controllers
                 .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
-
+            
             return new PartialViewResult
             {
                 ViewName = "_AddRowsNextAsync",
@@ -129,7 +159,7 @@ namespace LAMBusiness.Web.Controllers
                             <Filtro<List<VentaCierre>>>(ViewData, filtro)
             };
         }
-    
+
         private async Task<bool> EsAdministradorAsync()
         {
             return await _context.Usuarios

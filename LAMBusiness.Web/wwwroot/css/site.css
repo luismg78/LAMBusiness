@@ -220,7 +220,7 @@ transparencia: var(--lm-bg-transparency)*/
 }
 
 /*Movil vertical*/
-@media screen and (max-width: 425px) {
+@media screen and (max-width: 426px) {
     .box-responsive{max-width:100%;}
     .btn-icon {padding:0.3rem;}
     .btn-lam-75 {margin-bottom:0.75rem; padding:0.75rem;}
@@ -228,7 +228,7 @@ transparencia: var(--lm-bg-transparency)*/
         .card-header-lam-d1 p.title{font-size:1.1rem;}
         .card-header-lam-d1 span.subtitle{font-size:0.7rem;}
     .image-profile{width:5rem;}
-    .mt-container{margin-top:5.5rem;}
+    .mt-container{margin-top:4.5rem;}
     .process-with-spinner {background-color:#fff;}
     .text-deleteConfirm > p{font-size:1.3rem;}
 }

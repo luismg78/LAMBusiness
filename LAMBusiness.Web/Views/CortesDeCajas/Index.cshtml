@@ -23,25 +23,26 @@
     </div>
     <div class="modal-body pt-4" data-module="CortesDeCajas">
         <div class="row px-md-3">
-            <div class="col-9 col-md-8 pr-0 pr-md-3 d-inline-flex">
+            <div class="col-12 col-lg-7 pr-0 pr-md-3 d-inline-flex">
                 <div class="input-group mb-3 search">
-                    <input type="search" id="SearchInput" class="form-control" placeholder="Buscar..." onkeypress="searchWithDates(event);">
-                    <button class="btn btn-light border" type="button" onclick="searchWithDates(event);"><i class="fa fa-search"></i></button>
+                    <input type="search" id="CorteDeCajaSearchInput" class="form-control" placeholder="Buscar..." onkeypress="searchCortesDeCaja(event);">
+                    <button class="btn btn-light border" type="button" onclick="searchCortesDeCaja(event);"><i class="fa fa-search"></i></button>
                 </div>
                 <button class="btn btn-light border rounded-circle mb-3 px-3 ms-2" data-bs-toggle="modal" data-bs-target="#filtrarFechasModal">
                     <i class="fas fa-calendar"></i>
                 </button>
             </div>
-            <div class="col-3 col-md-4 text-end">
-                @if (Model.PermisoEscritura)
+            <div class="col-12 col-lg-5 text-end">
+                @*@if (Model.PermisoEscritura)
                 {
-                    <a asp-action="Create" class="btn btn-base"><i class="fas fa-file-invoice-dollar"></i><span class="d-none d-md-inline-block ms-2">Corte de caja</span></a>
-                }
+                }*@
+                <button id="CorteDeCajaTodosButton" class="btn btn-base" onclick="changeCortesDeCaja(event, '1');">Todos</button>
+                <button id="CorteDeCajaPendientesButton" class="btn btn-outline-base" onclick="changeCortesDeCaja(event, '0');">Pendientes<span class="d-none d-md-inline-block"> de Cierre</span></button>
             </div>
-            <div class="col-12">
+            <div id="dfiltro" class="col-12">
                 <span class="badge bg-light border text-dark fw-normal">
                     filtro:
-                    <span id="fechaInicioLabel">@Model.FechaInicio.ToShortDateString()</span> - 
+                    <span id="fechaInicioLabel">@Model.FechaInicio.ToShortDateString()</span> -
                     <span id="fechaFinLabel">@Model.FechaFin.ToShortDateString()</span>
                 </span>
             </div>
@@ -71,7 +72,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-base" data-bs-dismiss="modal" onclick="searchWithDates(event);">Aplicar filtro</button>
+                        <button type="button" class="btn btn-base" data-bs-dismiss="modal" onclick="searchCortesDeCaja(event);">Aplicar filtro</button>
                     </div>
                 </div>
             </div>
@@ -79,3 +80,13 @@
     </div>
 </div>
 
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        let urlCortesDeCaja = '@Url.Action("_AddRowsNext", "CortesDeCajas")';
+    </script>
+    <script src="~/js/movements.js"></script>
+}

@@ -20,7 +20,7 @@
                 @foreach (var item in Model.Datos)
                 {
                     pendiente = "text-muted";
-                    if (item.VentaPendiente == Guid.Empty)
+                    if (item.VentaPendiente == null || item.VentaPendiente == Guid.Empty)
                     {
                         pendiente = "text-danger";
                     }
@@ -36,6 +36,12 @@
                             </span>
                             <div class="d-block">
                                 <small class="text-muted me-md-3">@Html.DisplayFor(modelItem => item.Fecha)</small>
+                                @if (item.VentaPendiente == null || item.VentaPendiente == Guid.Empty)
+                                {
+                                    <small class="badge bg-danger fw-normal">Pendiente de cierre</small>
+                                }else{
+                                    <small class="badge bg-light border fw-normal text-dark">Cerrado</small>
+                                }
                             </div>
                         </div>
                         <div class="border-bottom col-12 col-md-3 py-2 p-md-3 text-end">

@@ -2,6 +2,7 @@
 {
     using Data;
     using Helpers;
+    using LAMBusiness.Shared.Movimiento;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.EntityFrameworkCore;
@@ -37,11 +38,15 @@
                 return RedirectToAction("Index", "Home");
             }
 
+            var f = DateTime.Now;
+            var fechaInicio = new DateTime(f.Year, f.Month - 1, 1, 0, 0, 0);
+            var fechaFin = new DateTime(f.Year, f.Month, f.Day, 23, 59, 59);
+
             var retiros = (from r in _context.RetirosCaja
                            join u in _context.Usuarios on r.UsuarioID equals u.UsuarioID
                            where u.AdministradorID != "SA" &&
+                                 r.Fecha >= fechaInicio && r.Fecha <= fechaFin &&
                                  (r.VentaCierreID == Guid.Empty || r.VentaCierreID == null)
-                           orderby r.Fecha descending
                            select new RetirosViewModel()
                            {
                                UsuarioID = u.UsuarioID,
@@ -53,10 +58,20 @@
                                VentaPendiente = r.VentaCierreID,
                            });
 
+            var administrador = await EsAdministradorAsync();
+            if (!administrador)
+                retiros = retiros.Where(c => c.UsuarioID == token.UsuarioID);
+
             var filtro = new Filtro<List<RetirosViewModel>>()
             {
-                Datos = await retiros.Take(50).ToListAsync(),
+                Datos = await retiros.OrderByDescending(q => q.Fecha)
+                .ThenByDescending(u => u.PrimerApellido)
+                .ThenByDescending(u => u.SegundoApellido)
+                .ThenByDescending(u => u.Nombre)
+                .Take(50).ToListAsync(),
                 Patron = "",
+                FechaInicio = fechaInicio,
+                FechaFin = fechaFin,
                 PermisoEscritura = permisosModulo.PermisoEscritura,
                 PermisoImprimir = permisosModulo.PermisoImprimir,
                 PermisoLectura = permisosModulo.PermisoLectura,
@@ -74,14 +89,13 @@
             if (validateToken != null) { return null; }
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
-            {
                 return null;
-            }
+
+            var esAdministrador = await EsAdministradorAsync();
 
             IQueryable<RetirosViewModel> query = (from r in _context.RetirosCaja
                                                   join u in _context.Usuarios on r.UsuarioID equals u.UsuarioID
                                                   where u.AdministradorID != "SA"
-                                                  orderby r.Fecha descending
                                                   select new RetirosViewModel()
                                                   {
                                                       UsuarioID = u.UsuarioID,
@@ -92,9 +106,21 @@
                                                       SegundoApellido = u.SegundoApellido,
                                                       VentaPendiente = r.VentaCierreID,
                                                   });
+            if (todos)
+            {
+                var fi = filtro.FechaInicio;
+                var ff = filtro.FechaFin;
+                var fechaInicio = new DateTime(fi.Year, fi.Month, fi.Day, 0, 0, 0);
+                var fechaFin = new DateTime(ff.Year, ff.Month, ff.Day, 23, 59, 59);
 
-            if (!todos)
+                query = query.Where(r => r.Fecha >= fechaInicio && r.Fecha <= fechaFin);
+            }
+            else
                 query = query.Where(q => q.VentaPendiente == Guid.Empty || q.VentaPendiente == null);
+
+            if (!esAdministrador)
+                query = query.Where(c => c.UsuarioID == token.UsuarioID);
+
 
             if (filtro.Patron != null && filtro.Patron != "")
             {
@@ -113,6 +139,9 @@
             filtro.Registros = await query.CountAsync();
 
             filtro.Datos = await query.OrderByDescending(q => q.Fecha)
+                .ThenByDescending(u => u.PrimerApellido)
+                .ThenByDescending(u => u.SegundoApellido)
+                .ThenByDescending(u => u.Nombre)
                 .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
@@ -127,6 +156,13 @@
                 ViewData = new ViewDataDictionary
                             <Filtro<List<RetirosViewModel>>>(ViewData, filtro)
             };
+        }
+
+        private async Task<bool> EsAdministradorAsync()
+        {
+            return await _context.Usuarios
+                .Where(u => u.UsuarioID == token.UsuarioID && (u.AdministradorID == "SA" || u.AdministradorID == "GA"))
+                .AnyAsync();
         }
     }
 }

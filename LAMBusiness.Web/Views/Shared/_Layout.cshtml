@@ -116,7 +116,6 @@
         var skip = 0;
         var itemToDelete;
         var filter;
-        var filter2;
 
         $(document).ready(function () {
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
@@ -269,23 +268,6 @@
                 };
                 addRowsNext(skip, true);
             }
-        }
-        function searchWithDates(e){
-            var date1 = $('#FechaInicio')[0] === undefined ? "" : $('#FechaInicio').val();
-            var date2 = $('#FechaFin')[0] === undefined ? "" : $('#FechaFin').val();
-
-            if(typeof fechaInicioLabel !== "undefined"){
-                fechaInicioLabel.innerText = date1;
-            }
-            if (typeof fechaFinLabel !== "undefined") {
-                fechaFinLabel.innerText = date2;
-            }
-
-            filter2 = {
-                FechaInicio: date1,
-                FechaFin: date2
-            }
-            search(e);
         }
 </script>
 </body>

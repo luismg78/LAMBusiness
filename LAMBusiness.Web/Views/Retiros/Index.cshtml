@@ -23,20 +23,56 @@
     </div>
     <div class="modal-body pt-4" data-module="Retiros">
         <div class="row px-md-3">
-            <div class="col-12 col-lg-7 pr-0 pr-md-3">
+            <div class="col-12 col-lg-7 pr-0 pr-md-3 d-inline-flex">
                 <div class="input-group mb-3 search">
                     <input type="search" id="RetiroSearchInput" class="form-control" placeholder="Buscar..." onkeypress="searchRetiros(event);">
                     <button class="btn btn-light border" type="button" onclick="searchRetiros(event);"><i class="fa fa-search"></i></button>
                 </div>
+                <button class="btn btn-light border rounded-circle mb-3 px-3 ms-2" data-bs-toggle="modal" data-bs-target="#filtrarFechasModal">
+                    <i class="fas fa-calendar"></i>
+                </button>
             </div>
             <div class="col-12 col-lg-5 text-end">
-                @*<a asp-action="Create" class="btn btn-base"><span class="d-none d-md-inline-block ms-2">Nuevo Registro</span></a>*@
                 <button id="RetiroTodosButton" class="btn btn-outline-base" onclick="changeRetiros(event, '1');">Todos</button>
-                <button id="RetiroPendientesButton" class="btn btn-base" onclick="changeRetiros(event, '0');">Pendientes<span class="d-none d-md-inline-block"> de Cierre</span></button>
+                <button id="RetiroPendientesButton" class="btn btn-base" onclick="changeRetiros(event, '0');">Pendientes <span class="d-none d-md-inline-block"> de Cierre</span></button>
+            </div>
+             <div id="dfiltro" class="col-12">
+                <span class="badge bg-light border text-dark fw-normal">
+                    filtro:
+                    <span id="fechaInicioLabel">@Model.FechaInicio.ToShortDateString()</span> -
+                    <span id="fechaFinLabel">@Model.FechaFin.ToShortDateString()</span>
+                </span>
             </div>
         </div>
         <div>
             <partial name="_AddRowsNextAsync" model="Model" />
+        </div>
+    </div>
+    <div>
+        <!-- Modal -->
+        <div class="modal fade" id="filtrarFechasModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Fechas</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label asp-for="FechaInicio" class="control-label">Fecha Inicio</label>
+                            <input asp-for="FechaInicio" type="date" class="form-control" autofocus />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="FechaFin" class="control-label">Fecha Inicio</label>
+                            <input asp-for="FechaFin" type="date" class="form-control" autofocus />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-base" data-bs-dismiss="modal" onclick="searchRetiros(event);">Aplicar filtro</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

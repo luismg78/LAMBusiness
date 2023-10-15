@@ -6,6 +6,14 @@ let almacenDescripcion = document.getElementById('Descripcion');
 let almacenDatos = document.getElementById('AlmacenDatos');
 let almacenSearch = document.getElementById('AlmacenSearch');
 
+let dRowCorteDeCaja = document.getElementById('dRowCorteDeCaja');
+let CorteDeCajaSearchInput = document.getElementById('CorteDeCajaSearchInput');
+let CorteDeCajaTodosButton = document.getElementById('CorteDeCajaTodosButton');
+let CorteDeCajaPendientesButton = document.getElementById('CorteDeCajaPendientesButton');
+
+let FechaInicioInput = document.getElementById('FechaInicio');
+let FechaFinInput = document.getElementById('FechaFin');
+
 let dRowRetiro = document.getElementById('dRowRetiro');
 let retiroSearchInput = document.getElementById('RetiroSearchInput');
 let retiroTodosButton = document.getElementById('RetiroTodosButton');
@@ -147,16 +155,53 @@ function addRowsNextAlmacen(skip, inicio = false) {
     });
 }
 
+function addRowsNextCortesDeCaja(skip, todos, inicio = false) {
+    addProcessWithSpinnerInList('SpinListAlmacen', 'fa-search');
+    dRowCorteDeCaja.setAttribute('data-charging', "1");
+    var searchBy = CorteDeCajaSearchInput === undefined ? "" : CorteDeCajaSearchInput.value;
+    var date1 = FechaInicioInput === undefined ? "" : FechaInicioInput.value;
+    var date2 = FechaFinInput === undefined ? "" : FechaFinInput.value;
+
+    $.ajax({
+        url: urlCortesDeCaja,
+        method: 'POST',
+        datatype: 'text',
+        data: {
+            filtro: {
+                Patron: searchBy,
+                Skip: skip,
+                FechaInicio: date1,
+                FechaFin: date2
+            },
+            todos: todos === '1' ? true : false
+        },
+        success: function (r) {
+            if (inicio) { dRowCorteDeCaja.innerHTML = ''; }
+            if (r !== null && r.trim() !== '') {
+                dRowCorteDeCaja.innerHTML += r;
+                dRowCorteDeCaja.scrollTop -= 100;
+                CorteDeCajaSearchInput.focus();
+            } else {
+                dRowCorteDeCaja.setAttribute('data-rows-next', "0");
+            }
+            dRowCorteDeCaja.setAttribute('data-charging', "0");
+            removeProcessWithSpinnerInList('SpinListAlmacen', 'fa-search');
+        },
+        error: function (r) {
+            dRowCorteDeCaja.setAttribute('data-charging', "0");
+            removeProcessWithSpinnerInList('SpinListAlmacen', 'fa-search');
+        },
+        cache: false
+    });
+}
+
 function addRowsNextRetiros(skip, todos, inicio = false) {
     addProcessWithSpinnerInList('SpinListAlmacen', 'fa-search');
     dRowRetiro.setAttribute('data-charging', "1");
     var searchBy = retiroSearchInput === undefined ? "" : retiroSearchInput.value;
-    //if (searchBy === '') {
-    //    dRowRetiro.setAttribute('data-rows-next', "0");
-    //    dRowRetiro.setAttribute('data-charging', "0");
-    //    removeProcessWithSpinnerInList('SpinListAlmacen', 'fa-search');
-    //    return false;
-    //}
+    var date1 = FechaInicioInput === undefined ? "" : FechaInicioInput.value;
+    var date2 = FechaFinInput === undefined ? "" : FechaFinInput.value;
+
     $.ajax({
         url: urlRetiros,
         method: 'POST',
@@ -164,7 +209,9 @@ function addRowsNextRetiros(skip, todos, inicio = false) {
         data: {
             filtro: {
                 Patron: searchBy,
-                Skip: skip
+                Skip: skip,
+                FechaInicio: date1,
+                FechaFin: date2
             },
             todos: todos === '1' ? true : false
         },
@@ -273,6 +320,20 @@ function apply(e) {
     url = url.replace('paramId', itemToApply);
 
     window.location.href = url;
+}
+
+function changeCortesDeCaja(e, value) {
+    dRowCorteDeCaja.setAttribute('data-cortesdecaja', value);
+    if (e.currentTarget.id === 'CorteDeCajaTodosButton') {
+        CorteDeCajaPendientesButton.classList.remove('btn-base');
+        CorteDeCajaPendientesButton.classList.add('btn-outline-base');
+    } else {
+        CorteDeCajaTodosButton.classList.remove('btn-base');
+        CorteDeCajaTodosButton.classList.add('btn-outline-base');
+    }
+    e.currentTarget.classList.remove('btn-outline-base');
+    e.currentTarget.classList.add('btn-base');
+    searchCortesDeCaja(event);
 }
 
 function changeRetiros(e, value) {
@@ -567,11 +628,36 @@ function searchAlmacen(e) {
     }
 }
 
+function searchCortesDeCaja(e) {
+    if (e.keyCode === 13 || e.type === 'click') {
+        e.preventDefault();
+        skip = 0;
+        let todos = dRowCorteDeCaja.getAttribute('data-cortesdecaja');
+        var f = document.getElementById('dfiltro');
+        if (todos === '1') {
+            fechaInicioLabel.innerText = FechaInicioInput.value;
+            fechaFinLabel.innerText = FechaFinInput.value;
+            f.classList.remove('d-none');
+        } else {
+            f.classList.add('d-none');
+        }
+        addRowsNextCortesDeCaja(skip, todos, true);
+    }
+}
+
 function searchRetiros(e) {
     if (e.keyCode === 13 || e.type === 'click') {
         e.preventDefault();
         skip = 0;
         let todos = dRowRetiro.getAttribute('data-retiros');
+        var f = document.getElementById('dfiltro');
+        if (todos === '1') {
+            fechaInicioLabel.innerText = FechaInicioInput.value;
+            fechaFinLabel.innerText = FechaFinInput.value;
+            f.classList.remove('d-none');
+        } else {
+            f.classList.add('d-none');
+        }
         addRowsNextRetiros(skip, todos, true);
     }
 }
