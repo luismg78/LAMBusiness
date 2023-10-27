@@ -1,11 +1,9 @@
-﻿using LAMBusiness.Shared.Aplicacion;
+﻿using LAMBusiness.Contextos;
+using LAMBusiness.Shared.Aplicacion;
 using LAMBusiness.Shared.Movimiento;
-using LAMBusiness.Web.Data;
 using LAMBusiness.Web.Helpers;
-using LAMBusiness.Web.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -114,8 +112,8 @@ namespace LAMBusiness.Web.Controllers
                     {
                         Fecha = DateTime.Now,
                         ImporteSistema = 0,
-                        ImporteUsuario= 0,
-                        UsuarioCajaID = u.UsuarioID, 
+                        ImporteUsuario = 0,
+                        UsuarioCajaID = u.UsuarioID,
                         UsuarioCaja = u,
                         UsuarioID = u.UsuarioID,
                         Usuarios = u,
@@ -151,7 +149,7 @@ namespace LAMBusiness.Web.Controllers
                 .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
-            
+
             return new PartialViewResult
             {
                 ViewName = "_AddRowsNextAsync",

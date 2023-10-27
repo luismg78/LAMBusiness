@@ -8,12 +8,13 @@
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
-    using Data;
+    using LAMBusiness.Contextos;
     using Helpers;
     using Interfaces;
     using Models.ViewModels;
     using Shared.Aplicacion;
     using Shared.Movimiento;
+    using LAMBusiness.Backend;
 
     public class SalidasController : GlobalController
     {
@@ -23,6 +24,7 @@
         private readonly IConverterHelper _converterHelper;
         private readonly IConfiguration _configuration;
         private readonly IDashboard _dashboard;
+        private readonly Productos _productos;
         private Guid moduloId = Guid.Parse("D6DC97D9-C3DE-4920-A0B1-B63D7685BB6A");
 
         public SalidasController(DataContext context,
@@ -38,6 +40,7 @@
             _converterHelper = converterHelper;
             _configuration = configuration;
             _dashboard = dashboard;
+            _productos = new Productos(context);
         }
 
         public async Task<IActionResult> Index()
@@ -608,7 +611,7 @@
             }
 
             var almacen = await _getHelper.GetAlmacenByIdAsync((Guid)salidaDetalle.AlmacenID);
-            var producto = await _getHelper.GetProductByIdAsync((Guid)salidaDetalle.ProductoID);
+            var producto = await _productos.ObtenerRegistroPorIdAsync((Guid)salidaDetalle.ProductoID);
 
             TempData["toast"] = "Falta información en algún campo.";
             if (ModelState.IsValid)
@@ -758,7 +761,7 @@
             }
 
             var almacen = await _getHelper.GetAlmacenByIdAsync((Guid)salidaDetalle.AlmacenID);
-            var producto = await _getHelper.GetProductByIdAsync((Guid)salidaDetalle.ProductoID);
+            var producto = await _productos.ObtenerRegistroPorIdAsync((Guid)salidaDetalle.ProductoID);
 
             TempData["toast"] = "Información incompleta, verifique los campos.";
             if (ModelState.IsValid)

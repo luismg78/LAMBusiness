@@ -1,4 +1,4 @@
-﻿namespace LAMBusiness.Web.Data
+﻿namespace LAMBusiness.Contextos
 {
     using Microsoft.EntityFrameworkCore;
     using Shared.Aplicacion;

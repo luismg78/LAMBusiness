@@ -1,19 +1,20 @@
 ﻿namespace LAMBusiness.Web.Helpers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Net;
-    using System.Threading.Tasks;
+    using LAMBusiness.Backend;
+    using LAMBusiness.Contextos;
     using Microsoft.EntityFrameworkCore;
-    using Data;
     using Models.ViewModels;
     using Newtonsoft.Json;
     using Shared.Aplicacion;
     using Shared.Catalogo;
     using Shared.Contacto;
     using Shared.Movimiento;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Threading.Tasks;
 
     public class GetHelper : IGetHelper
     {
@@ -342,13 +343,13 @@
                     var estadisticas = await _context.EstadisticasMovimientosMensual
                         .Where(e => e.AlmacenID == almacenId && e.Año == año)
                         .ToListAsync();
-                    if(estadisticas != null && estadisticas.Count > 0)
+                    if (estadisticas != null && estadisticas.Count > 0)
                     {
                         List<decimal> importe = new List<decimal>();
                         for (byte i = 1; i <= 12; i++)
                         {
                             var estadistica = estadisticas.FirstOrDefault(e => e.Mes == i);
-                            if(estadistica != null)
+                            if (estadistica != null)
                                 importe.Add((decimal)estadistica.VentasImporte);
                             else
                                 importe.Add(0);
@@ -359,7 +360,7 @@
                             Name = $"Total Venta {año}",
                             Data = importe
                         });
-                    } 
+                    }
                 }
 
                 return new EstadisticaMovimientoChartViewModel()
@@ -598,93 +599,6 @@
             return await _context.Paquetes.FirstOrDefaultAsync(p => p.PiezaProductoID == id);
         }
 
-        //Productos
-
-        /// <summary>
-        /// Obtener producto por ID.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns>String</returns>
-        public async Task<Producto> GetProductByIdAsync(Guid id)
-        {
-            return await _context.Productos
-                .Include(p => p.Existencias)
-                .ThenInclude(p => p.Almacenes)
-                .Include(p => p.Marcas)
-                .Include(p => p.Paquete)
-                .Include(p => p.TasasImpuestos)
-                .Include(p => p.Unidades)
-                .FirstOrDefaultAsync(p => p.ProductoID == id);
-        }
-
-        /// <summary>
-        /// Obtener producto por código
-        /// </summary>
-        /// <param name="codigo"></param>
-        /// <returns></returns>
-        public async Task<Producto> GetProductByCodeAsync(string codigo)
-        {
-            return await _context.Productos
-                .Include(p => p.Existencias)
-                .ThenInclude(p => p.Almacenes)
-                .Include(p => p.Marcas)
-                .Include(p => p.Paquete)
-                .Include(p => p.TasasImpuestos)
-                .Include(p => p.Unidades)
-                .FirstOrDefaultAsync(p => p.Codigo == codigo);
-        }
-
-        /// <summary>
-        /// Obtener lista de productos de acuerdo al patrón solicitado
-        /// </summary>
-        /// <param name="pattern"></param>
-        /// <returns></returns>
-        public async Task<Filtro<List<Producto>>> GetProductosByPatternAsync(Filtro<List<Producto>> filtro)
-        {
-            IQueryable<Producto> query = null;
-            if (filtro.Patron != null && filtro.Patron != "")
-            {
-                var words = filtro.Patron.Trim().ToUpper().Split(' ');
-                foreach (var w in words)
-                {
-                    if (w.Trim() != "")
-                    {
-                        if (query == null)
-                        {
-                            query = _context.Productos
-                                    .Where(p => p.Codigo.Contains(w) ||
-                                                p.Nombre.Contains(w) ||
-                                                p.Descripcion.Contains(w));
-                        }
-                        else
-                        {
-                            query = query.Where(p => p.Codigo.Contains(w) ||
-                                                p.Nombre.Contains(w) ||
-                                                p.Descripcion.Contains(w));
-                        }
-                    }
-                }
-            }
-            if (query == null)
-            {
-                query = _context.Productos;
-            }
-
-            filtro.Registros = await query.CountAsync();
-
-            filtro.Datos = await query
-                .Include(p => p.Marcas)
-                .Include(p => p.TasasImpuestos)
-                .Include(p => p.Unidades)
-                .Include(p => p.Paquete)
-                .OrderBy(p => p.Nombre)
-                .Skip(filtro.Skip)
-                .Take(50)
-                .ToListAsync();
-
-            return filtro;
-        }
-
         //Proveedores
 
         /// <summary>
@@ -882,7 +796,7 @@
             //initialize result class
             Resultado<Token> resultado = new Resultado<Token>
             {
-                Contenido = null,
+                Datos = null,
                 Error = false,
                 Mensaje = ""
             };
@@ -899,7 +813,7 @@
                 //validate if session exists
                 if (sesion == null)
                 {
-                    resultado.Contenido = null;
+                    resultado.Datos = null;
                     resultado.Error = true;
                     resultado.Mensaje = "Sesión no inicilizada (Redireccionar a página de inicio de aplicación)";
                 }
@@ -948,7 +862,7 @@
                 {
                     return new Resultado<Token>()
                     {
-                        Contenido = null,
+                        Datos = null,
                         Error = true,
                         Mensaje = "Sesión no inicilizada (Redireccionar a página de inicio de aplicación)"
                     };
@@ -986,7 +900,7 @@
                 {
                     return new Resultado<Token>()
                     {
-                        Contenido = null,
+                        Datos = null,
                         Error = true,
                         Mensaje = "Usuario Inexistente (identificador del usuario incorrecto)"
                     };
@@ -996,7 +910,7 @@
                 {
                     return new Resultado<Token>()
                     {
-                        Contenido = null,
+                        Datos = null,
                         Error = true,
                         Mensaje = "Usuario Inactivo (verifique con el administrador del sistema)"
                     };
@@ -1007,7 +921,7 @@
                 {
                     return new Resultado<Token>()
                     {
-                        Contenido = null,
+                        Datos = null,
                         Error = true,
                         Mensaje = $"Su periodo de acceso al sistema comenzará el {token.FechaInicio.ToString("dddd, dd \\de MMMM \\de yyyy a la\\s HH:mm")}"
                     };
@@ -1017,7 +931,7 @@
                 {
                     return new Resultado<Token>()
                     {
-                        Contenido = null,
+                        Datos = null,
                         Error = true,
                         Mensaje = $"Su periodo de acceso al sistema expiró el {token.FechaTermino.ToString("dddd, dd \\de MMMM \\de yyyy a la\\s HH:mm")}"
                     };
@@ -1036,7 +950,7 @@
                 {
                     return new Resultado<Token>()
                     {
-                        Contenido = null,
+                        Datos = null,
                         Error = true,
                         Mensaje = "No tiene privilegios de acceso a la aplicación"
                     };
@@ -1046,7 +960,7 @@
                 token.IPPrivada = GetIPPrivada();
                 token.IPPublica = GetIPPublica();
 
-                resultado.Contenido = token;
+                resultado.Datos = token;
 
                 try
                 {
@@ -1061,7 +975,7 @@
                     //bitácora de error 
                     return new Resultado<Token>()
                     {
-                        Contenido = null,
+                        Datos = null,
                         Error = true,
                         Mensaje = "Error al cargar archivo de sesión"
                     };
@@ -1107,7 +1021,7 @@
             //initialize result class
             Resultado<Token> resultado = new Resultado<Token>
             {
-                Contenido = null,
+                Datos = null,
                 Error = false,
                 Mensaje = ""
             };
@@ -1128,7 +1042,7 @@
                 else
                 {
                     Sesion sesion = await _context.Sesiones
-                        .FirstOrDefaultAsync(s => s.SessionID == resultado.Contenido.SessionID);
+                        .FirstOrDefaultAsync(s => s.SessionID == resultado.Datos.SessionID);
 
                     //validate if session exists
                     if (sesion == null)
@@ -1137,7 +1051,7 @@
                     }
                     else
                     {
-                        if (resultado.Contenido.UsuarioID != usuarioId ||
+                        if (resultado.Datos.UsuarioID != usuarioId ||
                             sesion.UsuarioID != usuarioId)
                         {
                             iniciarToken = true;
@@ -1213,7 +1127,7 @@
                 {
                     return new Resultado<Token>()
                     {
-                        Contenido = null,
+                        Datos = null,
                         Error = true,
                         Mensaje = "Usuario Inexistente (identificador del usuario incorrecto)"
                     };
@@ -1223,7 +1137,7 @@
                 {
                     return new Resultado<Token>()
                     {
-                        Contenido = null,
+                        Datos = null,
                         Error = true,
                         Mensaje = "Usuario Inactivo (verifique con el administrador del sistema)"
                     };
@@ -1234,7 +1148,7 @@
                 {
                     return new Resultado<Token>()
                     {
-                        Contenido = null,
+                        Datos = null,
                         Error = true,
                         Mensaje = $"Su periodo de acceso al sistema comenzará el {token.FechaInicio.ToString("dddd, dd \\de MMMM \\de yyyy a la\\s HH:mm")}"
                     };
@@ -1244,7 +1158,7 @@
                 {
                     return new Resultado<Token>()
                     {
-                        Contenido = null,
+                        Datos = null,
                         Error = true,
                         Mensaje = $"Su periodo de acceso al sistema expiró el {token.FechaTermino.ToString("dddd, dd \\de MMMM \\de yyyy a la\\s HH:mm")}"
                     };
@@ -1265,7 +1179,7 @@
                     {
                         return new Resultado<Token>()
                         {
-                            Contenido = null,
+                            Datos = null,
                             Error = true,
                             Mensaje = "No tiene privilegios de acceso a la aplicación"
                         };
@@ -1276,7 +1190,7 @@
                 token.IPPrivada = GetIPPrivada();
                 token.IPPublica = GetIPPublica();
 
-                resultado.Contenido = token;
+                resultado.Datos = token;
 
                 //actualizar fecha de último acceso a la aplicación por el usuario.
                 var usuario = await _context.Usuarios.FindAsync(usuarioId);
@@ -1301,7 +1215,7 @@
                     //bitácora de error 
                     return new Resultado<Token>()
                     {
-                        Contenido = null,
+                        Datos = null,
                         Error = true,
                         Mensaje = "Error al cargar archivo de sesión"
                     };
@@ -1391,7 +1305,7 @@
         {
             Resultado<VentaNoAplicadaDetalle> resultado = new Resultado<VentaNoAplicadaDetalle>()
             {
-                Contenido = null,
+                Datos = null,
                 Error = true,
                 Mensaje = ""
             };
@@ -1409,7 +1323,8 @@
                 return resultado;
             }
 
-            var producto = await GetProductByCodeAsync(codigo);
+            var _productos = new Productos(_context);
+            var producto = await _productos.ObtenerRegistroPorCodigoAsync(codigo);
             if (producto == null)
             {
                 resultado.Mensaje = "buscarProducto";
@@ -1465,7 +1380,7 @@
             }
 
             var ventaNoAplicada = await _context.VentasNoAplicadas.FindAsync(id);
-            if(ventaNoAplicada== null)
+            if (ventaNoAplicada == null)
             {
                 ventaNoAplicada = new VentaNoAplicada()
                 {
@@ -1520,7 +1435,7 @@
             try
             {
                 await _context.SaveChangesAsync();
-                resultado.Contenido = ventaDetalle;
+                resultado.Datos = ventaDetalle;
                 resultado.Error = false;
                 return resultado;
             }

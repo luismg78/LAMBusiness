@@ -8,12 +8,13 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Data;
+    using LAMBusiness.Contextos;
     using Helpers;
     using Interfaces;
     using Models.ViewModels;
     using Shared.Aplicacion;
     using Shared.Movimiento;
+    using LAMBusiness.Backend;
 
     public class EntradasController : GlobalController
     {
@@ -22,6 +23,7 @@
         private readonly IConverterHelper _converterHelper;
         private readonly IConfiguration _configuration;
         private readonly IDashboard _dashboard;
+        private readonly Productos _productos;
         private Guid moduloId = Guid.Parse("B019EBF0-5A25-4CC3-BD72-34FDA134E5C1");
 
         public EntradasController(DataContext context,
@@ -35,6 +37,7 @@
             _converterHelper = converterHelper;
             _configuration = configuration;
             _dashboard = dashboard;
+            _productos = new Productos(context);
         }
 
         public async Task<IActionResult> Index()
@@ -642,7 +645,7 @@
             }
 
             var almacen = await _getHelper.GetAlmacenByIdAsync((Guid)entradaDetalle.AlmacenID);
-            var producto = await _getHelper.GetProductByIdAsync((Guid)entradaDetalle.ProductoID);
+            var producto = await _productos.ObtenerRegistroPorIdAsync((Guid)entradaDetalle.ProductoID);
 
             TempData["toast"] = "Falta información en algún campo.";
 
@@ -769,7 +772,7 @@
             }
 
             var almacen = await _getHelper.GetAlmacenByIdAsync((Guid)entradaDetalle.AlmacenID);
-            var producto = await _getHelper.GetProductByIdAsync((Guid)entradaDetalle.ProductoID);
+            var producto = await _productos.ObtenerRegistroPorIdAsync((Guid)entradaDetalle.ProductoID);
 
             TempData["toast"] = "Información incompleta, verifique los campos.";
 

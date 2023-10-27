@@ -1,18 +1,13 @@
 ﻿namespace LAMBusiness.Web.Controllers
 {
+    using Helpers;
+    using LAMBusiness.Contextos;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
+    using Models.ViewModels;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.ViewFeatures;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
-    using Data;
-    using Helpers;
-    using Models.ViewModels;
-    using Shared.Aplicacion;
-    using Shared.Contacto;
     public class DashboardController : GlobalController
     {
         private readonly DataContext _context;

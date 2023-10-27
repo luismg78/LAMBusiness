@@ -1,6 +1,6 @@
 namespace LAMBusiness.Web
 {
-    using Data;
+    using LAMBusiness.Contextos;
     using Helpers;
     using Interfaces;
     using Microsoft.AspNetCore.Builder;
@@ -11,6 +11,7 @@ namespace LAMBusiness.Web
     using Microsoft.Extensions.Hosting;
     using Services;
     using System;
+    using LAMBusiness.Shared.Aplicacion;
 
     public class Startup
     {
@@ -43,11 +44,16 @@ namespace LAMBusiness.Web
                 options.Cookie.IsEssential = true;
             });
 
+            Configuracion configuracion = new();
+            Configuration.GetSection("Configuracion").Bind(configuracion);
+
             services.AddScoped<ICombosHelper, CombosHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
             services.AddScoped<ICriptografiaHelper, CriptografiaHelper>();
             services.AddScoped<IGetHelper, GetHelper>();
             services.AddScoped<IDashboard, Dashboard>();
+            services.AddScoped<DataContext, DataContext>();
+            services.AddTransient<Configuracion, Configuracion>(x => new Configuracion(configuracion));
 
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
 

@@ -8,7 +8,7 @@
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
-    using Data;
+    using LAMBusiness.Contextos;
     using Helpers;
     using Shared.Aplicacion;
     using Shared.Catalogo;

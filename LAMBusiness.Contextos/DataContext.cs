@@ -1,18 +1,37 @@
-﻿namespace LAMBusiness.Web.Data
+﻿namespace LAMBusiness.Contextos
 {
-    using System.Linq;
+    using LAMBusiness.Contextos.Entities;
     using Microsoft.EntityFrameworkCore;
-    using Data.Entities;
     using Shared.Aplicacion;
     using Shared.Catalogo;
     using Shared.Contacto;
-    using Shared.Movimiento;
     using Shared.Dashboard.Entidades;
+    using Shared.Movimiento;
+    using System.Linq;
 
-    public class DataContext: DbContext
+    public class DataContext : DbContext
     {
-        public DataContext(DbContextOptions<DataContext> options): base(options)
+        private readonly string _cadenaDeConexion;
+
+        public DataContext(string cadenaDeConexion)
         {
+            _cadenaDeConexion = cadenaDeConexion;
+        }
+
+        public DataContext(Configuracion configuracion)
+        {
+            _cadenaDeConexion = configuracion.CadenaDeConexion;
+        }
+
+        //public DataContext(DbContextOptions<DataContext> options) : base(options)
+        //{
+        //}
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(_cadenaDeConexion);
+            optionsBuilder.EnableSensitiveDataLogging();
+            base.OnConfiguring(optionsBuilder);
         }
 
         #region Aplicación
@@ -73,7 +92,8 @@
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             foreach (var foreignKey in modelBuilder.Model.GetEntityTypes()
-                .SelectMany(e => e.GetForeignKeys())) {
+                .SelectMany(e => e.GetForeignKeys()))
+            {
                 foreignKey.DeleteBehavior = DeleteBehavior.NoAction;
             }
 
@@ -106,7 +126,7 @@
             modelBuilder.Entity<Cliente>()
                 .HasIndex(c => new { c.RFC })
                 .IsUnique(true);
-            
+
             modelBuilder.Entity<DatoPersonal>()
                 .HasIndex(c => new { c.CURP })
                 .IsUnique(true);

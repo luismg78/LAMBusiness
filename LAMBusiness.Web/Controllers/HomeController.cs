@@ -1,6 +1,6 @@
 ﻿namespace LAMBusiness.Web.Controllers
 {
-    using Data;
+    using LAMBusiness.Contextos;
     using Helpers;
     using LAMBusiness.Shared.Dashboard;
     using Microsoft.AspNetCore.Http;
@@ -377,8 +377,8 @@
             Guid moduloId = Guid.Parse("4C4CD77D-E11F-4A69-AC1C-331A022A5718");
             string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
 
-            await _getHelper.SetBitacoraAsync(token.Contenido, accion, moduloId,
-                token, token.Contenido.UsuarioID.ToString(), directorioBitacora, excepcion);
+            await _getHelper.SetBitacoraAsync(token.Datos, accion, moduloId,
+                token, token.Datos.UsuarioID.ToString(), directorioBitacora, excepcion);
         }
     }
 }

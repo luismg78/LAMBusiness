@@ -8,7 +8,7 @@
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
-    using Data;
+    using LAMBusiness.Contextos;
     using Helpers;
     using Models.ViewModels;
     using Shared.Aplicacion;
@@ -214,17 +214,17 @@
 
                 try
                 {
-                    _context.Add(resultado.Contenido);
+                    _context.Add(resultado.Datos);
                     await _context.SaveChangesAsync();
                     TempData["toast"] = "Los datos del colaborador fueron almacenados correctamente.";
-                    await BitacoraAsync("Alta", resultado.Contenido);
-                    return RedirectToAction(nameof(Details), new { id = resultado.Contenido.UsuarioID });
+                    await BitacoraAsync("Alta", resultado.Datos);
+                    return RedirectToAction(nameof(Details), new { id = resultado.Datos.UsuarioID });
                 }
                 catch (Exception ex)
                 {
                     string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     TempData["toast"] = "[Error] Los datos del colaborador no fueron almacenados.";
-                    await BitacoraAsync("Alta", resultado.Contenido, excepcion);
+                    await BitacoraAsync("Alta", resultado.Datos, excepcion);
                 }
             }
 
@@ -305,12 +305,12 @@
                         return View(colaboradorViewModel);
                     }
 
-                    _context.Update(resultado.Contenido);
+                    _context.Update(resultado.Datos);
                     await _context.SaveChangesAsync();
 
                     TempData["toast"] = "Los datos del colaborador fueron actualizados correctamente.";
-                    await BitacoraAsync("Actualizar", resultado.Contenido);
-                    return RedirectToAction(nameof(Details), new { id = resultado.Contenido.UsuarioID });
+                    await BitacoraAsync("Actualizar", resultado.Datos);
+                    return RedirectToAction(nameof(Details), new { id = resultado.Datos.UsuarioID });
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
@@ -320,12 +320,12 @@
                     else
                         TempData["toast"] = "[Error] Los datos del colaborador no fueron actualizados.";
                     
-                    await BitacoraAsync("Actualizar", resultado.Contenido, excepcion);
+                    await BitacoraAsync("Actualizar", resultado.Datos, excepcion);
                 }
                 catch(Exception ex) {
                     string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
                     TempData["toast"] = "[Error] Los datos del colaborador no fueron actualizados.";
-                    await BitacoraAsync("Actualizar", resultado.Contenido, excepcion);
+                    await BitacoraAsync("Actualizar", resultado.Datos, excepcion);
                 }
 
                 return RedirectToAction(nameof(Index));

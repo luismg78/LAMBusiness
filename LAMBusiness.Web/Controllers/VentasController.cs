@@ -1,21 +1,19 @@
 ﻿namespace LAMBusiness.Web.Controllers
 {
+    using Helpers;
+    using Interfaces;
+    using LAMBusiness.Backend;
+    using LAMBusiness.Contextos;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+    using Models.ViewModels;
+    using Shared.Aplicacion;
+    using Shared.Movimiento;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
-    using Data;
-    using Helpers;
-    using Interfaces;
-    using Models.ViewModels;
-    using Shared.Aplicacion;
-    using Shared.Movimiento;
-    using NuGet.Packaging.Core;
-    using Microsoft.AspNetCore.Mvc.Abstractions;
-    using System.Collections.Immutable;
 
     public class VentasController : GlobalController
     {
@@ -24,6 +22,7 @@
         private readonly IConverterHelper _converterHelper;
         private readonly IConfiguration _configuration;
         private readonly IDashboard _dashboard;
+        private readonly Productos _productos;
         private Guid moduloId = Guid.Parse("a0ca4d51-b518-4a65-b1e3-f0a03b1caff8");
 
         public VentasController(DataContext context, IGetHelper getHelper,
@@ -36,6 +35,7 @@
             _converterHelper = converterHelper;
             _configuration = configuration;
             _dashboard = dashboard;
+            _productos = new Productos(context);
         }
 
         public async Task<IActionResult> Index()
@@ -52,7 +52,7 @@
 
             int totalDeVentasNoAplicadas = 0;
             VentaNoAplicada ventaNoAplicada = await InitializeSalesAsync();
-            
+
             if (ventaNoAplicada == null)
             {
                 TempData["toast"] = "La venta no puede ser inicializada.";
@@ -110,7 +110,7 @@
                     TempData["toast"] = "La venta no puede ser inicializada.";
                 }
             }
-            
+
             return ventaNoAplicada;
         }
 
@@ -144,7 +144,7 @@
 
             if (ventas == null || !ventas.Any())
                 return Json(new { Error = true, Estatus = "Proceso no realizado, no hay registro de ventas con ese identificador de usuario." });
-            
+
             foreach (var venta in ventas)
             {
                 venta.VentaCierreID = ventaDeCierreId;
@@ -312,7 +312,7 @@
                 }
             }
 
-            return PartialView(resultado.Contenido);
+            return PartialView(resultado.Datos);
         }
 
         public async Task<IActionResult> SetCancelSale(Guid? id)
@@ -484,7 +484,7 @@
 
             foreach (var item in ventasNoAplicadasDetalleAgrupada)
             {
-                var producto = await _getHelper.GetProductByIdAsync(item.ProductoID);
+                var producto = await _productos.ObtenerRegistroPorIdAsync(item.ProductoID);
                 if (producto == null)
                 {
                     TempData["toast"] = "Producto incorrecto, venta no realizada";

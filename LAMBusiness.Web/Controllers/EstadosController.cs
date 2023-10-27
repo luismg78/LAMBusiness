@@ -9,7 +9,7 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Helpers;
-    using Data;
+    using LAMBusiness.Contextos;
     using Shared.Aplicacion;
     using Shared.Catalogo;
 

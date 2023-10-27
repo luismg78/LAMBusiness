@@ -1,23 +1,21 @@
 ﻿namespace LAMBusiness.Web.Helpers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
+    using LAMBusiness.Backend;
+    using LAMBusiness.Contextos;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
-    using Data;
     using Models.ViewModels;
     using Shared.Aplicacion;
     using Shared.Catalogo;
     using Shared.Contacto;
     using Shared.Movimiento;
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
     using System.Drawing.Imaging;
-    using SkiaSharp;
-    using BarcodeStandard;
-    using Microsoft.IdentityModel.Tokens;
+    using System.IO;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public class ConverterHelper : IConverterHelper
     {
@@ -190,7 +188,7 @@
         {
             Resultado<DatoPersonal> resultado = new()
             {
-                Contenido = null,
+                Datos = null,
                 Error = true,
                 Mensaje = ""
             };
@@ -235,7 +233,7 @@
             if (isNew)
             {
                 resultado.Error = false;
-                resultado.Contenido = new DatoPersonal()
+                resultado.Datos = new DatoPersonal()
                 {
                     UsuarioID = Guid.NewGuid(),
                     CodigoPostal = datoPersonalViewModel.CodigoPostal,
@@ -272,7 +270,7 @@
                     employee.Municipios = await _getHelper.GetMunicipioByIdAsync((int)datoPersonalViewModel.MunicipioID);
                     employee.PuestoID = datoPersonalViewModel.PuestoID;
                     employee.Telefono = datoPersonalViewModel.Telefono;
-                    resultado.Contenido = employee;
+                    resultado.Datos = employee;
                     resultado.Error = false;
                 }
                 else
@@ -443,7 +441,8 @@
 
             if (productoViewModel.Unidades.Paquete)
             {
-                var pieza = await _getHelper.GetProductByCodeAsync(productoViewModel.CodigoPieza);
+                var _productos = new Productos(_context);
+                var pieza = await _productos.ObtenerRegistroPorCodigoAsync(productoViewModel.CodigoPieza);
 
                 var paquete = new Paquete()
                 {
@@ -494,7 +493,8 @@
             {
                 productoViewModel.CantidadProductoxPaquete = paquete.CantidadProductoxPaquete;
 
-                var pieza = await _getHelper.GetProductByIdAsync(paquete.PiezaProductoID);
+                var _productos = new Productos(_context);
+                var pieza = await _productos.ObtenerRegistroPorIdAsync(paquete.PiezaProductoID);
                 productoViewModel.CodigoPieza = pieza.Codigo;
             }
 
@@ -713,10 +713,10 @@
                     FechaInicio = usuarioViewModel.FechaInicio.AddHours(0).AddMinutes(0).AddSeconds(0),
                     FechaTermino = usuarioViewModel.FechaTermino.AddHours(23).AddMinutes(59).AddSeconds(59),
                     FechaUltimoAcceso = usuarioViewModel.FechaUltimoAcceso,
-                    Email= string.IsNullOrEmpty(usuarioViewModel.Email) ? "" : usuarioViewModel.Email.ToLower(),
-                    Nombre= string.IsNullOrEmpty(usuarioViewModel.Nombre) ? "" : usuarioViewModel.Nombre.ToUpper(),
-                    PrimerApellido= string.IsNullOrEmpty(usuarioViewModel.PrimerApellido) ? "" : usuarioViewModel.PrimerApellido.ToUpper(),
-                    SegundoApellido= string.IsNullOrEmpty(usuarioViewModel.SegundoApellido) ? "" : usuarioViewModel.SegundoApellido.ToUpper(),
+                    Email = string.IsNullOrEmpty(usuarioViewModel.Email) ? "" : usuarioViewModel.Email.ToLower(),
+                    Nombre = string.IsNullOrEmpty(usuarioViewModel.Nombre) ? "" : usuarioViewModel.Nombre.ToUpper(),
+                    PrimerApellido = string.IsNullOrEmpty(usuarioViewModel.PrimerApellido) ? "" : usuarioViewModel.PrimerApellido.ToUpper(),
+                    SegundoApellido = string.IsNullOrEmpty(usuarioViewModel.SegundoApellido) ? "" : usuarioViewModel.SegundoApellido.ToUpper(),
                     TelefonoMovil = string.IsNullOrEmpty(usuarioViewModel.TelefonoMovil) ? "" : usuarioViewModel.TelefonoMovil,
                     Password = "",
                     UsuarioID = Guid.NewGuid()
@@ -734,7 +734,7 @@
                 usuario.Nombre = usuarioViewModel.Nombre;
                 usuario.PrimerApellido = usuarioViewModel.PrimerApellido;
                 usuario.SegundoApellido = usuarioViewModel.SegundoApellido;
-                usuario.TelefonoMovil= usuarioViewModel.TelefonoMovil;
+                usuario.TelefonoMovil = usuarioViewModel.TelefonoMovil;
                 usuario.FechaInicio = usuarioViewModel.FechaInicio.AddHours(0).AddMinutes(0).AddSeconds(0);
                 usuario.FechaTermino = usuarioViewModel.FechaTermino.AddHours(23).AddMinutes(59).AddSeconds(59);
 

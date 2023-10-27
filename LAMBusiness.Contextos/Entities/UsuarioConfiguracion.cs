@@ -1,4 +1,4 @@
-﻿namespace LAMBusiness.Web.Data.Entities
+﻿namespace LAMBusiness.Contextos.Entities
 {
     using LAMBusiness.Shared.Contacto;
     using Microsoft.EntityFrameworkCore;

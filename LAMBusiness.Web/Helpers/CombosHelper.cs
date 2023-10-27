@@ -6,7 +6,7 @@
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.EntityFrameworkCore;
-    using Data;
+    using LAMBusiness.Contextos;
 
     public class CombosHelper : ICombosHelper
     {

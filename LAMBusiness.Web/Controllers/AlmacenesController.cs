@@ -1,21 +1,20 @@
 ﻿namespace LAMBusiness.Web.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
+    using Helpers;
+    using Hub;
+    using LAMBusiness.Contextos;
+    using LAMBusiness.Shared.Movimiento;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.AspNetCore.SignalR;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
-    using Data;
-    using Helpers;
-    using Hub;
     using Shared.Aplicacion;
     using Shared.Catalogo;
-    using LAMBusiness.Shared.Movimiento;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public class AlmacenesController : GlobalController
     {
@@ -25,8 +24,8 @@
         private readonly IHubContext<ServerHub> _hubContext;
         private Guid moduloId = Guid.Parse("DA183D55-101E-4A06-9EC3-A1ED5729F0CB");
 
-        public AlmacenesController(DataContext context, 
-            IConfiguration configuration, 
+        public AlmacenesController(DataContext context,
+            IConfiguration configuration,
             IGetHelper getHelper,
             IHubContext<ServerHub> hubContext)
         {
@@ -71,7 +70,7 @@
             {
                 return null;
             }
-            
+
             IQueryable<Almacen> query = null;
             if (filtro.Patron != null && filtro.Patron != "")
             {
@@ -248,7 +247,7 @@
                     await _context.SaveChangesAsync();
                     TempData["toast"] = "Los datos del almacén fueron actualizados correctamente.";
                     await BitacoraAsync("Actualizar", almacen);
-                    return RedirectToAction(nameof(Index)); 
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
@@ -286,8 +285,8 @@
 
             if (id == null)
             {
-                    TempData["toast"] = "Identificacor incorrecto, verifique.";
-                    return RedirectToAction(nameof(Index));
+                TempData["toast"] = "Identificacor incorrecto, verifique.";
+                return RedirectToAction(nameof(Index));
             }
 
             var almacen = await _context.Almacenes
@@ -299,7 +298,7 @@
                 TempData["toast"] = "Identificacor incorrecto, verifique.";
                 return RedirectToAction(nameof(Index));
             }
-            
+
             bool removeProcess = false;
 
             if (almacen.Existencias != null)
@@ -410,15 +409,15 @@
         {
             return _context.Almacenes.Any(e => e.AlmacenID == id);
         }
-    
-        private async Task BitacoraAsync(string accion, Almacen almacen, string excepcion = "" )
+
+        private async Task BitacoraAsync(string accion, Almacen almacen, string excepcion = "")
         {
             string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");
-            
+
             await _getHelper.SetBitacoraAsync(token, accion, moduloId,
                 almacen, almacen.AlmacenID.ToString(), directorioBitacora, excepcion);
         }
-   
+
         //private async Task Productos(string HubID)
         //{
         //    int registros = 10000;

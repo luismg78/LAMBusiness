@@ -1,4 +1,4 @@
-﻿namespace LAMBusiness.Web.Data.Entities
+﻿namespace LAMBusiness.Contextos.Entities
 {
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;

@@ -1,6 +1,6 @@
 ﻿namespace LAMBusiness.Web.Models.ViewModels
 {
-    using Data;
+    using LAMBusiness.Contextos;
     using System;
 
     public class EstadisticaMovimientoViewModel

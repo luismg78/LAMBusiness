@@ -8,10 +8,10 @@
     <PackageReference Include="BarcodeLib" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.0.15" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.8">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.13">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -22,10 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LAMBusiness.Backend\LAMBusiness.Backend.csproj" />
+    <ProjectReference Include="..\LAMBusiness.Contextos\LAMBusiness.Contextos.csproj" />
     <ProjectReference Include="..\LAMBusiness.Shared\LAMBusiness.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Bitacora\" />
     <Folder Include="Sesiones\" />
     <Folder Include="wwwroot\images\help\" />
     <Folder Include="wwwroot\images\perfil\" />

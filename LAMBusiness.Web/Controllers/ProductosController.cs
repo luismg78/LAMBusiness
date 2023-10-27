@@ -11,12 +11,13 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using BarcodeLib;
-    using Data;
+    using LAMBusiness.Contextos;
     using Helpers;
     using Models.ViewModels;
     using Shared.Aplicacion;
     using Shared.Catalogo;
     using Shared.Movimiento;
+    using LAMBusiness.Backend;
 
     public class ProductosController : GlobalController
     {
@@ -26,7 +27,7 @@
         private readonly IGetHelper _getHelper;
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _webHostEnvironment;
-
+        private readonly Productos _productos;
         private Guid moduloId = Guid.Parse("A549419C-89BD-49CE-BA93-4D73AFBA37CE");
 
         public ProductosController(DataContext context, 
@@ -42,6 +43,7 @@
             _getHelper = getHelper;
             _configuration = configuration;
             _webHostEnvironment = webHostEnvironment;
+            _productos = new Productos(context);
         }
 
         public async Task<IActionResult> Index()
@@ -54,23 +56,16 @@
                 return RedirectToAction("Index", "Home");
             }
 
-            var productos = _context.Productos
-                .Include(p => p.Marcas)
-                .Include(p => p.TasasImpuestos)
-                .Include(p => p.Unidades)
-                .Include(p => p.Paquete)
-                .OrderBy(p => p.Codigo);
-
             var filtro = new Filtro<List<Producto>>()
             {
-                Datos = await productos.Take(50).ToListAsync(),
                 Patron = "",
                 PermisoEscritura = permisosModulo.PermisoEscritura,
                 PermisoImprimir = permisosModulo.PermisoImprimir,
                 PermisoLectura = permisosModulo.PermisoLectura,
-                Registros = await productos.CountAsync(),
                 Skip = 0
             };
+
+            filtro = await _productos.ObtenerRegistros(filtro);
 
             return View(filtro);
         }
@@ -81,11 +76,9 @@
             if (validateToken != null) { return null; }
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
-            {
                 return null;
-            }
 
-            filtro = await _getHelper.GetProductosByPatternAsync(filtro);
+            filtro = await _productos.ObtenerRegistros(filtro);
 
             filtro.PermisoEscritura = permisosModulo.PermisoEscritura;
             filtro.PermisoImprimir = permisosModulo.PermisoImprimir;
@@ -115,7 +108,7 @@
                 return RedirectToAction(nameof(Index));
             }
 
-            var producto = await _getHelper.GetProductByIdAsync((Guid)id);
+            var producto = await _productos.ObtenerRegistroPorIdAsync((Guid)id);
             if (producto == null)
             {
                 TempData["toast"] = "Identificacor incorrecto, verifique.";
@@ -330,8 +323,7 @@
                             {
                                 foreach (var pack in packages)
                                 {
-                                    var productoPack = await _getHelper
-                                        .GetProductByIdAsync(pack.ProductoID);
+                                    var productoPack = await _productos.ObtenerRegistroPorIdAsync(pack.ProductoID);
                                     if (productoPack != null)
                                     {
                                         if (productoPack.Activo)
@@ -538,7 +530,8 @@
             if (id == null)
                 return new EmptyResult();
            
-            var producto = await _getHelper.GetProductByIdAsync((Guid)id);
+            var producto = await _productos.ObtenerRegistroPorIdAsync((Guid)id);
+
             if (producto == null)
                 return new EmptyResult();
 
@@ -566,7 +559,7 @@
             if (id == null)
                 return new EmptyResult();
 
-            var producto = await _getHelper.GetProductByCodeAsync(id);
+            var producto = await _productos.ObtenerRegistroPorCodigoAsync(id);
             if (producto == null)
                 return new EmptyResult();
 
@@ -615,7 +608,7 @@
                 return new EmptyResult();
             }
 
-            var producto = await _getHelper.GetProductByCodeAsync(code.Trim().ToUpper());
+            var producto = await _productos.ObtenerRegistroPorCodigoAsync(code.Trim().ToUpper());
             if (producto != null)
             {
                 producto.PrecioCosto = Convert.ToDecimal(producto.PrecioCosto?.ToString("0.00"));
@@ -647,7 +640,7 @@
                 return new EmptyResult();
             }
 
-            filtro = await _getHelper.GetProductosByPatternAsync(filtro);
+            filtro = await _productos.ObtenerRegistros(filtro);
 
             if(filtro.Registros == 0)
             {

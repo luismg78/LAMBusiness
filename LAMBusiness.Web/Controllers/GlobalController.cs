@@ -115,12 +115,12 @@
             }
             else
             {
-                token = resultado.Contenido;
+                token = resultado.Datos;
                 ViewData["token"] = token;
                 ViewBag.Id = token.UsuarioID;
             }
 
-            return resultado.Contenido;
+            return resultado.Datos;
         }
 
         public async Task<bool> ValidateModulePermissions(IGetHelper getHelper, Guid moduloId, eTipoPermiso tipoPermiso)

@@ -5,7 +5,7 @@
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
-    using Data;
+    using LAMBusiness.Contextos;
     using Helpers;
 
     public class EstadosCivilesController : GlobalController
