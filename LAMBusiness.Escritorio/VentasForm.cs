@@ -291,6 +291,5 @@ namespace LAMBusiness.Escritorio
             return resultado;
         }
         #endregion
-     
     }
 }

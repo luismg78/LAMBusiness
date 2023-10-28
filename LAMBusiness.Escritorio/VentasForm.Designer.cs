@@ -272,6 +272,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Ventas";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.VentasForm_FormClosing);
             this.Load += new System.EventHandler(this.VentasForm_Load);
             this.ClientePanel.ResumeLayout(false);
             this.ClientePanel.PerformLayout();

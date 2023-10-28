@@ -30,8 +30,6 @@ namespace LAMBusiness.Escritorio
                 this.Hide();
                 form.Show();
             }
-            //VentasForm frm = new(_configuracion);
-            //frm.Show();
         }
 
         private bool ValidarCampos(string correoElectronico, string password)
