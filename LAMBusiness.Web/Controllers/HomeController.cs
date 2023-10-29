@@ -4,7 +4,7 @@
     using LAMBusiness.Backend;
     using LAMBusiness.Contextos;
     using LAMBusiness.Shared.Dashboard;
-    using LAMBusiness.Shared.DTO;
+    using LAMBusiness.Shared.DTO.Sesion;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;

@@ -1,7 +1,7 @@
 ﻿using LAMBusiness.Contextos;
 using LAMBusiness.Shared.Aplicacion;
 using LAMBusiness.Shared.Contacto;
-using LAMBusiness.Shared.DTO;
+using LAMBusiness.Shared.DTO.Sesion;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
@@ -196,7 +196,7 @@ namespace LAMBusiness.Backend
             }
             return strEncrypt;
         }
-        private static string GenerateSHA512String(string inputString)
+        public static string GenerateSHA512String(string inputString)
         {
             var message = Encoding.UTF8.GetBytes(inputString);
             using (var sha512 = SHA512.Create())

@@ -1,4 +1,4 @@
-﻿namespace LAMBusiness.Shared.DTO
+﻿namespace LAMBusiness.Shared.DTO.Sesion
 {
     using System.ComponentModel.DataAnnotations;
 

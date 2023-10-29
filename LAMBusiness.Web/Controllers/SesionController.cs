@@ -11,7 +11,7 @@
     using Helpers;
     using LAMBusiness.Web.Models.ViewModels;
     using LAMBusiness.Backend;
-    using LAMBusiness.Shared.DTO;
+    using LAMBusiness.Shared.DTO.Sesion;
 
     public class SesionController : GlobalController
     {

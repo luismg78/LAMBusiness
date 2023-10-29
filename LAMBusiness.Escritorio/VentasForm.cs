@@ -1,6 +1,7 @@
 ﻿using LAMBusiness.Backend;
 using LAMBusiness.Contextos;
 using LAMBusiness.Shared.Aplicacion;
+using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 
 namespace LAMBusiness.Escritorio
@@ -21,7 +22,6 @@ namespace LAMBusiness.Escritorio
         private readonly Ventas _ventas;
         private readonly Productos _productos;
         private readonly Guid _razonSocialId = new("E9212EB2-697A-4358-9CDE-9123B66676EB");
-        private readonly DataContext _contexto;
         private readonly Configuracion _configuracion;
         private decimal _cantidad;
         private decimal _pago;
@@ -33,7 +33,7 @@ namespace LAMBusiness.Escritorio
         {
             InitializeComponent();
             DataContext contexto = new(configuracion);
-            //_ventas = new(contexto);
+            _ventas = new Ventas(contexto);
             _productos = new Productos(contexto);
             _configuracion = configuracion;
             _cantidad = 1;
@@ -41,15 +41,25 @@ namespace LAMBusiness.Escritorio
         #endregion
 
         #region Inicio y cierre del formulario
-        private void VentasForm_Load(object sender, EventArgs e)
+        private async void VentasForm_Load(object sender, EventArgs e)
         {
             if (Global.UsuarioId == null || Global.UsuarioId == Guid.Empty)
-            {
+            {                
                 IniciarSesionForm form = new(_configuracion);
                 Hide();
                 form.Show();
-                IniciarVenta();
             }
+
+            var resultado = await _ventas.Inicializar((Guid)Global.UsuarioId!);
+            if (resultado.Error)
+            {
+                MessageBox.Show(resultado.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                IniciarSesionForm form = new(_configuracion);
+                Hide();
+                form.Show();
+            }
+                
+            IniciarVenta();
         }
         private void VentasForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -198,7 +208,7 @@ namespace LAMBusiness.Escritorio
             _proceso = Proceso.Capturar;
             ProductosDataGridView.Rows.Clear();
             VentaTotalLabel.Text = "$0.00";
-            CodigoLabel.Text = "Código";
+            IconoPictureBox.Image = Properties.Resources.codigodebarras;
             CodigoTextBox.Text = string.Empty;
             CodigoTextBox.Focus();
         }
@@ -206,7 +216,7 @@ namespace LAMBusiness.Escritorio
         {
             _cantidad = 1;
             _proceso = Proceso.Capturar;
-            CodigoLabel.Text = "Código";
+            IconoPictureBox.Image = Properties.Resources.codigodebarras;
             CodigoTextBox.Text = string.Empty;
             CodigoTextBox.Focus();
         }
@@ -215,7 +225,7 @@ namespace LAMBusiness.Escritorio
             _pago = 0;
             _proceso = Proceso.Aplicar;
             ObtenerTotal();
-            CodigoLabel.Text = "Importe";
+            IconoPictureBox.Image = Properties.Resources.signopesos;
             CodigoTextBox.Text = string.Empty;
             CodigoTextBox.Focus();
         }

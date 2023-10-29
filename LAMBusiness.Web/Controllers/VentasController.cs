@@ -23,6 +23,7 @@
         private readonly IConfiguration _configuration;
         private readonly IDashboard _dashboard;
         private readonly Productos _productos;
+        private readonly Ventas _ventas;
         private Guid moduloId = Guid.Parse("a0ca4d51-b518-4a65-b1e3-f0a03b1caff8");
 
         public VentasController(DataContext context, IGetHelper getHelper,
@@ -36,6 +37,7 @@
             _configuration = configuration;
             _dashboard = dashboard;
             _productos = new Productos(context);
+            _ventas = new Ventas(context);
         }
 
         public async Task<IActionResult> Index()
@@ -44,74 +46,16 @@
             if (validateToken != null) { return validateToken; }
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
-            {
                 return RedirectToAction(nameof(Index));
-            }
 
-            var hayVentasPorCerrar = await _context.Ventas.AnyAsync(v => v.VentaCierreID == null || v.VentaCierreID == Guid.Empty);
-
-            int totalDeVentasNoAplicadas = 0;
-            VentaNoAplicada ventaNoAplicada = await InitializeSalesAsync();
-
-            if (ventaNoAplicada == null)
+            var resultado = await _ventas.Inicializar(token.UsuarioID);
+            if (resultado.Error)
             {
-                TempData["toast"] = "La venta no puede ser inicializada.";
+                TempData["toast"] = resultado.Mensaje;
                 return RedirectToAction("Index", "Movimiento");
             }
-            else
-            {
-                totalDeVentasNoAplicadas = await (from v in _context.VentasNoAplicadas
-                                                  join d in _context.VentasNoAplicadasDetalle on v.VentaNoAplicadaID equals d.VentaNoAplicadaID
-                                                  where v.UsuarioID == token.UsuarioID
-                                                  select v).CountAsync();
-            }
 
-            VentasNoAplicadasViewModel venta = new()
-            {
-                Fecha = ventaNoAplicada.Fecha,
-                HayVentasPorCerrar = hayVentasPorCerrar,
-                ImporteTotal = 0,
-                UsuarioID = token.UsuarioID,
-                VentaNoAplicadaID = ventaNoAplicada.VentaNoAplicadaID,
-                VentasNoAplicadasDetalle = null,
-                TotalDeRegistrosPendientes = totalDeVentasNoAplicadas,
-            };
-
-            ViewBag.Id = token.UsuarioID;
-            return View(venta);
-        }
-
-        private async Task<VentaNoAplicada> InitializeSalesAsync()
-        {
-            VentaNoAplicada ventaNoAplicada = null;
-            List<VentaNoAplicada> ventasNoAplicadas = await _context.VentasNoAplicadas
-                .Where(v => v.UsuarioID == token.UsuarioID)
-                .ToListAsync();
-
-            if (ventasNoAplicadas != null && ventasNoAplicadas.Any())
-                ventaNoAplicada = ventasNoAplicadas.OrderByDescending(v => v.Fecha).FirstOrDefault();
-
-            if (ventaNoAplicada == null)
-            {
-                ventaNoAplicada = new VentaNoAplicada()
-                {
-                    Fecha = DateTime.Now,
-                    UsuarioID = token.UsuarioID,
-                    VentaNoAplicadaID = Guid.NewGuid()
-                };
-
-                _context.VentasNoAplicadas.Add(ventaNoAplicada);
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (Exception)
-                {
-                    TempData["toast"] = "La venta no puede ser inicializada.";
-                }
-            }
-
-            return ventaNoAplicada;
+            return View(resultado.Datos);
         }
 
         public async Task<IActionResult> CloseSales()

@@ -39,6 +39,13 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             this.ClientePanel = new System.Windows.Forms.Panel();
+            this.CorteDeCajaButton = new System.Windows.Forms.Button();
+            this.RetirarEfectivoButton = new System.Windows.Forms.Button();
+            this.CobrarButton = new System.Windows.Forms.Button();
+            this.RecuperarButton = new System.Windows.Forms.Button();
+            this.CancelarButton = new System.Windows.Forms.Button();
+            this.BuscarButton = new System.Windows.Forms.Button();
+            this.VentasButton = new System.Windows.Forms.Button();
             this.VentaTotalLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.ProductosDataGridView = new System.Windows.Forms.DataGridView();
@@ -48,25 +55,110 @@
             this.PrecioDataGridView = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ImporteDataGridView = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.TotalPanel = new System.Windows.Forms.Panel();
+            this.IconoPictureBox = new System.Windows.Forms.PictureBox();
             this.TotalLabel = new System.Windows.Forms.Label();
             this.CodigoTextBox = new System.Windows.Forms.TextBox();
-            this.CodigoLabel = new System.Windows.Forms.Label();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.NotificacionToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.ProcesoToolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.ClientePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ProductosDataGridView)).BeginInit();
             this.TotalPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.IconoPictureBox)).BeginInit();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // ClientePanel
             // 
             this.ClientePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ClientePanel.BackColor = System.Drawing.Color.White;
+            this.ClientePanel.Controls.Add(this.CorteDeCajaButton);
+            this.ClientePanel.Controls.Add(this.RetirarEfectivoButton);
+            this.ClientePanel.Controls.Add(this.CobrarButton);
+            this.ClientePanel.Controls.Add(this.RecuperarButton);
+            this.ClientePanel.Controls.Add(this.CancelarButton);
+            this.ClientePanel.Controls.Add(this.BuscarButton);
+            this.ClientePanel.Controls.Add(this.VentasButton);
             this.ClientePanel.Controls.Add(this.VentaTotalLabel);
             this.ClientePanel.Controls.Add(this.label1);
-            this.ClientePanel.Location = new System.Drawing.Point(12, 12);
+            this.ClientePanel.Location = new System.Drawing.Point(1032, 4);
             this.ClientePanel.Name = "ClientePanel";
-            this.ClientePanel.Size = new System.Drawing.Size(320, 583);
+            this.ClientePanel.Size = new System.Drawing.Size(320, 582);
             this.ClientePanel.TabIndex = 9;
+            // 
+            // CorteDeCajaButton
+            // 
+            this.CorteDeCajaButton.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.CorteDeCajaButton.Location = new System.Drawing.Point(162, 360);
+            this.CorteDeCajaButton.Name = "CorteDeCajaButton";
+            this.CorteDeCajaButton.Size = new System.Drawing.Size(148, 105);
+            this.CorteDeCajaButton.TabIndex = 8;
+            this.CorteDeCajaButton.Text = "Corte de Caja";
+            this.CorteDeCajaButton.UseVisualStyleBackColor = true;
+            // 
+            // RetirarEfectivoButton
+            // 
+            this.RetirarEfectivoButton.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.RetirarEfectivoButton.Location = new System.Drawing.Point(10, 360);
+            this.RetirarEfectivoButton.Name = "RetirarEfectivoButton";
+            this.RetirarEfectivoButton.Size = new System.Drawing.Size(146, 105);
+            this.RetirarEfectivoButton.TabIndex = 7;
+            this.RetirarEfectivoButton.Text = "Retirar Efectivo";
+            this.RetirarEfectivoButton.UseVisualStyleBackColor = true;
+            // 
+            // CobrarButton
+            // 
+            this.CobrarButton.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.CobrarButton.Location = new System.Drawing.Point(162, 249);
+            this.CobrarButton.Name = "CobrarButton";
+            this.CobrarButton.Size = new System.Drawing.Size(148, 105);
+            this.CobrarButton.TabIndex = 6;
+            this.CobrarButton.Text = "Cobrar";
+            this.CobrarButton.UseVisualStyleBackColor = true;
+            // 
+            // RecuperarButton
+            // 
+            this.RecuperarButton.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.RecuperarButton.Location = new System.Drawing.Point(10, 249);
+            this.RecuperarButton.Name = "RecuperarButton";
+            this.RecuperarButton.Size = new System.Drawing.Size(146, 105);
+            this.RecuperarButton.TabIndex = 5;
+            this.RecuperarButton.Text = "Recuperar";
+            this.RecuperarButton.UseVisualStyleBackColor = true;
+            // 
+            // CancelarButton
+            // 
+            this.CancelarButton.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.CancelarButton.Location = new System.Drawing.Point(162, 138);
+            this.CancelarButton.Name = "CancelarButton";
+            this.CancelarButton.Size = new System.Drawing.Size(148, 105);
+            this.CancelarButton.TabIndex = 4;
+            this.CancelarButton.Text = "Cancelar";
+            this.CancelarButton.UseVisualStyleBackColor = true;
+            // 
+            // BuscarButton
+            // 
+            this.BuscarButton.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.BuscarButton.Location = new System.Drawing.Point(10, 138);
+            this.BuscarButton.Name = "BuscarButton";
+            this.BuscarButton.Size = new System.Drawing.Size(146, 105);
+            this.BuscarButton.TabIndex = 3;
+            this.BuscarButton.Text = "Buscar";
+            this.BuscarButton.UseVisualStyleBackColor = true;
+            // 
+            // VentasButton
+            // 
+            this.VentasButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
+            this.VentasButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.VentasButton.Font = new System.Drawing.Font("Segoe UI", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.VentasButton.ForeColor = System.Drawing.Color.White;
+            this.VentasButton.Location = new System.Drawing.Point(10, 8);
+            this.VentasButton.Name = "VentasButton";
+            this.VentasButton.Size = new System.Drawing.Size(300, 124);
+            this.VentasButton.TabIndex = 2;
+            this.VentasButton.Text = "Ventas";
+            this.VentasButton.UseVisualStyleBackColor = false;
             // 
             // VentaTotalLabel
             // 
@@ -105,7 +197,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ProductosDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.ProductosDataGridView.BackgroundColor = System.Drawing.Color.White;
-            this.ProductosDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.ProductosDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI Semibold", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
@@ -125,11 +217,12 @@
             dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle8.Font = new System.Drawing.Font("Segoe UI", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.SlateBlue;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.WhiteSmoke;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.Color.Black;
             dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.ProductosDataGridView.DefaultCellStyle = dataGridViewCellStyle8;
-            this.ProductosDataGridView.Location = new System.Drawing.Point(341, 12);
+            this.ProductosDataGridView.GridColor = System.Drawing.Color.WhiteSmoke;
+            this.ProductosDataGridView.Location = new System.Drawing.Point(4, 4);
             this.ProductosDataGridView.MultiSelect = false;
             this.ProductosDataGridView.Name = "ProductosDataGridView";
             dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -146,7 +239,7 @@
             this.ProductosDataGridView.RowTemplate.Height = 50;
             this.ProductosDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.ProductosDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.ProductosDataGridView.Size = new System.Drawing.Size(1002, 583);
+            this.ProductosDataGridView.Size = new System.Drawing.Size(1023, 581);
             this.ProductosDataGridView.TabIndex = 10;
             // 
             // CantidadDataGridView
@@ -212,22 +305,32 @@
             this.TotalPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.TotalPanel.BackColor = System.Drawing.Color.White;
+            this.TotalPanel.Controls.Add(this.IconoPictureBox);
             this.TotalPanel.Controls.Add(this.TotalLabel);
             this.TotalPanel.Controls.Add(this.CodigoTextBox);
-            this.TotalPanel.Controls.Add(this.CodigoLabel);
-            this.TotalPanel.Location = new System.Drawing.Point(12, 601);
+            this.TotalPanel.Location = new System.Drawing.Point(4, 590);
             this.TotalPanel.Name = "TotalPanel";
-            this.TotalPanel.Size = new System.Drawing.Size(1331, 97);
+            this.TotalPanel.Size = new System.Drawing.Size(1348, 102);
             this.TotalPanel.TabIndex = 11;
+            // 
+            // IconoPictureBox
+            // 
+            this.IconoPictureBox.Image = global::LAMBusiness.Escritorio.Properties.Resources.codigodebarras;
+            this.IconoPictureBox.Location = new System.Drawing.Point(22, 34);
+            this.IconoPictureBox.Name = "IconoPictureBox";
+            this.IconoPictureBox.Size = new System.Drawing.Size(74, 35);
+            this.IconoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.IconoPictureBox.TabIndex = 2;
+            this.IconoPictureBox.TabStop = false;
             // 
             // TotalLabel
             // 
             this.TotalLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.TotalLabel.Font = new System.Drawing.Font("Segoe UI", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.TotalLabel.Location = new System.Drawing.Point(326, 8);
+            this.TotalLabel.Location = new System.Drawing.Point(450, 11);
             this.TotalLabel.Name = "TotalLabel";
-            this.TotalLabel.Size = new System.Drawing.Size(999, 80);
+            this.TotalLabel.Size = new System.Drawing.Size(892, 80);
             this.TotalLabel.TabIndex = 0;
             this.TotalLabel.Text = "Total $0.00";
             this.TotalLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -238,31 +341,45 @@
             this.CodigoTextBox.BackColor = System.Drawing.Color.White;
             this.CodigoTextBox.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
             this.CodigoTextBox.Font = new System.Drawing.Font("Segoe UI", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.CodigoTextBox.Location = new System.Drawing.Point(15, 36);
+            this.CodigoTextBox.Location = new System.Drawing.Point(110, 28);
             this.CodigoTextBox.MaxLength = 14;
             this.CodigoTextBox.Name = "CodigoTextBox";
-            this.CodigoTextBox.Size = new System.Drawing.Size(305, 47);
+            this.CodigoTextBox.Size = new System.Drawing.Size(313, 47);
             this.CodigoTextBox.TabIndex = 1;
             this.CodigoTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.CodigoTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.CodigoTextBox_KeyDown);
             // 
-            // CodigoLabel
+            // statusStrip1
             // 
-            this.CodigoLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.CodigoLabel.AutoSize = true;
-            this.CodigoLabel.BackColor = System.Drawing.Color.Transparent;
-            this.CodigoLabel.ForeColor = System.Drawing.Color.Black;
-            this.CodigoLabel.Location = new System.Drawing.Point(15, 13);
-            this.CodigoLabel.Name = "CodigoLabel";
-            this.CodigoLabel.Size = new System.Drawing.Size(46, 15);
-            this.CodigoLabel.TabIndex = 0;
-            this.CodigoLabel.Text = "Código";
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.NotificacionToolStripStatusLabel,
+            this.ProcesoToolStripProgressBar});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 696);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(1357, 22);
+            this.statusStrip1.TabIndex = 12;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // NotificacionToolStripStatusLabel
+            // 
+            this.NotificacionToolStripStatusLabel.Name = "NotificacionToolStripStatusLabel";
+            this.NotificacionToolStripStatusLabel.Size = new System.Drawing.Size(1342, 17);
+            this.NotificacionToolStripStatusLabel.Spring = true;
+            this.NotificacionToolStripStatusLabel.Text = "...";
+            this.NotificacionToolStripStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // ProcesoToolStripProgressBar
+            // 
+            this.ProcesoToolStripProgressBar.Name = "ProcesoToolStripProgressBar";
+            this.ProcesoToolStripProgressBar.Size = new System.Drawing.Size(100, 16);
+            this.ProcesoToolStripProgressBar.Visible = false;
             // 
             // VentasForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1357, 718);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.TotalPanel);
             this.Controls.Add(this.ProductosDataGridView);
             this.Controls.Add(this.ClientePanel);
@@ -279,7 +396,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.ProductosDataGridView)).EndInit();
             this.TotalPanel.ResumeLayout(false);
             this.TotalPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.IconoPictureBox)).EndInit();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -297,6 +418,17 @@
         private Panel TotalPanel;
         private Label TotalLabel;
         private TextBox CodigoTextBox;
-        private Label CodigoLabel;
+        private Button VentasButton;
+        private Button CorteDeCajaButton;
+        private Button RetirarEfectivoButton;
+        private Button CobrarButton;
+        private Button RecuperarButton;
+        private Button CancelarButton;
+        private Button BuscarButton;
+        private PictureBox pictureBox1;
+        private StatusStrip statusStrip1;
+        private ToolStripStatusLabel NotificacionToolStripStatusLabel;
+        private ToolStripProgressBar ProcesoToolStripProgressBar;
+        private PictureBox IconoPictureBox;
     }
 }
