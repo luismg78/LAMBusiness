@@ -1,8 +1,8 @@
-﻿namespace LAMBusiness.Web.Models.ViewModels
+﻿namespace LAMBusiness.Shared.DTO
 {
     using System.ComponentModel.DataAnnotations;
 
-    public class InicioSesionViewModel
+    public class InicioDeSesionDTO
     {
         [Display(Name = "Correo Electrónico")]
         [DataType(DataType.EmailAddress)]

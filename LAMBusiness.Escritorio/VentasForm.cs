@@ -45,7 +45,7 @@ namespace LAMBusiness.Escritorio
         {
             if (Global.UsuarioId == null || Global.UsuarioId == Guid.Empty)
             {
-                IniciarSesionForm form = new(_contexto, _configuracion);
+                IniciarSesionForm form = new(_configuracion);
                 Hide();
                 form.Show();
                 IniciarVenta();

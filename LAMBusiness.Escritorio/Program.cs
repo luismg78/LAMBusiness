@@ -1,9 +1,7 @@
 using LAMBusiness.Contextos;
 using LAMBusiness.Shared.Aplicacion;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Configuration;
 
 namespace LAMBusiness.Escritorio
 {
@@ -28,9 +26,9 @@ namespace LAMBusiness.Escritorio
             //services.AddSingleton<IConfiguration>(configuration);
             services.AddScoped<DataContext, DataContext>();
             services.AddTransient<Configuracion, Configuracion>();
-            services.AddScoped<VentasForm>();
+            services.AddScoped<IniciarSesionForm>();
 
-            Application.Run(new VentasForm(configuracion!));
+            Application.Run(new IniciarSesionForm(configuracion!));
         }
     }
 }

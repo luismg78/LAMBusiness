@@ -49,7 +49,6 @@ namespace LAMBusiness.Web
 
             services.AddScoped<ICombosHelper, CombosHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
-            services.AddScoped<ICriptografiaHelper, CriptografiaHelper>();
             services.AddScoped<IGetHelper, GetHelper>();
             services.AddScoped<IDashboard, Dashboard>();
             services.AddScoped<DataContext, DataContext>();

@@ -10,6 +10,8 @@
     using LAMBusiness.Contextos;
     using Helpers;
     using LAMBusiness.Web.Models.ViewModels;
+    using LAMBusiness.Backend;
+    using LAMBusiness.Shared.DTO;
 
     public class SesionController : GlobalController
     {
@@ -17,22 +19,21 @@
         private readonly IConfiguration _configuration;
         private readonly IConverterHelper _converterHelper;
         private readonly IGetHelper _getHelper;
-        private readonly ICriptografiaHelper _criptografiaHelper;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly Sesiones _sesion;
         private Guid moduloId = Guid.Parse("CAED13FC-E9FF-4E0C-8D3D-9ECE76196EA2");
         public SesionController(DataContext context,
             IConfiguration configuration,
             IConverterHelper converterHelper,
             IGetHelper getHelper,
-            ICriptografiaHelper criptografiaHelper,
             IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _configuration = configuration;
             _converterHelper = converterHelper;
             _getHelper = getHelper;
-            _criptografiaHelper = criptografiaHelper;
             _webHostEnvironment = webHostEnvironment;
+            _sesion = new Sesiones(context);
         }
 
         public async Task<IActionResult> CerrarAplicacion()
@@ -89,7 +90,7 @@
             var validateToken = await ValidatedToken(_configuration, _getHelper, "home");
             if (validateToken != null) { return null; }
 
-            if(string.IsNullOrEmpty(imagen))
+            if (string.IsNullOrEmpty(imagen))
                 return Json(new { Estatus = $"Error: Imagen de perfil no actualizada.", Error = true });
 
             string path = "";
@@ -158,7 +159,7 @@
             var validateToken = await ValidatedToken(_configuration, _getHelper, "home");
             if (validateToken != null) { return validateToken; }
 
-            var pwd = new ChangePasswordViewModel()
+            var pwd = new ChangePasswordDTO()
             {
                 ConfirmPassword = "",
                 ConfirmPasswordEncrypt = "",
@@ -172,57 +173,33 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel changePasswordViewModel)
+        public async Task<IActionResult> ChangePassword(ChangePasswordDTO changePassword)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }
-            bool band = true;
 
             if (ModelState.IsValid)
             {
-                if (changePasswordViewModel.PasswordEncrypt != changePasswordViewModel.ConfirmPasswordEncrypt)
+                var resultado = await _sesion.CambiarPassword(changePassword);
+                if (resultado.Error)
                 {
-                    TempData["toast"] = "Contraseñas distintas, verifique su información";
-                    band = false;
+                    TempData["toast"] = resultado.Mensaje;
+                    return View(changePassword);
                 }
-
-                var usuario = await _context.Usuarios.FindAsync(token.UsuarioID);
-                if (usuario == null)
-                {
-                    TempData["toast"] = "Identificador incorrecto, usuario inexistente.";
-                    band = false;
-                }
-
-                if (band)
-                {
-                    try
-                    {
-                        usuario.Password = _criptografiaHelper.Encrypt(changePasswordViewModel.PasswordEncrypt);
-                        _context.Update(usuario);
-                        usuario.CambiarPassword = false;
-
-                        await _context.SaveChangesAsync();
-                        TempData["toast"] = "Su contraseña ha sido actualizada con éxito.";
-
-                        return RedirectToAction("Sesion", "Home");
-                    }
-                    catch (Exception)
-                    {
-                        TempData["toast"] = "Error al actualizar el cambio de contraseña.";
-                    }
-                }
+                
+                return RedirectToAction("Sesion", "Home");
             }
             else
             {
                 TempData["toast"] = "Proporcione la contraseña y confirme la información.";
             }
 
-            changePasswordViewModel.ConfirmPassword = "";
-            changePasswordViewModel.ConfirmPasswordEncrypt = "";
-            changePasswordViewModel.Password = "";
-            changePasswordViewModel.PasswordEncrypt = "";
+            changePassword.ConfirmPassword = "";
+            changePassword.ConfirmPasswordEncrypt = "";
+            changePassword.Password = "";
+            changePassword.PasswordEncrypt = "";
 
-            return View(changePasswordViewModel);
+            return View(changePassword);
         }
 
         public async Task<IActionResult> ResetPassword(Guid id)
@@ -230,32 +207,9 @@
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }
 
-            var rand = new Random();
+            var resultado = await _sesion.ResetearPassword(id);
 
-            int pwd = rand.Next(1000, 10000);
-
-            var usuario = await _context.Usuarios.FindAsync(id);
-            if (usuario == null)
-            {
-                TempData["toast"] = "Contraseñas distintas, verifique su información";
-                return RedirectToAction("Index", "Usuarios");
-            }
-
-            string pwdSha512 = _criptografiaHelper.GenerateSHA512String(pwd.ToString());
-            try
-            {
-                usuario.Password = _criptografiaHelper.Encrypt(pwdSha512);
-                usuario.CambiarPassword = true;
-                _context.Update(usuario);
-                await _context.SaveChangesAsync();
-
-                TempData["toast"] = $"La contraseña ha sido reiniciada con éxito. Contraseña temporal: {pwd}";
-            }
-            catch (Exception)
-            {
-                TempData["toast"] = "Error al reiniciar la contraseña.";
-            }
-            
+            TempData["toast"] = resultado.Mensaje;
             return RedirectToAction("Index", "Usuarios");
         }
 

@@ -30,6 +30,7 @@
   <ItemGroup>
     <Folder Include="Bitacora\" />
     <Folder Include="Sesiones\" />
+    <Folder Include="Sesiones\" />
     <Folder Include="wwwroot\images\help\" />
     <Folder Include="wwwroot\images\perfil\" />
     <Folder Include="wwwroot\images\productos\" />

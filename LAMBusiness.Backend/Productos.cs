@@ -1,10 +1,7 @@
-﻿using DocumentFormat.OpenXml.InkML;
-using LAMBusiness.Contextos;
+﻿using LAMBusiness.Contextos;
 using LAMBusiness.Shared.Aplicacion;
 using LAMBusiness.Shared.Catalogo;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Win32;
-using System.Runtime.Serialization;
 
 namespace LAMBusiness.Backend
 {
@@ -69,7 +66,7 @@ namespace LAMBusiness.Backend
         {
             if (string.IsNullOrEmpty(patron))
                 return datos;
-            
+
             var palabras = patron.Trim().Split(' ');
             if (palabras.Length > 0)
             {
@@ -83,7 +80,7 @@ namespace LAMBusiness.Backend
                     }
                 }
             }
-            
+
             return datos;
         }
 

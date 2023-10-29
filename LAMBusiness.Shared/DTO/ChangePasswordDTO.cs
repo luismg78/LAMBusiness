@@ -1,9 +1,9 @@
-﻿namespace LAMBusiness.Web.Models.ViewModels
+﻿namespace LAMBusiness.Shared.DTO
 {
     using System;
     using System.ComponentModel.DataAnnotations;
 
-    public class ChangePasswordViewModel
+    public class ChangePasswordDTO
     {
         public Guid UsuarioID { get; set; }
         

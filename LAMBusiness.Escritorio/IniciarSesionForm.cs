@@ -10,9 +10,10 @@ namespace LAMBusiness.Escritorio
         private readonly DataContext _contexto;
         private readonly Configuracion _configuracion;
 
-        public IniciarSesionForm(DataContext contexto,Configuracion configuracion)
+        public IniciarSesionForm(Configuracion configuracion)
         {
             InitializeComponent();
+            DataContext contexto = new(configuracion);
             _error = new ErrorProvider();
             _contexto = contexto;
             _configuracion = configuracion;
@@ -26,11 +27,11 @@ namespace LAMBusiness.Escritorio
                 Global.UsuarioId = Guid.NewGuid();
                 Global.AplicacionCerrada = false;
                 VentasForm form = new(_configuracion);
+                this.Hide();
                 form.Show();
-                this.Close();
             }
-            VentasForm frm = new(_configuracion);
-            frm.Show();
+            //VentasForm frm = new(_configuracion);
+            //frm.Show();
         }
 
         private bool ValidarCampos(string correoElectronico, string password)

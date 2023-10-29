@@ -1,16 +1,15 @@
 ﻿namespace LAMBusiness.Web.Controllers
 {
-    using LAMBusiness.Contextos;
     using Helpers;
+    using LAMBusiness.Backend;
+    using LAMBusiness.Contextos;
     using LAMBusiness.Shared.Dashboard;
+    using LAMBusiness.Shared.DTO;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Models;
-    using Models.ViewModels;
     using Shared.Aplicacion;
-    using Shared.Contacto;
     using System;
     using System.Diagnostics;
     using System.Linq;
@@ -19,19 +18,18 @@
     public class HomeController : GlobalController
     {
         private readonly DataContext _context;
-        private readonly ICriptografiaHelper _criptografia;
         private readonly IConfiguration _configuration;
         private readonly IGetHelper _getHelper;
+        private readonly Sesiones _sesion;
 
         public HomeController(DataContext context,
-            ICriptografiaHelper criptografia,
             IConfiguration configuration,
             IGetHelper getHelper)
         {
             _context = context;
-            _criptografia = criptografia;
             _configuration = configuration;
             _getHelper = getHelper;
+            _sesion = new Sesiones(context);
         }
 
         public IActionResult ErrorDeConexion()
@@ -60,47 +58,42 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> SignIn([Bind("Email, Password")] InicioSesionViewModel inicioSesionViewModel)
+        public async Task<IActionResult> SignIn([Bind("Email, Password")] InicioDeSesionDTO inicioDeSesion)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "signin", false);
             if (validateToken != null) { return validateToken; }
 
             if (ModelState.IsValid)
             {
-                string email = inicioSesionViewModel.Email.Trim().ToLower();
+                string email = inicioDeSesion.Email.Trim().ToLower();
 
-                Usuario usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+                var resultado = await _sesion.IniciarSesion(inicioDeSesion);
 
-                if (usuario == null)
+                if (resultado.Error)
                 {
-                    TempData["toast"] = "Correo electrónico inexistente, verifique";
-                    return View(inicioSesionViewModel);
+                    TempData["toast"] = resultado.Mensaje;
+                    return View(inicioDeSesion);
                 }
 
-                var pwd = _criptografia.Encrypt(inicioSesionViewModel.Password);
-                if (usuario.Password != pwd)
-                {
-                    TempData["toast"] = "Credenciales Incorrectas, verifique";
-                    return View(inicioSesionViewModel);
-                }
+                var usuario = resultado.Datos;
 
                 HttpContext.Session.SetString("LAMBusiness", HttpContext.Session.Id);
                 string sessionId = HttpContext.Session.GetString("LAMBusiness");
 
                 string directorioSesion = _configuration.GetValue<string>("DirectorioSesion");
 
-                var resultado = await _getHelper
+                var resultadoToken = await _getHelper
                     .SetTokenByUsuarioIDAsync(sessionId, usuario.UsuarioID, directorioSesion);
 
-                if (resultado.Error)
+                if (resultadoToken.Error)
                 {
-                    ModelState.AddModelError(string.Empty, resultado.Mensaje);
-                    TempData["toast"] = resultado.Mensaje;
-                    return View(inicioSesionViewModel);
+                    ModelState.AddModelError(string.Empty, resultadoToken.Mensaje);
+                    TempData["toast"] = resultadoToken.Mensaje;
+                    return View(inicioDeSesion);
                 }
 
                 TempData["toast"] = "¡Qué gusto tenerte de vuelta!";
-                await BitacoraAsync("InicioSesion", resultado);
+                await BitacoraAsync("InicioSesion", resultadoToken);
 
                 if (usuario.CambiarPassword)
                     return RedirectToAction("ChangePassword", "Sesion");
@@ -109,7 +102,7 @@
             }
 
             ModelState.AddModelError(string.Empty, "Credenciales Incorrectas");
-            return View(inicioSesionViewModel);
+            return View(inicioDeSesion);
         }
 
         public async Task<IActionResult> PaginaEnConstruccion()
