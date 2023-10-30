@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace LAMBusiness.Web.Models.ViewModels
+namespace LAMBusiness.Shared.DTO.Movimiento
 {
-    public class CorteDeCajaViewModel
+    public class CorteDeCajaDTO
     {
         public string ImporteDelSistema { get; set; }
         public string ImporteDelUsuario { get; set; }

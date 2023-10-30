@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System;
+using System.Diagnostics;
 
 namespace LAMBusiness.Shared.Aplicacion
 {
@@ -24,6 +25,8 @@ namespace LAMBusiness.Shared.Aplicacion
             Mensajes = new List<string>();
         }
         public bool Error { get; set; }
+        public bool Reiniciar { get; set; }
+
         public string Mensaje
         {
             get
@@ -35,6 +38,7 @@ namespace LAMBusiness.Shared.Aplicacion
                 Mensajes.Add(value);
             }
         }
+        public string Excepcion { get; set; } = string.Empty;
         public List<string> Mensajes { get; set; }
     }
 }

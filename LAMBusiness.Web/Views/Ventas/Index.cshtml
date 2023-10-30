@@ -335,19 +335,19 @@
 
 @section Scripts{
     <script>
-        let urlCancelSale = '@Url.Action("SetCancelSale", "Ventas")';
-        let urlCloseSales = '@Url.Action("CloseSales", "Ventas")';
-        let urlGetItBackSaleById = '@Url.Action("GetItBackSaleById", "Ventas")';
+        let urlCancelSale = '@Url.Action("CancelarVenta", "Ventas")';
+        let urlCloseSales = '@Url.Action("CerrarVentas", "Ventas")';
+        let urlGetItBackSaleById = '@Url.Action("RecuperarVentaPorId", "Ventas")';
         let urlGetItBackSale = '@Url.Action("GetItBackSale", "Ventas")';
         let urlMovement = '@Url.Action("Movimiento", "Home")';
-        let urlProductByCode = '@Url.Action("GetProductByCode", "Ventas")';
+        let urlProductByCode = '@Url.Action("ObtenerProductoPorCodigo", "Ventas")';
         let urlProductDetail = '@Url.Action("GetProductDetail", "Productos")';
         let urlProductDetailByCode = '@Url.Action("GetProductDetailByCode", "Productos")';
         let urlProductList = '@Url.Action("GetProductList", "Productos")';
         let urlSale = '@Url.Action("Index", "Ventas")';
-        let urlSaveSale = '@Url.Action("SetSaveSale", "Ventas")';
-        let urlSetSale = '@Url.Action("SetSale", "Ventas")';
-        let urlWithdrawCashApply = '@Url.Action("GetWithdrawCashApply", "Ventas")';
+        let urlSaveSale = '@Url.Action("Agregar", "Ventas")';
+        let urlSetSale = '@Url.Action("Aplicar", "Ventas")';
+        let urlWithdrawCashApply = '@Url.Action("RetirarEfectivoDeCaja", "Ventas")';
     </script>
     <script src="~/js/sales.js"></script>
 }

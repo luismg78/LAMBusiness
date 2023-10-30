@@ -6,7 +6,8 @@ namespace LAMBusiness.Shared.Aplicacion
     {
         public Guid AplicacionId { get; set; }
         public string CadenaDeConexion { get; set; } = string.Empty;
-        public string CadenaDeConexionDeAutenticacion { get; set; } = string.Empty;
+        public string CadenaDeConexionBitacora { get; set; } = string.Empty;
+        //public string CadenaDeConexionDeAutenticacion { get; set; } = string.Empty;
         public string Dominio { get; set; } = "";
         public string UrlCuenta { get; set; } = "";
         public string UrlAPICuenta { get; set; } = "";
@@ -24,7 +25,8 @@ namespace LAMBusiness.Shared.Aplicacion
         {
             AplicacionId = c.AplicacionId;
             CadenaDeConexion = c.CadenaDeConexion;
-            CadenaDeConexionDeAutenticacion = c.CadenaDeConexionDeAutenticacion;
+            CadenaDeConexionBitacora = c.CadenaDeConexionBitacora;
+            //CadenaDeConexionDeAutenticacion = c.CadenaDeConexionDeAutenticacion;
             Dominio = c.Dominio;
             UrlCuenta = c.UrlCuenta;
             UrlAPICuenta = c.UrlAPICuenta;

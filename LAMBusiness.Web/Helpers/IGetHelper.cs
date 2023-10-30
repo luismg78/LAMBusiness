@@ -40,7 +40,6 @@
         Task<List<Municipio>> GetMunicipiosByEstadoIdAsync(short id);
         Task<Paquete> GetPaqueteByIdAsync(Guid id);
         Task<Paquete> GetPaqueteByPieceID(Guid id);
-        Task<Resultado<VentaNoAplicadaDetalle>> GetProductByCodeForSale(Guid? id, Guid usuarioId, string codigo, decimal cantidad);
         Task<Proveedor> GetProveedorByIdAsync(Guid id);
         Task<Proveedor> GetProveedorByRFCAsync(string rfc);
         Task<Filtro<List<Proveedor>>> GetProveedoresByPatternAsync(Filtro<List<Proveedor>> filtro);

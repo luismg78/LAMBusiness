@@ -92,9 +92,9 @@
             this.CorteDeCajaButton.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.CorteDeCajaButton.Location = new System.Drawing.Point(162, 360);
             this.CorteDeCajaButton.Name = "CorteDeCajaButton";
-            this.CorteDeCajaButton.Size = new System.Drawing.Size(148, 105);
+            this.CorteDeCajaButton.Size = new System.Drawing.Size(148, 139);
             this.CorteDeCajaButton.TabIndex = 8;
-            this.CorteDeCajaButton.Text = "Corte de Caja";
+            this.CorteDeCajaButton.Text = "Corte de Caja       [F8]";
             this.CorteDeCajaButton.UseVisualStyleBackColor = true;
             // 
             // RetirarEfectivoButton
@@ -102,9 +102,9 @@
             this.RetirarEfectivoButton.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.RetirarEfectivoButton.Location = new System.Drawing.Point(10, 360);
             this.RetirarEfectivoButton.Name = "RetirarEfectivoButton";
-            this.RetirarEfectivoButton.Size = new System.Drawing.Size(146, 105);
+            this.RetirarEfectivoButton.Size = new System.Drawing.Size(146, 139);
             this.RetirarEfectivoButton.TabIndex = 7;
-            this.RetirarEfectivoButton.Text = "Retirar Efectivo";
+            this.RetirarEfectivoButton.Text = "Retirar Efectivo [F7]";
             this.RetirarEfectivoButton.UseVisualStyleBackColor = true;
             // 
             // CobrarButton
@@ -114,7 +114,7 @@
             this.CobrarButton.Name = "CobrarButton";
             this.CobrarButton.Size = new System.Drawing.Size(148, 105);
             this.CobrarButton.TabIndex = 6;
-            this.CobrarButton.Text = "Cobrar";
+            this.CobrarButton.Text = "Cobrar   [F5]";
             this.CobrarButton.UseVisualStyleBackColor = true;
             // 
             // RecuperarButton
@@ -124,8 +124,9 @@
             this.RecuperarButton.Name = "RecuperarButton";
             this.RecuperarButton.Size = new System.Drawing.Size(146, 105);
             this.RecuperarButton.TabIndex = 5;
-            this.RecuperarButton.Text = "Recuperar";
+            this.RecuperarButton.Text = "Recuperar [F4]";
             this.RecuperarButton.UseVisualStyleBackColor = true;
+            this.RecuperarButton.Click += new System.EventHandler(this.RecuperarButton_Click);
             // 
             // CancelarButton
             // 
@@ -134,8 +135,9 @@
             this.CancelarButton.Name = "CancelarButton";
             this.CancelarButton.Size = new System.Drawing.Size(148, 105);
             this.CancelarButton.TabIndex = 4;
-            this.CancelarButton.Text = "Cancelar";
+            this.CancelarButton.Text = "Cancelar [F2]";
             this.CancelarButton.UseVisualStyleBackColor = true;
+            this.CancelarButton.Click += new System.EventHandler(this.CancelarButton_Click);
             // 
             // BuscarButton
             // 
@@ -144,7 +146,7 @@
             this.BuscarButton.Name = "BuscarButton";
             this.BuscarButton.Size = new System.Drawing.Size(146, 105);
             this.BuscarButton.TabIndex = 3;
-            this.BuscarButton.Text = "Buscar";
+            this.BuscarButton.Text = "Buscar   [F1]";
             this.BuscarButton.UseVisualStyleBackColor = true;
             // 
             // VentasButton

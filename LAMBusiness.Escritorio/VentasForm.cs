@@ -1,7 +1,6 @@
 ﻿using LAMBusiness.Backend;
 using LAMBusiness.Contextos;
 using LAMBusiness.Shared.Aplicacion;
-using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 
 namespace LAMBusiness.Escritorio
@@ -25,7 +24,9 @@ namespace LAMBusiness.Escritorio
         private readonly Configuracion _configuracion;
         private decimal _cantidad;
         private decimal _pago;
+        private Guid _usuarioId;
         private Proceso _proceso = Proceso.Capturar;
+        public Guid _ventaId;
         #endregion
 
         #region Constructor
@@ -41,24 +42,16 @@ namespace LAMBusiness.Escritorio
         #endregion
 
         #region Inicio y cierre del formulario
-        private async void VentasForm_Load(object sender, EventArgs e)
+        private void VentasForm_Load(object sender, EventArgs e)
         {
             if (Global.UsuarioId == null || Global.UsuarioId == Guid.Empty)
-            {                
+            {
                 IniciarSesionForm form = new(_configuracion);
                 Hide();
                 form.Show();
             }
 
-            var resultado = await _ventas.Inicializar((Guid)Global.UsuarioId!);
-            if (resultado.Error)
-            {
-                MessageBox.Show(resultado.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                IniciarSesionForm form = new(_configuracion);
-                Hide();
-                form.Show();
-            }
-                
+            _usuarioId = (Guid)Global.UsuarioId!;
             IniciarVenta();
         }
         private void VentasForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -87,7 +80,7 @@ namespace LAMBusiness.Escritorio
                     switch (_proceso)
                     {
                         case Proceso.Capturar:
-                            resultado = await ObtenerProductoAsync();
+                            resultado = await ObtenerProductoPorCodigoAsync();
                             if (resultado.Error)
                                 MensajeDeError(resultado.Mensaje);
                             break;
@@ -118,14 +111,24 @@ namespace LAMBusiness.Escritorio
                     e.SuppressKeyPress = true;
                     break;
                 case Keys.F1:
+                    //buscar
                     //var ayuda = new VentaAyudaForm();
                     //ayuda.ShowDialog();
+                    break;
+                case Keys.F3:
+                    CancelarVentaModal();
+                    break;
+                case Keys.F4:
+                    RecuperarVentasModal();
                     break;
                 case Keys.F5:
                     IniciarCobro();
                     break;
                 case Keys.F7:
-                    MessageBox.Show("F7");
+                    MessageBox.Show("F7 - retiro de caja");
+                    break;
+                case Keys.F8:
+                    MessageBox.Show("F8 - Corte de caja");
                     break;
             }
         }
@@ -165,6 +168,18 @@ namespace LAMBusiness.Escritorio
         }
         #endregion
 
+        #region Botones
+
+        private void CancelarButton_Click(object sender, EventArgs e)
+        {
+            CancelarVentaModal();
+        }
+        private void RecuperarButton_Click(object sender, EventArgs e)
+        {
+            RecuperarVentasModal();
+        }
+        #endregion
+
         #region Ventas
         private async Task<Resultado> AplicarVentaAsync()
         {
@@ -175,37 +190,141 @@ namespace LAMBusiness.Escritorio
 
             return resultado;
         }
-        private async Task<Resultado> ObtenerProductoAsync()
-        {
-            Resultado resultado = new();
 
-            //var resultadoProducto = await _productos.ObtenerRegistroPorCodigoAsync(CodigoTextBox.Text.Trim(), _razonSocialId);
-            var producto = await _productos.ObtenerRegistroPorCodigoAsync(CodigoTextBox.Text.Trim());
-            if (producto == null)
+        public async Task<Resultado> ObtenerProductoPorCodigoAsync()
+        {
+            var resultado = await _ventas.ObtenerProducto(_ventaId, _usuarioId, CodigoTextBox.Text, _cantidad);
+
+            if (resultado.Error)
             {
-                resultado.Error = true;
-                resultado.Mensaje = "El código del producto es incorrecto.";
-                return resultado;
+                switch (resultado.Mensaje.Trim().ToLower())
+                {
+                    case "buscarproducto":
+                    //buscar producto
+                    case "reiniciar":
+                        MensajeDeError("Identificador de la venta incorrecto.");
+                        //reiniciar venta
+                        break;
+                    default:
+                        MensajeDeError(resultado.Mensaje);
+                        //reiniciar venta
+                        break;
+                }
             }
 
-            ProductosDataGridView.Rows.Add(_cantidad, producto.Codigo, producto.Nombre, producto.PrecioVenta, producto.PrecioVenta * _cantidad);
+            var producto = resultado.Datos;
+            ProductosDataGridView.Rows.Add(_cantidad, producto.Productos.Codigo, producto.Productos.Nombre, producto.Productos.PrecioVenta, producto.Productos.PrecioVenta * _cantidad);
             ProductosDataGridView.Rows[^1].Selected = true;
             ProductosDataGridView.FirstDisplayedScrollingRowIndex = ProductosDataGridView.Rows.Count - 1;
-
+            CobrarButton.Enabled = true;
             CodigoTextBox.Text = string.Empty;
             _cantidad = 1;
             ObtenerTotal();
 
             return resultado;
         }
+
+        public void CancelarVentaModal()
+        {
+            bool ok = HayRegistrosDeVentasPorAplicar();
+            if (ok)
+            {
+                var form = new CancelarVentaForm(_configuracion, _ventaId);
+                form.ShowDialog();
+                var resultado = Global.Resultado;
+                if (resultado != null)
+                {
+                    if (resultado.Error)
+                        MensajeDeError(resultado.Mensaje);
+                    else
+                        IniciarVenta();
+                }
+            }
+            else
+            {
+                MensajeDeError("Venta en proceso, movimiento no permitido.");
+            }
+        }
+
+        private async void RecuperarVentas(Guid id)
+        {
+            _ventaId = id;
+            var resultado = await _ventas.RecuperarVentaPorId(id, _usuarioId);
+            if (!resultado.Error)
+            {
+                var ventas = resultado.Datos;
+                if (ventas.VentasNoAplicadasDetalle != null && ventas.VentasNoAplicadasDetalle.Any())
+                {
+                    foreach (var venta in ventas.VentasNoAplicadasDetalle)
+                    {
+                        ProductosDataGridView.Rows.Add(venta.Cantidad, venta.Productos.Codigo, venta.Productos.Nombre, venta.Productos.PrecioVenta, venta.Productos.PrecioVenta * venta.Cantidad);
+                        ProductosDataGridView.Rows[^1].Selected = true;
+                        ProductosDataGridView.FirstDisplayedScrollingRowIndex = ProductosDataGridView.Rows.Count - 1;
+                    }
+                    CobrarButton.Enabled = true;
+                }
+            }
+            else
+            {
+                MensajeDeError(resultado.Mensaje);
+            }
+
+            _cantidad = 1;
+            ObtenerTotal();
+            CodigoTextBox.Text = string.Empty;
+            CodigoTextBox.Focus();
+        }
+
+        public void RecuperarVentasModal()
+        {
+            bool ok = HayRegistrosDeVentasPorAplicar();
+            if (ok)
+            {
+                MensajeDeError("Venta en proceso, movimiento no permitido.");
+            }
+            else
+            {
+                var form = new RecuperarVentasForm(_configuracion, _ventaId);
+                form.ShowDialog();
+                _ventaId = (Guid)Global.VentaId!;
+                RecuperarVentas(_ventaId);
+            }
+        }
+
         #endregion
 
         #region Reseteo
-        private void IniciarVenta()
+        private async void IniciarVenta()
         {
+            var resultado = await _ventas.Inicializar((Guid)Global.UsuarioId!);
+            if (resultado.Error)
+            {
+                MessageBox.Show(resultado.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                IniciarSesionForm form = new(_configuracion);
+                Hide();
+                form.Show();
+            }
+
+            var ventaNoAplicada = resultado.Datos;
+
+            RecuperarButton.Enabled = false;
+            if (ventaNoAplicada.TotalDeRegistrosPendientes > 0)
+                RecuperarButton.Enabled = true;
+
+            RetirarEfectivoButton.Enabled = false;
+            CorteDeCajaButton.Enabled = false;
+            if (ventaNoAplicada.HayVentasPorCerrar)
+            {
+                RetirarEfectivoButton.Enabled = true;
+                CorteDeCajaButton.Enabled = true;
+            }
+
+            CobrarButton.Enabled = false;
+
             _cantidad = 1;
             _pago = 0;
             _proceso = Proceso.Capturar;
+            _ventaId = ventaNoAplicada.VentaNoAplicadaID;
             ProductosDataGridView.Rows.Clear();
             VentaTotalLabel.Text = "$0.00";
             IconoPictureBox.Image = Properties.Resources.codigodebarras;
@@ -300,6 +419,15 @@ namespace LAMBusiness.Escritorio
 
             return resultado;
         }
+
+        private bool HayRegistrosDeVentasPorAplicar()
+        {
+            if (ProductosDataGridView == null)
+                return false;
+
+            return ProductosDataGridView.RowCount > 0;
+        }
         #endregion
+
     }
 }

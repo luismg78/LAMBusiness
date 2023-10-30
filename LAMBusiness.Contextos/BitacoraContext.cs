@@ -5,8 +5,23 @@
 
     public class BitacoraContext: DbContext
     {
-        public BitacoraContext(DbContextOptions<BitacoraContext> options) : base(options)
+        private readonly string _cadenaDeConexion;
+
+        public BitacoraContext(string cadenaDeConexion)
         {
+            _cadenaDeConexion = cadenaDeConexion;
+        }
+
+        public BitacoraContext(Configuracion configuracion)
+        {
+            _cadenaDeConexion = configuracion.CadenaDeConexionBitacora;
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(_cadenaDeConexion);
+            optionsBuilder.EnableSensitiveDataLogging();
+            base.OnConfiguring(optionsBuilder);
         }
 
         #region Aplicación
