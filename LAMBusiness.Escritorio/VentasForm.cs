@@ -1,4 +1,5 @@
-﻿using LAMBusiness.Backend;
+﻿using DocumentFormat.OpenXml.Vml.Spreadsheet;
+using LAMBusiness.Backend;
 using LAMBusiness.Contextos;
 using LAMBusiness.Shared.Aplicacion;
 using System.Text.RegularExpressions;
@@ -52,6 +53,7 @@ namespace LAMBusiness.Escritorio
             }
 
             _usuarioId = (Guid)Global.UsuarioId!;
+            Notificar();
             IniciarVenta();
         }
         private void VentasForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -169,6 +171,59 @@ namespace LAMBusiness.Escritorio
         #endregion
 
         #region Botones
+        private void ConfiguracionButtonBgColor(string proceso)
+        {
+            BuscarButton.BackColor = Color.White;
+            BuscarButton.ForeColor = Color.Black;
+            CancelarButton.BackColor = Color.White;
+            CancelarButton.ForeColor = Color.Black;
+            CobrarButton.BackColor = Color.White;
+            CobrarButton.ForeColor = Color.Black;
+            CorteDeCajaButton.BackColor = Color.White;
+            CorteDeCajaButton.ForeColor = Color.Black;
+            RecuperarButton.BackColor = Color.White;
+            RecuperarButton.ForeColor = Color.Black;
+            RetirarEfectivoButton.BackColor = Color.White;
+            RetirarEfectivoButton.ForeColor = Color.Black;
+            VentasButton.BackColor = Color.White;
+            VentasButton.ForeColor = Color.Black;
+            switch(proceso)
+            {
+                case "buscar":
+                    BuscarButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
+                    BuscarButton.ForeColor = Color.White;
+                    break;
+                case "cancelar":
+                    CancelarButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
+                    CancelarButton.ForeColor = Color.White;
+                    break;
+                case "cobrar":
+                    CobrarButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
+                    CobrarButton.ForeColor = Color.White;
+                    break;
+                case "cortedecaja":
+                    CorteDeCajaButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
+                    CorteDeCajaButton.ForeColor = Color.White;
+                    break;
+                case "recuperar":
+                    RecuperarButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
+                    RecuperarButton.ForeColor = Color.White;
+                    break;
+                case "retirar":
+                    RetirarEfectivoButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
+                    RetirarEfectivoButton.ForeColor = Color.White;
+                    break;
+                case "ventas":
+                    VentasButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
+                    VentasButton.ForeColor = Color.White;
+                    break;
+            }
+        }
+
+        private void BuscarButton_Click(object sender, EventArgs e)
+        {
+            ConfiguracionButtonBgColor("buscar");
+        }
 
         private void CancelarButton_Click(object sender, EventArgs e)
         {
@@ -177,6 +232,11 @@ namespace LAMBusiness.Escritorio
         private void RecuperarButton_Click(object sender, EventArgs e)
         {
             RecuperarVentasModal();
+        }
+
+        private void VentasButton_Click(object sender, EventArgs e)
+        {
+            ConfiguracionButtonBgColor("ventas");
         }
         #endregion
 
@@ -229,6 +289,7 @@ namespace LAMBusiness.Escritorio
             bool ok = HayRegistrosDeVentasPorAplicar();
             if (ok)
             {
+                ConfiguracionButtonBgColor("cancelar");
                 var form = new CancelarVentaForm(_configuracion, _ventaId);
                 form.ShowDialog();
                 var resultado = Global.Resultado;
@@ -242,7 +303,7 @@ namespace LAMBusiness.Escritorio
             }
             else
             {
-                MensajeDeError("Venta en proceso, movimiento no permitido.");
+                Notificar("Opción no aprobada, no hay movimientos en la lista.");
             }
         }
 
@@ -280,7 +341,7 @@ namespace LAMBusiness.Escritorio
             bool ok = HayRegistrosDeVentasPorAplicar();
             if (ok)
             {
-                MensajeDeError("Venta en proceso, movimiento no permitido.");
+                Notificar("Opción no aprobada, venta en proceso.");
             }
             else
             {
@@ -391,6 +452,10 @@ namespace LAMBusiness.Escritorio
         {
             MessageBox.Show(mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+        private void Notificar(string mensaje = "")
+        {
+            NotificacionLabel.Text = mensaje;
+        }
         #endregion
 
         #region Validaciones
@@ -428,6 +493,5 @@ namespace LAMBusiness.Escritorio
             return ProductosDataGridView.RowCount > 0;
         }
         #endregion
-
     }
 }
