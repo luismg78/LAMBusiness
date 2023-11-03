@@ -219,6 +219,7 @@
             await _getHelper.SetBitacoraAsync(token, accion, moduloId,
                 venta, venta.VentaID.ToString(), directorioBitacora, excepcion);
         }
+        
         private async Task BitacoraAsync(string accion, VentaCanceladaDTO ventaCancelada, Guid usuarioId, string excepcion = "")
         {
             string directorioBitacora = _configuration.GetValue<string>("DirectorioBitacora");

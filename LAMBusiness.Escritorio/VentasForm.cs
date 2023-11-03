@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Vml.Spreadsheet;
-using LAMBusiness.Backend;
+﻿using LAMBusiness.Backend;
 using LAMBusiness.Contextos;
 using LAMBusiness.Shared.Aplicacion;
 using System.Text.RegularExpressions;
@@ -13,6 +12,7 @@ namespace LAMBusiness.Escritorio
         {
             Capturar,
             Aplicar,
+            Buscar,
             Retirar,
             CorteDeCaja
         }
@@ -86,6 +86,11 @@ namespace LAMBusiness.Escritorio
                             if (resultado.Error)
                                 MensajeDeError(resultado.Mensaje);
                             break;
+                        case Proceso.Buscar:
+                            BuscarProductoPorCodigoAsync();
+                            //if (resultado.Error)
+                            //    MensajeDeError(resultado.Mensaje);
+                            break;
                         case Proceso.Aplicar:
                             resultado = await AplicarVentaAsync();
                             if (resultado.Error)
@@ -99,6 +104,7 @@ namespace LAMBusiness.Escritorio
                         case Proceso.Capturar:
                             CodigoTextBox.Text = string.Empty;
                             break;
+                        case Proceso.Buscar:
                         case Proceso.Aplicar:
                             IniciarCaptura();
                             break;
@@ -116,6 +122,9 @@ namespace LAMBusiness.Escritorio
                     //buscar
                     //var ayuda = new VentaAyudaForm();
                     //ayuda.ShowDialog();
+                    break;
+                case Keys.F2:
+                    IniciarBuscar();
                     break;
                 case Keys.F3:
                     CancelarVentaModal();
@@ -173,6 +182,7 @@ namespace LAMBusiness.Escritorio
         #region Botones
         private void ConfiguracionButtonBgColor(string proceso)
         {
+            Notificar();
             BuscarButton.BackColor = Color.White;
             BuscarButton.ForeColor = Color.Black;
             CancelarButton.BackColor = Color.White;
@@ -187,11 +197,13 @@ namespace LAMBusiness.Escritorio
             RetirarEfectivoButton.ForeColor = Color.Black;
             VentasButton.BackColor = Color.White;
             VentasButton.ForeColor = Color.Black;
-            switch(proceso)
+            IconoPictureBox.Image = Properties.Resources.codigodebarras;
+            switch (proceso)
             {
                 case "buscar":
                     BuscarButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
                     BuscarButton.ForeColor = Color.White;
+                    IconoPictureBox.Image = Properties.Resources.buscar;
                     break;
                 case "cancelar":
                     CancelarButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
@@ -200,6 +212,7 @@ namespace LAMBusiness.Escritorio
                 case "cobrar":
                     CobrarButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
                     CobrarButton.ForeColor = Color.White;
+                    IconoPictureBox.Image = Properties.Resources.signopesos;
                     break;
                 case "cortedecaja":
                     CorteDeCajaButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
@@ -222,13 +235,14 @@ namespace LAMBusiness.Escritorio
 
         private void BuscarButton_Click(object sender, EventArgs e)
         {
-            ConfiguracionButtonBgColor("buscar");
+            IniciarBuscar();
         }
 
         private void CancelarButton_Click(object sender, EventArgs e)
         {
             CancelarVentaModal();
         }
+
         private void RecuperarButton_Click(object sender, EventArgs e)
         {
             RecuperarVentasModal();
@@ -236,7 +250,7 @@ namespace LAMBusiness.Escritorio
 
         private void VentasButton_Click(object sender, EventArgs e)
         {
-            ConfiguracionButtonBgColor("ventas");
+            IniciarCaptura();
         }
         #endregion
 
@@ -249,6 +263,45 @@ namespace LAMBusiness.Escritorio
                 ObtenerCambio();
 
             return resultado;
+        }
+
+        public async void BuscarProductoPorCodigoAsync()
+        {
+            Notificar();
+            var producto = await _productos.ObtenerRegistroPorCodigoAsync(CodigoTextBox.Text);
+
+            if (producto == null)
+                Notificar("Código inexistente.");
+            else
+            {
+                BuscarForm form = new();
+                form.producto = producto;
+                form.ShowDialog();
+            }
+        }
+
+
+        public void CancelarVentaModal()
+        {
+            bool ok = HayRegistrosDeVentasPorAplicar();
+            if (ok)
+            {
+                ConfiguracionButtonBgColor("cancelar");
+                var form = new CancelarVentaForm(_configuracion, _ventaId);
+                form.ShowDialog();
+                var resultado = Global.Resultado;
+                if (resultado != null)
+                {
+                    if (resultado.Error)
+                        MensajeDeError(resultado.Mensaje);
+                    else
+                        IniciarVenta();
+                }
+            }
+            else
+            {
+                Notificar("Opción no aprobada, no hay movimientos en la lista.");
+            }
         }
 
         public async Task<Resultado> ObtenerProductoPorCodigoAsync()
@@ -284,29 +337,6 @@ namespace LAMBusiness.Escritorio
             return resultado;
         }
 
-        public void CancelarVentaModal()
-        {
-            bool ok = HayRegistrosDeVentasPorAplicar();
-            if (ok)
-            {
-                ConfiguracionButtonBgColor("cancelar");
-                var form = new CancelarVentaForm(_configuracion, _ventaId);
-                form.ShowDialog();
-                var resultado = Global.Resultado;
-                if (resultado != null)
-                {
-                    if (resultado.Error)
-                        MensajeDeError(resultado.Mensaje);
-                    else
-                        IniciarVenta();
-                }
-            }
-            else
-            {
-                Notificar("Opción no aprobada, no hay movimientos en la lista.");
-            }
-        }
-
         private async void RecuperarVentas(Guid id)
         {
             _ventaId = id;
@@ -337,6 +367,7 @@ namespace LAMBusiness.Escritorio
         }
 
         public void RecuperarVentasModal()
+
         {
             bool ok = HayRegistrosDeVentasPorAplicar();
             if (ok)
@@ -345,6 +376,7 @@ namespace LAMBusiness.Escritorio
             }
             else
             {
+                ConfiguracionButtonBgColor("recuperar");
                 var form = new RecuperarVentasForm(_configuracion, _ventaId);
                 form.ShowDialog();
                 _ventaId = (Guid)Global.VentaId!;
@@ -355,6 +387,14 @@ namespace LAMBusiness.Escritorio
         #endregion
 
         #region Reseteo
+        private void IniciarBuscar()
+        {
+            ConfiguracionButtonBgColor("buscar");
+            _cantidad = 1;
+            _proceso = Proceso.Buscar;
+            CodigoTextBox.Text = string.Empty;
+            CodigoTextBox.Focus();
+        }
         private async void IniciarVenta()
         {
             var resultado = await _ventas.Inicializar((Guid)Global.UsuarioId!);
@@ -394,20 +434,28 @@ namespace LAMBusiness.Escritorio
         }
         private void IniciarCaptura()
         {
+            ConfiguracionButtonBgColor("ventas");
             _cantidad = 1;
             _proceso = Proceso.Capturar;
-            IconoPictureBox.Image = Properties.Resources.codigodebarras;
             CodigoTextBox.Text = string.Empty;
             CodigoTextBox.Focus();
         }
         private void IniciarCobro()
         {
-            _pago = 0;
-            _proceso = Proceso.Aplicar;
-            ObtenerTotal();
-            IconoPictureBox.Image = Properties.Resources.signopesos;
-            CodigoTextBox.Text = string.Empty;
-            CodigoTextBox.Focus();
+            bool ok = HayRegistrosDeVentasPorAplicar();
+            if (ok)
+            {
+                _pago = 0;
+                _proceso = Proceso.Aplicar;
+                ConfiguracionButtonBgColor("cobrar");
+                ObtenerTotal();
+                CodigoTextBox.Text = string.Empty;
+                CodigoTextBox.Focus();
+            }
+            else
+            {
+                Notificar("Operación no aprobada, agregue al menos un registro en la lista.");
+            }
         }
         #endregion
 

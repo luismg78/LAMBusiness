@@ -55,13 +55,13 @@
             this.PrecioDataGridView = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ImporteDataGridView = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.TotalPanel = new System.Windows.Forms.Panel();
+            this.NotificacionLabel = new System.Windows.Forms.Label();
             this.IconoPictureBox = new System.Windows.Forms.PictureBox();
             this.TotalLabel = new System.Windows.Forms.Label();
             this.CodigoTextBox = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.NotificacionToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.ProcesoToolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
-            this.NotificacionLabel = new System.Windows.Forms.Label();
             this.ClientePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ProductosDataGridView)).BeginInit();
             this.TotalPanel.SuspendLayout();
@@ -142,7 +142,7 @@
             this.CancelarButton.Name = "CancelarButton";
             this.CancelarButton.Size = new System.Drawing.Size(169, 140);
             this.CancelarButton.TabIndex = 4;
-            this.CancelarButton.Text = "Cancelar [F2]";
+            this.CancelarButton.Text = "Cancelar [F3]";
             this.CancelarButton.UseVisualStyleBackColor = true;
             this.CancelarButton.Click += new System.EventHandler(this.CancelarButton_Click);
             // 
@@ -154,7 +154,7 @@
             this.BuscarButton.Name = "BuscarButton";
             this.BuscarButton.Size = new System.Drawing.Size(167, 140);
             this.BuscarButton.TabIndex = 3;
-            this.BuscarButton.Text = "Buscar   [F1]";
+            this.BuscarButton.Text = "Buscar   [F2]";
             this.BuscarButton.UseVisualStyleBackColor = true;
             this.BuscarButton.Click += new System.EventHandler(this.BuscarButton_Click);
             // 
@@ -330,6 +330,17 @@
             this.TotalPanel.Size = new System.Drawing.Size(1541, 136);
             this.TotalPanel.TabIndex = 11;
             // 
+            // NotificacionLabel
+            // 
+            this.NotificacionLabel.AutoSize = true;
+            this.NotificacionLabel.BackColor = System.Drawing.Color.Transparent;
+            this.NotificacionLabel.ForeColor = System.Drawing.Color.Red;
+            this.NotificacionLabel.Location = new System.Drawing.Point(126, 17);
+            this.NotificacionLabel.Name = "NotificacionLabel";
+            this.NotificacionLabel.Size = new System.Drawing.Size(90, 20);
+            this.NotificacionLabel.TabIndex = 3;
+            this.NotificacionLabel.Text = "Notificación";
+            // 
             // IconoPictureBox
             // 
             this.IconoPictureBox.Image = global::LAMBusiness.Escritorio.Properties.Resources.codigodebarras;
@@ -394,17 +405,6 @@
             this.ProcesoToolStripProgressBar.Name = "ProcesoToolStripProgressBar";
             this.ProcesoToolStripProgressBar.Size = new System.Drawing.Size(114, 19);
             this.ProcesoToolStripProgressBar.Visible = false;
-            // 
-            // NotificacionLabel
-            // 
-            this.NotificacionLabel.AutoSize = true;
-            this.NotificacionLabel.BackColor = System.Drawing.Color.Transparent;
-            this.NotificacionLabel.ForeColor = System.Drawing.Color.Red;
-            this.NotificacionLabel.Location = new System.Drawing.Point(126, 17);
-            this.NotificacionLabel.Name = "NotificacionLabel";
-            this.NotificacionLabel.Size = new System.Drawing.Size(90, 20);
-            this.NotificacionLabel.TabIndex = 3;
-            this.NotificacionLabel.Text = "Notificación";
             // 
             // VentasForm
             // 
