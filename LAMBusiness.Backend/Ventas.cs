@@ -574,7 +574,6 @@ namespace LAMBusiness.Backend
             {
                 Datos = null!,
                 Error = true,
-                Mensaje = ""
             };
             codigo = codigo.Trim().ToUpper();
 

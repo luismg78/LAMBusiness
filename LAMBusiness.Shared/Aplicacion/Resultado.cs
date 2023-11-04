@@ -20,26 +20,27 @@ namespace LAMBusiness.Shared.Aplicacion
 
     public class Resultado
     {
-        public Resultado()
-        {
-            Mensajes = new List<string>();
-        }
+        //public Resultado()
+        //{
+        //    Mensajes = new List<string>();
+        //}
         public bool Error { get; set; }
         public bool Reiniciar { get; set; }
 
-        public string Mensaje
-        {
-            get
-            {
-                return string.Join(Environment.NewLine, Mensajes);
-            }
-            set
-            {
-                Mensajes.Add(value);
-            }
-        }
+        //public string Mensaje
+        //{
+        //    get
+        //    {
+        //        return string.Join(Environment.NewLine, Mensajes);
+        //    }
+        //    set
+        //    {
+        //        Mensajes.Add(value);
+        //    }
+        //}
+        public string Mensaje { get; set; } = string.Empty;
         public string Excepcion { get; set; } = string.Empty;
-        public List<string> Mensajes { get; set; }
+        //public List<string> Mensajes { get; set; }
     }
 }
 

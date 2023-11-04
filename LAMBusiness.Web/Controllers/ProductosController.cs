@@ -548,7 +548,7 @@
 
         }
 
-        public async Task<IActionResult> GetProductDetailByCode(string id, bool mostrarPrecioCosto = false)
+        public async Task<IActionResult> ObtenerProductoDetallePorCodigo(string id, bool mostrarPrecioCosto = false)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return new EmptyResult(); }

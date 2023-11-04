@@ -19,6 +19,7 @@ namespace LAMBusiness.Escritorio
         #endregion
 
         #region Variables globales del formulario
+        private readonly DataContext _contexto;
         private readonly Ventas _ventas;
         private readonly Productos _productos;
         private readonly Guid _razonSocialId = new("E9212EB2-697A-4358-9CDE-9123B66676EB");
@@ -34,9 +35,9 @@ namespace LAMBusiness.Escritorio
         public VentasForm(Configuracion configuracion)
         {
             InitializeComponent();
-            DataContext contexto = new(configuracion);
-            _ventas = new Ventas(contexto);
-            _productos = new Productos(contexto);
+            _contexto = new(configuracion);
+            _ventas = new Ventas(_contexto);
+            _productos = new Productos(_contexto);
             _configuracion = configuracion;
             _cantidad = 1;
         }
@@ -52,6 +53,7 @@ namespace LAMBusiness.Escritorio
                 form.Show();
             }
 
+            WindowState = FormWindowState.Maximized;            
             _usuarioId = (Guid)Global.UsuarioId!;
             Notificar();
             IniciarVenta();
@@ -82,19 +84,15 @@ namespace LAMBusiness.Escritorio
                     switch (_proceso)
                     {
                         case Proceso.Capturar:
+                        case Proceso.Buscar:
                             resultado = await ObtenerProductoPorCodigoAsync();
                             if (resultado.Error)
-                                MensajeDeError(resultado.Mensaje);
-                            break;
-                        case Proceso.Buscar:
-                            BuscarProductoPorCodigoAsync();
-                            //if (resultado.Error)
-                            //    MensajeDeError(resultado.Mensaje);
+                                Notificar(resultado.Mensaje);
                             break;
                         case Proceso.Aplicar:
                             resultado = await AplicarVentaAsync();
                             if (resultado.Error)
-                                MensajeDeError(resultado.Mensaje);
+                                Notificar(resultado.Mensaje);
                             break;
                     }
                     break;
@@ -114,7 +112,7 @@ namespace LAMBusiness.Escritorio
                 case Keys.Oemplus:
                     resultado = ValidarCantidad();
                     if (resultado.Error)
-                        MensajeDeError(resultado.Mensaje);
+                        Notificar(resultado.Mensaje);
                     CodigoTextBox.Text = string.Empty;
                     e.SuppressKeyPress = true;
                     break;
@@ -126,20 +124,20 @@ namespace LAMBusiness.Escritorio
                 case Keys.F2:
                     IniciarBuscar();
                     break;
-                case Keys.F3:
-                    CancelarVentaModal();
-                    break;
-                case Keys.F4:
-                    RecuperarVentasModal();
-                    break;
                 case Keys.F5:
                     IniciarCobro();
                     break;
                 case Keys.F7:
-                    MessageBox.Show("F7 - retiro de caja");
+                    CancelarVentaModal();
                     break;
                 case Keys.F8:
-                    MessageBox.Show("F8 - Corte de caja");
+                    RecuperarVentasModal();
+                    break;
+                case Keys.F11:
+                    Notificar("Retiro de caja [pendiente]");
+                    break;
+                case Keys.F12:
+                    Notificar("Corte de caja [pendiente]");
                     break;
             }
         }
@@ -180,6 +178,19 @@ namespace LAMBusiness.Escritorio
         #endregion
 
         #region Botones
+        private void CerrarButton_Click(object sender, EventArgs e)
+        {
+            if (!Global.AplicacionCerrada)
+            {
+                var resultado = MessageBox.Show("¿Desea cerrar la aplicación?", "Cerrar", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (resultado == DialogResult.Yes)
+                {
+                    Global.AplicacionCerrada = true;
+                    Application.Exit();
+                }
+            }
+        }
+        
         private void ConfiguracionButtonBgColor(string proceso)
         {
             Notificar();
@@ -265,21 +276,33 @@ namespace LAMBusiness.Escritorio
             return resultado;
         }
 
-        public async void BuscarProductoPorCodigoAsync()
+        public async Task<Resultado> BuscarProductoPorCodigoAsync()
         {
             Notificar();
-            var producto = await _productos.ObtenerRegistroPorCodigoAsync(CodigoTextBox.Text);
-
-            if (producto == null)
-                Notificar("Código inexistente.");
+            Resultado resultado = new();
+            BuscarForm form = new(_contexto);
+            var productos = await form.ObtenerProductos(CodigoTextBox.Text);
+            if (productos != null && productos.Any())
+            {
+                form.productos = productos;
+                form.ShowDialog();
+                if(!string.IsNullOrEmpty(form.Codigo))
+                {
+                    CodigoTextBox.Text = form.Codigo;
+                    resultado = await ObtenerProductoPorCodigoAsync();
+                    if (resultado.Error)
+                        Notificar(resultado.Mensaje);
+                }
+            }
             else
             {
-                BuscarForm form = new();
-                form.producto = producto;
-                form.ShowDialog();
+                resultado.Error = true;
+                resultado.Mensaje = "Producto inexistente";
             }
-        }
 
+            CodigoTextBox.Text = "";
+            return resultado;
+        }
 
         public void CancelarVentaModal()
         {
@@ -293,7 +316,7 @@ namespace LAMBusiness.Escritorio
                 if (resultado != null)
                 {
                     if (resultado.Error)
-                        MensajeDeError(resultado.Mensaje);
+                        Notificar(resultado.Mensaje);
                     else
                         IniciarVenta();
                 }
@@ -313,16 +336,20 @@ namespace LAMBusiness.Escritorio
                 switch (resultado.Mensaje.Trim().ToLower())
                 {
                     case "buscarproducto":
-                    //buscar producto
+                        var buscar = await BuscarProductoPorCodigoAsync();
+                        resultado.Error = buscar.Error;
+                        resultado.Mensaje = buscar.Mensaje;
+                        break;
                     case "reiniciar":
-                        MensajeDeError("Identificador de la venta incorrecto.");
+                        Notificar("Identificador de la venta incorrecto.");
                         //reiniciar venta
                         break;
                     default:
-                        MensajeDeError(resultado.Mensaje);
+                        Notificar(resultado.Mensaje);
                         //reiniciar venta
                         break;
                 }
+                return resultado;
             }
 
             var producto = resultado.Datos;
@@ -336,7 +363,7 @@ namespace LAMBusiness.Escritorio
 
             return resultado;
         }
-
+        
         private async void RecuperarVentas(Guid id)
         {
             _ventaId = id;
@@ -357,7 +384,7 @@ namespace LAMBusiness.Escritorio
             }
             else
             {
-                MensajeDeError(resultado.Mensaje);
+                Notificar(resultado.Mensaje);
             }
 
             _cantidad = 1;
@@ -496,13 +523,10 @@ namespace LAMBusiness.Escritorio
         #endregion
 
         #region Mensajes
-        private static void MensajeDeError(string mensaje)
-        {
-            MessageBox.Show(mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
         private void Notificar(string mensaje = "")
         {
-            NotificacionLabel.Text = mensaje;
+            //NotificacionLabel.Text = mensaje;
+            NotificacionToolStripStatusLabel.Text = mensaje;
         }
         #endregion
 
@@ -540,6 +564,6 @@ namespace LAMBusiness.Escritorio
 
             return ProductosDataGridView.RowCount > 0;
         }
-        #endregion
+        #endregion        
     }
 }

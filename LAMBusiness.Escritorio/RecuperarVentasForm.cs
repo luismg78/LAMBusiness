@@ -1,17 +1,7 @@
-﻿using DocumentFormat.OpenXml.Office2010.Excel;
-using LAMBusiness.Backend;
+﻿using LAMBusiness.Backend;
 using LAMBusiness.Contextos;
 using LAMBusiness.Shared.Aplicacion;
-using LAMBusiness.Shared.Movimiento;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace LAMBusiness.Escritorio
 {
