@@ -82,9 +82,7 @@
             if (validateToken != null) { return Json(new { Reiniciar = true, Error = true }); }
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
-            {
                 return Json(new { Reiniciar = true, Error = true });
-            }
 
             var venta = await _ventas.Aplicar(id, token.UsuarioID, importe);
             if (venta.Error)

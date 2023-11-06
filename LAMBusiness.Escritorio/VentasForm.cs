@@ -268,11 +268,21 @@ namespace LAMBusiness.Escritorio
         #region Ventas
         private async Task<Resultado> AplicarVentaAsync()
         {
-            Resultado resultado = new();
-            resultado = ValidarCantidad();
-            if (!resultado.Error)
-                ObtenerCambio();
+            Resultado<decimal> resultado = new();
+            resultado = ValidarImporte();
+            if (resultado.Error)
+                return resultado;
 
+            decimal importe = resultado.Datos;
+            var venta = await _ventas.Aplicar(_ventaId, _usuarioId, importe);
+            if (venta.Error)
+            {
+                resultado.Error= true;
+                resultado.Mensaje = venta.Mensaje;
+                return resultado;
+            }
+
+            ObtenerCambio();
             return resultado;
         }
 
@@ -554,6 +564,28 @@ namespace LAMBusiness.Escritorio
                 resultado.Mensaje = $"La Cantidad no puede ser igual o menor a cero.";
             }
 
+            return resultado;
+        }
+
+        private Resultado<decimal> ValidarImporte()
+        {
+            Resultado<decimal> resultado = new();
+
+            if (string.IsNullOrEmpty(CodigoTextBox.Text))
+            {
+                resultado.Error = true;
+                resultado.Mensaje = "Importe incorrecto.";
+                return resultado;
+            }
+
+            if (!Regex.IsMatch(CodigoTextBox.Text, @"^\d+(?:\.\d+)?$"))
+            {
+                resultado.Error = true;
+                resultado.Mensaje = $"Importe ({CodigoTextBox.Text}) incorrecto.";
+                return resultado;
+            }
+
+            resultado.Datos = Convert.ToDecimal(CodigoTextBox.Text);
             return resultado;
         }
 
