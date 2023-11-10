@@ -53,6 +53,7 @@
         [DataType(DataType.EmailAddress)]
         [Display(Name = "Correo Electrónico")]
         [MaxLength(100, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
+        [EmailAddress(ErrorMessage = "El formato del Correo Electrónico es incorrecto.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public string Email { get; set; }
 

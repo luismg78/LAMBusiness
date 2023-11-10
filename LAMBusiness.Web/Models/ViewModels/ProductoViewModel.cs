@@ -12,6 +12,7 @@
         [MaxLength(14, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         public string CodigoPieza { get; set; }
 
+        [RegularExpression("^[0-9]*$", ErrorMessage = "Este campo {0} solo debe contener números.")]
         [Column(TypeName = "decimal(18,4)")]
         [Display(Name = "Cantidad")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]

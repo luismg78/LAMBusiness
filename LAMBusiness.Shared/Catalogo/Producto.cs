@@ -55,11 +55,13 @@
         [JsonIgnore]
         public virtual TasaImpuesto TasasImpuestos { get; set; }
 
+        [RegularExpression("^[0-9]*$", ErrorMessage = "Este campo {0} solo debe contener números.")]
         [Column(TypeName = "decimal(18,4)")]
         [Display(Name = "Precio (Costo Promedio)")]
         [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = false)]
         public decimal? PrecioCosto { get; set; }
 
+        [RegularExpression("^[0-9]*$", ErrorMessage = "Este campo {0} solo debe contener números.")]
         [Column(TypeName = "decimal(18,4)")]
         [Display(Name = "Precio (Venta)")]
         [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = false)]

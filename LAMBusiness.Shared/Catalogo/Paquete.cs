@@ -20,6 +20,7 @@
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public Guid PiezaProductoID { get; set; }
 
+        [RegularExpression("^[0-9]*$", ErrorMessage = "Este campo solo debe contener números.")]
         [Column(TypeName = "decimal(18,4)")]
         [Display(Name = "Cantidad")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]

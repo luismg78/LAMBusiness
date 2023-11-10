@@ -35,6 +35,7 @@
         [Display(Name = "Correo Electrónico")]
         [MaxLength(100, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
+        [EmailAddress(ErrorMessage = "El formato del Correo Electrónico es incorrecto.")]
         public string Email { get; set; }
 
         [JsonIgnore]
