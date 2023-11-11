@@ -25,6 +25,7 @@
         public string Descripcion { get; set; }
 
         [Column(TypeName = "decimal(18,4)")]
+        [RegularExpression(@"^\d+(\.\d+)?$", ErrorMessage = "Este campo debe ser un número válido.")]
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public decimal? Cantidad { get; set; }
     }
