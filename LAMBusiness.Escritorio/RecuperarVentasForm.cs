@@ -25,7 +25,7 @@ namespace LAMBusiness.Escritorio
             var filtro = await _ventas.RecuperarVenta((Guid)Global.UsuarioId!);
             if (filtro.Error)
             {
-                MensajeDeError(filtro.Mensaje);
+                _ventaId = Guid.Empty;
                 Close();
             }
 
@@ -45,11 +45,6 @@ namespace LAMBusiness.Escritorio
                     }
                 }
             }
-        }
-
-        private static void MensajeDeError(string mensaje)
-        {
-            MessageBox.Show(mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void RecuperarVentasDataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)

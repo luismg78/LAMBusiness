@@ -47,8 +47,6 @@
             this.CancelarButton = new System.Windows.Forms.Button();
             this.BuscarButton = new System.Windows.Forms.Button();
             this.VentasButton = new System.Windows.Forms.Button();
-            this.VentaTotalLabel = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.ProductosDataGridView = new System.Windows.Forms.DataGridView();
             this.CantidadDataGridView = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.CodigoDataGridView = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -82,11 +80,9 @@
             this.ClientePanel.Controls.Add(this.CancelarButton);
             this.ClientePanel.Controls.Add(this.BuscarButton);
             this.ClientePanel.Controls.Add(this.VentasButton);
-            this.ClientePanel.Controls.Add(this.VentaTotalLabel);
-            this.ClientePanel.Controls.Add(this.label1);
             this.ClientePanel.Location = new System.Drawing.Point(1032, 4);
             this.ClientePanel.Name = "ClientePanel";
-            this.ClientePanel.Size = new System.Drawing.Size(320, 565);
+            this.ClientePanel.Size = new System.Drawing.Size(320, 525);
             this.ClientePanel.TabIndex = 9;
             // 
             // CerrarButton
@@ -131,6 +127,7 @@
             this.CobrarButton.TabIndex = 4;
             this.CobrarButton.Text = "Cobrar   [F5]";
             this.CobrarButton.UseVisualStyleBackColor = true;
+            this.CobrarButton.Click += new System.EventHandler(this.CobrarButton_Click);
             // 
             // RecuperarButton
             // 
@@ -178,30 +175,6 @@
             this.VentasButton.Text = "Ventas";
             this.VentasButton.UseVisualStyleBackColor = false;
             this.VentasButton.Click += new System.EventHandler(this.VentasButton_Click);
-            // 
-            // VentaTotalLabel
-            // 
-            this.VentaTotalLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.VentaTotalLabel.AutoSize = true;
-            this.VentaTotalLabel.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.VentaTotalLabel.ForeColor = System.Drawing.Color.DimGray;
-            this.VentaTotalLabel.Location = new System.Drawing.Point(15, 992);
-            this.VentaTotalLabel.Name = "VentaTotalLabel";
-            this.VentaTotalLabel.Size = new System.Drawing.Size(49, 21);
-            this.VentaTotalLabel.TabIndex = 1;
-            this.VentaTotalLabel.Text = "$0.00";
-            // 
-            // label1
-            // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label1.ForeColor = System.Drawing.Color.BlueViolet;
-            this.label1.Location = new System.Drawing.Point(15, 960);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(96, 21);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Total Venta";
             // 
             // ProductosDataGridView
             // 
@@ -258,7 +231,7 @@
             this.ProductosDataGridView.RowTemplate.Height = 50;
             this.ProductosDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.ProductosDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.ProductosDataGridView.Size = new System.Drawing.Size(1023, 565);
+            this.ProductosDataGridView.Size = new System.Drawing.Size(1023, 525);
             this.ProductosDataGridView.TabIndex = 1;
             // 
             // CantidadDataGridView
@@ -327,7 +300,7 @@
             this.TotalPanel.Controls.Add(this.IconoPictureBox);
             this.TotalPanel.Controls.Add(this.TotalLabel);
             this.TotalPanel.Controls.Add(this.CodigoTextBox);
-            this.TotalPanel.Location = new System.Drawing.Point(4, 572);
+            this.TotalPanel.Location = new System.Drawing.Point(4, 533);
             this.TotalPanel.Name = "TotalPanel";
             this.TotalPanel.Size = new System.Drawing.Size(1348, 96);
             this.TotalPanel.TabIndex = 11;
@@ -375,7 +348,7 @@
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.NotificacionToolStripStatusLabel,
             this.ProcesoToolStripProgressBar});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 671);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 633);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1357, 30);
             this.statusStrip1.TabIndex = 12;
@@ -401,14 +374,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1357, 701);
+            this.ClientSize = new System.Drawing.Size(1357, 663);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.TotalPanel);
             this.Controls.Add(this.ProductosDataGridView);
             this.Controls.Add(this.ClientePanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.MinimumSize = new System.Drawing.Size(1344, 620);
+            this.MinimumSize = new System.Drawing.Size(1342, 610);
             this.Name = "VentasForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Ventas";
@@ -416,7 +389,6 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.VentasForm_FormClosing);
             this.Load += new System.EventHandler(this.VentasForm_Load);
             this.ClientePanel.ResumeLayout(false);
-            this.ClientePanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ProductosDataGridView)).EndInit();
             this.TotalPanel.ResumeLayout(false);
             this.TotalPanel.PerformLayout();
@@ -430,8 +402,6 @@
         #endregion
 
         private Panel ClientePanel;
-        private Label VentaTotalLabel;
-        private Label label1;
         private DataGridView ProductosDataGridView;
         private DataGridViewTextBoxColumn CantidadDataGridView;
         private DataGridViewTextBoxColumn CodigoDataGridView;
