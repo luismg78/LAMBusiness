@@ -21,7 +21,7 @@
                     <div class="border-bottom col-8 px-3 py-2 text-truncate">
                         <span class="text-dark">@Html.DisplayFor(modelItem => item.Nombre)</span>
                         <small class="d-block text-muted">Colaboradores asignados: @Html.DisplayFor(modelItem => item.Colaboradores.Count)</small>
-                        <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.Descripcion)</small>
+                        <small class="d-block text-muted descripcion-corta">@Html.DisplayFor(modelItem => item.Descripcion)</small>
                     </div>
                     <div class="border-bottom col-4 px-3 py-2 text-end">
                         @if (Model.PermisoEscritura)

@@ -20,6 +20,18 @@
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public string Descripcion { get; set; }
 
+        public string DescripcionResumida
+        {
+            get
+            {
+                if (Descripcion.Length > 50)
+                {
+                    return Descripcion.Substring(0, 100) + "...";
+                }
+                return Descripcion;
+            }
+        }
+
         [JsonIgnore]
         public virtual ICollection<Existencia> Existencias { get; set; }
     }

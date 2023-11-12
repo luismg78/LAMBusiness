@@ -244,3 +244,17 @@ function multiplyCantByPriceWhenChangeValue(precio) {
 function toggleFullScreen() {
     document.documentElement.requestFullscreen();
 }
+
+
+//document.querySelectorAll(".descripcion-corta").forEach(function (element) {
+//    element.addEventListener("click", function () {
+//        if (element.style.whiteSpace === "nowrap") {
+//            element.style.whiteSpace = "normal";
+//            element.style.maxWidth = "none";
+//            element.style.overflow = "hidden";
+//        } else {
+//            element.style.whiteSpace = "nowrap";
+//            element.style.overflow = "auto";
+//        }
+//    });
+//});

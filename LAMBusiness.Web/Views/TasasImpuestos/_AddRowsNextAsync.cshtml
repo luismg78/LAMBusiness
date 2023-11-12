@@ -24,7 +24,7 @@
                             <small class="d-block d-md-inline-block text-muted me-md-2">Porcentaje: @Html.DisplayFor(modelItem => item.Porcentaje)%</small>
                             <small class="d-block d-md-inline-block text-muted">Productos asignados: @Html.DisplayFor(modelItem => item.Productos.Count)</small>
                         </div>
-                        <small class="d-block text-muted">@Html.DisplayFor(modelItem => item.Descripcion)</small>
+                        <small class="d-block text-muted descripcion-corta">@Html.DisplayFor(modelItem => item.Descripcion)</small>
                     </div>
                     <div class="border-bottom col-4 px-3 py-2 text-end">
                         @if (Model.PermisoEscritura)

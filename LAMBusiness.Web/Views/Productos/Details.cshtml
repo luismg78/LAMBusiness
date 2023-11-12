@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Productos";
 }
+<link href="~/css/comun.css" rel="stylesheet" />
 
 <div class="modal-content border-0 box-shadow">
     <div class="modal-header pb-0 align-items-baseline">
@@ -29,7 +30,7 @@
                     <img src="@Url.Action("GetProductImages", "Productos", new { productoId = Model.ProductoID, imageId = Model.ProductoID, tipo = "md" })" class="rounded-circle" style="width:5rem;" alt="Image Profile" >
                     <div class="ms-md-4">
                         <p class="fw-bold m-0 pt-2 pt-md-0 title">@Html.DisplayFor(model => model.Nombre)</p>
-                        <span class="d-block mb-3 subtitle text-muted">@Html.DisplayFor(model => model.Descripcion)</span>
+                        <span class="d-block mb-3 subtitle text-muted descripcion-corta">@Html.DisplayFor(model => model.Descripcion)</span>
                         @if (Model.PermisoEscritura)
                         {
                             <a asp-action="Edit" asp-route-id="@Model.ProductoID" class="btn btn-base btn-sm">Editar</a>
@@ -155,7 +156,7 @@
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <span class="fw-bold d-block d-md-none">Descripción</span>
-                                    <span class="d-block">@productoAsignado.Descripcion</span>
+                                    <span class="d-block descripcion-corta">@productoAsignado.Descripcion</span>
                                 </div>
                                 <div class="col-12 col-md-2 text-md-end">
                                     <span class="fw-bold d-block d-md-none">Piezas x Paquete</span>
@@ -202,7 +203,7 @@
                                 <div class="col-12 col-md-9">
                                     <span class="fw-bold d-block d-md-none">Almacén</span>
                                     <span class="d-block">@existencia.Almacenes.Nombre</span>
-                                    <small class="d-block">@existencia.Almacenes.Descripcion</small>
+                                    <small class="d-block descripcion-corta">@existencia.Almacenes.Descripcion</small>
                                 </div>
                                 <div class="col-12 col-md-3 text-md-end">
                                     <span class="fw-bold d-block d-md-none">Existencia</span>
