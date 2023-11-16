@@ -1,10 +1,7 @@
-﻿using DocumentFormat.OpenXml.Vml;
-using LAMBusiness.Backend;
+﻿using LAMBusiness.Backend;
 using LAMBusiness.Contextos;
 using LAMBusiness.Shared.Aplicacion;
-using LAMBusiness.Shared.Contacto;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 
 namespace LAMBusiness.Escritorio
@@ -538,6 +535,7 @@ namespace LAMBusiness.Escritorio
                 IconoPictureBox.Image = Properties.Resources.codigodebarras;
                 if (nuevaVenta)
                     ProductosDataGridView.Rows.Clear();
+                ObtenerTotal();
                 CodigoTextBox.Text = string.Empty;
                 CodigoTextBox.Focus();
 
@@ -602,19 +600,11 @@ namespace LAMBusiness.Escritorio
                 var r = MessageBox.Show("Desea guardar el retiro de caja", "Retiro de caja", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3);
                 if (r == DialogResult.Yes)
                 {
-                    Resultado<decimal> resultado = new();
-                    resultado = ValidarImporte();
-                    if (resultado.Error)
-                        Notificar(resultado.Mensaje);
-                    else
-                    {
-                        decimal importe = resultado.Datos;
-                        var retiro = await _ventas.RetirarEfectivoDeCaja(importe, _usuarioId);
-                        if (retiro.Error)
-                            Notificar(retiro.Mensaje);
-                        else
-                            IniciarVenta(true);
-                    }
+                    decimal importe = CalcularTotal();
+                    var retiro = await _ventas.RetirarEfectivoDeCaja(importe, _usuarioId);
+                    if (!retiro.Error)
+                        IniciarVenta(true);
+                    Notificar(retiro.Mensaje);
                 }
                 else if (r == DialogResult.No)
                     IniciarVenta(true);
