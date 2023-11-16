@@ -52,7 +52,7 @@
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
                 return RedirectToAction(nameof(Index));
 
-            var resultado = await _ventas.Inicializar(token.UsuarioID);
+            var resultado = await _ventas.Inicializar(token.UsuarioID, true);
             if (resultado.Error)
             {
                 TempData["toast"] = resultado.Mensaje;

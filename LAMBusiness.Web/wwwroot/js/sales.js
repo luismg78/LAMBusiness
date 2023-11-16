@@ -64,28 +64,28 @@ document.getElementById('inputText').addEventListener('keydown', function (e) {
                 e.cancelable = true;
                 e.preventDefault();
                 break;
-            case 112: //F1
+            case 113: //F2
                 e.preventDefault();
                 searchMode();
-                break;
-            case 114: //F3    
-                e.preventDefault();
-                cancelSaleMode();
-                break;
-            case 115: //F4
-                e.preventDefault();
-                getItBackSaleMode();
                 break;
             case 116: //F5
                 e.preventDefault();
                 payMode();
                 break;
-            case 118: //F7 retiro de efectivo
+            case 118: //F7
+                e.preventDefault();
+                cancelSaleMode();
+                break;
+            case 119: //F8
+                e.preventDefault();
+                getItBackSaleMode();
+                break;
+            case 122: //F11 retiro de efectivo
                 if (hayVentasPorCerrar.value === 'True') {
                     withdrawCashMode(event);
                 }
                 break;
-            case 119: //F8
+            case 123: //F12
                 e.preventDefault();
                 if (hayVentasPorCerrar.value === 'True') {
                     closeSalesMode();

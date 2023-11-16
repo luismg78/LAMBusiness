@@ -117,6 +117,7 @@
             this.RetirarEfectivoButton.TabIndex = 7;
             this.RetirarEfectivoButton.Text = "Retirar Efectivo [F11]";
             this.RetirarEfectivoButton.UseVisualStyleBackColor = true;
+            this.RetirarEfectivoButton.Click += new System.EventHandler(this.RetirarEfectivoButton_Click);
             // 
             // CobrarButton
             // 

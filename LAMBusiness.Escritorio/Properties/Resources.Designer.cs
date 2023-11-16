@@ -83,6 +83,16 @@ namespace LAMBusiness.Escritorio.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap retirodecaja {
+            get {
+                object obj = ResourceManager.GetObject("retirodecaja", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap signopesos {
             get {
                 object obj = ResourceManager.GetObject("signopesos", resourceCulture);

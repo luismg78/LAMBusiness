@@ -481,14 +481,14 @@ namespace LAMBusiness.Backend
             return resultado;
         }
 
-        public async Task<Resultado<VentasNoAplicadasDTO>> Inicializar(Guid usuarioId)
+        public async Task<Resultado<VentasNoAplicadasDTO>> Inicializar(Guid usuarioId, bool nuevaVenta)
         {
             Resultado<VentasNoAplicadasDTO> resultado = new();
 
             var hayVentasPorCerrar = await _contexto.Ventas.AnyAsync(v => v.VentaCierreID == null || v.VentaCierreID == Guid.Empty);
 
             int totalDeVentasNoAplicadas = 0;
-            var resultadoInicioDeVenta = await InicializarVentaAsync(usuarioId);
+            var resultadoInicioDeVenta = await InicializarVentaAsync(usuarioId, nuevaVenta);
             if (resultadoInicioDeVenta.Error)
             {
                 resultado.Error = true;
@@ -526,7 +526,7 @@ namespace LAMBusiness.Backend
             return resultado;
         }
 
-        private async Task<Resultado<VentaNoAplicada>> InicializarVentaAsync(Guid usuarioId)
+        private async Task<Resultado<VentaNoAplicada>> InicializarVentaAsync(Guid usuarioId, bool nuevaVenta)
         {
             Resultado<VentaNoAplicada>? resultado = new();
             VentaNoAplicada? ventaNoAplicada = null!;
@@ -543,7 +543,7 @@ namespace LAMBusiness.Backend
                 iniciarVenta = await _contexto.VentasNoAplicadasDetalle.AnyAsync(v => v.VentaNoAplicadaID == ventaNoAplicada.VentaNoAplicadaID);
             }
 
-            if (iniciarVenta)
+            if (iniciarVenta && nuevaVenta)
             {
                 ventaNoAplicada = new VentaNoAplicada()
                 {

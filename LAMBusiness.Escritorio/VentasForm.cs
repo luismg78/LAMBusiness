@@ -1,8 +1,10 @@
-﻿using LAMBusiness.Backend;
+﻿using DocumentFormat.OpenXml.Vml;
+using LAMBusiness.Backend;
 using LAMBusiness.Contextos;
 using LAMBusiness.Shared.Aplicacion;
 using LAMBusiness.Shared.Contacto;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 
 namespace LAMBusiness.Escritorio
@@ -43,6 +45,10 @@ namespace LAMBusiness.Escritorio
             _configuracion = configuracion;
             _cantidad = 1;
         }
+
+        public VentasForm()
+        {
+        }
         #endregion
 
         #region Inicio y cierre del formulario
@@ -58,7 +64,7 @@ namespace LAMBusiness.Escritorio
             WindowState = FormWindowState.Maximized;
             _usuarioId = (Guid)Global.UsuarioId!;
             Notificar();
-            IniciarVenta();
+            IniciarVenta(true);
         }
         private void VentasForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -100,6 +106,11 @@ namespace LAMBusiness.Escritorio
                             if (resultado.Error)
                                 Notificar(resultado.Mensaje);
                             break;
+                        case Proceso.Retirar:
+                            resultado = AgregarImporteDeRetiroAsync();
+                            if (resultado.Error)
+                                Notificar(resultado.Mensaje);
+                            break;
                     }
                     break;
                 case Keys.Escape:
@@ -109,8 +120,13 @@ namespace LAMBusiness.Escritorio
                             CodigoTextBox.Text = string.Empty;
                             break;
                         case Proceso.Buscar:
+                            IniciarVenta();
+                            break;
                         case Proceso.Aplicar:
-                            IniciarCaptura();
+                            IniciarVenta();
+                            break;
+                        case Proceso.Retirar:
+                            AplicarRetiroDeCaja();
                             break;
                     }
                     break;
@@ -128,22 +144,28 @@ namespace LAMBusiness.Escritorio
                     //ayuda.ShowDialog();
                     break;
                 case Keys.F2:
-                    IniciarBuscar();
+                    if (BuscarButton.Enabled)
+                        IniciarBuscar();
                     break;
                 case Keys.F5:
-                    IniciarCobro();
+                    if (CobrarButton.Enabled)
+                        IniciarCobro();
                     break;
                 case Keys.F7:
-                    CancelarVentaModal();
+                    if (CancelarButton.Enabled)
+                        CancelarVentaModal();
                     break;
                 case Keys.F8:
-                    RecuperarVentasModal();
+                    if (RecuperarButton.Enabled)
+                        RecuperarVentasModal();
                     break;
                 case Keys.F11:
-                    Notificar("Retiro de caja [pendiente]");
+                    if (RetirarEfectivoButton.Enabled)
+                        IniciarRetiroDeCaja();
                     break;
                 case Keys.F12:
-                    Notificar("Corte de caja [pendiente]");
+                    if (CorteDeCajaButton.Enabled)
+                        Notificar("Corte de caja [pendiente]");
                     break;
             }
         }
@@ -247,6 +269,7 @@ namespace LAMBusiness.Escritorio
                 case "retirar":
                     RetirarEfectivoButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
                     RetirarEfectivoButton.ForeColor = Color.White;
+                    IconoPictureBox.Image = Properties.Resources.retirodecaja;
                     break;
                 case "ventas":
                     VentasButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
@@ -270,9 +293,22 @@ namespace LAMBusiness.Escritorio
             RecuperarVentasModal();
         }
 
+        private void RetirarEfectivoButton_Click(object sender, EventArgs e)
+        {
+            IniciarRetiroDeCaja();
+        }
+
         private void VentasButton_Click(object sender, EventArgs e)
         {
-            IniciarCaptura();
+            switch (_proceso)
+            {
+                case Proceso.Retirar:
+                    AplicarRetiroDeCaja();
+                    break;
+                default:
+                    IniciarVenta();
+                    break;
+            }
         }
         #endregion
 
@@ -294,7 +330,7 @@ namespace LAMBusiness.Escritorio
             }
 
             ObtenerCambio();
-            IniciarCaptura();
+            IniciarVenta(true);
             return resultado;
         }
 
@@ -315,7 +351,7 @@ namespace LAMBusiness.Escritorio
                     if (resultado.Error)
                         Notificar(resultado.Mensaje);
                     else
-                        IniciarCaptura();
+                        IniciarVenta();
                 }
             }
             else
@@ -342,10 +378,7 @@ namespace LAMBusiness.Escritorio
                     if (resultado.Error)
                         Notificar(resultado.Mensaje);
                     else
-                    {
-                        IniciarVenta();
-                        IniciarCaptura();
-                    }
+                        IniciarVenta(true);
                 }
             }
             else
@@ -443,7 +476,7 @@ namespace LAMBusiness.Escritorio
                     _ventaId = (Guid)Global.VentaId!;
                     if (_ventaId != Guid.Empty)
                         RecuperarVentas(_ventaId);
-                    IniciarCaptura();
+                    IniciarVenta();
                 }
                 else
                     Notificar("No existe registro de ventas pendientes por aplicar.");
@@ -460,9 +493,9 @@ namespace LAMBusiness.Escritorio
             CodigoTextBox.Text = string.Empty;
             CodigoTextBox.Focus();
         }
-        private async void IniciarVenta()
+        private async void IniciarVenta(bool nuevaVenta = false)
         {
-            var resultado = await _ventas.Inicializar((Guid)Global.UsuarioId!);
+            var resultado = await _ventas.Inicializar((Guid)Global.UsuarioId!, nuevaVenta);
             if (resultado.Error)
             {
                 MessageBox.Show(resultado.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -470,43 +503,45 @@ namespace LAMBusiness.Escritorio
                 Hide();
                 form.Show();
             }
-
-            var ventaNoAplicada = resultado.Datos;
-
-            CancelarButton.Enabled = false;
-            RecuperarButton.Enabled = false;
-            if (ventaNoAplicada.TotalDeRegistrosPendientes > 0)
+            else
             {
-                CancelarButton.Enabled = true;
-                RecuperarButton.Enabled = true;
+                var ventaNoAplicada = resultado.Datos;
+
+                CancelarButton.Enabled = false;
+                RecuperarButton.Enabled = false;
+                if (ventaNoAplicada.TotalDeRegistrosPendientes > 0)
+                {
+                    CancelarButton.Enabled = true;
+                    RecuperarButton.Enabled = true;
+                }
+
+                RetirarEfectivoButton.Enabled = false;
+                CorteDeCajaButton.Enabled = false;
+                if (ventaNoAplicada.HayVentasPorCerrar)
+                {
+                    RetirarEfectivoButton.Enabled = true;
+                    CorteDeCajaButton.Enabled = true;
+                }
+
+                CobrarButton.Enabled = false;
+                if (HayRegistrosDeVentasPorAplicar())
+                    CobrarButton.Enabled = true;
+
+                BuscarButton.Enabled = true;
+                VentasButton.Enabled = true;
+
+                _cantidad = 1;
+                _pago = 0;
+                _proceso = Proceso.Capturar;
+                _ventaId = ventaNoAplicada.VentaNoAplicadaID;
+                ConfiguracionButtonBgColor("ventas");
+                IconoPictureBox.Image = Properties.Resources.codigodebarras;
+                if (nuevaVenta)
+                    ProductosDataGridView.Rows.Clear();
+                CodigoTextBox.Text = string.Empty;
+                CodigoTextBox.Focus();
+
             }
-
-            RetirarEfectivoButton.Enabled = false;
-            CorteDeCajaButton.Enabled = false;
-            if (ventaNoAplicada.HayVentasPorCerrar)
-            {
-                RetirarEfectivoButton.Enabled = true;
-                CorteDeCajaButton.Enabled = true;
-            }
-
-            CobrarButton.Enabled = false;
-
-            _cantidad = 1;
-            _pago = 0;
-            _proceso = Proceso.Capturar;
-            _ventaId = ventaNoAplicada.VentaNoAplicadaID;
-            ProductosDataGridView.Rows.Clear();
-            IconoPictureBox.Image = Properties.Resources.codigodebarras;
-            CodigoTextBox.Text = string.Empty;
-            CodigoTextBox.Focus();
-        }
-        private void IniciarCaptura()
-        {
-            ConfiguracionButtonBgColor("ventas");
-            _cantidad = 1;
-            _proceso = Proceso.Capturar;
-            CodigoTextBox.Text = string.Empty;
-            CodigoTextBox.Focus();
         }
         private void IniciarCobro()
         {
@@ -517,6 +552,13 @@ namespace LAMBusiness.Escritorio
                 _proceso = Proceso.Aplicar;
                 ConfiguracionButtonBgColor("cobrar");
                 ObtenerTotal();
+                BuscarButton.Enabled = false;
+                CobrarButton.Enabled = false;
+                CancelarButton.Enabled = false;
+                RecuperarButton.Enabled = false;
+                RetirarEfectivoButton.Enabled = false;
+                CorteDeCajaButton.Enabled = false;
+                VentasButton.Enabled = true;
                 CodigoTextBox.Text = string.Empty;
                 CodigoTextBox.Focus();
             }
@@ -524,6 +566,84 @@ namespace LAMBusiness.Escritorio
             {
                 Notificar("Operación no aprobada, agregue al menos un registro en la lista.");
             }
+        }
+        private void IniciarRetiroDeCaja()
+        {
+            bool ok = HayRegistrosDeVentasPorAplicar();
+            if (ok)
+            {
+                Notificar("Opción no aprobada, venta en proceso.");
+            }
+            else
+            {
+                _pago = 0;
+                _proceso = Proceso.Retirar;
+                ConfiguracionButtonBgColor("retirar");
+                ObtenerTotal();
+                BuscarButton.Enabled = false;
+                CobrarButton.Enabled = false;
+                CancelarButton.Enabled = false;
+                RecuperarButton.Enabled = false;
+                RetirarEfectivoButton.Enabled = false;
+                CorteDeCajaButton.Enabled = false;
+                VentasButton.Enabled = true;
+                CodigoTextBox.Text = string.Empty;
+                CodigoTextBox.Focus();
+            }
+        }
+        #endregion
+
+        #region Retiro de cajas
+        public async void AplicarRetiroDeCaja()
+        {
+            bool ok = HayRegistrosDeVentasPorAplicar();
+            if (ok)
+            {
+                var r = MessageBox.Show("Desea guardar el retiro de caja", "Retiro de caja", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3);
+                if (r == DialogResult.Yes)
+                {
+                    Resultado<decimal> resultado = new();
+                    resultado = ValidarImporte();
+                    if (resultado.Error)
+                        Notificar(resultado.Mensaje);
+                    else
+                    {
+                        decimal importe = resultado.Datos;
+                        var retiro = await _ventas.RetirarEfectivoDeCaja(importe, _usuarioId);
+                        if (retiro.Error)
+                            Notificar(retiro.Mensaje);
+                        else
+                            IniciarVenta(true);
+                    }
+                }
+                else if (r == DialogResult.No)
+                    IniciarVenta(true);
+                else
+                {
+                    _cantidad = 1;
+                    CodigoTextBox.Text = string.Empty;
+                    CodigoTextBox.Focus();
+                }
+            }
+            else
+                IniciarVenta(true);
+        }
+        public Resultado AgregarImporteDeRetiroAsync()
+        {
+            Resultado<decimal> resultado = ValidarImporte();
+            if (resultado.Error)
+                return resultado;
+
+            decimal importe = resultado.Datos;
+
+            ProductosDataGridView.Rows.Add(_cantidad, "", "", importe, importe * _cantidad);
+            ProductosDataGridView.Rows[^1].Selected = true;
+            ProductosDataGridView.FirstDisplayedScrollingRowIndex = ProductosDataGridView.Rows.Count - 1;
+            CodigoTextBox.Text = string.Empty;
+            _cantidad = 1;
+            ObtenerTotal();
+
+            return resultado;
         }
         #endregion
 
@@ -627,5 +747,6 @@ namespace LAMBusiness.Escritorio
             return ProductosDataGridView.RowCount > 0;
         }
         #endregion
+
     }
 }
