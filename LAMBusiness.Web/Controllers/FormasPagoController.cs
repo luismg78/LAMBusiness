@@ -227,6 +227,8 @@
                     .FirstOrDefaultAsync(f => f.ValorPorDefault == true && 
                                               f.FormaPagoID != formaPago.FormaPagoID);
 
+                string avisoCheckBox = "";
+
                 if (formaPago.ValorPorDefault)
                 {
                     if (formaPagoPredeterminada != null)
@@ -240,6 +242,7 @@
                     if (formaPagoPredeterminada == null)
                     {
                         formaPago.ValorPorDefault = true;
+                        avisoCheckBox = "Pero debes tener al menos una opcion predeterminada.";
                     }
                 }
 
@@ -247,7 +250,7 @@
                 {
                     _context.Update(formaPago);
                     await _context.SaveChangesAsync();
-                    TempData["toast"] = "Los datos de la forma de pago fueron actualizados correctamente.";
+                    TempData["toast"] = $"Los datos de la forma de pago fueron actualizados correctamente. {avisoCheckBox} ";
                     await BitacoraAsync("Actualizar", formaPago);
                     return RedirectToAction(nameof(Index));
                 }
