@@ -264,9 +264,13 @@
                 var searchBy = $('#SearchInput')[0] === undefined ? "" : $('#SearchInput').val();
                 filter = {
                     Patron: searchBy,
-                    Skip: skip,
-                    ...filter2
+                    Skip: skip
                 };
+                //filter = {
+                //    Patron: searchBy,
+                //    Skip: skip,
+                //    ...filter2
+                //};
                 addRowsNext(skip, true);
             }
         }
