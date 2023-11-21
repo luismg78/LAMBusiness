@@ -3,6 +3,7 @@ using LAMBusiness.Shared.Aplicacion;
 using LAMBusiness.Shared.Contacto;
 using LAMBusiness.Shared.DTO.Sesion;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -117,6 +118,31 @@ namespace LAMBusiness.Backend
                 resultado.Mensaje = "Error en el servidor al evaluar sus credenciales.";
             }
 
+            return resultado;
+        }
+
+        public async Task<Resultado> ValidarContraseñaPorUsuarioIdAsync(Guid usuarioId, string password)
+        {
+            Resultado resultado = new();
+
+            Usuario? usuario = await _contexto.Usuarios.FindAsync(usuarioId);
+
+            if (usuario == null)
+            {
+                resultado.Error = true;
+                resultado.Mensaje = "Usuario inexistente.";
+                return resultado;
+            }
+
+            var pwd = Encrypt(password);
+            if (usuario.Password != pwd)
+            {
+                resultado.Error = true;
+                resultado.Mensaje = "Contraseña Incorrecta.";
+                return resultado;
+            }
+
+            resultado.Mensaje = "Contraseña válida";
             return resultado;
         }
 

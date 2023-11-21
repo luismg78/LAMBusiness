@@ -1,7 +1,9 @@
-﻿using LAMBusiness.Backend;
+﻿using DocumentFormat.OpenXml.Drawing.Diagrams;
+using LAMBusiness.Backend;
 using LAMBusiness.Contextos;
 using LAMBusiness.Shared.Aplicacion;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 
 namespace LAMBusiness.Escritorio
@@ -49,7 +51,7 @@ namespace LAMBusiness.Escritorio
         #endregion
 
         #region Inicio y cierre del formulario
-        private void VentasForm_Load(object sender, EventArgs e)
+        private async void VentasForm_Load(object sender, EventArgs e)
         {
             if (Global.UsuarioId == null || Global.UsuarioId == Guid.Empty)
             {
@@ -61,7 +63,7 @@ namespace LAMBusiness.Escritorio
             WindowState = FormWindowState.Maximized;
             _usuarioId = (Guid)Global.UsuarioId!;
             Notificar();
-            IniciarVenta(true);
+            await IniciarVenta(true);
         }
         private void VentasForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -108,22 +110,32 @@ namespace LAMBusiness.Escritorio
                             if (resultado.Error)
                                 Notificar(resultado.Mensaje);
                             break;
+                        case Proceso.CorteDeCaja:
+                            resultado = await AplicarCorteDeCaja();
+                            if (resultado.Error)
+                                Notificar(resultado.Mensaje);
+                            break;
                     }
                     break;
                 case Keys.Escape:
+                    TotalLabel.ForeColor = Color.Black;
                     switch (_proceso)
                     {
                         case Proceso.Capturar:
                             CodigoTextBox.Text = string.Empty;
+                            CodigoTextBox.PasswordChar = (char)0;
                             break;
                         case Proceso.Buscar:
-                            IniciarVenta();
+                            await IniciarVenta();
+                            break;
+                        case Proceso.CorteDeCaja:
+                            await IniciarVenta(true);
                             break;
                         case Proceso.Aplicar:
-                            IniciarVenta();
+                            await IniciarVenta();
                             break;
                         case Proceso.Retirar:
-                            AplicarRetiroDeCaja();
+                            await AplicarRetiroDeCaja();
                             break;
                     }
                     break;
@@ -150,11 +162,11 @@ namespace LAMBusiness.Escritorio
                     break;
                 case Keys.F7:
                     if (CancelarButton.Enabled)
-                        CancelarVentaModal();
+                        await CancelarVentaModal();
                     break;
                 case Keys.F8:
                     if (RecuperarButton.Enabled)
-                        RecuperarVentasModal();
+                        await RecuperarVentasModal();
                     break;
                 case Keys.F11:
                     if (RetirarEfectivoButton.Enabled)
@@ -162,7 +174,7 @@ namespace LAMBusiness.Escritorio
                     break;
                 case Keys.F12:
                     if (CorteDeCajaButton.Enabled)
-                        Notificar("Corte de caja [pendiente]");
+                        IniciarCorteDeCaja();
                     break;
             }
         }
@@ -196,6 +208,7 @@ namespace LAMBusiness.Escritorio
                     break;
                 case Keys.Escape:
                     CodigoTextBox.Text = string.Empty;
+                    CodigoTextBox.PasswordChar = (char)0;
                     CodigoTextBox.Focus();
                     break;
             }
@@ -280,14 +293,19 @@ namespace LAMBusiness.Escritorio
             IniciarCobro();
         }
 
-        private void CancelarButton_Click(object sender, EventArgs e)
+        private async void CancelarButton_Click(object sender, EventArgs e)
         {
-            CancelarVentaModal();
+            await CancelarVentaModal();
         }
 
-        private void RecuperarButton_Click(object sender, EventArgs e)
+        private void CorteDeCajaButton_Click(object sender, EventArgs e)
         {
-            RecuperarVentasModal();
+            IniciarCorteDeCaja();
+        }
+
+        private async void RecuperarButton_Click(object sender, EventArgs e)
+        {
+            await RecuperarVentasModal();
         }
 
         private void RetirarEfectivoButton_Click(object sender, EventArgs e)
@@ -295,15 +313,15 @@ namespace LAMBusiness.Escritorio
             IniciarRetiroDeCaja();
         }
 
-        private void VentasButton_Click(object sender, EventArgs e)
+        private async void VentasButton_Click(object sender, EventArgs e)
         {
             switch (_proceso)
             {
                 case Proceso.Retirar:
-                    AplicarRetiroDeCaja();
+                    await AplicarRetiroDeCaja();
                     break;
                 default:
-                    IniciarVenta();
+                    await IniciarVenta();
                     break;
             }
         }
@@ -326,8 +344,7 @@ namespace LAMBusiness.Escritorio
                 return resultado;
             }
 
-            ObtenerCambio();
-            IniciarVenta(true);
+            await ObtenerCambio();
             return resultado;
         }
 
@@ -348,7 +365,7 @@ namespace LAMBusiness.Escritorio
                     if (resultado.Error)
                         Notificar(resultado.Mensaje);
                     else
-                        IniciarVenta();
+                        await IniciarVenta();
                 }
             }
             else
@@ -361,7 +378,7 @@ namespace LAMBusiness.Escritorio
             return resultado;
         }
 
-        public void CancelarVentaModal()
+        public async Task CancelarVentaModal()
         {
             bool ok = HayRegistrosDeVentasPorAplicar();
             if (ok)
@@ -375,7 +392,7 @@ namespace LAMBusiness.Escritorio
                     if (resultado.Error)
                         Notificar(resultado.Mensaje);
                     else
-                        IniciarVenta(true);
+                        await IniciarVenta(true);
                 }
             }
             else
@@ -422,7 +439,7 @@ namespace LAMBusiness.Escritorio
             return resultado;
         }
 
-        private async void RecuperarVentas(Guid id)
+        private async Task RecuperarVentas(Guid id)
         {
             _ventaId = id;
             var resultado = await _ventas.RecuperarVentaPorId(id, _usuarioId);
@@ -448,10 +465,11 @@ namespace LAMBusiness.Escritorio
             _cantidad = 1;
             ObtenerTotal();
             CodigoTextBox.Text = string.Empty;
+            CodigoTextBox.PasswordChar = (char)0;
             CodigoTextBox.Focus();
         }
 
-        public async void RecuperarVentasModal()
+        public async Task RecuperarVentasModal()
         {
             bool ok = HayRegistrosDeVentasPorAplicar();
             if (ok)
@@ -472,8 +490,8 @@ namespace LAMBusiness.Escritorio
                     form.ShowDialog();
                     _ventaId = (Guid)Global.VentaId!;
                     if (_ventaId != Guid.Empty)
-                        RecuperarVentas(_ventaId);
-                    IniciarVenta();
+                        await RecuperarVentas(_ventaId);
+                    await IniciarVenta();
                 }
                 else
                     Notificar("No existe registro de ventas pendientes por aplicar.");
@@ -488,9 +506,10 @@ namespace LAMBusiness.Escritorio
             _cantidad = 1;
             _proceso = Proceso.Buscar;
             CodigoTextBox.Text = string.Empty;
+            CodigoTextBox.PasswordChar = (char)0;
             CodigoTextBox.Focus();
         }
-        private async void IniciarVenta(bool nuevaVenta = false)
+        private async Task IniciarVenta(bool nuevaVenta = false)
         {
             var resultado = await _ventas.Inicializar((Guid)Global.UsuarioId!, nuevaVenta);
             if (resultado.Error)
@@ -530,13 +549,16 @@ namespace LAMBusiness.Escritorio
                 _cantidad = 1;
                 _pago = 0;
                 _proceso = Proceso.Capturar;
-                _ventaId = ventaNoAplicada.VentaNoAplicadaID;
                 ConfiguracionButtonBgColor("ventas");
                 IconoPictureBox.Image = Properties.Resources.codigodebarras;
                 if (nuevaVenta)
+                {
+                    _ventaId = ventaNoAplicada.VentaNoAplicadaID;
                     ProductosDataGridView.Rows.Clear();
+                }
                 ObtenerTotal();
                 CodigoTextBox.Text = string.Empty;
+                CodigoTextBox.PasswordChar = (char)0;
                 CodigoTextBox.Focus();
 
             }
@@ -558,6 +580,7 @@ namespace LAMBusiness.Escritorio
                 CorteDeCajaButton.Enabled = false;
                 VentasButton.Enabled = true;
                 CodigoTextBox.Text = string.Empty;
+                CodigoTextBox.PasswordChar = (char)0;
                 CodigoTextBox.Focus();
             }
             else
@@ -565,12 +588,37 @@ namespace LAMBusiness.Escritorio
                 Notificar("Operación no aprobada, agregue al menos un registro en la lista.");
             }
         }
+        private void IniciarCorteDeCaja()
+        {
+            bool ok = HayRegistrosDeVentasPorAplicar();
+            if (ok)
+            {
+                Notificar("Opción no aprobada, movimiento en proceso.");
+            }
+            else
+            {
+                _pago = 0;
+                _proceso = Proceso.CorteDeCaja;
+                ConfiguracionButtonBgColor("cortedecaja");
+                ObtenerTotal();
+                BuscarButton.Enabled = false;
+                CobrarButton.Enabled = false;
+                CancelarButton.Enabled = false;
+                RecuperarButton.Enabled = false;
+                RetirarEfectivoButton.Enabled = false;
+                CorteDeCajaButton.Enabled = true;
+                VentasButton.Enabled = true;
+                CodigoTextBox.Text = string.Empty;
+                CodigoTextBox.PasswordChar = '*';
+                CodigoTextBox.Focus();
+            }
+        }
         private void IniciarRetiroDeCaja()
         {
             bool ok = HayRegistrosDeVentasPorAplicar();
             if (ok)
             {
-                Notificar("Opción no aprobada, venta en proceso.");
+                Notificar("Opción no aprobada, movimiento en proceso.");
             }
             else
             {
@@ -582,17 +630,72 @@ namespace LAMBusiness.Escritorio
                 CobrarButton.Enabled = false;
                 CancelarButton.Enabled = false;
                 RecuperarButton.Enabled = false;
-                RetirarEfectivoButton.Enabled = false;
+                RetirarEfectivoButton.Enabled = true;
                 CorteDeCajaButton.Enabled = false;
                 VentasButton.Enabled = true;
                 CodigoTextBox.Text = string.Empty;
+                CodigoTextBox.PasswordChar = (char)0;
                 CodigoTextBox.Focus();
             }
         }
         #endregion
 
+        #region Corte de cajas
+        public async Task<Resultado> AplicarCorteDeCaja()
+        {
+            Sesiones sesion = new(_contexto);
+            var pwd = Sesiones.GenerateSHA512String(CodigoTextBox.Text);
+            Resultado resultado = await sesion.ValidarContraseñaPorUsuarioIdAsync(_usuarioId, pwd);
+            if (resultado.Error)
+                return resultado;
+
+            var resultadoCorteDeCaja = await _ventas.CerrarVentas(_usuarioId);
+            if (resultadoCorteDeCaja.Error)
+            {
+                resultado.Error = true;
+                resultado.Mensaje = resultadoCorteDeCaja.Mensaje;
+                return resultado;
+            }
+
+            var corte = resultadoCorteDeCaja.Datos;
+
+            ProductosDataGridView.Rows.Add(1, "", "Importe del sistema", "", $"{corte.ImporteDelSistema:0.00}");
+            //if (corte.ImporteDelSistemaDetalle != null && corte.ImporteDelSistemaDetalle.Any())
+            //{
+            //    foreach (var item in corte.ImporteDelSistemaDetalle)
+            //    {
+            //        ProductosDataGridView.Rows.Add(1, "", item.FormaDePago, "", item.Importe);
+            //    }
+            //}
+            ProductosDataGridView.Rows.Add(1, "", "Importe del usuario (retiros)", "", $"{corte.ImporteDelUsuario:0.00}");
+            var diferencia = corte.ImporteDelSistema - corte.ImporteDelUsuario;
+            if(diferencia > 0)
+            {
+                TotalLabel.Text = $"Faltante {diferencia:$0.00}";
+                TotalLabel.ForeColor = Color.Red;
+            }
+            else if(diferencia < 0)
+            {
+                TotalLabel.Text = $"Sobrante {Math.Abs(diferencia):$0.00}";
+                TotalLabel.ForeColor = Color.Orange;
+            }
+            else
+            {
+                TotalLabel.Text = $"Correcto {diferencia:$0.00}";
+                TotalLabel.ForeColor = Color.Green;
+            }                        
+            ProductosDataGridView.Rows[^1].Selected = true;
+            ProductosDataGridView.FirstDisplayedScrollingRowIndex = ProductosDataGridView.Rows.Count - 1;
+            _cantidad = 1;
+            CodigoTextBox.Text = string.Empty;
+            CodigoTextBox.Focus();
+            return resultado;
+        }
+
+        #endregion
+
         #region Retiro de cajas
-        public async void AplicarRetiroDeCaja()
+        public async Task AplicarRetiroDeCaja()
         {
             bool ok = HayRegistrosDeVentasPorAplicar();
             if (ok)
@@ -603,20 +706,21 @@ namespace LAMBusiness.Escritorio
                     decimal importe = CalcularTotal();
                     var retiro = await _ventas.RetirarEfectivoDeCaja(importe, _usuarioId);
                     if (!retiro.Error)
-                        IniciarVenta(true);
+                        await IniciarVenta(true);
                     Notificar(retiro.Mensaje);
                 }
                 else if (r == DialogResult.No)
-                    IniciarVenta(true);
+                    await IniciarVenta(true);
                 else
                 {
                     _cantidad = 1;
                     CodigoTextBox.Text = string.Empty;
+                    CodigoTextBox.PasswordChar = (char)0;
                     CodigoTextBox.Focus();
                 }
             }
             else
-                IniciarVenta(true);
+                await IniciarVenta(true);
         }
         public Resultado AgregarImporteDeRetiroAsync()
         {
@@ -626,7 +730,7 @@ namespace LAMBusiness.Escritorio
 
             decimal importe = resultado.Datos;
 
-            ProductosDataGridView.Rows.Add(_cantidad, "", "", importe, importe * _cantidad);
+            ProductosDataGridView.Rows.Add(_cantidad, "", "", $"{importe:0.00}", $"{importe * _cantidad:0.00}");
             ProductosDataGridView.Rows[^1].Selected = true;
             ProductosDataGridView.FirstDisplayedScrollingRowIndex = ProductosDataGridView.Rows.Count - 1;
             CodigoTextBox.Text = string.Empty;
@@ -654,7 +758,7 @@ namespace LAMBusiness.Escritorio
             decimal total = CalcularTotal();
             TotalLabel.Text = $"Total {total:$0.00}";
         }
-        private void ObtenerCambio()
+        private async Task ObtenerCambio()
         {
             decimal total = CalcularTotal();
             _pago += Convert.ToDecimal(CodigoTextBox.Text);
@@ -662,11 +766,13 @@ namespace LAMBusiness.Escritorio
             if (diferencia < 0)
             {
                 TotalLabel.Text = $"Resta {Math.Abs(diferencia):$0.00}";
+                TotalLabel.ForeColor = Color.Gray;
             }
             else
             {
-                IniciarVenta();
+                await IniciarVenta(true);
                 TotalLabel.Text = $"Cambio {diferencia:$0.00}";
+                TotalLabel.ForeColor = Color.Black;
             }
             CodigoTextBox.Text = string.Empty;
         }
@@ -737,6 +843,5 @@ namespace LAMBusiness.Escritorio
             return ProductosDataGridView.RowCount > 0;
         }
         #endregion
-
     }
 }

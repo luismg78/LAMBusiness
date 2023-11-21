@@ -1,9 +1,6 @@
-﻿using DocumentFormat.OpenXml.Office2010.Excel;
-using LAMBusiness.Backend;
+﻿using LAMBusiness.Backend;
 using LAMBusiness.Contextos;
 using LAMBusiness.Shared.Aplicacion;
-using LAMBusiness.Shared.Movimiento;
-using Newtonsoft.Json.Linq;
 
 namespace LAMBusiness.Escritorio
 {

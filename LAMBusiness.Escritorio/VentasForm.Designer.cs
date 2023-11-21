@@ -107,6 +107,7 @@
             this.CorteDeCajaButton.TabIndex = 8;
             this.CorteDeCajaButton.Text = "Corte de Caja       [F12]";
             this.CorteDeCajaButton.UseVisualStyleBackColor = false;
+            this.CorteDeCajaButton.Click += new System.EventHandler(this.CorteDeCajaButton_Click);
             // 
             // RetirarEfectivoButton
             // 

@@ -4,8 +4,8 @@ namespace LAMBusiness.Shared.DTO.Movimiento
 {
     public class CorteDeCajaDTO
     {
-        public string ImporteDelSistema { get; set; }
-        public string ImporteDelUsuario { get; set; }
+        public decimal ImporteDelSistema { get; set; }
+        public decimal ImporteDelUsuario { get; set; }
         public List<ImporteDelSistemaDetalle> ImporteDelSistemaDetalle { get; set; } = null!;
     }
 

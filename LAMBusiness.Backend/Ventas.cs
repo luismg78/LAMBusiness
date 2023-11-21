@@ -462,8 +462,8 @@ namespace LAMBusiness.Backend
 
             var corteDeCaja = new CorteDeCajaDTO()
             {
-                ImporteDelSistema = totalSistema.ToString("$###,###,##0.00"),
-                ImporteDelUsuario = totalUsuario.ToString("$###,###,##0.00"),
+                ImporteDelSistema = totalSistema,
+                ImporteDelUsuario = totalUsuario,
                 ImporteDelSistemaDetalle = importesDelSistema
             };
 
@@ -484,7 +484,6 @@ namespace LAMBusiness.Backend
         public async Task<Resultado<VentasNoAplicadasDTO>> Inicializar(Guid usuarioId, bool nuevaVenta)
         {
             Resultado<VentasNoAplicadasDTO> resultado = new();
-#warning hay un detalle al recuperar una venta y presionar la tecla esc
             var hayVentasPorCerrar = await _contexto.Ventas.AnyAsync(v => v.VentaCierreID == null || v.VentaCierreID == Guid.Empty);
 
             int totalDeVentasNoAplicadas = 0;

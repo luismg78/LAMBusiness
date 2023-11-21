@@ -8,7 +8,7 @@
                 <h4>Importes:</h4>
             </div>
             <div class="col-6 mb-3">Sistema</div>
-            <div class="col-6 mb-3 text-end">@Model.ImporteDelSistema</div>
+            <div class="col-6 mb-3 text-end">@Model.ImporteDelSistema.ToString("$###,###,##0.00")</div>
             @if (Model.ImporteDelSistemaDetalle != null && Model.ImporteDelSistemaDetalle.Any())
             {
                 foreach (var item in Model.ImporteDelSistemaDetalle)
@@ -17,8 +17,8 @@
                     <div class="col-6 mb-3 text-muted text-end">@item.Importe.ToString("$###,###,##0.00")</div>
                 }
             }
-            <div class="col-6 mb-3">Sistema</div>
-            <div class="col-6 mb-3 text-end">@Model.ImporteDelSistema</div>
+            <div class="col-6 mb-3">Retiros</div>
+            <div class="col-6 mb-3 text-end">@Model.ImporteDelUsuario.ToString("$###,###,##0.00")</div>
         </div>
     }
     else
