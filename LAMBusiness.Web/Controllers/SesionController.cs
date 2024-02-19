@@ -12,6 +12,7 @@
     using LAMBusiness.Web.Models.ViewModels;
     using LAMBusiness.Backend;
     using LAMBusiness.Shared.DTO.Sesion;
+    using LAMBusiness.Shared.Aplicacion;
 
     public class SesionController : GlobalController
     {
@@ -180,6 +181,7 @@
 
             if (ModelState.IsValid)
             {
+                changePassword.UsuarioID = token.UsuarioID;
                 var resultado = await _sesion.CambiarPassword(changePassword);
                 if (resultado.Error)
                 {
@@ -187,6 +189,7 @@
                     return View(changePassword);
                 }
                 
+                TempData["toast"] = resultado.Mensaje;
                 return RedirectToAction("Sesion", "Home");
             }
             else
