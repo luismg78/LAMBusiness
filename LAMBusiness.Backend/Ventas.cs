@@ -152,7 +152,7 @@ namespace LAMBusiness.Backend
                 folio = 0;
             folio += 1;
 
-            //ca,biar informaciopn
+            //cambiar informaciopn
             Guid almacenId = Guid.Parse("8706EF28-2EBA-463A-BAB4-62227965F03F");
             DateTime fecha = DateTime.Now;
 
