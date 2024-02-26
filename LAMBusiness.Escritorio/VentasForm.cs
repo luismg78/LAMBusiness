@@ -213,6 +213,11 @@ namespace LAMBusiness.Escritorio
                     break;
             }
         }
+
+        private void ProductosDataGridView_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
+        {
+            MessageBox.Show("Removido");
+        }
         #endregion
 
         #region Botones

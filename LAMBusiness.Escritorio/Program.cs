@@ -16,7 +16,7 @@ namespace LAMBusiness.Escritorio
             ApplicationConfiguration.Initialize();
             IConfiguration configuration;
             configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetParent(AppContext.BaseDirectory)!.FullName)
+                .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
 
