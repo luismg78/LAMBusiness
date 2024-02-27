@@ -9,7 +9,6 @@ namespace LAMBusiness.Escritorio
     public partial class IniciarSesionForm : Form
     {
         ErrorProvider _error;
-        private readonly DataContext _contexto;
         private readonly Configuracion _configuracion;
         private readonly Sesiones _sesion;
 
@@ -18,19 +17,24 @@ namespace LAMBusiness.Escritorio
             InitializeComponent();
             DataContext contexto = new(configuracion);
             _error = new ErrorProvider();
-            _contexto = contexto;
             _configuracion = configuracion;
             _sesion = new Sesiones(contexto);
         }
 
         private void IniciarSesionForm_Load(object sender, EventArgs e)
         {
+            IniciarSesionButton.Enabled = true;
             NotificacionLabel.Text = string.Empty;
         }
 
-        private async void IniciarSesionButton_ClickAsync(object sender, EventArgs e)
+        private void IniciarSesionButton_ClickAsync(object sender, EventArgs e)
+        {
+            IniciarSesion();
+        }
+        private async void IniciarSesion()
         {
             NotificacionLabel.Text = "Procesando inicio de sesión...";
+            IniciarSesionButton.Enabled = false;
             var ok = ValidarCampos(CorreoElectronicoTextBox.Text, PasswordTextBox.Text);
             if (ok)
             {
@@ -52,6 +56,11 @@ namespace LAMBusiness.Escritorio
                     form.Show();
                 }
                 NotificacionLabel.Text = usuario.Mensaje;
+                IniciarSesionButton.Enabled = true;
+            }
+            else
+            {
+                IniciarSesionButton.Enabled = true;
             }
         }
 
@@ -92,6 +101,17 @@ namespace LAMBusiness.Escritorio
                 Global.AplicacionCerrada = true;
                 Application.Exit();
             }
+        }
+
+        private void CorreoElectronicoTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if(e.KeyChar == 13)
+                IniciarSesion();
+        }
+        private void PasswordTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if(e.KeyChar == 13)
+                IniciarSesion();
         }
     }
 }

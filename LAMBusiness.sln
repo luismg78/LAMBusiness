@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LAMBusiness.Escritorio", "L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LAMBusiness.Backend", "LAMBusiness.Backend\LAMBusiness.Backend.csproj", "{7E98E875-C06C-4495-ABFE-750C7685936D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LAMBusiness.Contextos", "LAMBusiness.Contextos\LAMBusiness.Contextos.csproj", "{42AEB850-E91C-4F35-8D12-365817D2676D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LAMBusiness.Contextos", "LAMBusiness.Contextos\LAMBusiness.Contextos.csproj", "{42AEB850-E91C-4F35-8D12-365817D2676D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -674,12 +674,12 @@ namespace LAMBusiness.Escritorio
             //}
             ProductosDataGridView.Rows.Add(1, "", "Importe del usuario (retiros)", "", $"{corte.ImporteDelUsuario:0.00}");
             var diferencia = corte.ImporteDelSistema - corte.ImporteDelUsuario;
-            if(diferencia > 0)
+            if (diferencia > 0)
             {
                 TotalLabel.Text = $"Faltante {diferencia:$0.00}";
                 TotalLabel.ForeColor = Color.Red;
             }
-            else if(diferencia < 0)
+            else if (diferencia < 0)
             {
                 TotalLabel.Text = $"Sobrante {Math.Abs(diferencia):$0.00}";
                 TotalLabel.ForeColor = Color.Orange;
@@ -688,7 +688,7 @@ namespace LAMBusiness.Escritorio
             {
                 TotalLabel.Text = $"Correcto {diferencia:$0.00}";
                 TotalLabel.ForeColor = Color.Green;
-            }                        
+            }
             ProductosDataGridView.Rows[^1].Selected = true;
             ProductosDataGridView.FirstDisplayedScrollingRowIndex = ProductosDataGridView.Rows.Count - 1;
             _cantidad = 1;
@@ -848,5 +848,6 @@ namespace LAMBusiness.Escritorio
             return ProductosDataGridView.RowCount > 0;
         }
         #endregion
+
     }
 }

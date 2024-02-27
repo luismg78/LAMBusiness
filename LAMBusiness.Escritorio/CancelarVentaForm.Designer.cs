@@ -28,67 +28,75 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.CancelarVentaLabel = new System.Windows.Forms.Label();
-            this.CancelarVentaButton = new System.Windows.Forms.Button();
-            this.GuardarVentaButton = new System.Windows.Forms.Button();
-            this.GuardarVentaLabel = new System.Windows.Forms.Label();
-            this.SuspendLayout();
+            CancelarVentaLabel = new Label();
+            CancelarVentaButton = new Button();
+            GuardarVentaButton = new Button();
+            GuardarVentaLabel = new Label();
+            SuspendLayout();
             // 
             // CancelarVentaLabel
             // 
-            this.CancelarVentaLabel.Location = new System.Drawing.Point(24, 21);
-            this.CancelarVentaLabel.Name = "CancelarVentaLabel";
-            this.CancelarVentaLabel.Size = new System.Drawing.Size(271, 54);
-            this.CancelarVentaLabel.TabIndex = 0;
-            this.CancelarVentaLabel.Text = "Presione el botón cancelar si desea anular la venta actual e iniciar una nueva ve" +
-    "nta.";
+            CancelarVentaLabel.Location = new Point(34, 35);
+            CancelarVentaLabel.Margin = new Padding(4, 0, 4, 0);
+            CancelarVentaLabel.Name = "CancelarVentaLabel";
+            CancelarVentaLabel.Size = new Size(387, 90);
+            CancelarVentaLabel.TabIndex = 0;
+            CancelarVentaLabel.Text = "Presione el botón cancelar si desea anular la venta actual e iniciar una nueva venta.";
             // 
             // CancelarVentaButton
             // 
-            this.CancelarVentaButton.Location = new System.Drawing.Point(24, 78);
-            this.CancelarVentaButton.Name = "CancelarVentaButton";
-            this.CancelarVentaButton.Size = new System.Drawing.Size(115, 28);
-            this.CancelarVentaButton.TabIndex = 1;
-            this.CancelarVentaButton.Text = "Cancelar venta";
-            this.CancelarVentaButton.UseVisualStyleBackColor = true;
-            this.CancelarVentaButton.Click += new System.EventHandler(this.CancelarVentaButton_Click);
+            CancelarVentaButton.BackColor = Color.Brown;
+            CancelarVentaButton.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            CancelarVentaButton.ForeColor = Color.White;
+            CancelarVentaButton.Location = new Point(34, 115);
+            CancelarVentaButton.Margin = new Padding(4, 5, 4, 5);
+            CancelarVentaButton.Name = "CancelarVentaButton";
+            CancelarVentaButton.Size = new Size(387, 64);
+            CancelarVentaButton.TabIndex = 1;
+            CancelarVentaButton.Text = "Cancelar venta";
+            CancelarVentaButton.UseVisualStyleBackColor = false;
+            CancelarVentaButton.Click += CancelarVentaButton_Click;
             // 
             // GuardarVentaButton
             // 
-            this.GuardarVentaButton.Location = new System.Drawing.Point(24, 204);
-            this.GuardarVentaButton.Name = "GuardarVentaButton";
-            this.GuardarVentaButton.Size = new System.Drawing.Size(115, 28);
-            this.GuardarVentaButton.TabIndex = 3;
-            this.GuardarVentaButton.Text = "Guardar venta";
-            this.GuardarVentaButton.UseVisualStyleBackColor = true;
-            this.GuardarVentaButton.Click += new System.EventHandler(this.GuardarVentaButton_Click);
+            GuardarVentaButton.BackColor = Color.Gold;
+            GuardarVentaButton.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            GuardarVentaButton.Location = new Point(34, 340);
+            GuardarVentaButton.Margin = new Padding(4, 5, 4, 5);
+            GuardarVentaButton.Name = "GuardarVentaButton";
+            GuardarVentaButton.Size = new Size(387, 61);
+            GuardarVentaButton.TabIndex = 3;
+            GuardarVentaButton.Text = "Guardar venta";
+            GuardarVentaButton.UseVisualStyleBackColor = false;
+            GuardarVentaButton.Click += GuardarVentaButton_Click;
             // 
             // GuardarVentaLabel
             // 
-            this.GuardarVentaLabel.Location = new System.Drawing.Point(24, 136);
-            this.GuardarVentaLabel.Name = "GuardarVentaLabel";
-            this.GuardarVentaLabel.Size = new System.Drawing.Size(271, 59);
-            this.GuardarVentaLabel.TabIndex = 2;
-            this.GuardarVentaLabel.Text = "Presione el botón guardar si desea almacenar temporalmente la venta actual e inic" +
-    "iar una nueva venta.";
+            GuardarVentaLabel.Location = new Point(34, 227);
+            GuardarVentaLabel.Margin = new Padding(4, 0, 4, 0);
+            GuardarVentaLabel.Name = "GuardarVentaLabel";
+            GuardarVentaLabel.Size = new Size(387, 98);
+            GuardarVentaLabel.TabIndex = 2;
+            GuardarVentaLabel.Text = "Presione el botón guardar si desea almacenar temporalmente la venta actual e iniciar una nueva venta.";
             // 
             // CancelarVentaForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(318, 288);
-            this.Controls.Add(this.GuardarVentaButton);
-            this.Controls.Add(this.GuardarVentaLabel);
-            this.Controls.Add(this.CancelarVentaButton);
-            this.Controls.Add(this.CancelarVentaLabel);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "CancelarVentaForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Cancelar venta";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CancelarVentaForm_FormClosing);
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.White;
+            ClientSize = new Size(454, 480);
+            Controls.Add(GuardarVentaButton);
+            Controls.Add(GuardarVentaLabel);
+            Controls.Add(CancelarVentaButton);
+            Controls.Add(CancelarVentaLabel);
+            Margin = new Padding(4, 5, 4, 5);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "CancelarVentaForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Cancelar venta";
+            FormClosing += CancelarVentaForm_FormClosing;
+            ResumeLayout(false);
         }
 
         #endregion
