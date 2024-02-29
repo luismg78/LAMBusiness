@@ -22,9 +22,6 @@ namespace LAMBusiness.Escritorio
         #endregion
 
         #region Variables globales del formulario
-        private readonly DataContext _contexto;
-        private readonly Ventas _ventas;
-        private readonly Productos _productos;
         private readonly Guid _razonSocialId = new("E9212EB2-697A-4358-9CDE-9123B66676EB");
         private readonly Configuracion _configuracion;
         private decimal _cantidad;
@@ -38,15 +35,8 @@ namespace LAMBusiness.Escritorio
         public VentasForm(Configuracion configuracion)
         {
             InitializeComponent();
-            _contexto = new(configuracion);
-            _ventas = new Ventas(_contexto);
-            _productos = new Productos(_contexto);
             _configuracion = configuracion;
             _cantidad = 1;
-        }
-
-        public VentasForm()
-        {
         }
         #endregion
 
@@ -214,10 +204,10 @@ namespace LAMBusiness.Escritorio
             }
         }
 
-        private void ProductosDataGridView_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
-        {
-            MessageBox.Show("Removido");
-        }
+        //private void ProductosDataGridView_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
+        //{
+        //    MessageBox.Show("Removido");
+        //}
         #endregion
 
         #region Botones
@@ -335,13 +325,16 @@ namespace LAMBusiness.Escritorio
         #region Ventas
         private async Task<Resultado> AplicarVentaAsync()
         {
+            using var contexto = new DataContext(_configuracion);
+            Ventas ventas = new(contexto);
             Resultado<decimal> resultado = new();
+
             resultado = ValidarImporte();
             if (resultado.Error)
                 return resultado;
 
             decimal importe = resultado.Datos;
-            var venta = await _ventas.Aplicar(_ventaId, _usuarioId, importe);
+            var venta = await ventas.Aplicar(_ventaId, _usuarioId, importe);
             if (venta.Error)
             {
                 resultado.Error = true;
@@ -352,12 +345,11 @@ namespace LAMBusiness.Escritorio
             await ObtenerCambio();
             return resultado;
         }
-
         public async Task<Resultado> BuscarProductoPorCodigoAsync()
         {
             Notificar();
             Resultado resultado = new();
-            BuscarForm form = new(_contexto);
+            BuscarForm form = new(_configuracion);
             var productos = await form.ObtenerProductos(CodigoTextBox.Text);
             if (productos != null && productos.Any())
             {
@@ -382,7 +374,6 @@ namespace LAMBusiness.Escritorio
             CodigoTextBox.Text = "";
             return resultado;
         }
-
         public async Task CancelarVentaModal()
         {
             bool ok = HayRegistrosDeVentasPorAplicar();
@@ -405,10 +396,11 @@ namespace LAMBusiness.Escritorio
                 Notificar("Opción no aprobada, no hay movimientos en la lista.");
             }
         }
-
         public async Task<Resultado> ObtenerProductoPorCodigoAsync()
         {
-            var resultado = await _ventas.ObtenerProducto(_ventaId, _usuarioId, CodigoTextBox.Text, _cantidad);
+            using var contexto = new DataContext(_configuracion);
+            Ventas ventas = new(contexto);
+            var resultado = await ventas.ObtenerProducto(_ventaId, _usuarioId, CodigoTextBox.Text, _cantidad);
             if (resultado.Error)
             {
                 switch (resultado.Mensaje.Trim().ToLower())
@@ -446,14 +438,16 @@ namespace LAMBusiness.Escritorio
 
         private async Task RecuperarVentas(Guid id)
         {
+            using var contexto = new DataContext(_configuracion);
+            Ventas ventas = new(contexto);
             _ventaId = id;
-            var resultado = await _ventas.RecuperarVentaPorId(id, _usuarioId);
+            var resultado = await ventas.RecuperarVentaPorId(id, _usuarioId);
             if (!resultado.Error)
             {
-                var ventas = resultado.Datos;
-                if (ventas.VentasNoAplicadasDetalle != null && ventas.VentasNoAplicadasDetalle.Any())
+                var resultadoDeVentas = resultado.Datos;
+                if (resultadoDeVentas.VentasNoAplicadasDetalle != null && resultadoDeVentas.VentasNoAplicadasDetalle.Any())
                 {
-                    foreach (var venta in ventas.VentasNoAplicadasDetalle)
+                    foreach (var venta in resultadoDeVentas.VentasNoAplicadasDetalle)
                     {
                         ProductosDataGridView.Rows.Add(venta.Cantidad, venta.Productos.Codigo, venta.Productos.Nombre, venta.Productos.PrecioVenta, venta.Productos.PrecioVenta * venta.Cantidad);
                         ProductosDataGridView.Rows[^1].Selected = true;
@@ -476,6 +470,7 @@ namespace LAMBusiness.Escritorio
 
         public async Task RecuperarVentasModal()
         {
+            using var contexto = new DataContext(_configuracion);
             bool ok = HayRegistrosDeVentasPorAplicar();
             if (ok)
             {
@@ -483,8 +478,8 @@ namespace LAMBusiness.Escritorio
             }
             else
             {
-                var hayVentasNoAplicadas = await (from v in _contexto.VentasNoAplicadas
-                                                  join d in _contexto.VentasNoAplicadasDetalle
+                var hayVentasNoAplicadas = await (from v in contexto.VentasNoAplicadas
+                                                  join d in contexto.VentasNoAplicadasDetalle
                                                   on v.VentaNoAplicadaID equals d.VentaNoAplicadaID
                                                   where v.UsuarioID == _usuarioId
                                                   select v).AnyAsync();
@@ -516,7 +511,9 @@ namespace LAMBusiness.Escritorio
         }
         private async Task IniciarVenta(bool nuevaVenta = false)
         {
-            var resultado = await _ventas.Inicializar((Guid)Global.UsuarioId!, nuevaVenta);
+            using var contexto = new DataContext(_configuracion);
+            Ventas ventas = new(contexto);
+            var resultado = await ventas.Inicializar((Guid)Global.UsuarioId!, nuevaVenta);
             if (resultado.Error)
             {
                 MessageBox.Show(resultado.Mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -648,13 +645,15 @@ namespace LAMBusiness.Escritorio
         #region Corte de cajas
         public async Task<Resultado> AplicarCorteDeCaja()
         {
-            Sesiones sesion = new(_contexto);
+            using var contexto = new DataContext(_configuracion);
+            Sesiones sesion = new(contexto);
+            Ventas ventas = new(contexto);
             var pwd = Sesiones.GenerateSHA512String(CodigoTextBox.Text);
             Resultado resultado = await sesion.ValidarContraseñaPorUsuarioIdAsync(_usuarioId, pwd);
             if (resultado.Error)
                 return resultado;
 
-            var resultadoCorteDeCaja = await _ventas.CerrarVentas(_usuarioId);
+            var resultadoCorteDeCaja = await ventas.CerrarVentas(_usuarioId);
             if (resultadoCorteDeCaja.Error)
             {
                 resultado.Error = true;
@@ -708,8 +707,10 @@ namespace LAMBusiness.Escritorio
                 var r = MessageBox.Show("Desea guardar el retiro de caja", "Retiro de caja", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3);
                 if (r == DialogResult.Yes)
                 {
+                    using var contexto = new DataContext(_configuracion);
+                    Ventas ventas = new(contexto);
                     decimal importe = CalcularTotal();
-                    var retiro = await _ventas.RetirarEfectivoDeCaja(importe, _usuarioId);
+                    var retiro = await ventas.RetirarEfectivoDeCaja(importe, _usuarioId);
                     if (!retiro.Error)
                         await IniciarVenta(true);
                     Notificar(retiro.Mensaje);

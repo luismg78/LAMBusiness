@@ -8,21 +8,23 @@ namespace LAMBusiness.Escritorio
     public partial class RecuperarVentasForm : Form
     {
         private readonly Configuracion _configuracion;
-        private readonly Ventas _ventas;
+        //private readonly Ventas _ventas;
         private Guid _ventaId;
 
         public RecuperarVentasForm(Configuracion configuracion, Guid ventaId)
         {
             InitializeComponent();
-            DataContext contexto = new(configuracion);
+            //DataContext contexto = new(configuracion);
             _configuracion = configuracion;
-            _ventas = new Ventas(contexto);
+            //_ventas = new Ventas(contexto);
             _ventaId = ventaId;
         }
 
         private async void RecuperarVentasForm_Load(object sender, EventArgs e)
         {
-            var filtro = await _ventas.RecuperarVenta((Guid)Global.UsuarioId!);
+            using var contexto = new DataContext(_configuracion);
+            Ventas ventas = new(contexto);
+            var filtro = await ventas.RecuperarVenta((Guid)Global.UsuarioId!);
             if (filtro.Error)
             {
                 _ventaId = Guid.Empty;
@@ -31,10 +33,10 @@ namespace LAMBusiness.Escritorio
 
             if (filtro.Datos != null)
             {
-                var ventas = filtro.Datos;
-                if (ventas != null && ventas.Datos.Any())
+                var resultadoDeVentas = filtro.Datos;
+                if (resultadoDeVentas != null && resultadoDeVentas.Datos.Any())
                 {
-                    foreach (var venta in ventas.Datos.OrderByDescending(v => v.Fecha))
+                    foreach (var venta in resultadoDeVentas.Datos.OrderByDescending(v => v.Fecha))
                     {
                         if (venta.Fecha != null)
                         {

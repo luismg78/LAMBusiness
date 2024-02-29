@@ -39,6 +39,7 @@
             DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
             ClientePanel = new Panel();
+            LogoPictureBox = new PictureBox();
             CerrarButton = new Button();
             CorteDeCajaButton = new Button();
             RetirarEfectivoButton = new Button();
@@ -61,6 +62,7 @@
             NotificacionToolStripStatusLabel = new ToolStripStatusLabel();
             ProcesoToolStripProgressBar = new ToolStripProgressBar();
             ClientePanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)LogoPictureBox).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ProductosDataGridView).BeginInit();
             TotalPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)IconoPictureBox).BeginInit();
@@ -70,7 +72,8 @@
             // ClientePanel
             // 
             ClientePanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            ClientePanel.BackColor = Color.White;
+            ClientePanel.BackColor = Color.FromArgb(242, 245, 247);
+            ClientePanel.Controls.Add(LogoPictureBox);
             ClientePanel.Controls.Add(CerrarButton);
             ClientePanel.Controls.Add(CorteDeCajaButton);
             ClientePanel.Controls.Add(RetirarEfectivoButton);
@@ -79,20 +82,31 @@
             ClientePanel.Controls.Add(CancelarButton);
             ClientePanel.Controls.Add(BuscarButton);
             ClientePanel.Controls.Add(VentasButton);
-            ClientePanel.Location = new Point(1474, 6);
-            ClientePanel.Margin = new Padding(4, 5, 4, 5);
+            ClientePanel.Location = new Point(1179, 5);
+            ClientePanel.Margin = new Padding(3, 4, 3, 4);
             ClientePanel.Name = "ClientePanel";
-            ClientePanel.Size = new Size(458, 875);
+            ClientePanel.Size = new Size(366, 700);
             ClientePanel.TabIndex = 9;
+            // 
+            // LogoPictureBox
+            // 
+            LogoPictureBox.Image = Properties.Resources.LAM;
+            LogoPictureBox.Location = new Point(107, 8);
+            LogoPictureBox.Margin = new Padding(3, 4, 3, 4);
+            LogoPictureBox.Name = "LogoPictureBox";
+            LogoPictureBox.Size = new Size(153, 147);
+            LogoPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+            LogoPictureBox.TabIndex = 13;
+            LogoPictureBox.TabStop = false;
             // 
             // CerrarButton
             // 
             CerrarButton.BackColor = Color.FromArgb(242, 245, 247);
             CerrarButton.Font = new Font("Segoe UI", 18F);
-            CerrarButton.Location = new Point(19, 799);
-            CerrarButton.Margin = new Padding(4, 5, 4, 5);
+            CerrarButton.Location = new Point(11, 663);
+            CerrarButton.Margin = new Padding(3, 4, 3, 4);
             CerrarButton.Name = "CerrarButton";
-            CerrarButton.Size = new Size(429, 135);
+            CerrarButton.Size = new Size(342, 86);
             CerrarButton.TabIndex = 9;
             CerrarButton.Text = "Cerrar";
             CerrarButton.UseVisualStyleBackColor = false;
@@ -102,10 +116,10 @@
             // 
             CorteDeCajaButton.BackColor = Color.White;
             CorteDeCajaButton.Font = new Font("Segoe UI", 18F);
-            CorteDeCajaButton.Location = new Point(231, 575);
-            CorteDeCajaButton.Margin = new Padding(4, 5, 4, 5);
+            CorteDeCajaButton.Location = new Point(184, 505);
+            CorteDeCajaButton.Margin = new Padding(3, 4, 3, 4);
             CorteDeCajaButton.Name = "CorteDeCajaButton";
-            CorteDeCajaButton.Size = new Size(211, 214);
+            CorteDeCajaButton.Size = new Size(169, 150);
             CorteDeCajaButton.TabIndex = 8;
             CorteDeCajaButton.Text = "Corte de Caja       [F12]";
             CorteDeCajaButton.UseVisualStyleBackColor = false;
@@ -113,62 +127,67 @@
             // 
             // RetirarEfectivoButton
             // 
+            RetirarEfectivoButton.BackColor = Color.White;
             RetirarEfectivoButton.Font = new Font("Segoe UI", 18F);
-            RetirarEfectivoButton.Location = new Point(14, 575);
-            RetirarEfectivoButton.Margin = new Padding(4, 5, 4, 5);
+            RetirarEfectivoButton.Location = new Point(10, 505);
+            RetirarEfectivoButton.Margin = new Padding(3, 4, 3, 4);
             RetirarEfectivoButton.Name = "RetirarEfectivoButton";
-            RetirarEfectivoButton.Size = new Size(211, 214);
+            RetirarEfectivoButton.Size = new Size(169, 150);
             RetirarEfectivoButton.TabIndex = 7;
             RetirarEfectivoButton.Text = "Retirar Efectivo [F11]";
-            RetirarEfectivoButton.UseVisualStyleBackColor = true;
+            RetirarEfectivoButton.UseVisualStyleBackColor = false;
             RetirarEfectivoButton.Click += RetirarEfectivoButton_Click;
             // 
             // CobrarButton
             // 
+            CobrarButton.BackColor = Color.White;
             CobrarButton.Font = new Font("Segoe UI", 18F);
-            CobrarButton.Location = new Point(231, 195);
-            CobrarButton.Margin = new Padding(4, 5, 4, 5);
+            CobrarButton.Location = new Point(185, 268);
+            CobrarButton.Margin = new Padding(3, 4, 3, 4);
             CobrarButton.Name = "CobrarButton";
-            CobrarButton.Size = new Size(211, 185);
+            CobrarButton.Size = new Size(169, 112);
             CobrarButton.TabIndex = 4;
             CobrarButton.Text = "Cobrar   [F5]";
-            CobrarButton.UseVisualStyleBackColor = true;
+            CobrarButton.UseVisualStyleBackColor = false;
             CobrarButton.Click += CobrarButton_Click;
             // 
             // RecuperarButton
             // 
+            RecuperarButton.BackColor = Color.White;
             RecuperarButton.Font = new Font("Segoe UI", 18F);
-            RecuperarButton.Location = new Point(231, 385);
-            RecuperarButton.Margin = new Padding(4, 5, 4, 5);
+            RecuperarButton.Location = new Point(185, 388);
+            RecuperarButton.Margin = new Padding(3, 4, 3, 4);
             RecuperarButton.Name = "RecuperarButton";
-            RecuperarButton.Size = new Size(211, 185);
+            RecuperarButton.Size = new Size(169, 109);
             RecuperarButton.TabIndex = 6;
             RecuperarButton.Text = "Recuperar [F8]";
-            RecuperarButton.UseVisualStyleBackColor = true;
+            RecuperarButton.UseVisualStyleBackColor = false;
             RecuperarButton.Click += RecuperarButton_Click;
             // 
             // CancelarButton
             // 
+            CancelarButton.BackColor = Color.White;
             CancelarButton.Font = new Font("Segoe UI", 18F);
-            CancelarButton.Location = new Point(14, 385);
-            CancelarButton.Margin = new Padding(4, 5, 4, 5);
+            CancelarButton.Location = new Point(10, 388);
+            CancelarButton.Margin = new Padding(3, 4, 3, 4);
             CancelarButton.Name = "CancelarButton";
-            CancelarButton.Size = new Size(211, 185);
+            CancelarButton.Size = new Size(169, 109);
             CancelarButton.TabIndex = 5;
             CancelarButton.Text = "Cancelar [F7]";
-            CancelarButton.UseVisualStyleBackColor = true;
+            CancelarButton.UseVisualStyleBackColor = false;
             CancelarButton.Click += CancelarButton_Click;
             // 
             // BuscarButton
             // 
+            BuscarButton.BackColor = Color.White;
             BuscarButton.Font = new Font("Segoe UI", 18F);
-            BuscarButton.Location = new Point(14, 195);
-            BuscarButton.Margin = new Padding(4, 5, 4, 5);
+            BuscarButton.Location = new Point(10, 268);
+            BuscarButton.Margin = new Padding(3, 4, 3, 4);
             BuscarButton.Name = "BuscarButton";
-            BuscarButton.Size = new Size(211, 185);
+            BuscarButton.Size = new Size(169, 112);
             BuscarButton.TabIndex = 3;
             BuscarButton.Text = "Buscar   [F2]";
-            BuscarButton.UseVisualStyleBackColor = true;
+            BuscarButton.UseVisualStyleBackColor = false;
             BuscarButton.Click += BuscarButton_Click;
             // 
             // VentasButton
@@ -177,10 +196,10 @@
             VentasButton.BackgroundImageLayout = ImageLayout.Stretch;
             VentasButton.Font = new Font("Segoe UI", 20.25F);
             VentasButton.ForeColor = Color.White;
-            VentasButton.Location = new Point(14, 14);
-            VentasButton.Margin = new Padding(4, 5, 4, 5);
+            VentasButton.Location = new Point(11, 163);
+            VentasButton.Margin = new Padding(3, 4, 3, 4);
             VentasButton.Name = "VentasButton";
-            VentasButton.Size = new Size(429, 175);
+            VentasButton.Size = new Size(343, 101);
             VentasButton.TabIndex = 2;
             VentasButton.Text = "Ventas";
             VentasButton.UseVisualStyleBackColor = false;
@@ -216,8 +235,8 @@
             dataGridViewCellStyle8.WrapMode = DataGridViewTriState.False;
             ProductosDataGridView.DefaultCellStyle = dataGridViewCellStyle8;
             ProductosDataGridView.GridColor = Color.WhiteSmoke;
-            ProductosDataGridView.Location = new Point(6, 6);
-            ProductosDataGridView.Margin = new Padding(4, 5, 4, 5);
+            ProductosDataGridView.Location = new Point(5, 5);
+            ProductosDataGridView.Margin = new Padding(3, 4, 3, 4);
             ProductosDataGridView.MultiSelect = false;
             ProductosDataGridView.Name = "ProductosDataGridView";
             dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleLeft;
@@ -234,9 +253,8 @@
             ProductosDataGridView.RowTemplate.Height = 50;
             ProductosDataGridView.ScrollBars = ScrollBars.Vertical;
             ProductosDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            ProductosDataGridView.Size = new Size(1461, 875);
+            ProductosDataGridView.Size = new Size(1169, 700);
             ProductosDataGridView.TabIndex = 1;
-            ProductosDataGridView.RowsRemoved += ProductosDataGridView_RowsRemoved;
             // 
             // CantidadDataGridView
             // 
@@ -248,7 +266,7 @@
             CantidadDataGridView.MinimumWidth = 6;
             CantidadDataGridView.Name = "CantidadDataGridView";
             CantidadDataGridView.ReadOnly = true;
-            CantidadDataGridView.Width = 191;
+            CantidadDataGridView.Width = 160;
             // 
             // CodigoDataGridView
             // 
@@ -260,7 +278,7 @@
             CodigoDataGridView.MinimumWidth = 6;
             CodigoDataGridView.Name = "CodigoDataGridView";
             CodigoDataGridView.ReadOnly = true;
-            CodigoDataGridView.Width = 166;
+            CodigoDataGridView.Width = 138;
             // 
             // DescripcionDataGridView
             // 
@@ -283,7 +301,7 @@
             PrecioDataGridView.MinimumWidth = 6;
             PrecioDataGridView.Name = "PrecioDataGridView";
             PrecioDataGridView.ReadOnly = true;
-            PrecioDataGridView.Width = 150;
+            PrecioDataGridView.Width = 124;
             // 
             // ImporteDataGridView
             // 
@@ -295,7 +313,7 @@
             ImporteDataGridView.MinimumWidth = 6;
             ImporteDataGridView.Name = "ImporteDataGridView";
             ImporteDataGridView.ReadOnly = true;
-            ImporteDataGridView.Width = 178;
+            ImporteDataGridView.Width = 149;
             // 
             // TotalPanel
             // 
@@ -304,19 +322,19 @@
             TotalPanel.Controls.Add(IconoPictureBox);
             TotalPanel.Controls.Add(TotalLabel);
             TotalPanel.Controls.Add(CodigoTextBox);
-            TotalPanel.Location = new Point(6, 889);
-            TotalPanel.Margin = new Padding(4, 5, 4, 5);
+            TotalPanel.Location = new Point(5, 711);
+            TotalPanel.Margin = new Padding(3, 4, 3, 4);
             TotalPanel.Name = "TotalPanel";
-            TotalPanel.Size = new Size(1926, 160);
+            TotalPanel.Size = new Size(1541, 128);
             TotalPanel.TabIndex = 11;
             // 
             // IconoPictureBox
             // 
             IconoPictureBox.Image = Properties.Resources.codigodebarras;
-            IconoPictureBox.Location = new Point(31, 61);
-            IconoPictureBox.Margin = new Padding(4, 5, 4, 5);
+            IconoPictureBox.Location = new Point(25, 49);
+            IconoPictureBox.Margin = new Padding(3, 4, 3, 4);
             IconoPictureBox.Name = "IconoPictureBox";
-            IconoPictureBox.Size = new Size(106, 59);
+            IconoPictureBox.Size = new Size(85, 47);
             IconoPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             IconoPictureBox.TabIndex = 2;
             IconoPictureBox.TabStop = false;
@@ -325,10 +343,9 @@
             // 
             TotalLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             TotalLabel.Font = new Font("Segoe UI", 36F, FontStyle.Bold);
-            TotalLabel.Location = new Point(642, 14);
-            TotalLabel.Margin = new Padding(4, 0, 4, 0);
+            TotalLabel.Location = new Point(514, 11);
             TotalLabel.Name = "TotalLabel";
-            TotalLabel.Size = new Size(1274, 134);
+            TotalLabel.Size = new Size(1019, 107);
             TotalLabel.TabIndex = 0;
             TotalLabel.Text = "Total $0.00";
             TotalLabel.TextAlign = ContentAlignment.MiddleRight;
@@ -339,11 +356,11 @@
             CodigoTextBox.BackColor = Color.White;
             CodigoTextBox.CharacterCasing = CharacterCasing.Upper;
             CodigoTextBox.Font = new Font("Segoe UI", 22.2F);
-            CodigoTextBox.Location = new Point(158, 45);
-            CodigoTextBox.Margin = new Padding(4, 5, 4, 5);
+            CodigoTextBox.Location = new Point(126, 36);
+            CodigoTextBox.Margin = new Padding(3, 4, 3, 4);
             CodigoTextBox.MaxLength = 14;
             CodigoTextBox.Name = "CodigoTextBox";
-            CodigoTextBox.Size = new Size(445, 67);
+            CodigoTextBox.Size = new Size(357, 57);
             CodigoTextBox.TabIndex = 1;
             CodigoTextBox.TextAlign = HorizontalAlignment.Center;
             CodigoTextBox.KeyDown += CodigoTextBox_KeyDown;
@@ -353,10 +370,10 @@
             statusStrip1.AutoSize = false;
             statusStrip1.ImageScalingSize = new Size(20, 20);
             statusStrip1.Items.AddRange(new ToolStripItem[] { NotificacionToolStripStatusLabel, ProcesoToolStripProgressBar });
-            statusStrip1.Location = new Point(0, 1055);
+            statusStrip1.Location = new Point(0, 842);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Padding = new Padding(1, 0, 20, 0);
-            statusStrip1.Size = new Size(1939, 50);
+            statusStrip1.Padding = new Padding(1, 0, 16, 0);
+            statusStrip1.Size = new Size(1551, 40);
             statusStrip1.TabIndex = 12;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -365,7 +382,7 @@
             NotificacionToolStripStatusLabel.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold);
             NotificacionToolStripStatusLabel.ForeColor = Color.FromArgb(192, 0, 0);
             NotificacionToolStripStatusLabel.Name = "NotificacionToolStripStatusLabel";
-            NotificacionToolStripStatusLabel.Size = new Size(1918, 43);
+            NotificacionToolStripStatusLabel.Size = new Size(1534, 34);
             NotificacionToolStripStatusLabel.Spring = true;
             NotificacionToolStripStatusLabel.Text = "...";
             NotificacionToolStripStatusLabel.TextAlign = ContentAlignment.MiddleLeft;
@@ -373,21 +390,20 @@
             // ProcesoToolStripProgressBar
             // 
             ProcesoToolStripProgressBar.Name = "ProcesoToolStripProgressBar";
-            ProcesoToolStripProgressBar.Size = new Size(142, 42);
+            ProcesoToolStripProgressBar.Size = new Size(114, 32);
             ProcesoToolStripProgressBar.Visible = false;
             // 
             // VentasForm
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1939, 1105);
+            ClientSize = new Size(1551, 882);
             Controls.Add(statusStrip1);
             Controls.Add(TotalPanel);
             Controls.Add(ProductosDataGridView);
             Controls.Add(ClientePanel);
             FormBorderStyle = FormBorderStyle.None;
-            Margin = new Padding(4, 4, 4, 4);
-            MinimumSize = new Size(1918, 1016);
+            MinimumSize = new Size(1534, 813);
             Name = "VentasForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Ventas";
@@ -395,6 +411,7 @@
             FormClosing += VentasForm_FormClosing;
             Load += VentasForm_Load;
             ClientePanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)LogoPictureBox).EndInit();
             ((System.ComponentModel.ISupportInitialize)ProductosDataGridView).EndInit();
             TotalPanel.ResumeLayout(false);
             TotalPanel.PerformLayout();
@@ -428,5 +445,6 @@
         private ToolStripProgressBar ProcesoToolStripProgressBar;
         private PictureBox IconoPictureBox;
         private Button CerrarButton;
+        private PictureBox LogoPictureBox;
     }
 }

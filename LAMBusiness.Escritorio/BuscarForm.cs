@@ -7,15 +7,15 @@ namespace LAMBusiness.Escritorio
 {
     public partial class BuscarForm : Form
     {
+        private readonly Configuracion _configuracion;
         public string Codigo;
-        private readonly Productos _producto;
         public List<Producto>? productos;
 
-        public BuscarForm(DataContext contexto)
+        public BuscarForm(Configuracion configuracion)
         {
             InitializeComponent();
+            _configuracion = configuracion;
             Codigo = string.Empty;
-            _producto = new Productos(contexto);
         }
 
         private void BuscarForm_Load(object sender, EventArgs e)
@@ -57,13 +57,15 @@ namespace LAMBusiness.Escritorio
         {
             if (!string.IsNullOrEmpty(patron))
             {
+                using var contexto = new DataContext(_configuracion);
+                Productos producto = new(contexto);
                 ProductoTextBox.Text = patron.Trim();
                 var filtro = new Filtro<List<Producto>>()
                 {
                     Patron = ProductoTextBox.Text,
                     Skip = 0,
                 };
-                filtro = await _producto.ObtenerRegistros(filtro);
+                filtro = await producto.ObtenerRegistros(filtro);
                 if (filtro != null)
                     return filtro.Datos;
             }

@@ -7,7 +7,6 @@ namespace LAMBusiness.Escritorio
     public partial class CancelarVentaForm : Form
     {
         private readonly Configuracion _configuracion;
-        private readonly Ventas _ventas;
         private readonly Guid _usuarioId;
         private readonly Guid _ventaId;
         private Resultado? _resultado;
@@ -15,9 +14,7 @@ namespace LAMBusiness.Escritorio
         public CancelarVentaForm(Configuracion configuracion, Guid ventaId)
         {
             InitializeComponent();
-            DataContext contexto = new(configuracion);
             _configuracion = configuracion;
-            _ventas = new Ventas(contexto);
             _usuarioId = (Guid)Global.UsuarioId!;
             _ventaId = ventaId;
             _resultado = null;
@@ -25,7 +22,9 @@ namespace LAMBusiness.Escritorio
 
         private async void CancelarVentaButton_Click(object sender, EventArgs e)
         {
-            var ventaCancelada = await _ventas.CancelarVenta(_ventaId, _usuarioId);
+            using var contexto = new DataContext(_configuracion);
+            Ventas ventas = new(contexto);
+            var ventaCancelada = await ventas.CancelarVenta(_ventaId, _usuarioId);
             //await BitacoraAsync("CancelarVenta", ventaCancelada.Datos, _usuarioId, ventaCancelada.Mensaje);
             _resultado = new Resultado()
             {
@@ -37,7 +36,9 @@ namespace LAMBusiness.Escritorio
 
         private async void GuardarVentaButton_Click(object sender, EventArgs e)
         {
-            var guardar = await _ventas.Agregar(_ventaId, _usuarioId);
+            using var contexto = new DataContext(_configuracion);
+            Ventas ventas = new(contexto);
+            var guardar = await ventas.Agregar(_ventaId, _usuarioId);
             _resultado = new Resultado()
             {
                 Error = guardar.Error,

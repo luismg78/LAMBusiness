@@ -35,14 +35,16 @@
             IniciarSesionButton = new Button();
             CorreoElectronicoLabel = new Label();
             NotificacionLabel = new Label();
+            LogoPictureBox = new PictureBox();
+            ((System.ComponentModel.ISupportInitialize)LogoPictureBox).BeginInit();
             SuspendLayout();
             // 
             // SalirButton
             // 
-            SalirButton.Location = new Point(43, 382);
-            SalirButton.Margin = new Padding(4, 5, 4, 5);
+            SalirButton.Location = new Point(33, 403);
+            SalirButton.Margin = new Padding(3, 4, 3, 4);
             SalirButton.Name = "SalirButton";
-            SalirButton.Size = new Size(181, 64);
+            SalirButton.Size = new Size(187, 51);
             SalirButton.TabIndex = 5;
             SalirButton.Text = "Salir";
             SalirButton.UseVisualStyleBackColor = true;
@@ -52,12 +54,12 @@
             // 
             PasswordTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             PasswordTextBox.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            PasswordTextBox.Location = new Point(43, 198);
-            PasswordTextBox.Margin = new Padding(4, 5, 4, 5);
+            PasswordTextBox.Location = new Point(33, 283);
+            PasswordTextBox.Margin = new Padding(3, 4, 3, 4);
             PasswordTextBox.MaxLength = 200;
             PasswordTextBox.Name = "PasswordTextBox";
             PasswordTextBox.PasswordChar = '*';
-            PasswordTextBox.Size = new Size(387, 34);
+            PasswordTextBox.Size = new Size(382, 30);
             PasswordTextBox.TabIndex = 4;
             PasswordTextBox.Text = "12345";
             PasswordTextBox.KeyPress += PasswordTextBox_KeyPress;
@@ -65,36 +67,36 @@
             // PasswordLabel
             // 
             PasswordLabel.AutoSize = true;
-            PasswordLabel.Location = new Point(43, 163);
-            PasswordLabel.Margin = new Padding(4, 0, 4, 0);
+            PasswordLabel.Location = new Point(33, 255);
             PasswordLabel.Name = "PasswordLabel";
-            PasswordLabel.Size = new Size(101, 25);
+            PasswordLabel.Size = new Size(83, 20);
             PasswordLabel.TabIndex = 3;
             PasswordLabel.Text = "Contraseña";
             // 
             // CorreoElectronicoTextBox
             // 
+            CorreoElectronicoTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             CorreoElectronicoTextBox.CharacterCasing = CharacterCasing.Lower;
             CorreoElectronicoTextBox.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            CorreoElectronicoTextBox.Location = new Point(43, 105);
-            CorreoElectronicoTextBox.Margin = new Padding(4, 5, 4, 5);
+            CorreoElectronicoTextBox.Location = new Point(33, 209);
+            CorreoElectronicoTextBox.Margin = new Padding(3, 4, 3, 4);
             CorreoElectronicoTextBox.MaxLength = 200;
             CorreoElectronicoTextBox.Name = "CorreoElectronicoTextBox";
             CorreoElectronicoTextBox.PlaceholderText = "ejemplo@correo.com";
-            CorreoElectronicoTextBox.Size = new Size(387, 34);
+            CorreoElectronicoTextBox.Size = new Size(382, 30);
             CorreoElectronicoTextBox.TabIndex = 2;
             CorreoElectronicoTextBox.Text = "luismg78@gmail.com";
             CorreoElectronicoTextBox.KeyPress += CorreoElectronicoTextBox_KeyPress;
             // 
             // IniciarSesionButton
             // 
-            IniciarSesionButton.BackColor = Color.Brown;
+            IniciarSesionButton.BackColor = Color.FromArgb(255, 65, 82);
             IniciarSesionButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             IniciarSesionButton.ForeColor = Color.White;
-            IniciarSesionButton.Location = new Point(250, 382);
-            IniciarSesionButton.Margin = new Padding(4, 5, 4, 5);
+            IniciarSesionButton.Location = new Point(229, 403);
+            IniciarSesionButton.Margin = new Padding(3, 4, 3, 4);
             IniciarSesionButton.Name = "IniciarSesionButton";
-            IniciarSesionButton.Size = new Size(181, 64);
+            IniciarSesionButton.Size = new Size(187, 51);
             IniciarSesionButton.TabIndex = 6;
             IniciarSesionButton.Text = "Iniciar Sesión";
             IniciarSesionButton.UseVisualStyleBackColor = false;
@@ -104,10 +106,9 @@
             // 
             CorreoElectronicoLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             CorreoElectronicoLabel.AutoSize = true;
-            CorreoElectronicoLabel.Location = new Point(43, 72);
-            CorreoElectronicoLabel.Margin = new Padding(4, 0, 4, 0);
+            CorreoElectronicoLabel.Location = new Point(33, 183);
             CorreoElectronicoLabel.Name = "CorreoElectronicoLabel";
-            CorreoElectronicoLabel.Size = new Size(157, 25);
+            CorreoElectronicoLabel.Size = new Size(132, 20);
             CorreoElectronicoLabel.TabIndex = 1;
             CorreoElectronicoLabel.Text = "Correo Electrónico";
             // 
@@ -115,24 +116,35 @@
             // 
             NotificacionLabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             NotificacionLabel.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
-            NotificacionLabel.ForeColor = Color.Brown;
-            NotificacionLabel.Location = new Point(43, 259);
-            NotificacionLabel.Margin = new Padding(4, 0, 4, 0);
+            NotificacionLabel.ForeColor = Color.FromArgb(255, 65, 82);
+            NotificacionLabel.Location = new Point(33, 314);
             NotificacionLabel.Name = "NotificacionLabel";
-            NotificacionLabel.Size = new Size(389, 36);
+            NotificacionLabel.Size = new Size(383, 74);
             NotificacionLabel.TabIndex = 11;
             NotificacionLabel.Text = "Notificación";
             NotificacionLabel.TextAlign = ContentAlignment.MiddleLeft;
             // 
+            // LogoPictureBox
+            // 
+            LogoPictureBox.Image = Properties.Resources.LAM;
+            LogoPictureBox.Location = new Point(148, 13);
+            LogoPictureBox.Margin = new Padding(3, 4, 3, 4);
+            LogoPictureBox.Name = "LogoPictureBox";
+            LogoPictureBox.Size = new Size(153, 147);
+            LogoPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+            LogoPictureBox.TabIndex = 12;
+            LogoPictureBox.TabStop = false;
+            // 
             // IniciarSesionForm
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            BackColor = Color.White;
+            BackColor = Color.FromArgb(234, 237, 239);
             CancelButton = SalirButton;
-            ClientSize = new Size(467, 473);
+            ClientSize = new Size(449, 489);
             ControlBox = false;
+            Controls.Add(LogoPictureBox);
             Controls.Add(NotificacionLabel);
             Controls.Add(SalirButton);
             Controls.Add(PasswordTextBox);
@@ -140,14 +152,14 @@
             Controls.Add(CorreoElectronicoTextBox);
             Controls.Add(IniciarSesionButton);
             Controls.Add(CorreoElectronicoLabel);
-            Margin = new Padding(4, 3, 4, 3);
+            Margin = new Padding(3, 2, 3, 2);
             MaximizeBox = false;
-            MaximumSize = new Size(489, 529);
-            MinimumSize = new Size(489, 529);
+            MinimumSize = new Size(395, 433);
             Name = "IniciarSesionForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Iniciar Sesión";
             Load += IniciarSesionForm_Load;
+            ((System.ComponentModel.ISupportInitialize)LogoPictureBox).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -161,5 +173,6 @@
         private Button IniciarSesionButton;
         private Label CorreoElectronicoLabel;
         private Label NotificacionLabel;
+        private PictureBox LogoPictureBox;
     }
 }
