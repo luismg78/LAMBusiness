@@ -44,7 +44,7 @@
             SalirButton.Location = new Point(33, 403);
             SalirButton.Margin = new Padding(3, 4, 3, 4);
             SalirButton.Name = "SalirButton";
-            SalirButton.Size = new Size(187, 51);
+            SalirButton.Size = new Size(165, 51);
             SalirButton.TabIndex = 5;
             SalirButton.Text = "Salir";
             SalirButton.UseVisualStyleBackColor = true;
@@ -59,9 +59,8 @@
             PasswordTextBox.MaxLength = 200;
             PasswordTextBox.Name = "PasswordTextBox";
             PasswordTextBox.PasswordChar = '*';
-            PasswordTextBox.Size = new Size(382, 30);
+            PasswordTextBox.Size = new Size(330, 30);
             PasswordTextBox.TabIndex = 4;
-            PasswordTextBox.Text = "12345";
             PasswordTextBox.KeyPress += PasswordTextBox_KeyPress;
             // 
             // PasswordLabel
@@ -83,9 +82,8 @@
             CorreoElectronicoTextBox.MaxLength = 200;
             CorreoElectronicoTextBox.Name = "CorreoElectronicoTextBox";
             CorreoElectronicoTextBox.PlaceholderText = "ejemplo@correo.com";
-            CorreoElectronicoTextBox.Size = new Size(382, 30);
+            CorreoElectronicoTextBox.Size = new Size(330, 30);
             CorreoElectronicoTextBox.TabIndex = 2;
-            CorreoElectronicoTextBox.Text = "luismg78@gmail.com";
             CorreoElectronicoTextBox.KeyPress += CorreoElectronicoTextBox_KeyPress;
             // 
             // IniciarSesionButton
@@ -93,10 +91,10 @@
             IniciarSesionButton.BackColor = Color.FromArgb(255, 65, 82);
             IniciarSesionButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             IniciarSesionButton.ForeColor = Color.White;
-            IniciarSesionButton.Location = new Point(229, 403);
+            IniciarSesionButton.Location = new Point(198, 403);
             IniciarSesionButton.Margin = new Padding(3, 4, 3, 4);
             IniciarSesionButton.Name = "IniciarSesionButton";
-            IniciarSesionButton.Size = new Size(187, 51);
+            IniciarSesionButton.Size = new Size(165, 51);
             IniciarSesionButton.TabIndex = 6;
             IniciarSesionButton.Text = "Iniciar Sesión";
             IniciarSesionButton.UseVisualStyleBackColor = false;
@@ -119,15 +117,16 @@
             NotificacionLabel.ForeColor = Color.FromArgb(255, 65, 82);
             NotificacionLabel.Location = new Point(33, 314);
             NotificacionLabel.Name = "NotificacionLabel";
-            NotificacionLabel.Size = new Size(383, 74);
+            NotificacionLabel.Size = new Size(331, 68);
             NotificacionLabel.TabIndex = 11;
             NotificacionLabel.Text = "Notificación";
             NotificacionLabel.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // LogoPictureBox
             // 
+            LogoPictureBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             LogoPictureBox.Image = Properties.Resources.LAM;
-            LogoPictureBox.Location = new Point(148, 13);
+            LogoPictureBox.Location = new Point(122, 13);
             LogoPictureBox.Margin = new Padding(3, 4, 3, 4);
             LogoPictureBox.Name = "LogoPictureBox";
             LogoPictureBox.Size = new Size(153, 147);
@@ -142,7 +141,7 @@
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
             BackColor = Color.FromArgb(234, 237, 239);
             CancelButton = SalirButton;
-            ClientSize = new Size(449, 489);
+            ClientSize = new Size(397, 483);
             ControlBox = false;
             Controls.Add(LogoPictureBox);
             Controls.Add(NotificacionLabel);
@@ -154,7 +153,8 @@
             Controls.Add(CorreoElectronicoLabel);
             Margin = new Padding(3, 2, 3, 2);
             MaximizeBox = false;
-            MinimumSize = new Size(395, 433);
+            MaximumSize = new Size(415, 530);
+            MinimumSize = new Size(415, 530);
             Name = "IniciarSesionForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Iniciar Sesión";

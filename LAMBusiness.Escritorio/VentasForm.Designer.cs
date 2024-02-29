@@ -331,7 +331,7 @@
             // IconoPictureBox
             // 
             IconoPictureBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            IconoPictureBox.Image = Properties.Resources.retirodecaja;
+            IconoPictureBox.Image = Properties.Resources.codigodebarras;
             IconoPictureBox.Location = new Point(25, 36);
             IconoPictureBox.Margin = new Padding(3, 4, 3, 4);
             IconoPictureBox.Name = "IconoPictureBox";
