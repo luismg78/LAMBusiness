@@ -330,11 +330,12 @@
             // 
             // IconoPictureBox
             // 
-            IconoPictureBox.Image = Properties.Resources.codigodebarras;
-            IconoPictureBox.Location = new Point(25, 49);
+            IconoPictureBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            IconoPictureBox.Image = Properties.Resources.retirodecaja;
+            IconoPictureBox.Location = new Point(25, 36);
             IconoPictureBox.Margin = new Padding(3, 4, 3, 4);
             IconoPictureBox.Name = "IconoPictureBox";
-            IconoPictureBox.Size = new Size(85, 47);
+            IconoPictureBox.Size = new Size(85, 63);
             IconoPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             IconoPictureBox.TabIndex = 2;
             IconoPictureBox.TabStop = false;
@@ -343,9 +344,9 @@
             // 
             TotalLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             TotalLabel.Font = new Font("Segoe UI", 36F, FontStyle.Bold);
-            TotalLabel.Location = new Point(514, 11);
+            TotalLabel.Location = new Point(633, 11);
             TotalLabel.Name = "TotalLabel";
-            TotalLabel.Size = new Size(1019, 107);
+            TotalLabel.Size = new Size(900, 107);
             TotalLabel.TabIndex = 0;
             TotalLabel.Text = "Total $0.00";
             TotalLabel.TextAlign = ContentAlignment.MiddleRight;
@@ -355,12 +356,12 @@
             CodigoTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             CodigoTextBox.BackColor = Color.White;
             CodigoTextBox.CharacterCasing = CharacterCasing.Upper;
-            CodigoTextBox.Font = new Font("Segoe UI", 22.2F);
-            CodigoTextBox.Location = new Point(126, 36);
+            CodigoTextBox.Font = new Font("Segoe UI", 34.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            CodigoTextBox.Location = new Point(116, 25);
             CodigoTextBox.Margin = new Padding(3, 4, 3, 4);
             CodigoTextBox.MaxLength = 14;
             CodigoTextBox.Name = "CodigoTextBox";
-            CodigoTextBox.Size = new Size(357, 57);
+            CodigoTextBox.Size = new Size(478, 83);
             CodigoTextBox.TabIndex = 1;
             CodigoTextBox.TextAlign = HorizontalAlignment.Center;
             CodigoTextBox.KeyDown += CodigoTextBox_KeyDown;

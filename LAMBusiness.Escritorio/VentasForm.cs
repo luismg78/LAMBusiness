@@ -253,6 +253,8 @@ namespace LAMBusiness.Escritorio
                     BuscarButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
                     BuscarButton.ForeColor = Color.White;
                     IconoPictureBox.Image = Properties.Resources.buscar;
+                    IconoPictureBox.Location = new System.Drawing.Point(25, 36);
+                    IconoPictureBox.Size = new Size(85, 63);
                     break;
                 case "cancelar":
                     CancelarButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
@@ -262,10 +264,15 @@ namespace LAMBusiness.Escritorio
                     CobrarButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
                     CobrarButton.ForeColor = Color.White;
                     IconoPictureBox.Image = Properties.Resources.signopesos;
+                    IconoPictureBox.Location = new System.Drawing.Point(25, 36);
+                    IconoPictureBox.Size = new Size(85, 63);
                     break;
                 case "cortedecaja":
                     CorteDeCajaButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
                     CorteDeCajaButton.ForeColor = Color.White;
+                    IconoPictureBox.Image = Properties.Resources.cortedecaja;
+                    IconoPictureBox.Location = new System.Drawing.Point(25, 32);
+                    IconoPictureBox.Size = new Size(85, 71);
                     break;
                 case "recuperar":
                     RecuperarButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
@@ -275,10 +282,14 @@ namespace LAMBusiness.Escritorio
                     RetirarEfectivoButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
                     RetirarEfectivoButton.ForeColor = Color.White;
                     IconoPictureBox.Image = Properties.Resources.retirodecaja;
+                    IconoPictureBox.Location = new System.Drawing.Point(25, 36);
+                    IconoPictureBox.Size = new Size(85, 63);
                     break;
                 case "ventas":
                     VentasButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
                     VentasButton.ForeColor = Color.White;
+                    IconoPictureBox.Location = new System.Drawing.Point(25, 41);
+                    IconoPictureBox.Size = new Size(85, 50);
                     break;
             }
         }
