@@ -171,43 +171,42 @@ namespace LAMBusiness.Escritorio
         #endregion
 
         #region Funcionalidad del datagrid
-        private void ProductosDataGridView_KeyDown(object sender, KeyEventArgs e)
+        private void ProductosDataGridView_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
-            switch (e.KeyCode)
+            DataGridView row = (DataGridView)sender;
+            int i = row.CurrentRow.Index;
+            decimal cantidad = Convert.ToDecimal(ProductosDataGridView.Rows[i].Cells[0].Value) * -1;
+            decimal precio = Convert.ToDecimal(ProductosDataGridView.Rows[i].Cells[3].Value);
+            string id = string.Empty;
+            if (ProductosDataGridView.Rows[i].Cells[5] != null)
+                id = ProductosDataGridView.Rows[i].Cells[5].Value.ToString()!;
+            string pregunta = "¿Desea eliminar el detalle del producto?";
+            Color color = Color.Red;
+            if (cantidad > 0)
             {
-                case Keys.Delete:
-                    DataGridView row = (DataGridView)sender;
-                    int i = row.CurrentRow.Index;
-                    decimal cantidad = (decimal)ProductosDataGridView.Rows[i].Cells[0].Value * -1;
-                    string pregunta = "¿Desea eliminar el detalle del producto?";
-                    Color color = Color.Red;
-                    if (cantidad > 0)
-                    {
-                        color = Color.Black;
-                        pregunta = "¿Desea restablecer el detalle del producto?";
-                    }
-
-                    if (MessageBox.Show(pregunta, "Ventas", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
-                    {
-                        ProductosDataGridView.Rows[i].Cells[0].Value = cantidad;
-                        ProductosDataGridView.Rows[i].Cells[4].Value = (decimal)ProductosDataGridView.Rows[i].Cells[3].Value * cantidad;
-                        ProductosDataGridView.Rows[i].DefaultCellStyle.ForeColor = color;
-                        ObtenerTotal();
-                    }
-                    CodigoTextBox.Focus();
-                    break;
-                case Keys.Escape:
-                    CodigoTextBox.Text = string.Empty;
-                    CodigoTextBox.PasswordChar = (char)0;
-                    CodigoTextBox.Focus();
-                    break;
+                color = Color.Black;
+                pregunta = "¿Desea restablecer el detalle del producto?";
             }
-        }
+                
+            e.Cancel = true;
 
-        //private void ProductosDataGridView_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
-        //{
-        //    MessageBox.Show("Removido");
-        //}
+            if (MessageBox.Show(pregunta,"Eliminación parcial",MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.OK)
+            {
+                var importe = precio * cantidad;
+                ProductosDataGridView.Rows[i].Cells[0].Value = $"{cantidad:0.0000}";
+                ProductosDataGridView.Rows[i].Cells[4].Value = $"{importe:0.00}";
+                ProductosDataGridView.Rows[i].DefaultCellStyle.ForeColor = color;
+                ObtenerTotal();
+                Notificar("El producto fue cancelado con éxito.");
+            }
+            else
+            {
+                Notificar("Operación cancelada por el usuario");
+            }
+            CodigoTextBox.Text = string.Empty;
+            CodigoTextBox.PasswordChar = (char)0;
+            CodigoTextBox.Focus();
+        }
         #endregion
 
         #region Botones
@@ -247,14 +246,14 @@ namespace LAMBusiness.Escritorio
             VentasButton.BackColor = Color.White;
             VentasButton.ForeColor = Color.Black;
             IconoPictureBox.Image = Properties.Resources.codigodebarras;
+            IconoPictureBox.Location = new System.Drawing.Point(12, 25);
+            IconoPictureBox.Size = new Size(80, 47);
             switch (proceso)
             {
                 case "buscar":
                     BuscarButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
                     BuscarButton.ForeColor = Color.White;
                     IconoPictureBox.Image = Properties.Resources.buscar;
-                    IconoPictureBox.Location = new System.Drawing.Point(25, 36);
-                    IconoPictureBox.Size = new Size(85, 63);
                     break;
                 case "cancelar":
                     CancelarButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
@@ -264,15 +263,11 @@ namespace LAMBusiness.Escritorio
                     CobrarButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
                     CobrarButton.ForeColor = Color.White;
                     IconoPictureBox.Image = Properties.Resources.signopesos;
-                    IconoPictureBox.Location = new System.Drawing.Point(25, 36);
-                    IconoPictureBox.Size = new Size(85, 63);
                     break;
                 case "cortedecaja":
                     CorteDeCajaButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
                     CorteDeCajaButton.ForeColor = Color.White;
                     IconoPictureBox.Image = Properties.Resources.cortedecaja;
-                    IconoPictureBox.Location = new System.Drawing.Point(25, 32);
-                    IconoPictureBox.Size = new Size(85, 71);
                     break;
                 case "recuperar":
                     RecuperarButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
@@ -282,14 +277,10 @@ namespace LAMBusiness.Escritorio
                     RetirarEfectivoButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
                     RetirarEfectivoButton.ForeColor = Color.White;
                     IconoPictureBox.Image = Properties.Resources.retirodecaja;
-                    IconoPictureBox.Location = new System.Drawing.Point(25, 36);
-                    IconoPictureBox.Size = new Size(85, 63);
                     break;
                 case "ventas":
                     VentasButton.BackColor = Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
                     VentasButton.ForeColor = Color.White;
-                    IconoPictureBox.Location = new System.Drawing.Point(25, 41);
-                    IconoPictureBox.Size = new Size(85, 50);
                     break;
             }
         }
@@ -432,9 +423,9 @@ namespace LAMBusiness.Escritorio
                 }
                 return resultado;
             }
-
+            
             var producto = resultado.Datos;
-            ProductosDataGridView.Rows.Add(_cantidad, producto.Productos.Codigo, producto.Productos.Nombre, producto.Productos.PrecioVenta, producto.Productos.PrecioVenta * _cantidad);
+            ProductosDataGridView.Rows.Add(producto.Cantidad, producto.Productos.Codigo, producto.Productos.Nombre, $"{producto.Productos.PrecioVenta:0.00}", $"{producto.Productos.PrecioVenta * producto.Cantidad:0.00}", producto.VentaNoAplicadaDetalleID);
             ProductosDataGridView.Rows[^1].Selected = true;
             ProductosDataGridView.FirstDisplayedScrollingRowIndex = ProductosDataGridView.Rows.Count - 1;
             CobrarButton.Enabled = true;
@@ -446,7 +437,6 @@ namespace LAMBusiness.Escritorio
 
             return resultado;
         }
-
         private async Task RecuperarVentas(Guid id)
         {
             using var contexto = new DataContext(_configuracion);
@@ -460,7 +450,7 @@ namespace LAMBusiness.Escritorio
                 {
                     foreach (var venta in resultadoDeVentas.VentasNoAplicadasDetalle)
                     {
-                        ProductosDataGridView.Rows.Add(venta.Cantidad, venta.Productos.Codigo, venta.Productos.Nombre, venta.Productos.PrecioVenta, venta.Productos.PrecioVenta * venta.Cantidad);
+                        ProductosDataGridView.Rows.Add(venta.Cantidad, venta.Productos.Codigo, venta.Productos.Nombre, $"{venta.Productos.PrecioVenta:0.00}", $"{venta.Productos.PrecioVenta * venta.Cantidad:0.00}", venta.VentaNoAplicadaDetalleID);
                         ProductosDataGridView.Rows[^1].Selected = true;
                         ProductosDataGridView.FirstDisplayedScrollingRowIndex = ProductosDataGridView.Rows.Count - 1;
                     }
@@ -478,7 +468,6 @@ namespace LAMBusiness.Escritorio
             CodigoTextBox.PasswordChar = (char)0;
             CodigoTextBox.Focus();
         }
-
         public async Task RecuperarVentasModal()
         {
             using var contexto = new DataContext(_configuracion);
@@ -674,7 +663,7 @@ namespace LAMBusiness.Escritorio
 
             var corte = resultadoCorteDeCaja.Datos;
 
-            ProductosDataGridView.Rows.Add(1, "", "Importe del sistema", "", $"{corte.ImporteDelSistema:0.00}");
+            ProductosDataGridView.Rows.Add(1, "", "Importe del sistema", "", $"{corte.ImporteDelSistema:0.00}", "");
             //if (corte.ImporteDelSistemaDetalle != null && corte.ImporteDelSistemaDetalle.Any())
             //{
             //    foreach (var item in corte.ImporteDelSistemaDetalle)
@@ -682,7 +671,7 @@ namespace LAMBusiness.Escritorio
             //        ProductosDataGridView.Rows.Add(1, "", item.FormaDePago, "", item.Importe);
             //    }
             //}
-            ProductosDataGridView.Rows.Add(1, "", "Importe del usuario (retiros)", "", $"{corte.ImporteDelUsuario:0.00}");
+            ProductosDataGridView.Rows.Add(1, "", "Importe del usuario (retiros)", "", $"{corte.ImporteDelUsuario:0.00}", "");
             var diferencia = corte.ImporteDelSistema - corte.ImporteDelUsuario;
             if (diferencia > 0)
             {
@@ -747,7 +736,7 @@ namespace LAMBusiness.Escritorio
 
             decimal importe = resultado.Datos;
 
-            ProductosDataGridView.Rows.Add(_cantidad, "", "", $"{importe:0.00}", $"{importe * _cantidad:0.00}");
+            ProductosDataGridView.Rows.Add(_cantidad, "", "", $"{importe:0.00}", $"{importe * _cantidad:0.00}", "");
             ProductosDataGridView.Rows[^1].Selected = true;
             ProductosDataGridView.FirstDisplayedScrollingRowIndex = ProductosDataGridView.Rows.Count - 1;
             CodigoTextBox.Text = string.Empty;
@@ -859,7 +848,6 @@ namespace LAMBusiness.Escritorio
 
             return ProductosDataGridView.RowCount > 0;
         }
-        #endregion
-
+        #endregion        
     }
 }

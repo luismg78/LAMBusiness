@@ -199,7 +199,7 @@ namespace LAMBusiness.Backend
 
                 if (producto.Unidades.Pieza)
                 {
-                    cantidad = Math.Round(cantidad);
+                    cantidad = Math.Truncate(cantidad);
                 }
 
                 if (producto.Unidades.Paquete)
@@ -604,7 +604,7 @@ namespace LAMBusiness.Backend
 
             if (producto.Unidades.Pieza)
             {
-                cantidad = Math.Round(cantidad);
+                cantidad = Math.Truncate(cantidad);
             }
 
             if (cantidad < 0)

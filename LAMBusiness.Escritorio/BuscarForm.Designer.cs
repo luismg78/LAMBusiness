@@ -28,135 +28,131 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.ProductoLabel = new System.Windows.Forms.Label();
-            this.ProductoTextBox = new System.Windows.Forms.TextBox();
-            this.ProductosDataGridView = new System.Windows.Forms.DataGridView();
-            this.CodigoDataGridView = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DataGridViewNombre = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DataGridViewPrecioDeVenta = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.NotificacionBuscarToolStripStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            ((System.ComponentModel.ISupportInitialize)(this.ProductosDataGridView)).BeginInit();
-            this.statusStrip1.SuspendLayout();
-            this.SuspendLayout();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            ProductoLabel = new Label();
+            ProductoTextBox = new TextBox();
+            ProductosDataGridView = new DataGridView();
+            CodigoDataGridView = new DataGridViewTextBoxColumn();
+            DataGridViewNombre = new DataGridViewTextBoxColumn();
+            DataGridViewPrecioDeVenta = new DataGridViewTextBoxColumn();
+            statusStrip1 = new StatusStrip();
+            NotificacionBuscarToolStripStatus = new ToolStripStatusLabel();
+            ((System.ComponentModel.ISupportInitialize)ProductosDataGridView).BeginInit();
+            statusStrip1.SuspendLayout();
+            SuspendLayout();
             // 
             // ProductoLabel
             // 
-            this.ProductoLabel.AutoSize = true;
-            this.ProductoLabel.Location = new System.Drawing.Point(12, 9);
-            this.ProductoLabel.Name = "ProductoLabel";
-            this.ProductoLabel.Size = new System.Drawing.Size(217, 20);
-            this.ProductoLabel.TabIndex = 4;
-            this.ProductoLabel.Text = "Código o nombre del producto";
+            ProductoLabel.AutoSize = true;
+            ProductoLabel.Location = new Point(10, 7);
+            ProductoLabel.Name = "ProductoLabel";
+            ProductoLabel.Size = new Size(172, 15);
+            ProductoLabel.TabIndex = 4;
+            ProductoLabel.Text = "Código o nombre del producto";
             // 
             // ProductoTextBox
             // 
-            this.ProductoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ProductoTextBox.Location = new System.Drawing.Point(12, 32);
-            this.ProductoTextBox.Name = "ProductoTextBox";
-            this.ProductoTextBox.Size = new System.Drawing.Size(772, 27);
-            this.ProductoTextBox.TabIndex = 5;
-            this.ProductoTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ProductoTextBox_KeyDown);
+            ProductoTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            ProductoTextBox.Location = new Point(10, 24);
+            ProductoTextBox.Margin = new Padding(3, 2, 3, 2);
+            ProductoTextBox.Name = "ProductoTextBox";
+            ProductoTextBox.Size = new Size(676, 23);
+            ProductoTextBox.TabIndex = 5;
+            ProductoTextBox.KeyDown += ProductoTextBox_KeyDown;
             // 
             // ProductosDataGridView
             // 
-            this.ProductosDataGridView.AllowUserToAddRows = false;
-            this.ProductosDataGridView.AllowUserToDeleteRows = false;
-            this.ProductosDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ProductosDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.ProductosDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-            this.ProductosDataGridView.BackgroundColor = System.Drawing.Color.White;
-            this.ProductosDataGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleVertical;
-            this.ProductosDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.ProductosDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.CodigoDataGridView,
-            this.DataGridViewNombre,
-            this.DataGridViewPrecioDeVenta});
-            this.ProductosDataGridView.Location = new System.Drawing.Point(12, 65);
-            this.ProductosDataGridView.MultiSelect = false;
-            this.ProductosDataGridView.Name = "ProductosDataGridView";
-            this.ProductosDataGridView.ReadOnly = true;
-            this.ProductosDataGridView.RowHeadersWidth = 51;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(65)))), ((int)(((byte)(82)))));
-            this.ProductosDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle1;
-            this.ProductosDataGridView.RowTemplate.Height = 29;
-            this.ProductosDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.ProductosDataGridView.Size = new System.Drawing.Size(772, 423);
-            this.ProductosDataGridView.TabIndex = 6;
-            this.ProductosDataGridView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ProductosDataGridView_KeyDown);
+            ProductosDataGridView.AllowUserToAddRows = false;
+            ProductosDataGridView.AllowUserToDeleteRows = false;
+            ProductosDataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            ProductosDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            ProductosDataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            ProductosDataGridView.BackgroundColor = Color.White;
+            ProductosDataGridView.CellBorderStyle = DataGridViewCellBorderStyle.SingleVertical;
+            ProductosDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            ProductosDataGridView.Columns.AddRange(new DataGridViewColumn[] { CodigoDataGridView, DataGridViewNombre, DataGridViewPrecioDeVenta });
+            ProductosDataGridView.Location = new Point(10, 49);
+            ProductosDataGridView.Margin = new Padding(3, 2, 3, 2);
+            ProductosDataGridView.MultiSelect = false;
+            ProductosDataGridView.Name = "ProductosDataGridView";
+            ProductosDataGridView.ReadOnly = true;
+            ProductosDataGridView.RowHeadersWidth = 51;
+            dataGridViewCellStyle1.Font = new Font("Microsoft Sans Serif", 12F);
+            dataGridViewCellStyle1.SelectionBackColor = Color.FromArgb(255, 65, 82);
+            ProductosDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle1;
+            ProductosDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            ProductosDataGridView.Size = new Size(676, 317);
+            ProductosDataGridView.TabIndex = 6;
+            ProductosDataGridView.DoubleClick += ProductosDataGridView_DoubleClick;
+            ProductosDataGridView.KeyDown += ProductosDataGridView_KeyDown;
             // 
             // CodigoDataGridView
             // 
-            this.CodigoDataGridView.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.CodigoDataGridView.HeaderText = "Código";
-            this.CodigoDataGridView.MinimumWidth = 6;
-            this.CodigoDataGridView.Name = "CodigoDataGridView";
-            this.CodigoDataGridView.ReadOnly = true;
-            this.CodigoDataGridView.Width = 87;
+            CodigoDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            CodigoDataGridView.HeaderText = "Código";
+            CodigoDataGridView.MinimumWidth = 6;
+            CodigoDataGridView.Name = "CodigoDataGridView";
+            CodigoDataGridView.ReadOnly = true;
+            CodigoDataGridView.Width = 71;
             // 
             // DataGridViewNombre
             // 
-            this.DataGridViewNombre.HeaderText = "Nombre";
-            this.DataGridViewNombre.MinimumWidth = 6;
-            this.DataGridViewNombre.Name = "DataGridViewNombre";
-            this.DataGridViewNombre.ReadOnly = true;
+            DataGridViewNombre.HeaderText = "Nombre";
+            DataGridViewNombre.MinimumWidth = 6;
+            DataGridViewNombre.Name = "DataGridViewNombre";
+            DataGridViewNombre.ReadOnly = true;
             // 
             // DataGridViewPrecioDeVenta
             // 
-            this.DataGridViewPrecioDeVenta.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.DataGridViewPrecioDeVenta.HeaderText = "Precio";
-            this.DataGridViewPrecioDeVenta.MinimumWidth = 6;
-            this.DataGridViewPrecioDeVenta.Name = "DataGridViewPrecioDeVenta";
-            this.DataGridViewPrecioDeVenta.ReadOnly = true;
-            this.DataGridViewPrecioDeVenta.Width = 79;
+            DataGridViewPrecioDeVenta.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            DataGridViewPrecioDeVenta.HeaderText = "Precio";
+            DataGridViewPrecioDeVenta.MinimumWidth = 6;
+            DataGridViewPrecioDeVenta.Name = "DataGridViewPrecioDeVenta";
+            DataGridViewPrecioDeVenta.ReadOnly = true;
+            DataGridViewPrecioDeVenta.Width = 65;
             // 
             // statusStrip1
             // 
-            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.NotificacionBuscarToolStripStatus});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 513);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(796, 26);
-            this.statusStrip1.TabIndex = 7;
-            this.statusStrip1.Text = "statusStrip1";
+            statusStrip1.ImageScalingSize = new Size(20, 20);
+            statusStrip1.Items.AddRange(new ToolStripItem[] { NotificacionBuscarToolStripStatus });
+            statusStrip1.Location = new Point(0, 382);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Padding = new Padding(1, 0, 12, 0);
+            statusStrip1.Size = new Size(696, 22);
+            statusStrip1.TabIndex = 7;
+            statusStrip1.Text = "statusStrip1";
             // 
             // NotificacionBuscarToolStripStatus
             // 
-            this.NotificacionBuscarToolStripStatus.Font = new System.Drawing.Font("Segoe UI Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.NotificacionBuscarToolStripStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.NotificacionBuscarToolStripStatus.Name = "NotificacionBuscarToolStripStatus";
-            this.NotificacionBuscarToolStripStatus.Size = new System.Drawing.Size(781, 20);
-            this.NotificacionBuscarToolStripStatus.Spring = true;
-            this.NotificacionBuscarToolStripStatus.Text = "Notificación";
-            this.NotificacionBuscarToolStripStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            NotificacionBuscarToolStripStatus.Font = new Font("Segoe UI Light", 9F);
+            NotificacionBuscarToolStripStatus.ForeColor = Color.FromArgb(192, 0, 0);
+            NotificacionBuscarToolStripStatus.Name = "NotificacionBuscarToolStripStatus";
+            NotificacionBuscarToolStripStatus.Size = new Size(683, 17);
+            NotificacionBuscarToolStripStatus.Spring = true;
+            NotificacionBuscarToolStripStatus.Text = "Notificación";
+            NotificacionBuscarToolStripStatus.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // BuscarForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(796, 539);
-            this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.ProductosDataGridView);
-            this.Controls.Add(this.ProductoTextBox);
-            this.Controls.Add(this.ProductoLabel);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "BuscarForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Buscar producto";
-            this.Load += new System.EventHandler(this.BuscarForm_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.ProductosDataGridView)).EndInit();
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(696, 404);
+            Controls.Add(statusStrip1);
+            Controls.Add(ProductosDataGridView);
+            Controls.Add(ProductoTextBox);
+            Controls.Add(ProductoLabel);
+            Margin = new Padding(3, 2, 3, 2);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "BuscarForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Buscar producto";
+            Load += BuscarForm_Load;
+            ((System.ComponentModel.ISupportInitialize)ProductosDataGridView).EndInit();
+            statusStrip1.ResumeLayout(false);
+            statusStrip1.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion

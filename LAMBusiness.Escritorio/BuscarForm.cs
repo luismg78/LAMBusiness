@@ -26,7 +26,7 @@ namespace LAMBusiness.Escritorio
 
         private async void CargarProductos(string? patron)
         {
-            var productos = await ObtenerProductos(patron);
+            productos = await ObtenerProductos(patron);
             if (ProductosDataGridView != null)
                 CargarListaDeProductos();
         }
@@ -125,6 +125,18 @@ namespace LAMBusiness.Escritorio
                     Close();
                     break;
             }
+        }
+
+        private void ProductosDataGridView_DoubleClick(object sender, EventArgs e)
+        {
+            Codigo = "";
+            if (ProductosDataGridView != null && ProductosDataGridView.Rows.Count > 0)
+            {
+                DataGridView row = (DataGridView)sender;
+                int index = row.CurrentRow.Index;
+                Codigo = ProductosDataGridView.Rows[index].Cells[0].Value.ToString()!;
+            }
+            Close();
         }
     }
 }

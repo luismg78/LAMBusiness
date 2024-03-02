@@ -49,18 +49,19 @@
             BuscarButton = new Button();
             VentasButton = new Button();
             ProductosDataGridView = new DataGridView();
+            TotalPanel = new Panel();
+            CodigoTextBox = new TextBox();
+            IconoPictureBox = new PictureBox();
+            TotalLabel = new Label();
+            statusStrip1 = new StatusStrip();
+            NotificacionToolStripStatusLabel = new ToolStripStatusLabel();
+            ProcesoToolStripProgressBar = new ToolStripProgressBar();
             CantidadDataGridView = new DataGridViewTextBoxColumn();
             CodigoDataGridView = new DataGridViewTextBoxColumn();
             DescripcionDataGridView = new DataGridViewTextBoxColumn();
             PrecioDataGridView = new DataGridViewTextBoxColumn();
             ImporteDataGridView = new DataGridViewTextBoxColumn();
-            TotalPanel = new Panel();
-            IconoPictureBox = new PictureBox();
-            TotalLabel = new Label();
-            CodigoTextBox = new TextBox();
-            statusStrip1 = new StatusStrip();
-            NotificacionToolStripStatusLabel = new ToolStripStatusLabel();
-            ProcesoToolStripProgressBar = new ToolStripProgressBar();
+            IdDataGridView = new DataGridViewTextBoxColumn();
             ClientePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)LogoPictureBox).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ProductosDataGridView).BeginInit();
@@ -82,19 +83,17 @@
             ClientePanel.Controls.Add(CancelarButton);
             ClientePanel.Controls.Add(BuscarButton);
             ClientePanel.Controls.Add(VentasButton);
-            ClientePanel.Location = new Point(1179, 5);
-            ClientePanel.Margin = new Padding(3, 4, 3, 4);
+            ClientePanel.Location = new Point(1032, 4);
             ClientePanel.Name = "ClientePanel";
-            ClientePanel.Size = new Size(366, 700);
+            ClientePanel.Size = new Size(320, 525);
             ClientePanel.TabIndex = 9;
             // 
             // LogoPictureBox
             // 
             LogoPictureBox.Image = Properties.Resources.LAM;
-            LogoPictureBox.Location = new Point(107, 8);
-            LogoPictureBox.Margin = new Padding(3, 4, 3, 4);
+            LogoPictureBox.Location = new Point(94, 6);
             LogoPictureBox.Name = "LogoPictureBox";
-            LogoPictureBox.Size = new Size(153, 147);
+            LogoPictureBox.Size = new Size(134, 110);
             LogoPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             LogoPictureBox.TabIndex = 13;
             LogoPictureBox.TabStop = false;
@@ -103,10 +102,9 @@
             // 
             CerrarButton.BackColor = Color.FromArgb(242, 245, 247);
             CerrarButton.Font = new Font("Segoe UI", 18F);
-            CerrarButton.Location = new Point(11, 663);
-            CerrarButton.Margin = new Padding(3, 4, 3, 4);
+            CerrarButton.Location = new Point(10, 497);
             CerrarButton.Name = "CerrarButton";
-            CerrarButton.Size = new Size(342, 86);
+            CerrarButton.Size = new Size(299, 64);
             CerrarButton.TabIndex = 9;
             CerrarButton.Text = "Cerrar";
             CerrarButton.UseVisualStyleBackColor = false;
@@ -116,10 +114,9 @@
             // 
             CorteDeCajaButton.BackColor = Color.White;
             CorteDeCajaButton.Font = new Font("Segoe UI", 18F);
-            CorteDeCajaButton.Location = new Point(184, 505);
-            CorteDeCajaButton.Margin = new Padding(3, 4, 3, 4);
+            CorteDeCajaButton.Location = new Point(161, 379);
             CorteDeCajaButton.Name = "CorteDeCajaButton";
-            CorteDeCajaButton.Size = new Size(169, 150);
+            CorteDeCajaButton.Size = new Size(148, 112);
             CorteDeCajaButton.TabIndex = 8;
             CorteDeCajaButton.Text = "Corte de Caja       [F12]";
             CorteDeCajaButton.UseVisualStyleBackColor = false;
@@ -129,10 +126,9 @@
             // 
             RetirarEfectivoButton.BackColor = Color.White;
             RetirarEfectivoButton.Font = new Font("Segoe UI", 18F);
-            RetirarEfectivoButton.Location = new Point(10, 505);
-            RetirarEfectivoButton.Margin = new Padding(3, 4, 3, 4);
+            RetirarEfectivoButton.Location = new Point(9, 379);
             RetirarEfectivoButton.Name = "RetirarEfectivoButton";
-            RetirarEfectivoButton.Size = new Size(169, 150);
+            RetirarEfectivoButton.Size = new Size(148, 112);
             RetirarEfectivoButton.TabIndex = 7;
             RetirarEfectivoButton.Text = "Retirar Efectivo [F11]";
             RetirarEfectivoButton.UseVisualStyleBackColor = false;
@@ -142,10 +138,9 @@
             // 
             CobrarButton.BackColor = Color.White;
             CobrarButton.Font = new Font("Segoe UI", 18F);
-            CobrarButton.Location = new Point(185, 268);
-            CobrarButton.Margin = new Padding(3, 4, 3, 4);
+            CobrarButton.Location = new Point(162, 201);
             CobrarButton.Name = "CobrarButton";
-            CobrarButton.Size = new Size(169, 112);
+            CobrarButton.Size = new Size(148, 84);
             CobrarButton.TabIndex = 4;
             CobrarButton.Text = "Cobrar   [F5]";
             CobrarButton.UseVisualStyleBackColor = false;
@@ -155,10 +150,9 @@
             // 
             RecuperarButton.BackColor = Color.White;
             RecuperarButton.Font = new Font("Segoe UI", 18F);
-            RecuperarButton.Location = new Point(185, 388);
-            RecuperarButton.Margin = new Padding(3, 4, 3, 4);
+            RecuperarButton.Location = new Point(162, 291);
             RecuperarButton.Name = "RecuperarButton";
-            RecuperarButton.Size = new Size(169, 109);
+            RecuperarButton.Size = new Size(148, 82);
             RecuperarButton.TabIndex = 6;
             RecuperarButton.Text = "Recuperar [F8]";
             RecuperarButton.UseVisualStyleBackColor = false;
@@ -168,10 +162,9 @@
             // 
             CancelarButton.BackColor = Color.White;
             CancelarButton.Font = new Font("Segoe UI", 18F);
-            CancelarButton.Location = new Point(10, 388);
-            CancelarButton.Margin = new Padding(3, 4, 3, 4);
+            CancelarButton.Location = new Point(9, 291);
             CancelarButton.Name = "CancelarButton";
-            CancelarButton.Size = new Size(169, 109);
+            CancelarButton.Size = new Size(148, 82);
             CancelarButton.TabIndex = 5;
             CancelarButton.Text = "Cancelar [F7]";
             CancelarButton.UseVisualStyleBackColor = false;
@@ -181,10 +174,9 @@
             // 
             BuscarButton.BackColor = Color.White;
             BuscarButton.Font = new Font("Segoe UI", 18F);
-            BuscarButton.Location = new Point(10, 268);
-            BuscarButton.Margin = new Padding(3, 4, 3, 4);
+            BuscarButton.Location = new Point(9, 201);
             BuscarButton.Name = "BuscarButton";
-            BuscarButton.Size = new Size(169, 112);
+            BuscarButton.Size = new Size(148, 84);
             BuscarButton.TabIndex = 3;
             BuscarButton.Text = "Buscar   [F2]";
             BuscarButton.UseVisualStyleBackColor = false;
@@ -196,10 +188,9 @@
             VentasButton.BackgroundImageLayout = ImageLayout.Stretch;
             VentasButton.Font = new Font("Segoe UI", 20.25F);
             VentasButton.ForeColor = Color.White;
-            VentasButton.Location = new Point(11, 163);
-            VentasButton.Margin = new Padding(3, 4, 3, 4);
+            VentasButton.Location = new Point(10, 122);
             VentasButton.Name = "VentasButton";
-            VentasButton.Size = new Size(343, 101);
+            VentasButton.Size = new Size(300, 76);
             VentasButton.TabIndex = 2;
             VentasButton.Text = "Ventas";
             VentasButton.UseVisualStyleBackColor = false;
@@ -225,7 +216,7 @@
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
             ProductosDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             ProductosDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            ProductosDataGridView.Columns.AddRange(new DataGridViewColumn[] { CantidadDataGridView, CodigoDataGridView, DescripcionDataGridView, PrecioDataGridView, ImporteDataGridView });
+            ProductosDataGridView.Columns.AddRange(new DataGridViewColumn[] { CantidadDataGridView, CodigoDataGridView, DescripcionDataGridView, PrecioDataGridView, ImporteDataGridView, IdDataGridView });
             dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle8.BackColor = SystemColors.Window;
             dataGridViewCellStyle8.Font = new Font("Segoe UI", 13.8F);
@@ -235,8 +226,7 @@
             dataGridViewCellStyle8.WrapMode = DataGridViewTriState.False;
             ProductosDataGridView.DefaultCellStyle = dataGridViewCellStyle8;
             ProductosDataGridView.GridColor = Color.WhiteSmoke;
-            ProductosDataGridView.Location = new Point(5, 5);
-            ProductosDataGridView.Margin = new Padding(3, 4, 3, 4);
+            ProductosDataGridView.Location = new Point(4, 4);
             ProductosDataGridView.MultiSelect = false;
             ProductosDataGridView.Name = "ProductosDataGridView";
             dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleLeft;
@@ -253,89 +243,45 @@
             ProductosDataGridView.RowTemplate.Height = 50;
             ProductosDataGridView.ScrollBars = ScrollBars.Vertical;
             ProductosDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            ProductosDataGridView.Size = new Size(1169, 700);
+            ProductosDataGridView.Size = new Size(1023, 525);
             ProductosDataGridView.TabIndex = 1;
-            // 
-            // CantidadDataGridView
-            // 
-            CantidadDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.Font = new Font("Microsoft Sans Serif", 16.2F);
-            CantidadDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
-            CantidadDataGridView.HeaderText = "Cantidad";
-            CantidadDataGridView.MinimumWidth = 6;
-            CantidadDataGridView.Name = "CantidadDataGridView";
-            CantidadDataGridView.ReadOnly = true;
-            CantidadDataGridView.Width = 160;
-            // 
-            // CodigoDataGridView
-            // 
-            CodigoDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.Font = new Font("Microsoft Sans Serif", 16.2F);
-            CodigoDataGridView.DefaultCellStyle = dataGridViewCellStyle4;
-            CodigoDataGridView.HeaderText = "Código";
-            CodigoDataGridView.MinimumWidth = 6;
-            CodigoDataGridView.Name = "CodigoDataGridView";
-            CodigoDataGridView.ReadOnly = true;
-            CodigoDataGridView.Width = 138;
-            // 
-            // DescripcionDataGridView
-            // 
-            DescripcionDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.Font = new Font("Microsoft Sans Serif", 16.2F);
-            DescripcionDataGridView.DefaultCellStyle = dataGridViewCellStyle5;
-            DescripcionDataGridView.HeaderText = "Descripción";
-            DescripcionDataGridView.MinimumWidth = 6;
-            DescripcionDataGridView.Name = "DescripcionDataGridView";
-            DescripcionDataGridView.ReadOnly = true;
-            // 
-            // PrecioDataGridView
-            // 
-            PrecioDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle6.Font = new Font("Microsoft Sans Serif", 16.2F);
-            PrecioDataGridView.DefaultCellStyle = dataGridViewCellStyle6;
-            PrecioDataGridView.HeaderText = "Precio";
-            PrecioDataGridView.MinimumWidth = 6;
-            PrecioDataGridView.Name = "PrecioDataGridView";
-            PrecioDataGridView.ReadOnly = true;
-            PrecioDataGridView.Width = 124;
-            // 
-            // ImporteDataGridView
-            // 
-            ImporteDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle7.Font = new Font("Microsoft Sans Serif", 16.2F);
-            ImporteDataGridView.DefaultCellStyle = dataGridViewCellStyle7;
-            ImporteDataGridView.HeaderText = "Importe";
-            ImporteDataGridView.MinimumWidth = 6;
-            ImporteDataGridView.Name = "ImporteDataGridView";
-            ImporteDataGridView.ReadOnly = true;
-            ImporteDataGridView.Width = 149;
+            ProductosDataGridView.UserDeletingRow += ProductosDataGridView_UserDeletingRow;
             // 
             // TotalPanel
             // 
             TotalPanel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             TotalPanel.BackColor = Color.White;
+            TotalPanel.Controls.Add(CodigoTextBox);
             TotalPanel.Controls.Add(IconoPictureBox);
             TotalPanel.Controls.Add(TotalLabel);
-            TotalPanel.Controls.Add(CodigoTextBox);
-            TotalPanel.Location = new Point(5, 711);
-            TotalPanel.Margin = new Padding(3, 4, 3, 4);
+            TotalPanel.Location = new Point(4, 533);
             TotalPanel.Name = "TotalPanel";
-            TotalPanel.Size = new Size(1541, 128);
+            TotalPanel.Size = new Size(1348, 96);
             TotalPanel.TabIndex = 11;
+            // 
+            // CodigoTextBox
+            // 
+            CodigoTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            CodigoTextBox.BackColor = Color.White;
+            CodigoTextBox.BorderStyle = BorderStyle.None;
+            CodigoTextBox.CharacterCasing = CharacterCasing.Upper;
+            CodigoTextBox.Font = new Font("Segoe UI", 34.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            CodigoTextBox.Location = new Point(129, 18);
+            CodigoTextBox.MaxLength = 14;
+            CodigoTextBox.Name = "CodigoTextBox";
+            CodigoTextBox.Size = new Size(404, 61);
+            CodigoTextBox.TabIndex = 1;
+            CodigoTextBox.KeyDown += CodigoTextBox_KeyDown;
             // 
             // IconoPictureBox
             // 
             IconoPictureBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             IconoPictureBox.Image = Properties.Resources.codigodebarras;
-            IconoPictureBox.Location = new Point(25, 36);
-            IconoPictureBox.Margin = new Padding(3, 4, 3, 4);
+            IconoPictureBox.Location = new Point(12, 25);
+            IconoPictureBox.MaximumSize = new Size(80, 47);
+            IconoPictureBox.MinimumSize = new Size(80, 47);
             IconoPictureBox.Name = "IconoPictureBox";
-            IconoPictureBox.Size = new Size(85, 63);
+            IconoPictureBox.Size = new Size(80, 47);
             IconoPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             IconoPictureBox.TabIndex = 2;
             IconoPictureBox.TabStop = false;
@@ -344,37 +290,21 @@
             // 
             TotalLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             TotalLabel.Font = new Font("Segoe UI", 36F, FontStyle.Bold);
-            TotalLabel.Location = new Point(633, 11);
+            TotalLabel.Location = new Point(554, 8);
             TotalLabel.Name = "TotalLabel";
-            TotalLabel.Size = new Size(900, 107);
+            TotalLabel.Size = new Size(788, 80);
             TotalLabel.TabIndex = 0;
             TotalLabel.Text = "Total $0.00";
             TotalLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // CodigoTextBox
-            // 
-            CodigoTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            CodigoTextBox.BackColor = Color.White;
-            CodigoTextBox.CharacterCasing = CharacterCasing.Upper;
-            CodigoTextBox.Font = new Font("Segoe UI", 34.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            CodigoTextBox.Location = new Point(116, 25);
-            CodigoTextBox.Margin = new Padding(3, 4, 3, 4);
-            CodigoTextBox.MaxLength = 14;
-            CodigoTextBox.Name = "CodigoTextBox";
-            CodigoTextBox.Size = new Size(478, 83);
-            CodigoTextBox.TabIndex = 1;
-            CodigoTextBox.TextAlign = HorizontalAlignment.Center;
-            CodigoTextBox.KeyDown += CodigoTextBox_KeyDown;
             // 
             // statusStrip1
             // 
             statusStrip1.AutoSize = false;
             statusStrip1.ImageScalingSize = new Size(20, 20);
             statusStrip1.Items.AddRange(new ToolStripItem[] { NotificacionToolStripStatusLabel, ProcesoToolStripProgressBar });
-            statusStrip1.Location = new Point(0, 842);
+            statusStrip1.Location = new Point(0, 632);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Padding = new Padding(1, 0, 16, 0);
-            statusStrip1.Size = new Size(1551, 40);
+            statusStrip1.Size = new Size(1357, 30);
             statusStrip1.TabIndex = 12;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -383,7 +313,7 @@
             NotificacionToolStripStatusLabel.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold);
             NotificacionToolStripStatusLabel.ForeColor = Color.FromArgb(192, 0, 0);
             NotificacionToolStripStatusLabel.Name = "NotificacionToolStripStatusLabel";
-            NotificacionToolStripStatusLabel.Size = new Size(1534, 34);
+            NotificacionToolStripStatusLabel.Size = new Size(1342, 25);
             NotificacionToolStripStatusLabel.Spring = true;
             NotificacionToolStripStatusLabel.Text = "...";
             NotificacionToolStripStatusLabel.TextAlign = ContentAlignment.MiddleLeft;
@@ -391,20 +321,93 @@
             // ProcesoToolStripProgressBar
             // 
             ProcesoToolStripProgressBar.Name = "ProcesoToolStripProgressBar";
-            ProcesoToolStripProgressBar.Size = new Size(114, 32);
+            ProcesoToolStripProgressBar.Size = new Size(100, 24);
             ProcesoToolStripProgressBar.Visible = false;
+            // 
+            // CantidadDataGridView
+            // 
+            CantidadDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.Font = new Font("Microsoft Sans Serif", 16.2F);
+            CantidadDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
+            CantidadDataGridView.Frozen = true;
+            CantidadDataGridView.HeaderText = "Cantidad";
+            CantidadDataGridView.MinimumWidth = 6;
+            CantidadDataGridView.Name = "CantidadDataGridView";
+            CantidadDataGridView.ReadOnly = true;
+            CantidadDataGridView.Width = 127;
+            // 
+            // CodigoDataGridView
+            // 
+            CodigoDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.Font = new Font("Microsoft Sans Serif", 16.2F);
+            CodigoDataGridView.DefaultCellStyle = dataGridViewCellStyle4;
+            CodigoDataGridView.Frozen = true;
+            CodigoDataGridView.HeaderText = "Código";
+            CodigoDataGridView.MinimumWidth = 6;
+            CodigoDataGridView.Name = "CodigoDataGridView";
+            CodigoDataGridView.ReadOnly = true;
+            CodigoDataGridView.Width = 110;
+            // 
+            // DescripcionDataGridView
+            // 
+            DescripcionDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.Font = new Font("Microsoft Sans Serif", 16.2F);
+            DescripcionDataGridView.DefaultCellStyle = dataGridViewCellStyle5;
+            DescripcionDataGridView.Frozen = true;
+            DescripcionDataGridView.HeaderText = "Descripción";
+            DescripcionDataGridView.MinimumWidth = 6;
+            DescripcionDataGridView.Name = "DescripcionDataGridView";
+            DescripcionDataGridView.ReadOnly = true;
+            DescripcionDataGridView.Width = 517;
+            // 
+            // PrecioDataGridView
+            // 
+            PrecioDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle6.Font = new Font("Microsoft Sans Serif", 16.2F);
+            PrecioDataGridView.DefaultCellStyle = dataGridViewCellStyle6;
+            PrecioDataGridView.Frozen = true;
+            PrecioDataGridView.HeaderText = "Precio";
+            PrecioDataGridView.MinimumWidth = 6;
+            PrecioDataGridView.Name = "PrecioDataGridView";
+            PrecioDataGridView.ReadOnly = true;
+            // 
+            // ImporteDataGridView
+            // 
+            ImporteDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle7.Font = new Font("Microsoft Sans Serif", 16.2F);
+            ImporteDataGridView.DefaultCellStyle = dataGridViewCellStyle7;
+            ImporteDataGridView.Frozen = true;
+            ImporteDataGridView.HeaderText = "Importe";
+            ImporteDataGridView.MinimumWidth = 6;
+            ImporteDataGridView.Name = "ImporteDataGridView";
+            ImporteDataGridView.ReadOnly = true;
+            ImporteDataGridView.Width = 118;
+            // 
+            // IdDataGridView
+            // 
+            IdDataGridView.Frozen = true;
+            IdDataGridView.HeaderText = "Id";
+            IdDataGridView.Name = "IdDataGridView";
+            IdDataGridView.ReadOnly = true;
+            IdDataGridView.Visible = false;
             // 
             // VentasForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1551, 882);
+            ClientSize = new Size(1357, 662);
             Controls.Add(statusStrip1);
             Controls.Add(TotalPanel);
             Controls.Add(ProductosDataGridView);
             Controls.Add(ClientePanel);
             FormBorderStyle = FormBorderStyle.None;
-            MinimumSize = new Size(1534, 813);
+            Margin = new Padding(3, 2, 3, 2);
+            MinimumSize = new Size(1188, 538);
             Name = "VentasForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Ventas";
@@ -426,11 +429,6 @@
 
         private Panel ClientePanel;
         private DataGridView ProductosDataGridView;
-        private DataGridViewTextBoxColumn CantidadDataGridView;
-        private DataGridViewTextBoxColumn CodigoDataGridView;
-        private DataGridViewTextBoxColumn DescripcionDataGridView;
-        private DataGridViewTextBoxColumn PrecioDataGridView;
-        private DataGridViewTextBoxColumn ImporteDataGridView;
         private Panel TotalPanel;
         private Label TotalLabel;
         private TextBox CodigoTextBox;
@@ -447,5 +445,11 @@
         private PictureBox IconoPictureBox;
         private Button CerrarButton;
         private PictureBox LogoPictureBox;
+        private DataGridViewTextBoxColumn CantidadDataGridView;
+        private DataGridViewTextBoxColumn CodigoDataGridView;
+        private DataGridViewTextBoxColumn DescripcionDataGridView;
+        private DataGridViewTextBoxColumn PrecioDataGridView;
+        private DataGridViewTextBoxColumn ImporteDataGridView;
+        private DataGridViewTextBoxColumn IdDataGridView;
     }
 }
