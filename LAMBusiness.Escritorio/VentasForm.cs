@@ -171,15 +171,46 @@ namespace LAMBusiness.Escritorio
         #endregion
 
         #region Funcionalidad del datagrid
-        private void ProductosDataGridView_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
+        private async void ProductosDataGridView_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
             DataGridView row = (DataGridView)sender;
             int i = row.CurrentRow.Index;
+            switch (_proceso)
+            {
+                case Proceso.Capturar:
+                    e.Cancel = true;
+                    await RemoverDetalleDeVenta(i);
+                    break;
+                case Proceso.Retirar:
+                    e.Cancel = false;
+                    break;
+                default:
+                    e.Cancel = true;
+                    break;
+            }
+
+            CodigoTextBox.Text = string.Empty;
+            CodigoTextBox.PasswordChar = (char)0;
+            CodigoTextBox.Focus();
+        }
+
+        private void ProductosDataGridView_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
+        {
+            switch(_proceso)
+            {
+                case Proceso.Retirar:
+                    ObtenerTotal();
+                    Notificar("Importe eliminado");
+                    break;
+            }
+        }
+
+        private async Task RemoverDetalleDeVenta(int i)
+        {
             decimal cantidad = Convert.ToDecimal(ProductosDataGridView.Rows[i].Cells[0].Value) * -1;
             decimal precio = Convert.ToDecimal(ProductosDataGridView.Rows[i].Cells[3].Value);
-            string id = string.Empty;
-            if (ProductosDataGridView.Rows[i].Cells[5] != null)
-                id = ProductosDataGridView.Rows[i].Cells[5].Value.ToString()!;
+            Guid id = Guid.Parse(ProductosDataGridView.Rows[i].Cells[5].Value.ToString()!);
+
             string pregunta = "¿Desea eliminar el detalle del producto?";
             Color color = Color.Red;
             if (cantidad > 0)
@@ -187,25 +218,30 @@ namespace LAMBusiness.Escritorio
                 color = Color.Black;
                 pregunta = "¿Desea restablecer el detalle del producto?";
             }
-                
-            e.Cancel = true;
 
-            if (MessageBox.Show(pregunta,"Eliminación parcial",MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.OK)
+            if (MessageBox.Show(pregunta, "Eliminación parcial", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.OK)
             {
-                var importe = precio * cantidad;
-                ProductosDataGridView.Rows[i].Cells[0].Value = $"{cantidad:0.0000}";
-                ProductosDataGridView.Rows[i].Cells[4].Value = $"{importe:0.00}";
-                ProductosDataGridView.Rows[i].DefaultCellStyle.ForeColor = color;
-                ObtenerTotal();
-                Notificar("El producto fue cancelado con éxito.");
+                using var contexto = new DataContext(_configuracion);
+                Ventas ventas = new(contexto);
+                var resultado = await ventas.CancelarVentaParcial(id, (Guid)Global.UsuarioId!);
+                if (!resultado.Error)
+                {
+                    var importe = precio * cantidad;
+                    ProductosDataGridView.Rows[i].Cells[0].Value = $"{cantidad:0.0000}";
+                    ProductosDataGridView.Rows[i].Cells[4].Value = $"{importe:0.00}";
+                    ProductosDataGridView.Rows[i].DefaultCellStyle.ForeColor = color;
+                    ObtenerTotal();
+                    Notificar("El producto fue cancelado con éxito.");
+                }
+                else
+                {
+                    Notificar(resultado.Mensaje);
+                }
             }
             else
             {
                 Notificar("Operación cancelada por el usuario");
             }
-            CodigoTextBox.Text = string.Empty;
-            CodigoTextBox.PasswordChar = (char)0;
-            CodigoTextBox.Focus();
         }
         #endregion
 
@@ -423,7 +459,7 @@ namespace LAMBusiness.Escritorio
                 }
                 return resultado;
             }
-            
+
             var producto = resultado.Datos;
             ProductosDataGridView.Rows.Add(producto.Cantidad, producto.Productos.Codigo, producto.Productos.Nombre, $"{producto.Productos.PrecioVenta:0.00}", $"{producto.Productos.PrecioVenta * producto.Cantidad:0.00}", producto.VentaNoAplicadaDetalleID);
             ProductosDataGridView.Rows[^1].Selected = true;
@@ -448,11 +484,18 @@ namespace LAMBusiness.Escritorio
                 var resultadoDeVentas = resultado.Datos;
                 if (resultadoDeVentas.VentasNoAplicadasDetalle != null && resultadoDeVentas.VentasNoAplicadasDetalle.Any())
                 {
+                    Color color = Color.Black;
+                    int reg = 0;
                     foreach (var venta in resultadoDeVentas.VentasNoAplicadasDetalle)
                     {
+                        color = Color.Black;
+                        if (venta.Cantidad < 0)
+                            color = Color.Red;
                         ProductosDataGridView.Rows.Add(venta.Cantidad, venta.Productos.Codigo, venta.Productos.Nombre, $"{venta.Productos.PrecioVenta:0.00}", $"{venta.Productos.PrecioVenta * venta.Cantidad:0.00}", venta.VentaNoAplicadaDetalleID);
                         ProductosDataGridView.Rows[^1].Selected = true;
                         ProductosDataGridView.FirstDisplayedScrollingRowIndex = ProductosDataGridView.Rows.Count - 1;
+                        ProductosDataGridView.Rows[reg].DefaultCellStyle.ForeColor = color;
+                        reg++;
                     }
                     CobrarButton.Enabled = true;
                 }
@@ -848,6 +891,6 @@ namespace LAMBusiness.Escritorio
 
             return ProductosDataGridView.RowCount > 0;
         }
-        #endregion        
+        #endregion
     }
 }

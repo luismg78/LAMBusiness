@@ -128,7 +128,35 @@ namespace LAMBusiness.Backend
                 return resultado;
             }
 
-            var ventasNoAplicadasDetalleAgrupada = ventasNoAplicadasDetalle
+            var ventasNoAplicadasDetalleCanceladas = ventasNoAplicadasDetalle
+                .Where(v => v.Cantidad < 0).ToList();
+            if(ventasNoAplicadasDetalleCanceladas != null && ventasNoAplicadasDetalleCanceladas.Count> 0)
+            {
+                Guid ventaCanceladaId = Guid.NewGuid();
+                _contexto.Add(new VentaCancelada()
+                {
+                    VentaCanceladaID = ventaCanceladaId,
+                    Fecha = DateTime.Now,
+                    UsuarioID = usuarioId,
+                    VentaCompleta = false
+                });
+                foreach(var item in ventasNoAplicadasDetalleCanceladas)
+                {
+                    _contexto.Add(new VentaCanceladaDetalle()
+                    {
+                        Cantidad = Math.Abs(item.Cantidad),
+                        PrecioVenta = item.PrecioVenta,
+                        ProductoID = item.ProductoID,
+                        VentaCanceladaDetalleID = Guid.NewGuid(),
+                        VentaCanceladaID = ventaCanceladaId
+                    });
+                }
+            }
+
+            var ventasNoAplicadasDetallePorAplicar = ventasNoAplicadasDetalle
+                .Where(v => v.Cantidad >= 0).ToList();
+
+            var ventasNoAplicadasDetalleAgrupada = ventasNoAplicadasDetallePorAplicar
                 .GroupBy(v => new { v.VentaNoAplicadaID, v.ProductoID, v.Cantidad, v.PrecioVenta })
                 .Where(v => v.Key.VentaNoAplicadaID == id)
                 .Select(v => new
@@ -380,6 +408,45 @@ namespace LAMBusiness.Backend
             return resultado;
         }
 
+        public async Task<Resultado<VentaCanceladaDTO>> CancelarVentaParcial(Guid? id, Guid usuarioId)
+        {
+            Resultado<VentaCanceladaDTO> resultado = new();
+
+            if (id == null || id == Guid.Empty)
+            {
+                resultado.Error = true;
+                resultado.Reiniciar = true;
+                resultado.Mensaje = "Identificador de la venta incorrecto.";
+                return resultado;
+            }
+
+            try
+            {
+                var ventasNoAplicadasDetalle = await _contexto.VentasNoAplicadasDetalle
+                    .FirstOrDefaultAsync(v => v.VentaNoAplicadaDetalleID == id);
+
+                if (ventasNoAplicadasDetalle == null)
+                {
+                    resultado.Error = true;
+                    resultado.Mensaje = "Identificador de la venta incorrecto.";
+                    return resultado;
+                }
+
+                ventasNoAplicadasDetalle.Cantidad *= -1;
+                _contexto.Update(ventasNoAplicadasDetalle);
+
+                await _contexto.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                resultado.Error = true;
+                resultado.Mensaje = "Cancelación no realizada.";
+                resultado.Excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
+            }
+
+            return resultado;
+        }
+
         public async Task<Resultado<CorteDeCajaDTO>> CerrarVentas(Guid usuarioId)
         {
             Resultado<CorteDeCajaDTO> resultado = new();
@@ -535,7 +602,7 @@ namespace LAMBusiness.Backend
 
             if (ventasNoAplicadas != null && ventasNoAplicadas.Any())
                 ventaNoAplicada = ventasNoAplicadas.OrderByDescending(v => v.Fecha).FirstOrDefault();
-            
+
             bool iniciarVenta = true;
             if (ventaNoAplicada != null)
             {

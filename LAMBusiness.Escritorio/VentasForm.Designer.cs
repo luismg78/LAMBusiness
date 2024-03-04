@@ -49,6 +49,12 @@
             BuscarButton = new Button();
             VentasButton = new Button();
             ProductosDataGridView = new DataGridView();
+            CantidadDataGridView = new DataGridViewTextBoxColumn();
+            CodigoDataGridView = new DataGridViewTextBoxColumn();
+            DescripcionDataGridView = new DataGridViewTextBoxColumn();
+            PrecioDataGridView = new DataGridViewTextBoxColumn();
+            ImporteDataGridView = new DataGridViewTextBoxColumn();
+            IdDataGridView = new DataGridViewTextBoxColumn();
             TotalPanel = new Panel();
             CodigoTextBox = new TextBox();
             IconoPictureBox = new PictureBox();
@@ -56,12 +62,6 @@
             statusStrip1 = new StatusStrip();
             NotificacionToolStripStatusLabel = new ToolStripStatusLabel();
             ProcesoToolStripProgressBar = new ToolStripProgressBar();
-            CantidadDataGridView = new DataGridViewTextBoxColumn();
-            CodigoDataGridView = new DataGridViewTextBoxColumn();
-            DescripcionDataGridView = new DataGridViewTextBoxColumn();
-            PrecioDataGridView = new DataGridViewTextBoxColumn();
-            ImporteDataGridView = new DataGridViewTextBoxColumn();
-            IdDataGridView = new DataGridViewTextBoxColumn();
             ClientePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)LogoPictureBox).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ProductosDataGridView).BeginInit();
@@ -205,8 +205,10 @@
             ProductosDataGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             ProductosDataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             ProductosDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            ProductosDataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             ProductosDataGridView.BackgroundColor = Color.White;
             ProductosDataGridView.BorderStyle = BorderStyle.None;
+            ProductosDataGridView.CellBorderStyle = DataGridViewCellBorderStyle.None;
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = SystemColors.Control;
             dataGridViewCellStyle2.Font = new Font("Segoe UI Semibold", 16.2F, FontStyle.Bold);
@@ -245,7 +247,75 @@
             ProductosDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             ProductosDataGridView.Size = new Size(1023, 525);
             ProductosDataGridView.TabIndex = 1;
+            ProductosDataGridView.UserDeletedRow += ProductosDataGridView_UserDeletedRow;
             ProductosDataGridView.UserDeletingRow += ProductosDataGridView_UserDeletingRow;
+            // 
+            // CantidadDataGridView
+            // 
+            CantidadDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.Font = new Font("Microsoft Sans Serif", 16.2F);
+            CantidadDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
+            CantidadDataGridView.HeaderText = "Cantidad";
+            CantidadDataGridView.MinimumWidth = 6;
+            CantidadDataGridView.Name = "CantidadDataGridView";
+            CantidadDataGridView.ReadOnly = true;
+            CantidadDataGridView.Width = 127;
+            // 
+            // CodigoDataGridView
+            // 
+            CodigoDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.Font = new Font("Microsoft Sans Serif", 16.2F);
+            CodigoDataGridView.DefaultCellStyle = dataGridViewCellStyle4;
+            CodigoDataGridView.HeaderText = "Código";
+            CodigoDataGridView.MinimumWidth = 6;
+            CodigoDataGridView.Name = "CodigoDataGridView";
+            CodigoDataGridView.ReadOnly = true;
+            CodigoDataGridView.Width = 110;
+            // 
+            // DescripcionDataGridView
+            // 
+            DescripcionDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.Font = new Font("Microsoft Sans Serif", 16.2F);
+            DescripcionDataGridView.DefaultCellStyle = dataGridViewCellStyle5;
+            DescripcionDataGridView.HeaderText = "Descripción";
+            DescripcionDataGridView.MinimumWidth = 6;
+            DescripcionDataGridView.Name = "DescripcionDataGridView";
+            DescripcionDataGridView.ReadOnly = true;
+            // 
+            // PrecioDataGridView
+            // 
+            PrecioDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle6.Font = new Font("Microsoft Sans Serif", 16.2F);
+            PrecioDataGridView.DefaultCellStyle = dataGridViewCellStyle6;
+            PrecioDataGridView.HeaderText = "Precio";
+            PrecioDataGridView.MinimumWidth = 6;
+            PrecioDataGridView.Name = "PrecioDataGridView";
+            PrecioDataGridView.ReadOnly = true;
+            // 
+            // ImporteDataGridView
+            // 
+            ImporteDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle7.Font = new Font("Microsoft Sans Serif", 16.2F);
+            ImporteDataGridView.DefaultCellStyle = dataGridViewCellStyle7;
+            ImporteDataGridView.HeaderText = "Importe";
+            ImporteDataGridView.MinimumWidth = 6;
+            ImporteDataGridView.Name = "ImporteDataGridView";
+            ImporteDataGridView.ReadOnly = true;
+            ImporteDataGridView.Width = 118;
+            // 
+            // IdDataGridView
+            // 
+            IdDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            IdDataGridView.HeaderText = "Id";
+            IdDataGridView.Name = "IdDataGridView";
+            IdDataGridView.ReadOnly = true;
+            IdDataGridView.Visible = false;
+            IdDataGridView.Width = 5;
             // 
             // TotalPanel
             // 
@@ -323,78 +393,6 @@
             ProcesoToolStripProgressBar.Name = "ProcesoToolStripProgressBar";
             ProcesoToolStripProgressBar.Size = new Size(100, 24);
             ProcesoToolStripProgressBar.Visible = false;
-            // 
-            // CantidadDataGridView
-            // 
-            CantidadDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.Font = new Font("Microsoft Sans Serif", 16.2F);
-            CantidadDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
-            CantidadDataGridView.Frozen = true;
-            CantidadDataGridView.HeaderText = "Cantidad";
-            CantidadDataGridView.MinimumWidth = 6;
-            CantidadDataGridView.Name = "CantidadDataGridView";
-            CantidadDataGridView.ReadOnly = true;
-            CantidadDataGridView.Width = 127;
-            // 
-            // CodigoDataGridView
-            // 
-            CodigoDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.Font = new Font("Microsoft Sans Serif", 16.2F);
-            CodigoDataGridView.DefaultCellStyle = dataGridViewCellStyle4;
-            CodigoDataGridView.Frozen = true;
-            CodigoDataGridView.HeaderText = "Código";
-            CodigoDataGridView.MinimumWidth = 6;
-            CodigoDataGridView.Name = "CodigoDataGridView";
-            CodigoDataGridView.ReadOnly = true;
-            CodigoDataGridView.Width = 110;
-            // 
-            // DescripcionDataGridView
-            // 
-            DescripcionDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.Font = new Font("Microsoft Sans Serif", 16.2F);
-            DescripcionDataGridView.DefaultCellStyle = dataGridViewCellStyle5;
-            DescripcionDataGridView.Frozen = true;
-            DescripcionDataGridView.HeaderText = "Descripción";
-            DescripcionDataGridView.MinimumWidth = 6;
-            DescripcionDataGridView.Name = "DescripcionDataGridView";
-            DescripcionDataGridView.ReadOnly = true;
-            DescripcionDataGridView.Width = 517;
-            // 
-            // PrecioDataGridView
-            // 
-            PrecioDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle6.Font = new Font("Microsoft Sans Serif", 16.2F);
-            PrecioDataGridView.DefaultCellStyle = dataGridViewCellStyle6;
-            PrecioDataGridView.Frozen = true;
-            PrecioDataGridView.HeaderText = "Precio";
-            PrecioDataGridView.MinimumWidth = 6;
-            PrecioDataGridView.Name = "PrecioDataGridView";
-            PrecioDataGridView.ReadOnly = true;
-            // 
-            // ImporteDataGridView
-            // 
-            ImporteDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle7.Font = new Font("Microsoft Sans Serif", 16.2F);
-            ImporteDataGridView.DefaultCellStyle = dataGridViewCellStyle7;
-            ImporteDataGridView.Frozen = true;
-            ImporteDataGridView.HeaderText = "Importe";
-            ImporteDataGridView.MinimumWidth = 6;
-            ImporteDataGridView.Name = "ImporteDataGridView";
-            ImporteDataGridView.ReadOnly = true;
-            ImporteDataGridView.Width = 118;
-            // 
-            // IdDataGridView
-            // 
-            IdDataGridView.Frozen = true;
-            IdDataGridView.HeaderText = "Id";
-            IdDataGridView.Name = "IdDataGridView";
-            IdDataGridView.ReadOnly = true;
-            IdDataGridView.Visible = false;
             // 
             // VentasForm
             // 
