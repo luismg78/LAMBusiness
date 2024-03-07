@@ -24,9 +24,9 @@
         {
             get
             {
-                if (Descripcion.Length > 50)
+                if (Descripcion != null && Descripcion.Length > 50)
                 {
-                    return Descripcion.Substring(0, 100) + "...";
+                    return $"{Descripcion[..100]}...";
                 }
                 return Descripcion;
             }

@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml.Drawing.Diagrams;
 using LAMBusiness.Backend;
 using LAMBusiness.Contextos;
+using LAMBusiness.Escritorio.Reportes;
 using LAMBusiness.Shared.Aplicacion;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
@@ -824,6 +825,26 @@ namespace LAMBusiness.Escritorio
                 TotalLabel.ForeColor = Color.Black;
             }
             CodigoTextBox.Text = string.Empty;
+        }
+        #endregion
+
+        #region Impresiones
+        public void ImprimirTicketDeVenta()
+        {
+            TicketReport rpt = new();
+            rpt.DataSource = new List<TicketReport>();
+
+            string ruta = "";
+            string directorio = Path.Combine(ruta, "Tickets");
+            if (!Directory.Exists(directorio))
+                Directory.CreateDirectory(directorio);
+
+            string ticket = Path.Combine(directorio, $"{Guid.NewGuid}.pdf");
+
+            rpt.CreateDocument();
+            rpt.ExportToPdf(ticket);
+
+            //return File(ticket, "application/pdf");
         }
         #endregion
 
