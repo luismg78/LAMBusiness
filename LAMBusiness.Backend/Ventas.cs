@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml.InkML;
 using LAMBusiness.Contextos;
 using LAMBusiness.Shared.Aplicacion;
+using LAMBusiness.Shared.Catalogo;
 using LAMBusiness.Shared.Dashboard;
 using LAMBusiness.Shared.DTO.Movimiento;
 using LAMBusiness.Shared.Movimiento;
@@ -548,6 +549,24 @@ namespace LAMBusiness.Backend
             return resultado;
         }
 
+        private IQueryable<VentasDTO> FiltrarRegistro()
+        {
+            return _contexto.Ventas
+                .Include(p => p.Usuarios)
+                .Include(p => p.Almacenes)
+                .Select(p => new VentasDTO()
+                {
+                    Almacenes = p.Almacenes,
+                    Fecha = p.Fecha,
+                    Folio = p.Folio,
+                    ImporteTotal = _contexto.VentasImportes
+                    .Where(v => v.VentaID == p.VentaID)
+                    .Sum(v => v.Importe),
+                    Usuarios = p.Usuarios,
+                    VentaID = p.VentaID,
+                });
+        }
+
         public async Task<Resultado<VentasNoAplicadasDTO>> Inicializar(Guid usuarioId, bool nuevaVenta)
         {
             Resultado<VentasNoAplicadasDTO> resultado = new();
@@ -776,6 +795,46 @@ namespace LAMBusiness.Backend
                 resultado.Mensaje = "Error al actualizar la venta.";
                 return resultado;
             }
+        }
+
+        public async Task<Resultado<VentasDTO>> ObtenerVentaAsync(Guid? id)
+        {
+            Resultado<VentasDTO> resultado = new();
+            var venta = await _contexto.Ventas.FindAsync(id);
+            if(venta == null)
+            {
+                resultado.Error = true;
+                resultado.Mensaje = "El identificador de la venta es incorrecto.";
+                return resultado;
+            }
+
+            var detalle = await _contexto.VentasDetalle.Where(v => v.VentaID == id).ToListAsync();
+            if (detalle == null || detalle.Count == 0)
+            {
+                resultado.Error = true;
+                resultado.Mensaje = "No se encontró registro de venta.";
+                return resultado;
+            }
+
+            resultado.Datos = new VentasDTO()
+            {
+                Fecha = venta.Fecha,
+                Folio = venta.Folio,
+                VentasDetalle = detalle,
+                ImporteTotal = detalle.Sum(d => d.Cantidad * d.PrecioVenta)
+            };
+
+            return resultado;
+        }
+
+        public async Task<Filtro<List<VentasDTO>>> ObtenerVentasAsync(Filtro<List<VentasDTO>> filtro)
+        {
+            IQueryable<VentasDTO> registros = FiltrarRegistro();
+
+            filtro.Datos = await registros.OrderByDescending(r => r.Folio).Skip(filtro.Skip).Take(100).ToListAsync();
+            filtro.Registros = await registros.CountAsync();
+
+            return filtro;
         }
 
         public async Task<Resultado<Filtro<List<VentaNoAplicada>>>> RecuperarVenta(Guid usuarioId)

@@ -2,9 +2,8 @@
 
 namespace LAMBusiness.Shared.Aplicacion
 {
-    public class Filtro<T>
+    public class Filtro
     {
-        public T Datos { get; set; }
         public string Patron { get; set; }
         public DateTime FechaInicio { get; set; }
         public DateTime FechaFin { get; set; }
@@ -13,5 +12,9 @@ namespace LAMBusiness.Shared.Aplicacion
         public bool PermisoLectura { get; set; }
         public bool PermisoEscritura { get; set; }
         public bool PermisoImprimir { get; set; }
+    }
+    public class Filtro<T>: Filtro
+    {
+        public T Datos { get; set; }
     }
 }

@@ -1,10 +1,9 @@
-﻿using DocumentFormat.OpenXml.Drawing.Diagrams;
-using LAMBusiness.Backend;
+﻿using LAMBusiness.Backend;
 using LAMBusiness.Contextos;
 using LAMBusiness.Escritorio.Reportes;
 using LAMBusiness.Shared.Aplicacion;
+using LAMBusiness.Shared.DTO.Movimiento;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 
 namespace LAMBusiness.Escritorio
@@ -18,7 +17,8 @@ namespace LAMBusiness.Escritorio
             Aplicar,
             Buscar,
             Retirar,
-            CorteDeCaja
+            CorteDeCaja,
+            ImprimirTicket
         }
         #endregion
 
@@ -38,6 +38,7 @@ namespace LAMBusiness.Escritorio
             InitializeComponent();
             _configuracion = configuracion;
             _cantidad = 1;
+            UsuarioLabel.Text = $"{Global.PrimerApellido} {Global.SegundoApellido} {Global.Nombre} | {DateTime.Now:dd \\de MMMM \\de yyyy}";
         }
         #endregion
 
@@ -147,6 +148,9 @@ namespace LAMBusiness.Escritorio
                     if (BuscarButton.Enabled)
                         IniciarBuscar();
                     break;
+                case Keys.F3:
+                    ImprimirVentaModal();
+                    break;
                 case Keys.F5:
                     if (CobrarButton.Enabled)
                         IniciarCobro();
@@ -197,7 +201,7 @@ namespace LAMBusiness.Escritorio
 
         private void ProductosDataGridView_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
         {
-            switch(_proceso)
+            switch (_proceso)
             {
                 case Proceso.Retirar:
                     ObtenerTotal();
@@ -336,7 +340,10 @@ namespace LAMBusiness.Escritorio
         {
             IniciarCorteDeCaja();
         }
-
+        private void ImprimirTicketButton_Click(object sender, EventArgs e)
+        {
+            ImprimirVentaModal();
+        }
         private async void RecuperarButton_Click(object sender, EventArgs e)
         {
             await RecuperarVentasModal();
@@ -381,6 +388,7 @@ namespace LAMBusiness.Escritorio
                 return resultado;
             }
 
+            //ImprimirTicketDeVentaPorIdAsync(_ventaId);
             await ObtenerCambio();
             return resultado;
         }
@@ -434,6 +442,18 @@ namespace LAMBusiness.Escritorio
             {
                 Notificar("Opción no aprobada, no hay movimientos en la lista.");
             }
+        }
+        public void ImprimirVentaModal()
+        {
+            Global.VentaId = null;
+            var form = new ImprimirTicketForm(_configuracion);
+            form.ShowDialog();
+            if(Global.VentaId != null && Global.VentaId != Guid.Empty)
+                ImprimirTicketDeVentaPorIdAsync((Guid)Global.VentaId);
+            else
+                Notificar("Impresión cancelada.");
+            CodigoTextBox.Text = string.Empty;
+            CodigoTextBox.Focus();
         }
         public async Task<Resultado> ObtenerProductoPorCodigoAsync()
         {
@@ -549,6 +569,7 @@ namespace LAMBusiness.Escritorio
             ConfiguracionButtonBgColor("buscar");
             _cantidad = 1;
             _proceso = Proceso.Buscar;
+            CodigoTextBox.CharacterCasing = CharacterCasing.Upper;
             CodigoTextBox.Text = string.Empty;
             CodigoTextBox.PasswordChar = (char)0;
             CodigoTextBox.Focus();
@@ -603,6 +624,7 @@ namespace LAMBusiness.Escritorio
                     ProductosDataGridView.Rows.Clear();
                 }
                 ObtenerTotal();
+                CodigoTextBox.CharacterCasing = CharacterCasing.Upper;
                 CodigoTextBox.Text = string.Empty;
                 CodigoTextBox.PasswordChar = (char)0;
                 CodigoTextBox.Focus();
@@ -625,6 +647,7 @@ namespace LAMBusiness.Escritorio
                 RetirarEfectivoButton.Enabled = false;
                 CorteDeCajaButton.Enabled = false;
                 VentasButton.Enabled = true;
+                CodigoTextBox.CharacterCasing = CharacterCasing.Upper;
                 CodigoTextBox.Text = string.Empty;
                 CodigoTextBox.PasswordChar = (char)0;
                 CodigoTextBox.Focus();
@@ -654,6 +677,7 @@ namespace LAMBusiness.Escritorio
                 RetirarEfectivoButton.Enabled = false;
                 CorteDeCajaButton.Enabled = true;
                 VentasButton.Enabled = true;
+                CodigoTextBox.CharacterCasing = CharacterCasing.Normal;
                 CodigoTextBox.Text = string.Empty;
                 CodigoTextBox.PasswordChar = '*';
                 CodigoTextBox.Focus();
@@ -679,6 +703,7 @@ namespace LAMBusiness.Escritorio
                 RetirarEfectivoButton.Enabled = true;
                 CorteDeCajaButton.Enabled = false;
                 VentasButton.Enabled = true;
+                CodigoTextBox.CharacterCasing = CharacterCasing.Upper;
                 CodigoTextBox.Text = string.Empty;
                 CodigoTextBox.PasswordChar = (char)0;
                 CodigoTextBox.Focus();
@@ -829,22 +854,35 @@ namespace LAMBusiness.Escritorio
         #endregion
 
         #region Impresiones
-        public void ImprimirTicketDeVenta()
+        public void ImprimirTicketDeVentaAsync(VentasDTO venta)
         {
             TicketReport rpt = new();
-            rpt.DataSource = new List<TicketReport>();
 
-            string ruta = "";
-            string directorio = Path.Combine(ruta, "Tickets");
-            if (!Directory.Exists(directorio))
-                Directory.CreateDirectory(directorio);
-
-            string ticket = Path.Combine(directorio, $"{Guid.NewGuid}.pdf");
-
+            List<VentasDTO> ventas = new();
+            ventas.Add(venta);
+            rpt.DataSource = ventas;
             rpt.CreateDocument();
-            rpt.ExportToPdf(ticket);
+            try
+            {
+                rpt.Print();
+            }
+            catch (Exception)
+            {
+                Notificar("Error de impresión. Verifique que la impresora esté encendida o conectada a la PC.");
+            }
+        }
+        public async void ImprimirTicketDeVentaPorIdAsync(Guid ventaId)
+        {
+            using var contexto = new DataContext(_configuracion);
+            Ventas ventas = new(contexto);
+            var venta = await ventas.ObtenerVentaAsync(ventaId);
+            if(venta.Error)
+            {
+                Notificar(venta.Mensaje);
+                return;
+            }
 
-            //return File(ticket, "application/pdf");
+            ImprimirTicketDeVentaAsync(venta.Datos);
         }
         #endregion
 
@@ -912,6 +950,6 @@ namespace LAMBusiness.Escritorio
 
             return ProductosDataGridView.RowCount > 0;
         }
-        #endregion
+        #endregion        
     }
 }

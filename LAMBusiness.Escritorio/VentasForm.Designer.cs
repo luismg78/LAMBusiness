@@ -39,6 +39,7 @@
             DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
             ClientePanel = new Panel();
+            ImprimirTicketButton = new Button();
             LogoPictureBox = new PictureBox();
             CerrarButton = new Button();
             CorteDeCajaButton = new Button();
@@ -62,6 +63,7 @@
             statusStrip1 = new StatusStrip();
             NotificacionToolStripStatusLabel = new ToolStripStatusLabel();
             ProcesoToolStripProgressBar = new ToolStripProgressBar();
+            UsuarioLabel = new Label();
             ClientePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)LogoPictureBox).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ProductosDataGridView).BeginInit();
@@ -73,7 +75,9 @@
             // ClientePanel
             // 
             ClientePanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            ClientePanel.AutoScroll = true;
             ClientePanel.BackColor = Color.FromArgb(242, 245, 247);
+            ClientePanel.Controls.Add(ImprimirTicketButton);
             ClientePanel.Controls.Add(LogoPictureBox);
             ClientePanel.Controls.Add(CerrarButton);
             ClientePanel.Controls.Add(CorteDeCajaButton);
@@ -83,17 +87,29 @@
             ClientePanel.Controls.Add(CancelarButton);
             ClientePanel.Controls.Add(BuscarButton);
             ClientePanel.Controls.Add(VentasButton);
-            ClientePanel.Location = new Point(1032, 4);
+            ClientePanel.Location = new Point(1153, 4);
             ClientePanel.Name = "ClientePanel";
-            ClientePanel.Size = new Size(320, 525);
+            ClientePanel.Size = new Size(196, 525);
             ClientePanel.TabIndex = 9;
+            // 
+            // ImprimirTicketButton
+            // 
+            ImprimirTicketButton.BackColor = Color.White;
+            ImprimirTicketButton.Font = new Font("Segoe UI", 12F);
+            ImprimirTicketButton.Location = new Point(9, 221);
+            ImprimirTicketButton.Name = "ImprimirTicketButton";
+            ImprimirTicketButton.Size = new Size(168, 43);
+            ImprimirTicketButton.TabIndex = 14;
+            ImprimirTicketButton.Text = "Imprimir Ticket [F3]";
+            ImprimirTicketButton.UseVisualStyleBackColor = false;
+            ImprimirTicketButton.Click += ImprimirTicketButton_Click;
             // 
             // LogoPictureBox
             // 
             LogoPictureBox.Image = Properties.Resources.LAM;
-            LogoPictureBox.Location = new Point(94, 6);
+            LogoPictureBox.Location = new Point(29, 6);
             LogoPictureBox.Name = "LogoPictureBox";
-            LogoPictureBox.Size = new Size(134, 110);
+            LogoPictureBox.Size = new Size(127, 110);
             LogoPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             LogoPictureBox.TabIndex = 13;
             LogoPictureBox.TabStop = false;
@@ -101,10 +117,10 @@
             // CerrarButton
             // 
             CerrarButton.BackColor = Color.FromArgb(242, 245, 247);
-            CerrarButton.Font = new Font("Segoe UI", 18F);
-            CerrarButton.Location = new Point(10, 497);
+            CerrarButton.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            CerrarButton.Location = new Point(10, 486);
             CerrarButton.Name = "CerrarButton";
-            CerrarButton.Size = new Size(299, 64);
+            CerrarButton.Size = new Size(168, 45);
             CerrarButton.TabIndex = 9;
             CerrarButton.Text = "Cerrar";
             CerrarButton.UseVisualStyleBackColor = false;
@@ -113,22 +129,22 @@
             // CorteDeCajaButton
             // 
             CorteDeCajaButton.BackColor = Color.White;
-            CorteDeCajaButton.Font = new Font("Segoe UI", 18F);
-            CorteDeCajaButton.Location = new Point(161, 379);
+            CorteDeCajaButton.Font = new Font("Segoe UI", 12F);
+            CorteDeCajaButton.Location = new Point(9, 437);
             CorteDeCajaButton.Name = "CorteDeCajaButton";
-            CorteDeCajaButton.Size = new Size(148, 112);
+            CorteDeCajaButton.Size = new Size(168, 47);
             CorteDeCajaButton.TabIndex = 8;
-            CorteDeCajaButton.Text = "Corte de Caja       [F12]";
+            CorteDeCajaButton.Text = "Corte de Caja [F12]";
             CorteDeCajaButton.UseVisualStyleBackColor = false;
             CorteDeCajaButton.Click += CorteDeCajaButton_Click;
             // 
             // RetirarEfectivoButton
             // 
             RetirarEfectivoButton.BackColor = Color.White;
-            RetirarEfectivoButton.Font = new Font("Segoe UI", 18F);
-            RetirarEfectivoButton.Location = new Point(9, 379);
+            RetirarEfectivoButton.Font = new Font("Segoe UI", 12F);
+            RetirarEfectivoButton.Location = new Point(9, 394);
             RetirarEfectivoButton.Name = "RetirarEfectivoButton";
-            RetirarEfectivoButton.Size = new Size(148, 112);
+            RetirarEfectivoButton.Size = new Size(168, 43);
             RetirarEfectivoButton.TabIndex = 7;
             RetirarEfectivoButton.Text = "Retirar Efectivo [F11]";
             RetirarEfectivoButton.UseVisualStyleBackColor = false;
@@ -137,22 +153,22 @@
             // CobrarButton
             // 
             CobrarButton.BackColor = Color.White;
-            CobrarButton.Font = new Font("Segoe UI", 18F);
-            CobrarButton.Location = new Point(162, 201);
+            CobrarButton.Font = new Font("Segoe UI", 12F);
+            CobrarButton.Location = new Point(9, 264);
             CobrarButton.Name = "CobrarButton";
-            CobrarButton.Size = new Size(148, 84);
+            CobrarButton.Size = new Size(168, 43);
             CobrarButton.TabIndex = 4;
-            CobrarButton.Text = "Cobrar   [F5]";
+            CobrarButton.Text = "Cobrar [F5]";
             CobrarButton.UseVisualStyleBackColor = false;
             CobrarButton.Click += CobrarButton_Click;
             // 
             // RecuperarButton
             // 
             RecuperarButton.BackColor = Color.White;
-            RecuperarButton.Font = new Font("Segoe UI", 18F);
-            RecuperarButton.Location = new Point(162, 291);
+            RecuperarButton.Font = new Font("Segoe UI", 12F);
+            RecuperarButton.Location = new Point(9, 351);
             RecuperarButton.Name = "RecuperarButton";
-            RecuperarButton.Size = new Size(148, 82);
+            RecuperarButton.Size = new Size(168, 43);
             RecuperarButton.TabIndex = 6;
             RecuperarButton.Text = "Recuperar [F8]";
             RecuperarButton.UseVisualStyleBackColor = false;
@@ -161,10 +177,10 @@
             // CancelarButton
             // 
             CancelarButton.BackColor = Color.White;
-            CancelarButton.Font = new Font("Segoe UI", 18F);
-            CancelarButton.Location = new Point(9, 291);
+            CancelarButton.Font = new Font("Segoe UI", 12F);
+            CancelarButton.Location = new Point(9, 307);
             CancelarButton.Name = "CancelarButton";
-            CancelarButton.Size = new Size(148, 82);
+            CancelarButton.Size = new Size(168, 43);
             CancelarButton.TabIndex = 5;
             CancelarButton.Text = "Cancelar [F7]";
             CancelarButton.UseVisualStyleBackColor = false;
@@ -173,12 +189,12 @@
             // BuscarButton
             // 
             BuscarButton.BackColor = Color.White;
-            BuscarButton.Font = new Font("Segoe UI", 18F);
-            BuscarButton.Location = new Point(9, 201);
+            BuscarButton.Font = new Font("Segoe UI", 12F);
+            BuscarButton.Location = new Point(9, 178);
             BuscarButton.Name = "BuscarButton";
-            BuscarButton.Size = new Size(148, 84);
+            BuscarButton.Size = new Size(168, 43);
             BuscarButton.TabIndex = 3;
-            BuscarButton.Text = "Buscar   [F2]";
+            BuscarButton.Text = "Buscar [F2]";
             BuscarButton.UseVisualStyleBackColor = false;
             BuscarButton.Click += BuscarButton_Click;
             // 
@@ -188,9 +204,9 @@
             VentasButton.BackgroundImageLayout = ImageLayout.Stretch;
             VentasButton.Font = new Font("Segoe UI", 20.25F);
             VentasButton.ForeColor = Color.White;
-            VentasButton.Location = new Point(10, 122);
+            VentasButton.Location = new Point(9, 122);
             VentasButton.Name = "VentasButton";
-            VentasButton.Size = new Size(300, 76);
+            VentasButton.Size = new Size(168, 53);
             VentasButton.TabIndex = 2;
             VentasButton.Text = "Ventas";
             VentasButton.UseVisualStyleBackColor = false;
@@ -228,7 +244,7 @@
             dataGridViewCellStyle8.WrapMode = DataGridViewTriState.False;
             ProductosDataGridView.DefaultCellStyle = dataGridViewCellStyle8;
             ProductosDataGridView.GridColor = Color.WhiteSmoke;
-            ProductosDataGridView.Location = new Point(4, 4);
+            ProductosDataGridView.Location = new Point(4, 34);
             ProductosDataGridView.MultiSelect = false;
             ProductosDataGridView.Name = "ProductosDataGridView";
             dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleLeft;
@@ -245,7 +261,7 @@
             ProductosDataGridView.RowTemplate.Height = 50;
             ProductosDataGridView.ScrollBars = ScrollBars.Vertical;
             ProductosDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            ProductosDataGridView.Size = new Size(1023, 525);
+            ProductosDataGridView.Size = new Size(1145, 495);
             ProductosDataGridView.TabIndex = 1;
             ProductosDataGridView.UserDeletedRow += ProductosDataGridView_UserDeletedRow;
             ProductosDataGridView.UserDeletingRow += ProductosDataGridView_UserDeletingRow;
@@ -394,11 +410,22 @@
             ProcesoToolStripProgressBar.Size = new Size(100, 24);
             ProcesoToolStripProgressBar.Visible = false;
             // 
+            // UsuarioLabel
+            // 
+            UsuarioLabel.AutoSize = true;
+            UsuarioLabel.Font = new Font("Segoe UI", 10F);
+            UsuarioLabel.Location = new Point(4, 8);
+            UsuarioLabel.Name = "UsuarioLabel";
+            UsuarioLabel.Size = new Size(56, 19);
+            UsuarioLabel.TabIndex = 13;
+            UsuarioLabel.Text = "Usuario";
+            // 
             // VentasForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1357, 662);
+            Controls.Add(UsuarioLabel);
             Controls.Add(statusStrip1);
             Controls.Add(TotalPanel);
             Controls.Add(ProductosDataGridView);
@@ -421,6 +448,7 @@
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -449,5 +477,7 @@
         private DataGridViewTextBoxColumn PrecioDataGridView;
         private DataGridViewTextBoxColumn ImporteDataGridView;
         private DataGridViewTextBoxColumn IdDataGridView;
+        private Button ImprimirTicketButton;
+        private Label UsuarioLabel;
     }
 }
