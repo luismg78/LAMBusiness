@@ -800,7 +800,9 @@ namespace LAMBusiness.Backend
         public async Task<Resultado<VentasDTO>> ObtenerVentaAsync(Guid? id)
         {
             Resultado<VentasDTO> resultado = new();
-            var venta = await _contexto.Ventas.FindAsync(id);
+            var venta = await _contexto.Ventas
+                .Include(v => v.Usuarios)
+                .FirstOrDefaultAsync(v => v.VentaID == id);
             if(venta == null)
             {
                 resultado.Error = true;
@@ -808,7 +810,9 @@ namespace LAMBusiness.Backend
                 return resultado;
             }
 
-            var detalle = await _contexto.VentasDetalle.Where(v => v.VentaID == id).ToListAsync();
+            var detalle = await _contexto.VentasDetalle
+                .Include(v => v.Productos)
+                .Where(v => v.VentaID == id).ToListAsync();
             if (detalle == null || detalle.Count == 0)
             {
                 resultado.Error = true;
@@ -820,10 +824,56 @@ namespace LAMBusiness.Backend
             {
                 Fecha = venta.Fecha,
                 Folio = venta.Folio,
+                Usuarios = venta.Usuarios,
                 VentasDetalle = detalle,
                 ImporteTotal = detalle.Sum(d => d.Cantidad * d.PrecioVenta)
             };
 
+            return resultado;
+        }
+
+        public async Task<Resultado<TicketDeVentaDTO>> ObtenerTicketDeVentaAsync(Guid? id)
+        {
+            Resultado<TicketDeVentaDTO> resultado = new();
+            var resultadoDeVenta = await ObtenerVentaAsync(id);
+            if (resultadoDeVenta.Error)
+            {
+                resultado.Error = true;
+                resultado.Mensaje = resultadoDeVenta.Mensaje;
+                return resultado;
+            }
+
+            var venta = resultadoDeVenta.Datos;
+            TicketDeVentaDTO ticket = new()
+            {
+                AtendidoPor = venta.Usuarios.NombreCompleto.ToUpper(),
+                ColoniaDeLaSucursal = "COLONIA",
+                DomicilioDeLaSucursal = "DOMICILIO",
+                Fecha = venta.Fecha?.ToString("dd/MM/yyyy HH:mm"),
+                Folio = venta.Folio.ToString("000000000"),
+                ImporteTotalDeVenta = venta.ImporteTotal.ToString("$0.00"),
+                LugarDeLaSucursal="TUXTLA GUTIÉRREZ, CHIAPAS",
+                NombreDeLaSucursal = "AROMAYA",
+                RFC = "ARO781227XYZ",
+                DetalleDeVenta = new()
+            };
+
+            if(venta.VentasDetalle != null && venta.VentasDetalle.Count > 0)
+            {
+                List<TicketDeVentaDetalleDTO> detalle = new();
+                foreach(var item in venta.VentasDetalle)
+                {
+                    detalle.Add(new()
+                    {
+                        CantidadPorPrecioDeVenta = $"{item.Cantidad:0.0000} X {item.PrecioVenta:$0.00}",
+                        Importe = $"{item.Cantidad * item.PrecioVenta:$0.00}",
+                        NombreDelProducto = $"{item.Productos.Codigo.ToUpper()} {item.Productos.Nombre.ToUpper()}"
+                    });
+                }
+
+                ticket.DetalleDeVenta.AddRange(detalle);
+            }
+            resultado.Datos = ticket;
             return resultado;
         }
 

@@ -854,17 +854,20 @@ namespace LAMBusiness.Escritorio
         #endregion
 
         #region Impresiones
-        public void ImprimirTicketDeVentaAsync(VentasDTO venta)
+        public void ImprimirTicketDeVentaAsync(TicketDeVentaDTO venta)
         {
             TicketReport rpt = new();
 
-            List<VentasDTO> ventas = new();
-            ventas.Add(venta);
-            rpt.DataSource = ventas;
+            List<TicketDeVentaDTO> ticket = new();
+            ticket.Add(venta);
+            rpt.DataSource = ticket;
             rpt.CreateDocument();
             try
             {
-                rpt.Print();
+                string ruta = AppDomain.CurrentDomain.BaseDirectory;
+                var pdf = Path.Combine(ruta,"Reportes","ticket.pdf");
+                rpt.ExportToPdf(pdf);
+                //rpt.Print();
             }
             catch (Exception)
             {
@@ -875,14 +878,14 @@ namespace LAMBusiness.Escritorio
         {
             using var contexto = new DataContext(_configuracion);
             Ventas ventas = new(contexto);
-            var venta = await ventas.ObtenerVentaAsync(ventaId);
-            if(venta.Error)
+            var ticket = await ventas.ObtenerTicketDeVentaAsync(ventaId);
+            if(ticket.Error)
             {
-                Notificar(venta.Mensaje);
+                Notificar(ticket.Mensaje);
                 return;
             }
 
-            ImprimirTicketDeVentaAsync(venta.Datos);
+            ImprimirTicketDeVentaAsync(ticket.Datos);
         }
         #endregion
 
