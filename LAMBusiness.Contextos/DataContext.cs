@@ -52,6 +52,7 @@
         public DbSet<Paquete> Paquetes { get; set; }
         public DbSet<Producto> Productos { get; set; }
         public DbSet<Puesto> Puestos { get; set; }
+        public DbSet<RazonSocial> RazonesSociales { get; set; }
         public DbSet<TasaImpuesto> TasasImpuestos { get; set; }
         public DbSet<Unidad> Unidades { get; set; }
 
@@ -112,6 +113,10 @@
 
             modelBuilder.Entity<Puesto>()
                 .HasIndex(p => new { p.Nombre })
+                .IsUnique(true);
+
+            modelBuilder.Entity<RazonSocial>()
+                .HasIndex(p => new { p.RFC })
                 .IsUnique(true);
 
             modelBuilder.Entity<TasaImpuesto>()

@@ -1,6 +1,7 @@
 using LAMBusiness.Backend;
 using LAMBusiness.Contextos;
 using LAMBusiness.Shared.Aplicacion;
+using LAMBusiness.Shared.Catalogo;
 using LAMBusiness.Shared.DTO.Sesion;
 using System.Text.RegularExpressions;
 
@@ -10,15 +11,12 @@ namespace LAMBusiness.Escritorio
     {
         ErrorProvider _error;
         private readonly Configuracion _configuracion;
-        private readonly Sesiones _sesion;
 
         public IniciarSesionForm(Configuracion configuracion)
         {
             InitializeComponent();
-            DataContext contexto = new(configuracion);
             _error = new ErrorProvider();
             _configuracion = configuracion;
-            _sesion = new Sesiones(contexto);
         }
 
         private void IniciarSesionForm_Load(object sender, EventArgs e)
@@ -31,6 +29,7 @@ namespace LAMBusiness.Escritorio
         {
             IniciarSesion();
         }
+
         private async void IniciarSesion()
         {
             NotificacionLabel.Text = "Procesando inicio de sesión...";
@@ -43,14 +42,21 @@ namespace LAMBusiness.Escritorio
                     Email = CorreoElectronicoTextBox.Text,
                     Password = Sesiones.GenerateSHA512String(PasswordTextBox.Text)
                 };
+
+                DataContext contexto = new(_configuracion);
+                Sesiones _sesion = new(contexto);
+
                 var usuario = await _sesion.IniciarSesion(inicioDeSesion);
                 if (!usuario.Error)
                 {
+
                     Global.UsuarioId = usuario.Datos.UsuarioID;
                     Global.Nombre = usuario.Datos.Nombre;
                     Global.PrimerApellido = usuario.Datos.PrimerApellido;
                     Global.SegundoApellido = usuario.Datos.SegundoApellido;
                     Global.AplicacionCerrada = false;
+                    Global.Almacen = await ObtenerAlmacen();
+                    Global.RazonSocial = await ObtenerRazonSocial();
                     VentasForm form = new(_configuracion);
                     Hide();
                     form.Show();
@@ -105,13 +111,59 @@ namespace LAMBusiness.Escritorio
 
         private void CorreoElectronicoTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if(e.KeyChar == 13)
+            if (e.KeyChar == 13)
                 IniciarSesion();
         }
+
         private void PasswordTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if(e.KeyChar == 13)
+            if (e.KeyChar == 13)
                 IniciarSesion();
+        }
+
+        private async Task<Almacen> ObtenerAlmacen()
+        {
+            DataContext contexto = new(_configuracion);
+            Almacenes almacenes = new(contexto);
+
+            if (_configuracion.AlmacenId != Guid.Empty)
+            {
+                var almacen = await almacenes.ObtenerRegistroPorIdAsync(_configuracion.AlmacenId);
+                if (almacen != null)
+                    return almacen;
+            }
+         
+            return new Almacen()
+            {
+                AlmacenID = Guid.Empty,
+                Nombre = "Almacén no configurado"
+            };
+        }
+
+        private async Task<RazonSocial> ObtenerRazonSocial()
+        {
+            DataContext contexto = new(_configuracion);
+            RazonesSociales razonesSociales = new(contexto);
+
+            if (_configuracion.RazonSocialId != Guid.Empty)
+            {
+                var razonSocial = await razonesSociales.ObtenerRegistroPorIdAsync(_configuracion.RazonSocialId);
+                if (razonSocial != null)
+                    return razonSocial;
+            }
+
+            return new RazonSocial()
+            {
+                RazonSocialId = Guid.Empty,
+                CodigoPostal = 0,
+                Colonia = "No configurada",
+                Domicilio = "No configurado",
+                Lugar = "No configurado",
+                Nombre = "No configurado",
+                NombreCorto = "No configurado",
+                RFC = "",
+                Slogan = ""
+            };
         }
     }
 }

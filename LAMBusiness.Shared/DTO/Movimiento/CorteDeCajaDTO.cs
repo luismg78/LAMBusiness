@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace LAMBusiness.Shared.DTO.Movimiento
 {
     public class CorteDeCajaDTO
     {
+        public string Usuario { get; set; }
+        public DateTime Fecha { get; set; }
         public decimal ImporteDelSistema { get; set; }
         public decimal ImporteDelUsuario { get; set; }
         public List<ImporteDelSistemaDetalle> ImporteDelSistemaDetalle { get; set; } = null!;

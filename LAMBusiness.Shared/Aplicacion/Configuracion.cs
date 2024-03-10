@@ -5,6 +5,8 @@ namespace LAMBusiness.Shared.Aplicacion
     public class Configuracion
     {
         public Guid AplicacionId { get; set; }
+        public Guid RazonSocialId { get; set; }
+        public Guid AlmacenId { get; set; }
         public string CadenaDeConexion { get; set; } = string.Empty;
         public string CadenaDeConexionBitacora { get; set; } = string.Empty;
         //public string CadenaDeConexionDeAutenticacion { get; set; } = string.Empty;
@@ -24,6 +26,8 @@ namespace LAMBusiness.Shared.Aplicacion
         public Configuracion(Configuracion c)
         {
             AplicacionId = c.AplicacionId;
+            RazonSocialId = c.RazonSocialId;
+            AlmacenId = c.AlmacenId;
             CadenaDeConexion = c.CadenaDeConexion;
             CadenaDeConexionBitacora = c.CadenaDeConexionBitacora;
             //CadenaDeConexionDeAutenticacion = c.CadenaDeConexionDeAutenticacion;

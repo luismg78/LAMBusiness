@@ -119,7 +119,7 @@
             NotificacionLabel.ForeColor = Color.FromArgb(255, 65, 82);
             NotificacionLabel.Location = new Point(29, 251);
             NotificacionLabel.Name = "NotificacionLabel";
-            NotificacionLabel.Size = new Size(290, 48);
+            NotificacionLabel.Size = new Size(290, 25);
             NotificacionLabel.TabIndex = 11;
             NotificacionLabel.Text = "Notificación";
             NotificacionLabel.TextAlign = ContentAlignment.MiddleLeft;
@@ -130,7 +130,7 @@
             LogoPictureBox.Image = Properties.Resources.LAM;
             LogoPictureBox.Location = new Point(107, 10);
             LogoPictureBox.Name = "LogoPictureBox";
-            LogoPictureBox.Size = new Size(134, 111);
+            LogoPictureBox.Size = new Size(134, 88);
             LogoPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             LogoPictureBox.TabIndex = 12;
             LogoPictureBox.TabStop = false;

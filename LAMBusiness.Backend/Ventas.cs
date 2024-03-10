@@ -7,6 +7,7 @@ using LAMBusiness.Shared.DTO.Movimiento;
 using LAMBusiness.Shared.Movimiento;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json.Linq;
 
 namespace LAMBusiness.Backend
@@ -452,6 +453,14 @@ namespace LAMBusiness.Backend
         {
             Resultado<CorteDeCajaDTO> resultado = new();
 
+            var usuario = await _contexto.Usuarios.FindAsync(usuarioId);
+            if(usuario == null)
+            {
+                resultado.Error = true;
+                resultado.Mensaje = "El identificador del usuario es incorrecto.";
+                return resultado;
+            }
+
             Guid ventaDeCierreId = Guid.NewGuid();
 
             var importesDelSistema = await (from v in _contexto.Ventas
@@ -504,9 +513,10 @@ namespace LAMBusiness.Backend
             decimal totalSistema = importesDelSistema == null || !importesDelSistema.Any() ? 0 : importesDelSistema.Sum(i => i.Importe);
             decimal totalUsuario = importeDelUsuario == null || !importeDelUsuario.Any() ? 0 : importeDelUsuario.Sum(r => r.Importe);
 
+            var fecha = DateTime.Now;
             _contexto.VentasCierre.Add(new VentaCierre()
             {
-                Fecha = DateTime.Now,
+                Fecha = fecha,
                 ImporteSistema = totalSistema,
                 ImporteUsuario = totalUsuario,
                 UsuarioCajaID = usuarioId,
@@ -530,6 +540,8 @@ namespace LAMBusiness.Backend
 
             var corteDeCaja = new CorteDeCajaDTO()
             {
+                Fecha = fecha,
+                Usuario = usuario.NombreCompleto,
                 ImporteDelSistema = totalSistema,
                 ImporteDelUsuario = totalUsuario,
                 ImporteDelSistemaDetalle = importesDelSistema
@@ -831,52 +843,7 @@ namespace LAMBusiness.Backend
 
             return resultado;
         }
-
-        public async Task<Resultado<TicketDeVentaDTO>> ObtenerTicketDeVentaAsync(Guid? id)
-        {
-            Resultado<TicketDeVentaDTO> resultado = new();
-            var resultadoDeVenta = await ObtenerVentaAsync(id);
-            if (resultadoDeVenta.Error)
-            {
-                resultado.Error = true;
-                resultado.Mensaje = resultadoDeVenta.Mensaje;
-                return resultado;
-            }
-
-            var venta = resultadoDeVenta.Datos;
-            TicketDeVentaDTO ticket = new()
-            {
-                AtendidoPor = venta.Usuarios.NombreCompleto.ToUpper(),
-                ColoniaDeLaSucursal = "COLONIA",
-                DomicilioDeLaSucursal = "DOMICILIO",
-                Fecha = venta.Fecha?.ToString("dd/MM/yyyy HH:mm"),
-                Folio = venta.Folio.ToString("000000000"),
-                ImporteTotalDeVenta = venta.ImporteTotal.ToString("$0.00"),
-                LugarDeLaSucursal="TUXTLA GUTIÉRREZ, CHIAPAS",
-                NombreDeLaSucursal = "AROMAYA",
-                RFC = "ARO781227XYZ",
-                DetalleDeVenta = new()
-            };
-
-            if(venta.VentasDetalle != null && venta.VentasDetalle.Count > 0)
-            {
-                List<TicketDeVentaDetalleDTO> detalle = new();
-                foreach(var item in venta.VentasDetalle)
-                {
-                    detalle.Add(new()
-                    {
-                        CantidadPorPrecioDeVenta = $"{item.Cantidad:0.0000} X {item.PrecioVenta:$0.00}",
-                        Importe = $"{item.Cantidad * item.PrecioVenta:$0.00}",
-                        NombreDelProducto = $"{item.Productos.Codigo.ToUpper()} {item.Productos.Nombre.ToUpper()}"
-                    });
-                }
-
-                ticket.DetalleDeVenta.AddRange(detalle);
-            }
-            resultado.Datos = ticket;
-            return resultado;
-        }
-
+                
         public async Task<Filtro<List<VentasDTO>>> ObtenerVentasAsync(Filtro<List<VentasDTO>> filtro)
         {
             IQueryable<VentasDTO> registros = FiltrarRegistro();
@@ -966,9 +933,9 @@ namespace LAMBusiness.Backend
             return resultado;
         }
 
-        public async Task<Resultado> RetirarEfectivoDeCaja(decimal total, Guid usuarioId)
+        public async Task<Resultado<RetiroCaja>> RetirarEfectivoDeCaja(decimal total, Guid usuarioId)
         {
-            Resultado resultado = new();
+            Resultado<RetiroCaja> resultado = new();
 
             if (total <= 0)
             {
@@ -983,6 +950,7 @@ namespace LAMBusiness.Backend
                 Importe = total,
                 RetiroCajaID = Guid.NewGuid(),
                 UsuarioID = usuarioId,
+                Usuarios = await _contexto.Usuarios.FindAsync(usuarioId),
                 VentaCierreID = null
             };
             _contexto.Add(retiro);
@@ -990,6 +958,7 @@ namespace LAMBusiness.Backend
             try
             {
                 await _contexto.SaveChangesAsync();
+                resultado.Datos = retiro;
                 resultado.Mensaje = "Proceso finalizado con éxito.";
             }
             catch (Exception ex)

@@ -1,8 +1,11 @@
-﻿using LAMBusiness.Backend;
+﻿using DevExpress.CodeParser;
+using LAMBusiness.Backend;
 using LAMBusiness.Contextos;
 using LAMBusiness.Escritorio.Reportes;
 using LAMBusiness.Shared.Aplicacion;
+using LAMBusiness.Shared.Catalogo;
 using LAMBusiness.Shared.DTO.Movimiento;
+using LAMBusiness.Shared.Movimiento;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 
@@ -448,7 +451,7 @@ namespace LAMBusiness.Escritorio
             Global.VentaId = null;
             var form = new ImprimirTicketForm(_configuracion);
             form.ShowDialog();
-            if(Global.VentaId != null && Global.VentaId != Guid.Empty)
+            if (Global.VentaId != null && Global.VentaId != Guid.Empty)
                 ImprimirTicketDeVentaPorIdAsync((Guid)Global.VentaId);
             else
                 Notificar("Impresión cancelada.");
@@ -733,13 +736,6 @@ namespace LAMBusiness.Escritorio
             var corte = resultadoCorteDeCaja.Datos;
 
             ProductosDataGridView.Rows.Add(1, "", "Importe del sistema", "", $"{corte.ImporteDelSistema:0.00}", "");
-            //if (corte.ImporteDelSistemaDetalle != null && corte.ImporteDelSistemaDetalle.Any())
-            //{
-            //    foreach (var item in corte.ImporteDelSistemaDetalle)
-            //    {
-            //        ProductosDataGridView.Rows.Add(1, "", item.FormaDePago, "", item.Importe);
-            //    }
-            //}
             ProductosDataGridView.Rows.Add(1, "", "Importe del usuario (retiros)", "", $"{corte.ImporteDelUsuario:0.00}", "");
             var diferencia = corte.ImporteDelSistema - corte.ImporteDelUsuario;
             if (diferencia > 0)
@@ -759,6 +755,8 @@ namespace LAMBusiness.Escritorio
             }
             ProductosDataGridView.Rows[^1].Selected = true;
             ProductosDataGridView.FirstDisplayedScrollingRowIndex = ProductosDataGridView.Rows.Count - 1;
+
+            ImprimirTicketDeCorteDeCajaAsync(corte);
             _cantidad = 1;
             CodigoTextBox.Text = string.Empty;
             CodigoTextBox.Focus();
@@ -781,7 +779,10 @@ namespace LAMBusiness.Escritorio
                     decimal importe = CalcularTotal();
                     var retiro = await ventas.RetirarEfectivoDeCaja(importe, _usuarioId);
                     if (!retiro.Error)
+                    {
+                        ImprimirTicketDeRetiroDeCajaAsync(retiro.Datos);
                         await IniciarVenta(true);
+                    }
                     Notificar(retiro.Mensaje);
                 }
                 else if (r == DialogResult.No)
@@ -854,18 +855,78 @@ namespace LAMBusiness.Escritorio
         #endregion
 
         #region Impresiones
-        public void ImprimirTicketDeVentaAsync(TicketDeVentaDTO venta)
+        public void ImprimirTicketDeCorteDeCajaAsync(CorteDeCajaDTO corteDeCaja)
+        {
+            TicketCorteDeCajaReport rpt = new();
+
+            List<TicketDTO> ticket = new();
+            TicketDTO ticketDTO = CargarRazonSocialYSucursal(new TicketDTO());
+            ticketDTO.AtendidoPor = corteDeCaja.Usuario.ToUpper();
+            ticketDTO.Fecha = corteDeCaja.Fecha.ToString("dd \\de MMMM \\de yyyy");
+            ticketDTO.ImporteTotalDeSistema = corteDeCaja.ImporteDelSistema.ToString("$#,###,##0.00");
+            ticketDTO.ImporteTotalDeRetiros = corteDeCaja.ImporteDelUsuario.ToString("$#,###,##0.00");
+            var diferencia = corteDeCaja.ImporteDelSistema - corteDeCaja.ImporteDelUsuario;
+            if (diferencia > 0)
+                ticketDTO.ImporteTotalDeVenta = $"Faltante {diferencia:$0.00}";
+            else if (diferencia < 0)
+                ticketDTO.ImporteTotalDeVenta = $"Sobrante {Math.Abs(diferencia):$0.00}";
+            else
+                ticketDTO.ImporteTotalDeVenta = $"Correcto {diferencia:$0.00}";
+
+            ticket.Add(ticketDTO);
+            rpt.DataSource = ticket;
+            rpt.CreateDocument();
+            try
+            {
+                string ruta = AppDomain.CurrentDomain.BaseDirectory;
+                var pdf = Path.Combine(ruta, "Reportes", "ticketDeCorteDeCaja.pdf");
+                rpt.ExportToPdf(pdf);
+                //rpt.Print();
+            }
+            catch (Exception)
+            {
+                Notificar("Error de impresión. Verifique que la impresora esté encendida o conectada a la PC.");
+            }
+        }
+        public void ImprimirTicketDeRetiroDeCajaAsync(RetiroCaja retiro)
+        {
+            TicketRetiroReport rpt = new();
+
+            List<TicketDTO> ticket = new();
+            TicketDTO ticketDTO = CargarRazonSocialYSucursal(new TicketDTO());
+            ticketDTO.AtendidoPor = retiro.Usuarios.NombreCompleto.ToUpper();
+            ticketDTO.Fecha = retiro.Fecha?.ToString("dd \\de MMMM \\de yyyy");
+            ticketDTO.ImporteTotalDeVenta = retiro.Importe.ToString("$#,###,##0.00");
+
+            ticket.Add(ticketDTO);
+            rpt.DataSource = ticket;
+            rpt.CreateDocument();
+            try
+            {
+                string ruta = AppDomain.CurrentDomain.BaseDirectory;
+                var pdf = Path.Combine(ruta, "Reportes", "ticketDeRetiroDeCaja.pdf");
+                rpt.ExportToPdf(pdf);
+                //rpt.Print();
+            }
+            catch (Exception)
+            {
+                Notificar("Error de impresión. Verifique que la impresora esté encendida o conectada a la PC.");
+            }
+        }
+        public void ImprimirTicketDeVentaAsync(TicketDTO venta)
         {
             TicketReport rpt = new();
+            List<TicketDTO> ticket = new();
+            //obtener datos de la sucursal y razón social.
+            venta = CargarRazonSocialYSucursal(venta);
 
-            List<TicketDeVentaDTO> ticket = new();
             ticket.Add(venta);
             rpt.DataSource = ticket;
             rpt.CreateDocument();
             try
             {
                 string ruta = AppDomain.CurrentDomain.BaseDirectory;
-                var pdf = Path.Combine(ruta,"Reportes","ticket.pdf");
+                var pdf = Path.Combine(ruta, "Reportes", "ticketDeVenta.pdf");
                 rpt.ExportToPdf(pdf);
                 //rpt.Print();
             }
@@ -878,14 +939,55 @@ namespace LAMBusiness.Escritorio
         {
             using var contexto = new DataContext(_configuracion);
             Ventas ventas = new(contexto);
-            var ticket = await ventas.ObtenerTicketDeVentaAsync(ventaId);
-            if(ticket.Error)
+            var resultado = await ventas.ObtenerVentaAsync(ventaId);
+            if (!resultado.Error)
             {
-                Notificar(ticket.Mensaje);
-                return;
+                
+                var venta = resultado.Datos;
+                TicketDTO ticket = new()
+                {
+                    AtendidoPor = venta.Usuarios.NombreCompleto.ToUpper(),
+                    Fecha = venta.Fecha?.ToString("dd/MM/yyyy HH:mm"),
+                    Folio = venta.Folio.ToString("000000000"),
+                    ImporteTotalDeVenta = venta.ImporteTotal.ToString("$#,###,###,##0.00"),                    
+                    DetalleDeVenta = new()
+                };
+
+                if (venta.VentasDetalle != null && venta.VentasDetalle.Count > 0)
+                {
+                    List<TicketDetalleDTO> detalle = new();
+                    foreach (var item in venta.VentasDetalle)
+                    {
+                        detalle.Add(new()
+                        {
+                            CantidadPorPrecioDeVenta = $"{item.Cantidad:0.0000} X {item.PrecioVenta:$0.00}",
+                            Importe = $"{item.Cantidad * item.PrecioVenta:$0.00}",
+                            NombreDelProducto = $"{item.Productos.Codigo.ToUpper()} {item.Productos.Nombre.ToUpper()}"
+                        });
+                    }
+
+                    ticket.DetalleDeVenta.AddRange(detalle);
+                }
+                ImprimirTicketDeVentaAsync(ticket);
             }
 
-            ImprimirTicketDeVentaAsync(ticket.Datos);
+            Notificar(resultado.Mensaje);
+        }
+        private TicketDTO CargarRazonSocialYSucursal(TicketDTO ticket)
+        {
+            var almacen = Global.Almacen;
+            var rs = Global.RazonSocial;
+            ticket.Sucursal = almacen.Nombre.ToUpper();
+            ticket.Colonia = rs.Colonia.ToUpper();
+            ticket.Domicilio = $"{rs.Domicilio.ToUpper()} C.P.{rs.CodigoPostal:00000}";
+            ticket.Lugar = rs.Lugar.ToUpper();
+            ticket.Nombre = rs.Nombre.ToUpper();
+            ticket.NombreCorto = rs.NombreCorto.ToUpper();
+            ticket.RFC = rs.RFC == null ? "" : rs.RFC.ToUpper();
+            ticket.Telefono = rs.Telefono == null ? "" : $"TELÉFONO {rs.Telefono}";
+            ticket.Slogan = rs.Slogan == null ? "" : rs.Slogan.ToUpper();
+
+            return ticket;
         }
         #endregion
 
