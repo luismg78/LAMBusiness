@@ -1,9 +1,7 @@
-﻿using DevExpress.CodeParser;
-using LAMBusiness.Backend;
+﻿using LAMBusiness.Backend;
 using LAMBusiness.Contextos;
 using LAMBusiness.Escritorio.Reportes;
 using LAMBusiness.Shared.Aplicacion;
-using LAMBusiness.Shared.Catalogo;
 using LAMBusiness.Shared.DTO.Movimiento;
 using LAMBusiness.Shared.Movimiento;
 using Microsoft.EntityFrameworkCore;
@@ -942,14 +940,14 @@ namespace LAMBusiness.Escritorio
             var resultado = await ventas.ObtenerVentaAsync(ventaId);
             if (!resultado.Error)
             {
-                
+
                 var venta = resultado.Datos;
                 TicketDTO ticket = new()
                 {
                     AtendidoPor = venta.Usuarios.NombreCompleto.ToUpper(),
                     Fecha = venta.Fecha?.ToString("dd/MM/yyyy HH:mm"),
                     Folio = venta.Folio.ToString("000000000"),
-                    ImporteTotalDeVenta = venta.ImporteTotal.ToString("$#,###,###,##0.00"),                    
+                    ImporteTotalDeVenta = venta.ImporteTotal.ToString("$#,###,###,##0.00"),
                     DetalleDeVenta = new()
                 };
 
