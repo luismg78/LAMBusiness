@@ -15,6 +15,7 @@
     using Shared.Aplicacion;
     using Shared.Movimiento;
     using LAMBusiness.Backend;
+    using Microsoft.EntityFrameworkCore.Storage;
 
     public class EntradasController : GlobalController
     {
@@ -443,6 +444,11 @@
 
                 if (item.Productos.Unidades.Paquete)
                 {
+                    if (item.Productos.Paquete == null)
+                    {
+                        TempData["toast"] = $"El producto ({item.Productos.Codigo} - {item.Productos.Nombre}) está clasificado como paquete, pero no se encontró el código de la pieza asociada.";
+                        return RedirectToAction(nameof(Details), new { id });
+                    }
                     _productoId = item.Productos.Paquete.PiezaProductoID;
                     _precioCosto = (decimal)item.PrecioCosto / item.Productos.Paquete.CantidadProductoxPaquete;
                     _cantidad = item.Productos.Paquete.CantidadProductoxPaquete * _cantidad;

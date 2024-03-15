@@ -5,191 +5,188 @@
 }
 
 <div class="modal-body py-4">
-    <div class="card mb-4 text-dark rounded-lam-lg">
-        <div class="card-body py-3 py-4 py-lg-5">
-            <div class="row align-items-center">
-                <div class="col-3 col-lg-2 text-center">
-                    <img src="@Url.Action("GetProfilePicture", "Sesion", new { id = ViewBag.Id, tipo = "median" })" class="rounded-circle image-profile" alt="Image Profile" />
-                </div>
-                <div class="col text-start">
-                    <h2 class="m-0">
-                        ¡Hola,
-                        <span class="text-capitalize">
-                            @Model.Nombre.ToLower()
-                            @Model.PrimerApellido.ToLower()
-                        </span>!
-                    </h2>
-                    <p class="text-muted ms-2">
-                        Tienes 2 mensajes sin leer...
-                    </p>
-                </div>
-            </div>
-        </div>
+    @* <div class="card mb-4 text-dark rounded-lam-lg">
+    <div class="card-body py-3 py-4 py-lg-5">
+    <div class="row align-items-center">
+    <div class="col-3 col-lg-2 text-center">
+    <img src="@Url.Action("GetProfilePicture", "Sesion", new { id = ViewBag.Id, tipo = "median" })" class="rounded-circle image-profile" alt="Image Profile" />
     </div>
-    @*<div class="text-end px-4">
-        <button class="btn btn-light active border rounded-pill">Estadísticas</button>
-        <button class="btn btn-light border rounded-pill">Compañeros</button>
-    </div>*@
+    <div class="col text-start">
+    <h2 class="m-0">
+    ¡Hola,
+    <span class="text-capitalize">
+    @Model.Nombre.ToLower()
+    @Model.PrimerApellido.ToLower()
+    </span>!
+    </h2>
+    <p class="text-muted ms-2">
+    Tienes 2 mensajes sin leer...
+    </p>
+    </div>
+    </div>
+    </div>
+    </div> *@
     <div class="">
         <div class="row g-0">
-            <div class="col-6 col-lg-3">
+            <!-- entradas -->
+            <div class="col-12 col-lg-4">
                 <div class="bg-white border rounded-lam-lg p-3 m-2">
                     <div class="fw-bold text-dark">Entradas</div>
                     <div class="text-center my-4">
-                        <h1 class="text-primary">27</h1>
-                        <small class="text-muted">Agosto 2021</small>
+                        <div id="totalDeEntradas">
+                            <div class="spinner-border text-secondary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>                        
+                        <small class="text-muted">Total de entradas</small>
                     </div>
-                    <div></div>
                 </div>
             </div>
-            <div class="col-6 col-lg-3">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="bg-white border rounded-lam-lg p-3 m-2">
+                    <div class="fw-bold text-dark">Entradas</div>
+                    <div class="text-center my-4">
+                        <div id="totalDeEntradasAplicadas">
+                            <div class="spinner-border text-secondary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                        <small class="text-muted">Total de entradas aplicadas</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="bg-white border rounded-lam-lg p-3 m-2">
+                    <div class="fw-bold text-dark">Entradas</div>
+                    <div class="text-center my-4">
+                        <div id="totalDeEntradasNoAplicadas">
+                            <div class="spinner-border text-secondary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                        <small class="text-muted">Total de entradas no aplicadas</small>
+                    </div>
+                </div>
+            </div>
+            <!-- salidas -->
+            <div class="col-12 col-lg-4">
                 <div class="bg-white border rounded-lam-lg p-3 m-2">
                     <div class="fw-bold text-dark">Salidas</div>
                     <div class="text-center my-4">
-                        <h1 class="text-danger">22</h1>
-                        <small class="text-muted">Agosto 2021</small>
+                        <div id="totalDeSalidas">
+                            <div class="spinner-border text-secondary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                        <small class="text-muted">Total de salidas</small>
                     </div>
-                    <div></div>
                 </div>
             </div>
-            <div class="col-6 col-lg-3">
+            <div class="col-12 col-md-6 col-lg-4">
                 <div class="bg-white border rounded-lam-lg p-3 m-2">
-                    <div class="fw-bold text-dark">Ventas</div>
+                    <div class="fw-bold text-dark">Salidas</div>
                     <div class="text-center my-4">
-                        <h1 class="text-sucess">17</h1>
-                        <small class="text-muted">Agosto 2021</small>
+                        <div id="totalDeSalidasAplicadas">
+                            <div class="spinner-border text-secondary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                        <small class="text-muted">Total de salidas aplicadas</small>
                     </div>
-                    <div></div>
                 </div>
             </div>
-            <div class="col-6 col-lg-3">
+            <div class="col-12 col-md-6 col-lg-4">
                 <div class="bg-white border rounded-lam-lg p-3 m-2">
-                    <div class="fw-bold text-dark">Devoluciones</div>
+                    <div class="fw-bold text-dark">Salidas</div>
                     <div class="text-center my-4">
-                        <h1 class="text-warning">12</h1>
-                        <small class="text-muted">Agosto 2021</small>
-                    </div>
-                    <div></div>
-                </div>
-            </div>
-        </div>
-        <div class="row g-0">
-            <div class="col-6 col-lg-3 mb-2">
-                <div class="bg-white bg-card border box-shadow-lam mx-2 rounded-lam-lg">
-                    <div class="py-3 px-2 mb-3">
-                        <div class="text-center my-4">
-                            <img class="rounded-circle" style="width:7rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = Guid.Parse("ac9b54e6-293d-4802-bb8e-1d5f329d0a5b"), tipo = "median" })" alt="Image Profile" />
+                        <div id="totalDeSalidasNoAplicadas">
+                            <div class="spinner-border text-secondary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
                         </div>
-                        <div class="text-center">
-                            <span class="fw-bold d-block">Alejandra Martínez</span>
-                            <span class="fw-light text-muted">Administradora</span>
-                        </div>
-                    </div>
-                    <div class="row row-bordered g-0 text-center border-top">
-                        <div class="col-6">
-                            <a class="d-block px-2 py-3 btn-outline-base rounded-lam-lg-bottom-start text-muted text-decoration-none" 
-                               href="mailto:luismg78@gmail.com">
-                                <i class="fa fa-envelope small me-2"></i>
-                                Email
-                                </a>
-                        </div>
-                        <div class="col-6">
-                            <a class="d-block px-2 py-3 btn-outline-base rounded-lam-lg-bottom-end text-muted text-decoration-none" 
-                               href="tel:9611774769">
-                                Llamar
-                                <i class="fa fa-phone small ms-2"></i>
-                            </a>
-                        </div>
+                        <small class="text-muted">Total de salidas no aplicadas</small>
                     </div>
                 </div>
             </div>
-            <div class="col-6 col-lg-3 mb-2">
-                <div class="bg-white bg-card border box-shadow-lam mx-2 rounded-lam-lg">
-                    <div class="py-3 px-2 mb-3">
-                        <div class="text-center my-4">
-                            <img class="rounded-circle" style="width:7rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = Guid.Parse("7E102AAE-6F87-49DF-A886-CBBB15437671"), tipo = "median" })" alt="Image Profile" />
+            <!-- productos -->
+            <div class="col-12">
+                <div class="bg-white border rounded-lam-lg p-3 m-2">
+                    <div class="fw-bold text-dark">Productos</div>
+                    <div class="text-center my-4">
+                        <div id="totalDeProductosNegativos">
+                            <div class="spinner-border text-secondary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
                         </div>
-                        <div class="text-center">
-                            <span class="fw-bold d-block">Luis Ángel Martínez</span>
-                            <span class="fw-light text-muted">Administrador</span>
-                        </div>
-                    </div>
-                    <div class="row row-bordered g-0 text-center border-top">
-                        <div class="col-6">
-                            <a class="d-block px-2 py-3 btn-outline-base rounded-lam-lg-bottom-start text-muted text-decoration-none"
-                               href="mailto:luismg78@gmail.com">
-                                <i class="fa fa-envelope small me-2"></i>
-                                Email
-                            </a>
-                        </div>
-                        <div class="col-6">
-                            <a class="d-block px-2 py-3 btn-outline-base rounded-lam-lg-bottom-end text-muted text-decoration-none"
-                               href="tel:9611774769">
-                                Llamar
-                                <i class="fa fa-phone small ms-2"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-lg-3 mb-2">
-                <div class="bg-white bg-card border box-shadow-lam mx-2 rounded-lam-lg">
-                    <div class="py-3 px-2 mb-3">
-                        <div class="text-center my-4">
-                            <img class="rounded-circle" style="width:7rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = Guid.Parse("ac9b54e6-293d-4802-bb8e-1d5f329d0a5b"), tipo = "median" })" alt="Image Profile" />
-                        </div>
-                        <div class="text-center">
-                            <span class="fw-bold d-block">Alejandra Martínez</span>
-                            <span class="fw-light text-muted">Administradora</span>
-                        </div>
-                    </div>
-                    <div class="row row-bordered g-0 text-center border-top">
-                        <div class="col-6">
-                            <a class="d-block px-2 py-3 btn-outline-base rounded-lam-lg-bottom-start text-muted text-decoration-none"
-                               href="mailto:luismg78@gmail.com">
-                                <i class="fa fa-envelope small me-2"></i>
-                                Email
-                            </a>
-                        </div>
-                        <div class="col-6">
-                            <a class="d-block px-2 py-3 btn-outline-base rounded-lam-lg-bottom-end text-muted text-decoration-none"
-                               href="tel:9611774769">
-                                Llamar
-                                <i class="fa fa-phone small ms-2"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-lg-3 mb-2">
-                <div class="bg-white bg-card border box-shadow-lam mx-2 rounded-lam-lg">
-                    <div class="py-3 px-2 mb-3">
-                        <div class="text-center my-4">
-                            <img class="rounded-circle" style="width:7rem;" src="@Url.Action("GetProfilePicture", "Sesion", new { id = Guid.Parse("7E102AAE-6F87-49DF-A886-CBBB15437671"), tipo = "median" })" alt="Image Profile" />
-                        </div>
-                        <div class="text-center">
-                            <span class="fw-bold d-block">Luis Ángel Martínez</span>
-                            <span class="fw-light text-muted">Administrador</span>
-                        </div>
-                    </div>
-                    <div class="row row-bordered g-0 text-center border-top">
-                        <div class="col-6">
-                            <a class="d-block px-2 py-3 btn-outline-base rounded-lam-lg-bottom-start text-muted text-decoration-none"
-                               href="mailto:luismg78@gmail.com">
-                                <i class="fa fa-envelope small me-2"></i>
-                                Email
-                            </a>
-                        </div>
-                        <div class="col-6">
-                            <a class="d-block px-2 py-3 btn-outline-base rounded-lam-lg-bottom-end text-muted text-decoration-none"
-                               href="tel:9611774769">
-                                Llamar
-                                <i class="fa fa-phone small ms-2"></i>
-                            </a>
-                        </div>
+                        <small class="text-muted">Total de productos negativos</small>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function ObtenerDatosDeEntradas() {
+            $.ajax({
+                url: '@Url.Action("GetCountDashboardEntradas", "Home")',
+                method: 'POST',
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    let totalDeEntradas = document.getElementById('totalDeEntradas');
+                    totalDeEntradas.innerHTML = `<h1 class="text-primary">${r.totalDeMovimientos}</h1>`;
+                    let totalDeEntradasAplicadas = document.getElementById('totalDeEntradasAplicadas');
+                    totalDeEntradasAplicadas.innerHTML = `<h1 class="text-primary">${r.totalDeMovimientosAplicados}</h1>`;
+                    let totalDeEntradasNoAplicadas = document.getElementById('totalDeEntradasNoAplicadas');
+                    totalDeEntradasNoAplicadas.innerHTML = `<h1 class="text-primary">${r.totalDeMovimientosNoAplicados}</h1>`;
+                },
+                error: function(r){
+                    console.log(r);
+                },
+                cache: false
+            });
+        }
+        function ObtenerDatosDeSalidas() {
+            $.ajax({
+                url: '@Url.Action("GetCountDashboardSalidas", "Home")',
+                method: 'POST',
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    let totalDeSalidas = document.getElementById('totalDeSalidas');
+                    totalDeSalidas.innerHTML = `<h1 class="text-primary">${r.totalDeMovimientos}</h1>`;
+                    let totalDeSalidasAplicadas = document.getElementById('totalDeSalidasAplicadas');
+                    totalDeSalidasAplicadas.innerHTML = `<h1 class="text-primary">${r.totalDeMovimientosAplicados}</h1>`;
+                    let totalDeSalidasNoAplicadas = document.getElementById('totalDeSalidasNoAplicadas');
+                    totalDeSalidasNoAplicadas.innerHTML = `<h1 class="text-primary">${r.totalDeMovimientosNoAplicados}</h1>`;
+                },
+                error: function (r) {
+                    console.log(r);
+                },
+                cache: false
+            });
+        }
+        function ObtenerDatosDeProductos() {
+            $.ajax({
+                url: '@Url.Action("GetCountDashboardProductos", "Home")',
+                method: 'POST',
+                dataType: 'json',
+                success: function (r) {
+                    console.log(r);
+                    let totalDeProductosNegativos = document.getElementById('totalDeProductosNegativos');
+                    totalDeProductosNegativos.innerHTML = `<h1 class="text-primary">${r.productosNegativos}</h1>`;
+                },
+                error: function (r) {
+                    console.log(r);
+                },
+                cache: false
+            });
+        }
+
+        ObtenerDatosDeEntradas();
+        ObtenerDatosDeSalidas();
+        ObtenerDatosDeProductos();
+    </script>
+}

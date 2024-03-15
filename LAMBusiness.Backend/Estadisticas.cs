@@ -1,4 +1,6 @@
 ﻿using LAMBusiness.Contextos;
+using LAMBusiness.Shared.Aplicacion;
+using LAMBusiness.Shared.Dashboard;
 using LAMBusiness.Shared.Dashboard.Entidades;
 using LAMBusiness.Shared.DTO.Movimiento;
 using Microsoft.EntityFrameworkCore;
@@ -110,6 +112,68 @@ namespace LAMBusiness.Backend
                 _contexto.EstadisticasMovimientosDiario.Add(estadisticaDiaria);
             else
                 _contexto.EstadisticasMovimientosDiario.Update(estadisticaDiaria);
+        }
+
+        public static async Task<EstadisticasDeMovimientos> ObtenerEstadisticasDeEntradas(string cadenaDeConexion)
+        {
+            DataContext contexto = new(cadenaDeConexion);
+            var entradas = await (from e in contexto.Entradas
+                                  group e by e.Aplicado into g
+                                  select new EstadisticasDeMovimientos
+                                  {
+                                      Movimiento = "Entradas",
+                                      TotalDeMovimientos = g.Count(),
+                                      TotalDeMovimientosAplicados = g.Count(x => x.Aplicado == true),
+                                      TotalDeMovimientosNoAplicados = g.Count(x => x.Aplicado == false)
+                                  }).FirstOrDefaultAsync();
+            if (entradas == null)
+            {
+                return new EstadisticasDeMovimientos()
+                {
+                    Movimiento = "Entradas",
+                    TotalDeMovimientos = 0,
+                    TotalDeMovimientosAplicados = 0,
+                    TotalDeMovimientosNoAplicados = 0
+                };
+            }
+
+            return entradas;
+        }
+
+        public static async Task<EstadisticasDeMovimientos> ObtenerEstadisticasDeSalidas(string cadenaDeConexion)
+        {
+            DataContext contexto = new(cadenaDeConexion);
+            var salidas = await (from e in contexto.Salidas
+                                 group e by e.Aplicado into g
+                                 select new EstadisticasDeMovimientos
+                                 {
+                                     Movimiento = "Salidas",
+                                     TotalDeMovimientos = g.Count(),
+                                     TotalDeMovimientosAplicados = g.Count(x => x.Aplicado == true),
+                                     TotalDeMovimientosNoAplicados = g.Count(x => x.Aplicado == false)
+                                 }).FirstOrDefaultAsync();
+            if (salidas == null)
+            {
+                return new EstadisticasDeMovimientos()
+                {
+                    Movimiento = "Salidas",
+                    TotalDeMovimientos = 0,
+                    TotalDeMovimientosAplicados = 0,
+                    TotalDeMovimientosNoAplicados = 0
+                };
+            }
+
+            return salidas;
+        }
+
+        public static async Task<EstadisticasDeProductos> ObtenerEstadisticasDeProductos(string cadenaDeConexion)
+        {
+            DataContext contexto = new(cadenaDeConexion);
+            var negativos = await contexto.Existencias.CountAsync(p => p.ExistenciaEnAlmacen < 0);
+            return new EstadisticasDeProductos()
+            {
+                ProductosNegativos = negativos
+            };
         }
     }
 }

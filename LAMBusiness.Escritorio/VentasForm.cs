@@ -860,7 +860,7 @@ namespace LAMBusiness.Escritorio
             List<TicketDTO> ticket = new();
             TicketDTO ticketDTO = CargarRazonSocialYSucursal(new TicketDTO());
             ticketDTO.AtendidoPor = corteDeCaja.Usuario.ToUpper();
-            ticketDTO.Fecha = corteDeCaja.Fecha.ToString("dd \\de MMMM \\de yyyy");
+            ticketDTO.Fecha = corteDeCaja.Fecha.ToString("dd \\de MMMM \\de yyyy HH:mm");
             ticketDTO.ImporteTotalDeSistema = corteDeCaja.ImporteDelSistema.ToString("$#,###,##0.00");
             ticketDTO.ImporteTotalDeRetiros = corteDeCaja.ImporteDelUsuario.ToString("$#,###,##0.00");
             var diferencia = corteDeCaja.ImporteDelSistema - corteDeCaja.ImporteDelUsuario;
@@ -876,10 +876,10 @@ namespace LAMBusiness.Escritorio
             rpt.CreateDocument();
             try
             {
-                string ruta = AppDomain.CurrentDomain.BaseDirectory;
-                var pdf = Path.Combine(ruta, "Reportes", "ticketDeCorteDeCaja.pdf");
-                rpt.ExportToPdf(pdf);
-                //rpt.Print();
+                //string ruta = AppDomain.CurrentDomain.BaseDirectory;
+                //var pdf = Path.Combine(ruta, "Reportes", "ticketDeCorteDeCaja.pdf");
+                //rpt.ExportToPdf(pdf);
+                rpt.Print();
             }
             catch (Exception)
             {
@@ -893,7 +893,7 @@ namespace LAMBusiness.Escritorio
             List<TicketDTO> ticket = new();
             TicketDTO ticketDTO = CargarRazonSocialYSucursal(new TicketDTO());
             ticketDTO.AtendidoPor = retiro.Usuarios.NombreCompleto.ToUpper();
-            ticketDTO.Fecha = retiro.Fecha?.ToString("dd \\de MMMM \\de yyyy");
+            ticketDTO.Fecha = retiro.Fecha?.ToString("dd \\de MMMM \\de yyyy HH:mm");
             ticketDTO.ImporteTotalDeVenta = retiro.Importe.ToString("$#,###,##0.00");
 
             ticket.Add(ticketDTO);
@@ -901,10 +901,10 @@ namespace LAMBusiness.Escritorio
             rpt.CreateDocument();
             try
             {
-                string ruta = AppDomain.CurrentDomain.BaseDirectory;
-                var pdf = Path.Combine(ruta, "Reportes", "ticketDeRetiroDeCaja.pdf");
-                rpt.ExportToPdf(pdf);
-                //rpt.Print();
+                //string ruta = AppDomain.CurrentDomain.BaseDirectory;
+                //var pdf = Path.Combine(ruta, "Reportes", "ticketDeRetiroDeCaja.pdf");
+                //rpt.ExportToPdf(pdf);
+                rpt.Print();
             }
             catch (Exception)
             {
@@ -923,10 +923,10 @@ namespace LAMBusiness.Escritorio
             rpt.CreateDocument();
             try
             {
-                string ruta = AppDomain.CurrentDomain.BaseDirectory;
-                var pdf = Path.Combine(ruta, "Reportes", "ticketDeVenta.pdf");
-                rpt.ExportToPdf(pdf);
-                //rpt.Print();
+                //string ruta = AppDomain.CurrentDomain.BaseDirectory;
+                //var pdf = Path.Combine(ruta, "Reportes", "ticketDeVenta.pdf");
+                //rpt.ExportToPdf(pdf);
+                rpt.Print();
             }
             catch (Exception)
             {
@@ -958,9 +958,10 @@ namespace LAMBusiness.Escritorio
                     {
                         detalle.Add(new()
                         {
-                            CantidadPorPrecioDeVenta = $"{item.Cantidad:0.0000} X {item.PrecioVenta:$0.00}",
+                            Cantidad = $"{item.Cantidad:0.0000}",
+                            NombreDelProducto = item.Productos.Nombre.ToUpper(),
+                            Precio = $"{item.PrecioVenta:$0.00}",
                             Importe = $"{item.Cantidad * item.PrecioVenta:$0.00}",
-                            NombreDelProducto = $"{item.Productos.Codigo.ToUpper()} {item.Productos.Nombre.ToUpper()}"
                         });
                     }
 

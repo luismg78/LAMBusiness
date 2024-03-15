@@ -46,7 +46,7 @@
                 return validateToken;
             }
 
-            return View(token);
+            return View();
         }
 
         public async Task<IActionResult> SignIn()
@@ -257,6 +257,7 @@
         {
             return _context.Generos.Count();
         }
+       
         private int GetCountEstados()
         {
             return _context.Estados.Count();
@@ -357,7 +358,26 @@
         {
             return _context.Ventas.Count();
         }
-        #endregion        
+        #endregion
+
+        #region Dashboard
+        public async Task<JsonResult> GetCountDashboardEntradas()
+        {
+            var cnx = _configuration.GetValue<string>("Configuracion:CadenaDeConexion");
+            var entradas = await Estadisticas.ObtenerEstadisticasDeEntradas(cnx);
+            return Json(entradas);
+        }
+        public async Task<JsonResult> GetCountDashboardSalidas()
+        {
+            var cnx = _configuration.GetValue<string>("Configuracion:CadenaDeConexion");
+            return Json(await Estadisticas.ObtenerEstadisticasDeSalidas(cnx));
+        }
+        public async Task<JsonResult> GetCountDashboardProductos()
+        {
+            var cnx = _configuration.GetValue<string>("Configuracion:CadenaDeConexion");
+            return Json(await Estadisticas.ObtenerEstadisticasDeProductos(cnx));
+        }
+        #endregion
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
