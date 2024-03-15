@@ -50,29 +50,31 @@
                         <span asp-validation-for="SegundoApellido" class="text-danger"></span>
                     </div>
                 </div>
-                 <!--Teléfono Móvil-->
-               <div class="col-md-4">
-                    <div class="form-group">
-                        <label asp-for="TelefonoMovil" class="control-label required"></label>
-                        <input asp-for="TelefonoMovil" class="form-control" />
-                        <span asp-validation-for="TelefonoMovil" class="text-danger"></span>
-                    </div>
-                </div>
                 <!--Correo Electrónico-->
-                <div class="col-md-4">
+                <div class="col-md-8">
                     <div class="form-group">
                         <label asp-for="Email" class="control-label required"></label>
                         <input asp-for="Email" class="form-control" />
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                 </div>
+                <!--Teléfono Móvil-->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="TelefonoMovil" class="control-label required"></label>
+                        <input asp-for="TelefonoMovil" class="form-control" />
+                        <span asp-validation-for="TelefonoMovil" class="text-danger"></span>
+                    </div>
+                </div>
+                <!--Fecha de inicio-->
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="form-group">
                         <label asp-for="FechaInicio" class="control-label required"></label>
-                        <input asp-for="FechaInicio" class="form-control" autofocus />
+                        <input asp-for="FechaInicio" class="form-control" />
                         <span asp-validation-for="FechaInicio" class="text-danger"></span>
                     </div>
                 </div>
+                <!--Fecha de término-->
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="form-group">
                         <label asp-for="FechaTermino" class="control-label required"></label>
@@ -80,6 +82,7 @@
                         <span asp-validation-for="FechaTermino" class="text-danger"></span>
                     </div>
                 </div>
+                <!--Administrador-->
                 <div class="col-12 col-lg-4">
                     <div class="form-group">
                         <label asp-for="AdministradorID" class="control-label required"></label>
@@ -87,10 +90,10 @@
                         <span asp-validation-for="AdministradorID" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="col-12 col-md-4">
-                    <div class="form-group">
-                        <label asp-for="Activo" class="control-label"></label>
-                        <input class="d-block" asp-for="Activo" />
+                <div class="col-12 mt-4">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" asp-for="Activo" />
+                        <label asp-for="Activo" class="form-check-label"></label>
                     </div>
                 </div>
             </div>
@@ -104,3 +107,10 @@
         </div>
     </div>
 </form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/usuarios.js" asp-append-version="true"></script>
+}

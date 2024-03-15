@@ -89,10 +89,10 @@
                     </div>
                 </div>
                 <!--Activo-->
-                <div class="col-12 col-md-4">
-                    <div class="form-group">
-                        <label asp-for="Activo" class="control-label"></label>
-                        <input class="d-block" asp-for="Activo" />
+                <div class="col-12 mt-4">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" asp-for="Activo" />
+                        <label asp-for="Activo" class="form-check-label"></label>
                     </div>
                 </div>
             </div>
@@ -109,106 +109,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script>
-    function addColaborador(e) {
-        e.preventDefault();
-        getColaboradorByCURP(e.currentTarget.dataset.search);
-    }
-
-    function addRowsNextListBox(skip, inicio = false) {
-        addProcessWithSpinnerInList('SpinList', 'fa-search');
-        $('#dRowListBox').attr('data-charging', "1");
-        var searchBy = $('#ColaboradorSearchInput')[0] === undefined ? "" : $('#ColaboradorSearchInput').val();
-        if (searchBy === '') {
-            $('#dRowListBox').attr('data-rows-next', "0");
-            $('#dRowListBox').attr('data-charging', "0");
-            removeProcessWithSpinnerInList('SpinList', 'fa-search');
-            return false;
-        }
-        $.ajax({
-            url: '@Url.Action("GetColaboradores", "Usuarios")',
-            method: 'POST',
-            datatype: 'text',
-            data: {
-                pattern: searchBy,
-                skip: skip
-            },
-            success: function (r) {
-                if (inicio) { $('#dRowListBox').empty(); }
-                if (r !== null && r.trim() !== '') {
-                    $('#dRowListBox').append(r);
-                    $('#dRowListBox').slideDown();
-                    $('#ColaboradorSearchInput').focus();
-                } else {
-                    toast('No se encontró información con ese patrón de búsqueda.');
-                    $('#dRowListBox').attr('data-rows-next', "0");
-                }
-                $('#dRowListBox').attr('data-charging', "0");
-                removeProcessWithSpinnerInList('SpinList', 'fa-search');
-            },
-            error: function (r) {
-                $('#dRowListBox').attr('data-charging', "0");
-                removeProcessWithSpinnerInList('SpinList', 'fa-search');
-            },
-            cache: false
-        });
-    }
-
-    function deleteButtonColaborador(e) {
-        e.preventDefault();
-        $('#UsuarioID').val('');
-        $('#ColaboradorNombre')[0].innerText = '';
-        $('#ColaboradorDatos').removeClass('d-block').addClass('d-none');
-        $('#ColaboradorSearch').removeClass('d-none').addClass('d-block');
-        $('#ColaboradorsLista > div').remove();
-        $('#ColaboradorSearchInput').val('');
-        $('#ColaboradorSearchInput').focus();
-    }
-
-    function getColaborador(e) {
-        if (e.keyCode === 13) {
-            e.preventDefault();
-            getColaboradorByCURP(e.currentTarget.value);
-        }
-    }
-
-    function getColaboradorByCURP(curp) {
-        if (curp !== '') {
-            addProcessWithSpinnerInList('SpinList', 'fa-search');
-            $.ajax({
-                url: '@Url.Action("GetColaborador", "Usuarios")',
-                method: 'POST',
-                datatype: 'text',
-                data: { curp: curp },
-                success: function (r) {
-                    if (!r.error) {
-                        $('#ColaboradorDatos').removeClass('d-none').addClass('d-block');
-                        $('#UsuarioID').val(r.UsuarioID);
-                        $('#ColaboradorNombre')[0].innerText = r.primerApellido + ' ' + r.segundoApellido + ' ' + r.nombre;
-                        $('#ColaboradorSearch').removeClass('d-block').addClass('d-none');
-                        $('#dRowListBox > div').remove();
-                        $('#Activo').focus();
-                    } else {
-                        alert(r.message);
-                    }
-                    removeProcessWithSpinnerInList('SpinList', 'fa-search');
-                },
-                error: function (r) {
-                    removeProcessWithSpinnerInList('SpinList', 'fa-search');
-                },
-                cache: false
-            });
-        }
-    }
-
-    function searchListBox(e) {
-        e.preventDefault();
-        if ($('#ColaboradorSearchInput').attr('data-bs-toggle')) {
-            if ($('#ColaboradorSearchInput').val() !== '') {
-                skip = 0;
-                addRowsNextListBox(skip, true);
-            }
-        }
-    }
-    </script>
+    <script src="~/js/usuarios.js" asp-append-version="true"></script>
 }

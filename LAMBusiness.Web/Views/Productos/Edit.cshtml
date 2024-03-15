@@ -68,49 +68,15 @@
                     </div>
                 </div>
                 <div class="col-12">
-                    <div id="MarcaSearch" class="form-group @if (Model.Marcas != null) {<text>d-none</text>}">
-                        <input asp-for="MarcaID" type="hidden" />
+                    <div class="form-group">
                         <label asp-for="MarcaID" class="control-label required"></label>
-                        <div class="input-group">
-                            <input id="MarcaSearchInput" type="search" class="form-control"
-                                   data-bs-toggle="focus"
-                                   data-bs-target=".list-registers"
-                                   placeholder="Ingrese nombre de la marca..."
-                                   autofocus autocomplete="off"
-                                   onkeyup="positionCursorWithArrowKey(event);"
-                                   onkeypress="getMarca(event);" />
-                            <button id="MarcaSearchButton" class="btn btn-light border"
-                                    type="button" onclick="searchMarca(event);">
-                                <span id="SpinList" class="d-flex align-items-center">
-                                    <i class="fa fa-search"></i>
-                                </span>
-                            </button>
-                        </div>
+                        <select asp-for="MarcaID" class="form-select">
+                            @if (Model.MarcaID != null && Model.MarcaID != Guid.Empty && Model.Marcas != null)
+                            {
+                                <option value="@Model.MarcaID">@Model.Marcas.Nombre</option>
+                            }
+                        </select>
                         <span asp-validation-for="MarcaID" class="text-danger"></span>
-                        <div id="dRowListBox" class="mb-4 mt-1 list-registers" data-charging="0" data-rows-next="1">
-                        </div>
-                    </div>
-                </div>
-                <div id="MarcaDatos" class="col-12 pt-4 @if(Model.Marcas == null){<text>d-none</text>}">
-                    <div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h6 class="fw-bold text-base">Datos de la marca</h6>
-                            <a href="#" onclick="deleteButtonMarca(event);"><span>&times;</span></a>
-                        </div>
-                        <hr class="my-2" />
-                        <small id="Nombre" class="d-block">
-                            @if (Model.Marcas != null)
-                            {
-                                <text>@Model.Marcas.Nombre</text>
-                            }
-                        </small>
-                        <small id="Descripcion" class="text-muted">
-                            @if (Model.Marcas != null)
-                            {
-                                <text>@Model.Marcas.Descripcion</text>
-                            }
-                        </small>
-                        <hr />
                     </div>
                 </div>
                 <!--add package code for product-->
@@ -134,16 +100,16 @@
                 </div>
                 <!--End Package-->
                 @*<div class="col-12 col-md-4">
-                        <div class="form-group">
-                            <label asp-for="ExistenciaMaxima" class="control-label"></label>
-                            <input asp-for="ExistenciaMaxima" class="form-control" />
-                            <span asp-validation-for="ExistenciaMaxima" class="text-danger"></span>
-                        </div>
-                    </div>*@
-                <div class="col-12 col-md-4">
-                    <div class="form-group">
-                        <label asp-for="Activo" class="control-label"></label>
-                        <input class="d-block" asp-for="Activo" />
+                <div class="form-group">
+                <label asp-for="ExistenciaMaxima" class="control-label"></label>
+                <input asp-for="ExistenciaMaxima" class="form-control" />
+                <span asp-validation-for="ExistenciaMaxima" class="text-danger"></span>
+                </div>
+                </div>*@
+                <div class="col-12 mt-4">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" asp-for="Activo" />
+                        <label asp-for="Activo" class="form-check-label"></label>
                     </div>
                 </div>
             </div>
@@ -159,125 +125,11 @@
 </form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <script>
-    $(document).ready(function () {
-        validatedUnitChange();
-    });
-
-    $('#UnidadID').change(function () {
-        validatedUnitChange();
-    });
-
-    function addMarca(e) {
-        e.preventDefault();
-        getMarcaByNombre(e.currentTarget.dataset.search);
-    }
-
-    function addRowsNextListBox(skip, inicio = false) {
-        addProcessWithSpinnerInList('SpinList', 'fa-search');
-        $('#dRowListBox').attr('data-charging', "1");
-        var searchBy = $('#MarcaSearchInput')[0] === undefined ? "" : $('#MarcaSearchInput').val();
-        if (searchBy === '') {
-            $('#dRowListBox').attr('data-rows-next', "0");
-            $('#dRowListBox').attr('data-charging', "0");
-            removeProcessWithSpinnerInList('SpinList', 'fa-search');
-            return false;
-        }
-        $.ajax({
-            url: '@Url.Action("GetMarcas", "Productos")',
-            method: 'POST',
-            datatype: 'text',
-            data: {
-                pattern: searchBy,
-                skip: skip
-            },
-            success: function (r) {
-                if (inicio) { $('#dRowListBox').empty(); }
-                if (r !== null && r.trim() !== '') {
-                    $('#dRowListBox').append(r);
-                    $('#dRowListBox').slideDown();
-                    $('#MarcaSearchInput').focus();
-                } else {
-                    $('#dRowListBox').attr('data-rows-next', "0");
-                }
-                $('#dRowListBox').attr('data-charging', "0");
-                removeProcessWithSpinnerInList('SpinList', 'fa-search');
-            },
-            error: function (r) {
-                $('#dRowListBox').attr('data-charging', "0");
-                removeProcessWithSpinnerInList('SpinList', 'fa-search');
-            },
-            cache: false
-        });
-    }
-
-    function deleteButtonMarca(e) {
-        e.preventDefault();
-        $('#MarcaID').val('');
-        $('#Nombre')[0].innerText = '';
-        $('#Descripcion')[0].innerText = '';
-        $('#MarcaDatos').removeClass('d-block').addClass('d-none');
-        $('#MarcaSearch').removeClass('d-none').addClass('d-block');
-        $('#MarcasLista > div').remove();
-        $('#MarcaSearchInput').val('');
-        $('#MarcaSearchInput').focus();
-    }
-
-    function getMarca(e) {
-        if (e.keyCode === 13) {
-            e.preventDefault();
-            getMarcaByNombre(e.currentTarget.value);
-        }
-    }
-
-    function getMarcaByNombre(marca) {
-        if (marca !== '') {
-            addProcessWithSpinnerInList('SpinList', 'fa-search');
-            $.ajax({
-                url: '@Url.Action("GetMarca", "Productos")',
-                method: 'POST',
-                datatype: 'text',
-                data: { nombreMarca: marca },
-                success: function (r) {
-                    if (!r.error) {
-                        $('#MarcaDatos').removeClass('d-none').addClass('d-block');
-                        $('#MarcaID').val(r.marcaID);
-                        $('#Nombre')[0].innerText = r.marcaNombre;
-                        $('#Descripcion')[0].innerText = r.marcaDescripcion;
-                        $('#MarcaSearch').removeClass('d-block').addClass('d-none');
-                        $('#dRowListBox > div').remove();
-                        $('#Activo').focus();
-                    } else {
-                        alert(r.message);
-                    }
-                    removeProcessWithSpinnerInList('SpinList', 'fa-search');
-                },
-                error: function (r) {
-                    removeProcessWithSpinnerInList('SpinList', 'fa-search');
-                },
-                cache: false
-            });
-        }
-    }
-
-    function searchMarca(e) {
-        e.preventDefault();
-        if ($('#MarcaSearchInput').attr('data-bs-toggle')) {
-            if ($('#MarcaSearchInput').val() !== '') {
-                skip = 0;
-                addRowsNextListBox(skip, true);
-            }
-        }
-    }
-
-    function validatedUnitChange() {
-        if ($('#UnidadID').val() === '6C9C7801-D654-11E9-8B00-8CDCD47D68A1' ||
-            $('#UnidadID').val() === '95B850EC-D654-11E9-8B00-8CDCD47D68A1') {
-            $('#dPackage').show();
-        } else {
-            $('#dPackage').hide();
-        }
-    }
+        var urlObtenerMarcas = '@Url.Action("GetMarcas", "Productos")';
     </script>
+    <script src="~/js/productos.js" asp-append-version="true"></script>
 }

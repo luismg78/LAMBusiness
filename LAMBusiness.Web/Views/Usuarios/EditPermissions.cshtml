@@ -69,20 +69,26 @@
                                 <div class="row g-0">
                                     <div class="col-12 col-md-6 mb-2 mb-md-0">@item.Modulo.Descripcion</div>
                                     <div class="col-12 col-md-2 text-md-center">
-                                        <div class="d-flex d-md-block mb-2 mb-md-0">
-                                            @Html.CheckBoxFor(model => model.UsuarioModulos[cont].PermisoLectura, new { @class = "check-leer" })
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <div class="form-check form-switch">
+                                                @Html.CheckBoxFor(model => model.UsuarioModulos[cont].PermisoLectura, new { @class = "check-leer form-check-input" })
+                                            </div>
                                             <span class="d-md-none ms-2 text-muted">PERMISO DE LECTURA</span>
                                         </div>
                                     </div>
                                     <div class="col-12 col-md-2 text-md-center">
-                                        <div class="d-flex d-md-block mb-2 mb-md-0">
-                                            @Html.CheckBoxFor(model => model.UsuarioModulos[cont].PermisoEscritura, new { @class = "check-escribir" })
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <div class="form-check form-switch">
+                                                @Html.CheckBoxFor(model => model.UsuarioModulos[cont].PermisoEscritura, new { @class = "check-escribir form-check-input" })
+                                            </div>
                                             <span class="d-md-none ms-2 text-muted">PERMISO DE ESCRITURA</span>
                                         </div>
                                     </div>
                                     <div class="col-12 col-md-2 text-md-center">
-                                        <div class="d-flex d-md-block mb-2 mb-md-0">
-                                            @Html.CheckBoxFor(model => model.UsuarioModulos[cont].PermisoImprimir, new { @class = "check-imprimir" })
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <div class="form-check form-switch">
+                                                @Html.CheckBoxFor(model => model.UsuarioModulos[cont].PermisoImprimir, new { @class = "check-imprimir form-check-input" })
+                                            </div>
                                             <span class="d-md-none ms-2 text-muted">PERMISO DE IMPRESIÓN</span>
                                         </div>
                                     </div>

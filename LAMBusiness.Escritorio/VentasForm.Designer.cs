@@ -87,18 +87,20 @@
             ClientePanel.Controls.Add(CancelarButton);
             ClientePanel.Controls.Add(BuscarButton);
             ClientePanel.Controls.Add(VentasButton);
-            ClientePanel.Location = new Point(1153, 4);
+            ClientePanel.Location = new Point(1647, 7);
+            ClientePanel.Margin = new Padding(4, 5, 4, 5);
             ClientePanel.Name = "ClientePanel";
-            ClientePanel.Size = new Size(196, 525);
+            ClientePanel.Size = new Size(280, 875);
             ClientePanel.TabIndex = 9;
             // 
             // ImprimirTicketButton
             // 
             ImprimirTicketButton.BackColor = Color.White;
             ImprimirTicketButton.Font = new Font("Segoe UI", 12F);
-            ImprimirTicketButton.Location = new Point(9, 221);
+            ImprimirTicketButton.Location = new Point(13, 368);
+            ImprimirTicketButton.Margin = new Padding(4, 5, 4, 5);
             ImprimirTicketButton.Name = "ImprimirTicketButton";
-            ImprimirTicketButton.Size = new Size(168, 43);
+            ImprimirTicketButton.Size = new Size(240, 72);
             ImprimirTicketButton.TabIndex = 14;
             ImprimirTicketButton.Text = "Imprimir Ticket [F3]";
             ImprimirTicketButton.UseVisualStyleBackColor = false;
@@ -107,9 +109,10 @@
             // LogoPictureBox
             // 
             LogoPictureBox.Image = Properties.Resources.LAM;
-            LogoPictureBox.Location = new Point(29, 6);
+            LogoPictureBox.Location = new Point(41, 10);
+            LogoPictureBox.Margin = new Padding(4, 5, 4, 5);
             LogoPictureBox.Name = "LogoPictureBox";
-            LogoPictureBox.Size = new Size(127, 110);
+            LogoPictureBox.Size = new Size(181, 183);
             LogoPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             LogoPictureBox.TabIndex = 13;
             LogoPictureBox.TabStop = false;
@@ -118,9 +121,10 @@
             // 
             CerrarButton.BackColor = Color.FromArgb(242, 245, 247);
             CerrarButton.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            CerrarButton.Location = new Point(10, 486);
+            CerrarButton.Location = new Point(14, 810);
+            CerrarButton.Margin = new Padding(4, 5, 4, 5);
             CerrarButton.Name = "CerrarButton";
-            CerrarButton.Size = new Size(168, 45);
+            CerrarButton.Size = new Size(240, 75);
             CerrarButton.TabIndex = 9;
             CerrarButton.Text = "Cerrar";
             CerrarButton.UseVisualStyleBackColor = false;
@@ -130,9 +134,10 @@
             // 
             CorteDeCajaButton.BackColor = Color.White;
             CorteDeCajaButton.Font = new Font("Segoe UI", 12F);
-            CorteDeCajaButton.Location = new Point(9, 437);
+            CorteDeCajaButton.Location = new Point(13, 728);
+            CorteDeCajaButton.Margin = new Padding(4, 5, 4, 5);
             CorteDeCajaButton.Name = "CorteDeCajaButton";
-            CorteDeCajaButton.Size = new Size(168, 47);
+            CorteDeCajaButton.Size = new Size(240, 78);
             CorteDeCajaButton.TabIndex = 8;
             CorteDeCajaButton.Text = "Corte de Caja [F12]";
             CorteDeCajaButton.UseVisualStyleBackColor = false;
@@ -142,9 +147,10 @@
             // 
             RetirarEfectivoButton.BackColor = Color.White;
             RetirarEfectivoButton.Font = new Font("Segoe UI", 12F);
-            RetirarEfectivoButton.Location = new Point(9, 394);
+            RetirarEfectivoButton.Location = new Point(13, 657);
+            RetirarEfectivoButton.Margin = new Padding(4, 5, 4, 5);
             RetirarEfectivoButton.Name = "RetirarEfectivoButton";
-            RetirarEfectivoButton.Size = new Size(168, 43);
+            RetirarEfectivoButton.Size = new Size(240, 72);
             RetirarEfectivoButton.TabIndex = 7;
             RetirarEfectivoButton.Text = "Retirar Efectivo [F11]";
             RetirarEfectivoButton.UseVisualStyleBackColor = false;
@@ -154,9 +160,10 @@
             // 
             CobrarButton.BackColor = Color.White;
             CobrarButton.Font = new Font("Segoe UI", 12F);
-            CobrarButton.Location = new Point(9, 264);
+            CobrarButton.Location = new Point(13, 440);
+            CobrarButton.Margin = new Padding(4, 5, 4, 5);
             CobrarButton.Name = "CobrarButton";
-            CobrarButton.Size = new Size(168, 43);
+            CobrarButton.Size = new Size(240, 72);
             CobrarButton.TabIndex = 4;
             CobrarButton.Text = "Cobrar [F5]";
             CobrarButton.UseVisualStyleBackColor = false;
@@ -166,9 +173,10 @@
             // 
             RecuperarButton.BackColor = Color.White;
             RecuperarButton.Font = new Font("Segoe UI", 12F);
-            RecuperarButton.Location = new Point(9, 351);
+            RecuperarButton.Location = new Point(13, 585);
+            RecuperarButton.Margin = new Padding(4, 5, 4, 5);
             RecuperarButton.Name = "RecuperarButton";
-            RecuperarButton.Size = new Size(168, 43);
+            RecuperarButton.Size = new Size(240, 72);
             RecuperarButton.TabIndex = 6;
             RecuperarButton.Text = "Recuperar [F8]";
             RecuperarButton.UseVisualStyleBackColor = false;
@@ -178,9 +186,10 @@
             // 
             CancelarButton.BackColor = Color.White;
             CancelarButton.Font = new Font("Segoe UI", 12F);
-            CancelarButton.Location = new Point(9, 307);
+            CancelarButton.Location = new Point(13, 512);
+            CancelarButton.Margin = new Padding(4, 5, 4, 5);
             CancelarButton.Name = "CancelarButton";
-            CancelarButton.Size = new Size(168, 43);
+            CancelarButton.Size = new Size(240, 72);
             CancelarButton.TabIndex = 5;
             CancelarButton.Text = "Cancelar [F7]";
             CancelarButton.UseVisualStyleBackColor = false;
@@ -190,9 +199,10 @@
             // 
             BuscarButton.BackColor = Color.White;
             BuscarButton.Font = new Font("Segoe UI", 12F);
-            BuscarButton.Location = new Point(9, 178);
+            BuscarButton.Location = new Point(13, 297);
+            BuscarButton.Margin = new Padding(4, 5, 4, 5);
             BuscarButton.Name = "BuscarButton";
-            BuscarButton.Size = new Size(168, 43);
+            BuscarButton.Size = new Size(240, 72);
             BuscarButton.TabIndex = 3;
             BuscarButton.Text = "Buscar [F2]";
             BuscarButton.UseVisualStyleBackColor = false;
@@ -204,9 +214,10 @@
             VentasButton.BackgroundImageLayout = ImageLayout.Stretch;
             VentasButton.Font = new Font("Segoe UI", 20.25F);
             VentasButton.ForeColor = Color.White;
-            VentasButton.Location = new Point(9, 122);
+            VentasButton.Location = new Point(13, 203);
+            VentasButton.Margin = new Padding(4, 5, 4, 5);
             VentasButton.Name = "VentasButton";
-            VentasButton.Size = new Size(168, 53);
+            VentasButton.Size = new Size(240, 88);
             VentasButton.TabIndex = 2;
             VentasButton.Text = "Ventas";
             VentasButton.UseVisualStyleBackColor = false;
@@ -244,7 +255,8 @@
             dataGridViewCellStyle8.WrapMode = DataGridViewTriState.False;
             ProductosDataGridView.DefaultCellStyle = dataGridViewCellStyle8;
             ProductosDataGridView.GridColor = Color.WhiteSmoke;
-            ProductosDataGridView.Location = new Point(4, 34);
+            ProductosDataGridView.Location = new Point(6, 57);
+            ProductosDataGridView.Margin = new Padding(4, 5, 4, 5);
             ProductosDataGridView.MultiSelect = false;
             ProductosDataGridView.Name = "ProductosDataGridView";
             dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleLeft;
@@ -261,7 +273,7 @@
             ProductosDataGridView.RowTemplate.Height = 50;
             ProductosDataGridView.ScrollBars = ScrollBars.Vertical;
             ProductosDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            ProductosDataGridView.Size = new Size(1145, 495);
+            ProductosDataGridView.Size = new Size(1636, 825);
             ProductosDataGridView.TabIndex = 1;
             ProductosDataGridView.UserDeletedRow += ProductosDataGridView_UserDeletedRow;
             ProductosDataGridView.UserDeletingRow += ProductosDataGridView_UserDeletingRow;
@@ -276,7 +288,7 @@
             CantidadDataGridView.MinimumWidth = 6;
             CantidadDataGridView.Name = "CantidadDataGridView";
             CantidadDataGridView.ReadOnly = true;
-            CantidadDataGridView.Width = 127;
+            CantidadDataGridView.Width = 191;
             // 
             // CodigoDataGridView
             // 
@@ -288,7 +300,7 @@
             CodigoDataGridView.MinimumWidth = 6;
             CodigoDataGridView.Name = "CodigoDataGridView";
             CodigoDataGridView.ReadOnly = true;
-            CodigoDataGridView.Width = 110;
+            CodigoDataGridView.Width = 166;
             // 
             // DescripcionDataGridView
             // 
@@ -311,6 +323,7 @@
             PrecioDataGridView.MinimumWidth = 6;
             PrecioDataGridView.Name = "PrecioDataGridView";
             PrecioDataGridView.ReadOnly = true;
+            PrecioDataGridView.Width = 150;
             // 
             // ImporteDataGridView
             // 
@@ -322,16 +335,17 @@
             ImporteDataGridView.MinimumWidth = 6;
             ImporteDataGridView.Name = "ImporteDataGridView";
             ImporteDataGridView.ReadOnly = true;
-            ImporteDataGridView.Width = 118;
+            ImporteDataGridView.Width = 178;
             // 
             // IdDataGridView
             // 
             IdDataGridView.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             IdDataGridView.HeaderText = "Id";
+            IdDataGridView.MinimumWidth = 8;
             IdDataGridView.Name = "IdDataGridView";
             IdDataGridView.ReadOnly = true;
             IdDataGridView.Visible = false;
-            IdDataGridView.Width = 5;
+            IdDataGridView.Width = 8;
             // 
             // TotalPanel
             // 
@@ -340,9 +354,10 @@
             TotalPanel.Controls.Add(CodigoTextBox);
             TotalPanel.Controls.Add(IconoPictureBox);
             TotalPanel.Controls.Add(TotalLabel);
-            TotalPanel.Location = new Point(4, 533);
+            TotalPanel.Location = new Point(6, 888);
+            TotalPanel.Margin = new Padding(4, 5, 4, 5);
             TotalPanel.Name = "TotalPanel";
-            TotalPanel.Size = new Size(1348, 96);
+            TotalPanel.Size = new Size(1926, 160);
             TotalPanel.TabIndex = 11;
             // 
             // CodigoTextBox
@@ -352,10 +367,11 @@
             CodigoTextBox.BorderStyle = BorderStyle.None;
             CodigoTextBox.CharacterCasing = CharacterCasing.Upper;
             CodigoTextBox.Font = new Font("Segoe UI", 34.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            CodigoTextBox.Location = new Point(129, 18);
+            CodigoTextBox.Location = new Point(184, 30);
+            CodigoTextBox.Margin = new Padding(4, 5, 4, 5);
             CodigoTextBox.MaxLength = 14;
             CodigoTextBox.Name = "CodigoTextBox";
-            CodigoTextBox.Size = new Size(404, 61);
+            CodigoTextBox.Size = new Size(577, 91);
             CodigoTextBox.TabIndex = 1;
             CodigoTextBox.KeyDown += CodigoTextBox_KeyDown;
             // 
@@ -363,11 +379,12 @@
             // 
             IconoPictureBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             IconoPictureBox.Image = Properties.Resources.codigodebarras;
-            IconoPictureBox.Location = new Point(12, 25);
-            IconoPictureBox.MaximumSize = new Size(80, 47);
-            IconoPictureBox.MinimumSize = new Size(80, 47);
+            IconoPictureBox.Location = new Point(17, 42);
+            IconoPictureBox.Margin = new Padding(4, 5, 4, 5);
+            IconoPictureBox.MaximumSize = new Size(114, 78);
+            IconoPictureBox.MinimumSize = new Size(114, 78);
             IconoPictureBox.Name = "IconoPictureBox";
-            IconoPictureBox.Size = new Size(80, 47);
+            IconoPictureBox.Size = new Size(114, 78);
             IconoPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             IconoPictureBox.TabIndex = 2;
             IconoPictureBox.TabStop = false;
@@ -376,9 +393,10 @@
             // 
             TotalLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             TotalLabel.Font = new Font("Segoe UI", 36F, FontStyle.Bold);
-            TotalLabel.Location = new Point(554, 8);
+            TotalLabel.Location = new Point(791, 13);
+            TotalLabel.Margin = new Padding(4, 0, 4, 0);
             TotalLabel.Name = "TotalLabel";
-            TotalLabel.Size = new Size(788, 80);
+            TotalLabel.Size = new Size(1126, 133);
             TotalLabel.TabIndex = 0;
             TotalLabel.Text = "Total $0.00";
             TotalLabel.TextAlign = ContentAlignment.MiddleRight;
@@ -388,9 +406,10 @@
             statusStrip1.AutoSize = false;
             statusStrip1.ImageScalingSize = new Size(20, 20);
             statusStrip1.Items.AddRange(new ToolStripItem[] { NotificacionToolStripStatusLabel, ProcesoToolStripProgressBar });
-            statusStrip1.Location = new Point(0, 632);
+            statusStrip1.Location = new Point(0, 1053);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(1357, 30);
+            statusStrip1.Padding = new Padding(1, 0, 20, 0);
+            statusStrip1.Size = new Size(1939, 50);
             statusStrip1.TabIndex = 12;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -399,7 +418,7 @@
             NotificacionToolStripStatusLabel.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold);
             NotificacionToolStripStatusLabel.ForeColor = Color.FromArgb(192, 0, 0);
             NotificacionToolStripStatusLabel.Name = "NotificacionToolStripStatusLabel";
-            NotificacionToolStripStatusLabel.Size = new Size(1342, 25);
+            NotificacionToolStripStatusLabel.Size = new Size(1918, 43);
             NotificacionToolStripStatusLabel.Spring = true;
             NotificacionToolStripStatusLabel.Text = "...";
             NotificacionToolStripStatusLabel.TextAlign = ContentAlignment.MiddleLeft;
@@ -407,32 +426,33 @@
             // ProcesoToolStripProgressBar
             // 
             ProcesoToolStripProgressBar.Name = "ProcesoToolStripProgressBar";
-            ProcesoToolStripProgressBar.Size = new Size(100, 24);
+            ProcesoToolStripProgressBar.Size = new Size(143, 42);
             ProcesoToolStripProgressBar.Visible = false;
             // 
             // UsuarioLabel
             // 
             UsuarioLabel.AutoSize = true;
             UsuarioLabel.Font = new Font("Segoe UI", 10F);
-            UsuarioLabel.Location = new Point(4, 8);
+            UsuarioLabel.Location = new Point(6, 13);
+            UsuarioLabel.Margin = new Padding(4, 0, 4, 0);
             UsuarioLabel.Name = "UsuarioLabel";
-            UsuarioLabel.Size = new Size(56, 19);
+            UsuarioLabel.Size = new Size(79, 28);
             UsuarioLabel.TabIndex = 13;
             UsuarioLabel.Text = "Usuario";
             // 
             // VentasForm
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1357, 662);
+            ClientSize = new Size(1939, 1103);
             Controls.Add(UsuarioLabel);
             Controls.Add(statusStrip1);
             Controls.Add(TotalPanel);
             Controls.Add(ProductosDataGridView);
             Controls.Add(ClientePanel);
             FormBorderStyle = FormBorderStyle.None;
-            Margin = new Padding(3, 2, 3, 2);
-            MinimumSize = new Size(1188, 538);
+            Margin = new Padding(4, 3, 4, 3);
+            MinimumSize = new Size(1697, 897);
             Name = "VentasForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Ventas";

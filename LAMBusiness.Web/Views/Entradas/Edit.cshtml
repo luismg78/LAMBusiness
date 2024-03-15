@@ -26,6 +26,18 @@
             <input type="hidden" asp-for="EntradaID" />
             <div class="row px-md-3">
                 <div class="col-12">
+                    <div class="form-group">
+                        <label asp-for="ProveedorID" class="control-label required"></label>
+                        <select asp-for="ProveedorID" class="form-select">
+                            @if (Model.ProveedorID != null && Model.ProveedorID != Guid.Empty && Model.Proveedores != null)
+                            {
+                                <option value="@Model.ProveedorID">@Model.Proveedores.Nombre</option>
+                            }
+                        </select>
+                        <span asp-validation-for="ProveedorID" class="text-danger"></span>
+                    </div>
+                </div>
+                @* <div class="col-12">
                     <div id="ProveedorSearch" class="form-group @if (Model.Proveedores != null) {<text>d-none</text>}">
                         <input asp-for="ProveedorID" type="hidden" />
                         <label asp-for="ProveedorID" class="control-label required"></label>
@@ -69,7 +81,7 @@
                         </small>
                         <hr />
                     </div>
-                </div>
+                </div> *@
                 <div class="col-12 col-md-6">
                     <div class="form-group">
                         <label asp-for="Folio" class="control-label required"></label>

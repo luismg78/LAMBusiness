@@ -30,7 +30,7 @@
         private readonly Productos _productos;
         private Guid moduloId = Guid.Parse("A549419C-89BD-49CE-BA93-4D73AFBA37CE");
 
-        public ProductosController(DataContext context, 
+        public ProductosController(DataContext context,
             ICombosHelper combosHelper,
             IConverterHelper converterHelper,
             IGetHelper getHelper,
@@ -122,19 +122,19 @@
             string directorio = _configuration.GetValue<string>("DirectorioImagenProducto");
             string directorioProducto = Path.Combine(directorio, producto.ProductoID.ToString(), "md");
 
-            if(Directory.Exists(directorioProducto))
-            { 
+            if (Directory.Exists(directorioProducto))
+            {
                 DirectoryInfo directory = new DirectoryInfo(directorioProducto);
                 string _file = "";
                 List<Guid> images = new List<Guid>();
-                foreach(var file in directory.GetFiles())
+                foreach (var file in directory.GetFiles())
                 {
                     _file = Path.GetFileNameWithoutExtension(file.ToString());
                     images.Add(Guid.Parse(_file));
                 }
                 productoDetailsViewModel.ProductoImages = images;
             }
-            
+
             return View(productoDetailsViewModel);
         }
 
@@ -148,12 +148,13 @@
                 return RedirectToAction(nameof(Index));
             }
 
-            var productoViewModel = new ProductoViewModel() {
+            var productoViewModel = new ProductoViewModel()
+            {
                 UnidadesDDL = await _combosHelper.GetComboUnidadesAsync(),
                 TasasImpuestosDDL = await _combosHelper.GetComboTasaImpuestosAsync()
             };
 
-            if(productoViewModel.TasasImpuestosDDL.Count() <= 1)
+            if (productoViewModel.TasasImpuestosDDL.Count() <= 1)
             {
                 ModelState.AddModelError(string.Empty, "No existe tasa de impuestos para asignar a productos.");
                 return RedirectToAction(nameof(Create), "TasasImpuestos");
@@ -182,7 +183,7 @@
 
                 bool paqueteExists = PaqueteExists(producto.ProductoID);
 
-                if(producto.Paquete != null)
+                if (producto.Paquete != null)
                 {
                     if (paqueteExists)
                         _context.Update(producto.Paquete);
@@ -198,11 +199,12 @@
                 }
 
                 var almacen = await _context.Almacenes.ToListAsync();
-                if(almacen != null)
+                if (almacen != null)
                 {
-                    foreach(var a in almacen)
+                    foreach (var a in almacen)
                     {
-                        _context.Add(new Existencia(){
+                        _context.Add(new Existencia()
+                        {
                             AlmacenID = a.AlmacenID,
                             ExistenciaEnAlmacen = (decimal)0,
                             ExistenciaID = Guid.NewGuid(),
@@ -216,7 +218,7 @@
                     await _context.SaveChangesAsync();
                     await BitacoraAsync("Alta", producto);
                     TempData["toast"] = "Los datos del producto fueron almacenados correctamente.";
-                    return RedirectToAction(nameof(Details), new { id = producto.ProductoID});
+                    return RedirectToAction(nameof(Details), new { id = producto.ProductoID });
                 }
                 catch (Exception ex)
                 {
@@ -260,7 +262,7 @@
             var productoViewModel = await _converterHelper.ToProductosViewModelAsync(producto);
 
             return View(productoViewModel);
-        }   
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -293,7 +295,7 @@
                         .Select(p => p.PrecioCosto).FirstOrDefault();
 
                     _context.Update(producto);
-                    
+
                     var paquete = producto.Paquete;
                     bool paqueteExists = PaqueteExists(producto.ProductoID);
 
@@ -307,7 +309,8 @@
                     else
                     {
                         paquete = await _getHelper.GetPaqueteByIdAsync(producto.ProductoID);
-                        if (paquete != null) {
+                        if (paquete != null)
+                        {
                             if (paqueteExists)
                             {
                                 _context.Remove(paquete);
@@ -340,7 +343,7 @@
                     await _context.SaveChangesAsync();
                     TempData["toast"] = "Los datos del producto fueron actualizados correctamente.";
                     await BitacoraAsync("Actualizar", producto);
-                    return RedirectToAction(nameof(Details), new { id = producto.ProductoID});
+                    return RedirectToAction(nameof(Details), new { id = producto.ProductoID });
 
                 }
                 catch (DbUpdateConcurrencyException ex)
@@ -363,7 +366,7 @@
                     await BitacoraAsync("Actualizar", producto, excepcion);
                 }
             }
-            
+
             productoViewModel.TasasImpuestosDDL = await _combosHelper.GetComboTasaImpuestosAsync();
             productoViewModel.UnidadesDDL = await _combosHelper.GetComboUnidadesAsync();
 
@@ -398,9 +401,11 @@
                 return RedirectToAction(nameof(Index));
             }
 
-            if (producto.Unidades.Paquete) {
+            if (producto.Unidades.Paquete)
+            {
                 var paquete = await _context.Paquetes.FindAsync(producto.ProductoID);
-                if (paquete != null) {
+                if (paquete != null)
+                {
                     _context.Remove(paquete);
                 }
             }
@@ -416,7 +421,7 @@
                 }
             }
 
-            if(producto.Existencias.Count > 0)
+            if (producto.Existencias.Count > 0)
             {
                 foreach (var existencia in producto.Existencias)
                 {
@@ -494,23 +499,26 @@
             if (validateToken != null) { return null; }
 
             if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
-            {
                 return null;
-            }
 
-            if (pattern == null || pattern == "" || skip == null)
-            {
+            if (pattern == null || pattern == "")
                 return null;
-            }
+            
+            skip = skip == null ? 0 : skip;
 
             var marcas = await _getHelper.GetMarcasByPatternAsync(pattern, (int)skip);
 
-            return new PartialViewResult
+            if (marcas != null && marcas.Count > 0)
             {
-                ViewName = "_GetMarcas",
-                ViewData = new ViewDataDictionary
-                            <List<Marca>>(ViewData, marcas)
-            };
+                return Json(marcas.Select(m => new Select2Items()
+                {
+                    Id = m.MarcaID.ToString(),
+                    Text = m.Nombre,
+                }));
+            }
+
+            return null;
+
         }
 
         public FileContentResult GetProductBarCode(string id)
@@ -529,7 +537,7 @@
 
             if (id == null)
                 return new EmptyResult();
-           
+
             var producto = await _productos.ObtenerRegistroPorIdAsync((Guid)id);
 
             if (producto == null)
@@ -642,7 +650,7 @@
 
             filtro = await _productos.ObtenerRegistros(filtro);
 
-            if(filtro.Registros == 0)
+            if (filtro.Registros == 0)
             {
                 return new EmptyResult();
             }
@@ -760,7 +768,7 @@
             }
 
             var producto = await _context.Productos.FindAsync(id);
-            if(producto == null)
+            if (producto == null)
             {
                 TempData["toast"] = "Identificador del producto inexistente";
                 return RedirectToAction(nameof(Index));
@@ -815,7 +823,7 @@
             }
 
             string nameProduct = $"{producto.ProductoID}.png";
-            if(!System.IO.File.Exists(Path.Combine(directorioImagenProductoID, "lg", nameProduct)))
+            if (!System.IO.File.Exists(Path.Combine(directorioImagenProductoID, "lg", nameProduct)))
             {
                 productoId = nameProduct;
             }
@@ -877,7 +885,7 @@
                 {
                     if (Directory.Exists($"{directorioImagenProductoID}//sm//"))
                     {
-                        if(System.IO.File.Exists($"{directorioImagenProductoID}//sm//{imageId}.png"))
+                        if (System.IO.File.Exists($"{directorioImagenProductoID}//sm//{imageId}.png"))
                         {
                             System.IO.File.Delete($"{directorioImagenProductoID}//sm//{imageId}.png");
                         }
@@ -899,11 +907,11 @@
                 }
             }
 
-            if(productoId == imageId)
+            if (productoId == imageId)
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo($"{directorioImagenProductoID}//lg//");
                 string _file = "";
-                foreach(var file in directoryInfo.GetFiles())
+                foreach (var file in directoryInfo.GetFiles())
                 {
                     _file = file.Name;
                     break;

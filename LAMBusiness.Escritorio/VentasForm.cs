@@ -1054,6 +1054,7 @@ namespace LAMBusiness.Escritorio
 
             return ProductosDataGridView.RowCount > 0;
         }
-        #endregion        
+        #endregion
+
     }
 }

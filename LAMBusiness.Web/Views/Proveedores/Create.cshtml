@@ -105,10 +105,10 @@
                     </div>
                 </div>
                 <!--Activo-->
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label asp-for="Activo" class="control-label"></label>
-                        <input class="d-block" asp-for="Activo" />
+                <div class="col-12 mt-4">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" asp-for="Activo" />
+                        <label asp-for="Activo" class="form-check-label"></label>
                     </div>
                 </div>
             </div>
@@ -126,31 +126,7 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
-    $('#EstadoID').change(function () {
-        StateChange();
-    });
-
-    function StateChange() {
-        addProcessWithSpinner('Cargando municipios...');
-        $.ajax({
-            url: '@Url.Action("AddMunicipios", "Proveedores")',
-            method: 'POST',
-            datatype: 'text',
-            data: {
-                id: $('#EstadoID').val()
-            },
-            success: function (r) {
-                $('#MunicipioID').empty();
-                if (r !== null && r.trim() !== '') {
-                    $('#MunicipioID').append(r);
-                }
-                removeProcessWithSpinner();
-            },
-            error: function (r) {
-                removeProcessWithSpinner();
-            },
-            cache: false
-        });
-    }
+        var urlMunicipios = '@Url.Action("AddMunicipios", "Proveedores")';
     </script>
+    <script src="~/js/clientes.js"></script>
 }

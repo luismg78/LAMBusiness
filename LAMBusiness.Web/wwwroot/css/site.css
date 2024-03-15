@@ -12,20 +12,20 @@ a {
     text-decoration: none;
 }
     a.navbar-brand {text-align:center;white-space:normal;word-break:break-all;}
-body {background-color:#eaedef;margin-bottom:60px;}
+body {background-color:#eaedef;font-size:0.9rem;margin-bottom:60px;}
 button.accept-policy {font-size: 1rem;line-height: inherit;}
 html {font-size:16px;min-height:100%;position:relative;}
-input[type=checkbox], input[type=radio] {cursor:pointer;height:1.5rem;width:1.4rem;}
-input.form-control, select.form-select, textarea.form-control{font-weight:500;padding:0.75rem;}
-label.control-label{color:#6c757d!important;margin-bottom:.35rem;margin-top:.25rem;}
+/*input[type=checkbox], input[type=radio] {cursor:pointer;height:1.5rem;width:1.4rem;}*/
+input.form-control, select.form-select, textarea.form-control{font-size:0.9rem;}
+label.control-label{color:#6c757d!important;margin-bottom:0.25rem;margin-top:.5rem;}
 ul li.selected{background-color:#f8f9fa;color:#000;font-weight:bold;}
 
-[type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled), 
+/*[type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled), 
 button:not(:disabled), a.btn {
     border-radius: 50rem;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
-}
+}*/
 
 /*IDs*/
 #UpButton{background-color:transparent;border:0;bottom:4rem;color:var(--lm-primary);display:none;
@@ -102,6 +102,7 @@ transparencia: var(--lm-bg-transparency)*/
         .card-header-lam-d1 span.subtitle{font-size:0.8rem;}
 
 .card-body-lam-d1 i{color:#a1b4cc;font-size:1rem;margin:0 .75rem;}
+.card-body-lam-d1 .card-body{padding:0.5rem 1rem;}
 
 .card-footer-lam-d1{display:block;}
 
@@ -154,14 +155,14 @@ transparencia: var(--lm-bg-transparency)*/
 .row-bordered > [class="col"]::after {border-left: 1px solid #dee2e6;bottom: 0;content: "";
                                       display: block;left: -1px;position: absolute;top: 0;width: 0;}
 
-.search input[type=search], .search input[type=number] {
+/*.search input[type=search], .search input[type=number] {
     border-top-left-radius: 50rem;
     border-bottom-left-radius: 50rem;
     margin-bottom: initial;
     padding-left: 1.5rem;
-}
+}*/
 
-.search-0 input[type=search], .search-0 input[type=number] {
+/*.search-0 input[type=search], .search-0 input[type=number] {
     border-top-left-radius: .25rem!important;
     border-bottom-left-radius: .25rem!important;
     margin-bottom: initial!important;
@@ -171,7 +172,7 @@ transparencia: var(--lm-bg-transparency)*/
 .search-0 button{
     border-radius:.25rem!important;
     padding: .375rem .75rem!important;
-}
+}*/
 
 .signIn{display:flex;flex-basis:100%;max-height:100vh;width:100%;}
 .box-shadow-lam{box-shadow:0px 1px 1px #cacaca;}
@@ -202,6 +203,60 @@ transparencia: var(--lm-bg-transparency)*/
 .bs-tooltip-start .tooltip-arrow::before, 
 .bs-tooltip-auto[data-popper-placement^=left] .tooltip-arrow::before {
     border-left-color: var(--lm-primary);
+}
+
+.form-check-input:checked {
+    background-color: var(--lm-primary);
+    border-color: var(--lm-primary);
+}
+
+/*select2*/
+.select2-container .select2-selection--single {
+    height: 37px;
+}
+
+select2-container--focus:focus-visible {
+    outline: #737373 auto 1px;
+}
+
+.select2-container--default .select2-selection--single {
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 35px;
+        padding-left: 14px;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow b {
+        margin-left: -10px;
+        margin-top: 0px;
+    }
+
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    border: 1px solid var(--lm-primary);
+    outline: none;
+    padding: 8px 12px;
+}
+
+.select2-search--dropdown {
+    padding: 5px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__clear {
+    color: #888;
+    height: 32px;
+    margin-right: 27px;
+}
+
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: var(--lm-primary);
+    color: white;
+}
+
+.select2-container--default .select2-results__option--selected {
+    background-color: #f5f5f5;
 }
 
 /*Render*/

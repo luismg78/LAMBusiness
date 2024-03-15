@@ -680,3 +680,40 @@ function searchProveedor(e) {
         addRowsNextProveedor(skip, true);
     }
 }
+
+$(proveedorID).on('select2:select', function (e) {
+    var data = e.params.data;
+    $(proveedorID).val(data.id).change();
+});
+
+$(proveedorID).select2({
+    ajax: {
+        url: urlProveedores,
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+            return {
+                pattern: params.term
+            };
+        },
+        processResults: function (data) {
+            var results = [];
+            $.each(data, function (index, item) {
+                results.push({
+                    id: item.id,
+                    text: item.text
+                });
+            });
+
+            return { results };
+        },
+        cache: true
+    },
+    language: "es",
+    placeholder: 'Seleccionar proveedor',
+    width: '100%',
+    allowClear: true,
+    language: 'es',
+    minimumInputLength: 3,
+    minimumResultsForSearch: 50
+});

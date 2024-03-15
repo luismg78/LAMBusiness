@@ -60,7 +60,7 @@
             list.Insert(0, new SelectListItem()
             {
                 Text = "[Seleccionar Estado]",
-                Value = "0"
+                Value = ""
             });
 
             return list;
@@ -78,7 +78,7 @@
             list.Insert(0, new SelectListItem()
             {
                 Text = "[Seleccionar Estado Civil]",
-                Value = "0"
+                Value = ""
             });
 
             return list;
@@ -116,7 +116,7 @@
             list.Insert(0, new SelectListItem()
             {
                 Text = "[Seleccionar Módulo Padre]",
-                Value = "0"
+                Value = ""
             });
 
             return list;
@@ -136,7 +136,7 @@
             list.Insert(0, new SelectListItem()
             {
                 Text = "[Seleccionar Municipio]",
-                Value = "0"
+                Value = ""
             });
 
             return list;
@@ -172,7 +172,7 @@
             list.Insert(0, new SelectListItem()
             {
                 Text = "[Seleccionar Tipo de salida]",
-                Value = "0"
+                Value = ""
             });
 
             return list;
@@ -190,7 +190,7 @@
             list.Insert(0, new SelectListItem()
             {
                 Text = "[Seleccionar Tasa de Impuesto]",
-                Value = Guid.Empty.ToString()
+                Value = ""
             });
 
             return list;
@@ -208,7 +208,7 @@
             list.Insert(0, new SelectListItem()
             {
                 Text = "[Seleccionar Unidad]",
-                Value = Guid.Empty.ToString()
+                Value = ""
             });
 
             return list;

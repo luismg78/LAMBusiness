@@ -14,6 +14,7 @@
     using Shared.Aplicacion;
     using Shared.Catalogo;
     using Shared.Contacto;
+    using Microsoft.EntityFrameworkCore.Diagnostics;
 
     public class ProveedoresController : GlobalController
     {
@@ -278,7 +279,7 @@
 
             TempData["toast"] = "Falta información en algún campo, verifique.";
             await ValidarDatosDelProveedor(proveedorViewModel);
-            
+
             if (ModelState.IsValid)
             {
                 var proveedor = await _converterHelper.ToProveedorAsync(proveedorViewModel, false);
@@ -356,7 +357,7 @@
                 TempData["toast"] = "[Error] Los datos del proveedor no fueron eliminados.";
                 await BitacoraAsync("Baja", proveedor, excepcion);
             }
-            
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -435,16 +436,26 @@
             filtro = await _getHelper.GetProveedoresByPatternAsync(filtro);
 
             if (filtro.Registros == 0)
-            {
                 return new EmptyResult();
+
+            var proveedores = filtro.Datos;
+            if (proveedores != null && proveedores.Count > 0)
+            {
+                return Json(proveedores.Select(m => new Select2Items()
+                {
+                    Id = m.ProveedorID.ToString(),
+                    Text = m.Nombre,
+                }));
             }
 
-            return new PartialViewResult
-            {
-                ViewName = "_GetProveedores",
-                ViewData = new ViewDataDictionary
-                            <Filtro<List<Proveedor>>>(ViewData, filtro)
-            };
+            return null;
+
+            //return new PartialViewResult
+            //{
+            //    ViewName = "_GetProveedores",
+            //    ViewData = new ViewDataDictionary
+            //                <Filtro<List<Proveedor>>>(ViewData, filtro)
+            //};
         }
 
         //Contactos
@@ -561,10 +572,10 @@
             if (ModelState.IsValid)
             {
                 var contacto = await _getHelper.GetContactoProveedorByIdAsync(proveedorContacto.ProveedorContactoID);
-                
+
                 if (contacto == null)
                 {
-                    ModelState.AddModelError(string.Empty, 
+                    ModelState.AddModelError(string.Empty,
                         "Actualización no realizada, contacto inexistente.");
                     proveedorContacto.Proveedor = await _getHelper
                         .GetProveedorByIdAsync(proveedorContacto.ProveedorID);
