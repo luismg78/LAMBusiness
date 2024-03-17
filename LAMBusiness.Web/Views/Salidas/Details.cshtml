@@ -129,7 +129,7 @@
                     {
                         @if (Model.PermisoEscritura)
                         {
-                            <a asp-action="AddDetails" asp-controller="Salidas" asp-route-id="@Model.SalidaID" class="btn btn-sm btn-base float-end"><i class="fas fa-plus"></i> Ingresar Detalle</a>
+                            <a asp-action="AddDetails" asp-controller="Salidas" asp-route-id="@Model.SalidaID" class="btn btn-sm btn-outline-base float-end"><i class="fas fa-plus"></i> Ingresar Detalle</a>
                         }
                     }
                     @if (Model.SalidaDetalle.Count > 0)
@@ -205,10 +205,10 @@
                                 {
                                     @if (Model.PermisoEscritura)
                                     {
-                                        <a href="#" id="applyConfirmButton" data-id="@Model.SalidaID" class="applyConfirm col-12 col-md-7 col-lg-5 btn btn-info text-white" data-bs-toggle="modal" data-bs-target="#applyConfirm">Aplicar Movimiento</a>
+                                        <a href="#" id="applyConfirmButton" data-id="@Model.SalidaID" class="applyConfirm btn btn-info text-white" data-bs-toggle="modal" data-bs-target="#applyConfirm">Aplicar Movimiento</a>
                                     }
                                 }
-                                <a asp-action="Index" class="btn btn-outline-secondary col-12 col-md-4 col-lg-3 mt-2 mt-md-0">Regresar</a>
+                                <a asp-action="Index" class="btn btn-outline-secondary mt-2 mt-md-0">Regresar</a>
                             </div>
                             <div class="col-12 col-md-6 order-1 order-md-2 text-center text-md-end">
                                 <h3 class="fw-bold">Total @Convert.ToDecimal(Model.SalidaDetalle.Sum(e => e.Cantidad * e.PrecioCosto)).ToString("$#,###,##0.00")</h3>

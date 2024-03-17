@@ -68,3 +68,16 @@
         </div>
     </div>
 </form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#SalidaTipoID').select2({
+                language: "es",
+                placeholder: 'Seleccionar tipo de salida',
+                minimumResultsForSearch: Infinity,
+                width: '100%'
+            });
+        });
+    </script>
+}

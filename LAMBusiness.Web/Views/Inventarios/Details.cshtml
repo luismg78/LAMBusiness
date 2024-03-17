@@ -1,0 +1,267 @@
+﻿@model LAMBusiness.Web.Models.ViewModels.InventarioViewModel
+
+@{
+    ViewData["Title"] = "Inventarios";
+}
+
+<div class="modal-content border-0 box-shadow">
+    <div class="modal-header pb-0 align-items-baseline">
+        <div class="ms-3">
+            <h3 class="modal-title" id="exampleModalLabel">Inventarios</h3>
+            <ul class="breadcrumb bg-transparent p-0 small">
+                <li class="breadcrumb-item"><a asp-action="Movimiento" asp-controller="Home">Movimientos</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Inventarios">Inventarios</a></li>
+                <li class="breadcrumb-item active">Detalle</li>
+            </ul>
+        </div>
+        <div class="d-flex align-items-center">
+            <a class="btn-help text-secondary me-3" href="/" onclick="help('DetailsMovimientos', event);">
+                <i class="fa fa-question-circle"></i>
+            </a>
+            <a asp-action="Index" asp-controller="Inventarios" class="btn-close me-md-1" aria-label="Close"></a>
+        </div>
+    </div>
+    <div class="modal-body py-4">
+        <div class="row px-md-3">
+            <!--Información de la inventario-->
+            <div class="card-lam-d1 col-12">
+                <div class="card-header-lam-d1">
+                    <div class="col-12">
+                        <div class="row g-0">
+                            <div class="col-12">
+                                @if (!Model.Aplicado)
+                                {
+                                    @if (Model.PermisoEscritura)
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@Model.InventarioID" class="btn btn-base btn-sm">Editar</a>
+                                    }
+                                }
+                                <a asp-action="Index" class="btn btn-sm btn-outline-secondary border">Regresar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body-lam-d1 mt-2">
+                    <div class="row g-0 row-bordered border">
+                        <div class="bg-row d-flex col-md-6 col-lg-4 align-items-center">
+                            <div class="card-body d-flex align-items-center">
+                                <i class="fas fa-calendar display-4"></i>
+                                <div class="ms-3">
+                                    <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.FechaCreacion)</div>
+                                    <h6>@Model.FechaCreacion.ToString("dd MMMM, yyyy")</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-row d-flex col-md-6 col-lg-4 align-items-center">
+                            <div class="card-body d-flex align-items-center">
+                                <i class="fas fa-calendar display-4"></i>
+                                <div class="ms-3">
+                                    <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.FechaActualizacion)</div>
+                                    <h6>@Model.FechaActualizacion.ToString("dd MMMM, yyyy")</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-row d-flex col-md-12 col-lg-4 align-items-center">
+                            <div class="card-body d-flex align-items-center">
+                                @if (Model.Aplicado)
+                                {
+                                    <i class="fas fa-user-check display-4"></i>
+                                    <div class="ms-3">
+                                        <div class="text-muted small line-height-1">Responsable Aplicar Movimiento</div>
+                                        <h6 class="text-capitalize">@Html.DisplayFor(model => model.Usuarios.NombreCompleto)</h6>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <i class="fas fa-user-edit display-4"></i>
+                                    <div class="ms-3">
+                                        <div class="text-muted small line-height-1">Responsable Última Actualización</div>
+                                        <h6 class="text-capitalize">@Html.DisplayFor(model => model.Usuarios.NombreCompleto)</h6>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="bg-row col-md-12 col-lg-8 align-items-center">
+                            <div class="card-body align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-eye display-4"></i>
+                                    <div class="text-muted small line-height-1">@Html.DisplayNameFor(model => model.Observaciones)</div>
+                                </div>
+                                <div class="ms-3">
+                                    <h6 class="descripcion-corta">@Html.DisplayFor(model => model.Observaciones)</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-row d-flex col-md-12 col-lg-4 align-items-center">
+                            <div class="card-body d-flex align-items-center">
+                                @if (Model.Aplicado)
+                                {
+                                    <i class="fas fa-clipboard-check display-4 text-danger"></i>
+                                    <div class="ms-3">
+                                        <div class="text-muted small line-height-1">Aplicado</div>
+                                        <h6 class="text-danger">No se permiten cambios</h6>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <i class="fas fa-file-alt display-4 text-success"></i>
+                                    <div class="ms-4">
+                                        <div class="text-muted small line-height-1">No Aplicado</div>
+                                        <h6 class="text-success">Se permiten cambios</h6>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="my-4">
+                    @if (!Model.Aplicado)
+                    {
+                        if (Model.PermisoEscritura)
+                        {
+                            <a asp-action="AddDetails" asp-controller="Inventarios" asp-route-id="@Model.InventarioID" class="btn btn-sm btn-outline-base float-end"><i class="fas fa-plus"></i> Ingresar Detalle</a>
+                        }
+                    }
+                    @if (Model.InventarioDetalle.Count > 0)
+                    {
+                        <p>
+                            <span class="d-block fw-bold text-base">Detalle</span>
+                            @if (Model.Aplicado)
+                            {
+                            <small class="text-muted">Si la cantidad inventariada es menor a la cantidad (existencia) registrada en el sistema, se verá reflejada en la cantidad faltante y ésta se multiplicará por el precio de costo actual del producto, para obtener el importe faltante, en conclusíón, <strong>el importe total, es la suma de los importes de las existencias faltantes.</strong></small>
+                            }
+                        </p>
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Producto</th>
+                                        <th scope="col">Almacén</th>
+                                        <th scope="col" class="text-end">Cant. Inv.</th>
+                                        @if (Model.Aplicado)
+                                        {
+                                            <th scope="col" class="text-end">Cant. Sist.</th>
+                                            <th scope="col" class="text-end">Cant. Falt.</th>
+                                            <th scope="col" class="text-end">Precio Costo</th>
+                                            <th scope="col" class="text-end">Importe</th>
+                                        }
+                                        @if (!Model.Aplicado)
+                                        {
+                                            <th scope="col"></th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.InventarioDetalle)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex justify-content-start align-items-center">
+                                                    <div class="me-3">
+                                                        <img class="rounded-circle" style="width:2rem;" src="@Url.Action("GetProductImages", "Productos", new { productoId = item.ProductoID, imageId = item.ProductoID, tipo = "sm" })" alt="Image Product" />
+                                                    </div>
+                                                    <div>
+                                                        <span class="d-block">@item.Productos.Nombre</span>
+                                                        @if (Model.Aplicado)
+                                                        {
+                                                            <a href="#" class="d-block small" onclick="getProductoDetail('@item.ProductoID');">@item.Productos.Codigo</a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="d-block small text-muted">@item.Productos.Codigo</span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="d-block">@item.Almacenes.Nombre</span>
+                                            </td>
+                                            <td class="text-end">
+                                                <span class="d-block">@Convert.ToDecimal(item.CantidadInventariada).ToString("#,###,##0.0000")</span>
+                                            </td>
+                                            @if (Model.Aplicado)
+                                            {
+                                                <td class="text-end">
+                                                    <span class="d-block">@Convert.ToDecimal(item.CantidadEnSistema).ToString("#,###,##0.0000")</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="d-block">@Convert.ToDecimal(item.CantidadFaltante).ToString("#,###,##0.0000")</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="d-block">@Convert.ToDecimal(item.PrecioCosto).ToString("#,###,##0.0000")</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="d-block">@Convert.ToDecimal(item.Importe).ToString("#,###,##0.0000")</span>
+                                                </td>
+                                            }
+                                            @if (!Model.Aplicado)
+                                            {
+                                                <td>
+                                                    <div class="text-end">
+                                                        <a asp-action="EditDetails" asp-route-id="@item.InventarioDetalleID" class="text-decoration-none">
+                                                            <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="editar registro">
+                                                                <i class="fa fa-edit"></i>
+                                                            </div>
+                                                        </a>
+                                                        <a href="#" data-id="@item.InventarioDetalleID" class="deleteConfirm text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteRegister">
+                                                            <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="eliminar registro">
+                                                                <i class="fa fa-trash"></i>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row g-0 pt-4">
+                            <div class="col-12 col-md-6 order-2 text-center text-md-start pt-3 pt-md-0 order-md-1">
+                                @if (!Model.Aplicado)
+                                {
+                                    @*@if (Model.PermisoEscritura) cambiar por permiso para aplicar
+                            {*@
+                                    <a href="#" id="applyConfirmButton" data-id="@Model.InventarioID" class="btn btn-info text-white" data-bs-toggle="modal" data-bs-target="#applyConfirm">Aplicar Movimiento</a>
+                                    //}
+                                }
+                                <a asp-action="Index" class="btn btn-outline-secondary mt-2 mt-md-0">Regresar</a>
+                            </div>
+                            @if (Model.Aplicado)
+                            {
+                                <div class="col-12 col-md-6 order-1 order-md-2 text-center text-md-end">
+                                    <h3 class="fw-bold">Total @Convert.ToDecimal(Model.InventarioDetalle.Sum(e => e.CantidadFaltante * e.PrecioCosto)).ToString("$#,###,##0.00")</h3>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-base">Sin registro en el detalle de movimientos.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.PermisoEscritura)
+{
+    <partial name="_DeleteConfirmDialogDetail" />
+    <partial name="_ApplyConfirmDialog" />
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        let urlApply = '@Url.Action("Apply", "Inventarios", new { id = "paramId" })';
+        let urlDeleteDetails = '@Url.Action("DeleteDetails", "Inventarios", new { id = "paramId" })';
+        let urlProductoDetails = '@Url.Action("GetProductDetail", "Productos")';
+    </script>
+    <script src="~/js/movements.js"></script>
+}

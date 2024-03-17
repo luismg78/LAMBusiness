@@ -29,13 +29,9 @@
             if (TempData != null)
             {
                 if (TempData.ContainsKey("Home"))
-                {
                     TempData["Home"] = value;
-                }
                 else
-                {
                     TempData.Add("Home", value);
-                }
             }
             else
             {
@@ -185,21 +181,18 @@
 
         public async Task<IActionResult> ValidatedToken(IConfiguration configuration, IGetHelper getHelper, string menuSelected, bool validateToken = true)
         {
-            if (!SetConnectionActive(configuration))
-            {
-                return RedirectToAction("ErrorDeConexion", "Home");
-            }
+            //if (!SetConnectionActive(configuration))
+            //{
+            //    return RedirectToAction("ErrorDeConexion", "Home");
+            //}
 
             if (validateToken)
             {
                 if (await GetTokenActive(configuration, getHelper) == null)
-                {
                     return RedirectToAction("SignIn", "Home"); 
-                }
             }
 
             SetMenuSelected(menuSelected);
-
             return null;
         }
     }

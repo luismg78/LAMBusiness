@@ -75,6 +75,8 @@
         public DbSet<Entrada> Entradas { get; set; }
         public DbSet<EntradaDetalle> EntradasDetalle { get; set; }
         public DbSet<Existencia> Existencias { get; set; }
+        public DbSet<Inventario> Inventarios { get; set; }
+        public DbSet<InventarioDetalle> InventariosDetalle { get; set; }
         public DbSet<Salida> Salidas { get; set; }
         public DbSet<SalidaDetalle> SalidasDetalle { get; set; }
         public DbSet<SalidaTipo> SalidasTipo { get; set; }

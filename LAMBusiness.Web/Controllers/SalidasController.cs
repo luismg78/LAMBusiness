@@ -55,7 +55,8 @@
 
             var salidas = _context.Salidas
                 .Include(e => e.SalidaTipo)
-                .OrderBy(e => e.Folio);
+                .OrderByDescending(e => e.FechaActualizacion)
+                .ThenBy(e => e.Folio);
 
             var filtro = new Filtro<List<Salida>>()
             {
@@ -113,7 +114,8 @@
 
             filtro.Registros = await query.CountAsync();
 
-            filtro.Datos = await query.OrderByDescending(m => m.FechaActualizacion)
+            filtro.Datos = await query.OrderByDescending(e => e.FechaActualizacion)
+                .ThenBy(e => e.Folio)
                 .Skip(filtro.Skip)
                 .Take(50)
                 .ToListAsync();
@@ -286,6 +288,7 @@
 
             if (ModelState.IsValid)
             {
+                salidaViewModel.UsuarioID = token.UsuarioID;
                 var salida = await _converterHelper.ToSalidaAsync(salidaViewModel, false);
                 if(salida == null)
                 {
@@ -527,7 +530,7 @@
             catch (Exception ex)
             {
                 string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
-                TempData["toast"] = "Error al aplicar el movimieno, verifique bitácora de errores.";
+                TempData["toast"] = "Error al aplicar el movimiento, verifique bitácora de errores.";
                 await BitacoraAsync("Aplicar", salida, excepcion);
             }
 

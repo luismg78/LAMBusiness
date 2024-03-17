@@ -100,17 +100,17 @@
             </div>
         }
 
-        <!--Devoluciones-->
+        <!--Inventarios-->
         @if (Model.ModulosMenu.Contains(Guid.Parse("1d1048a7-44fe-44b5-abc8-cf0a4dfc0aff")))
         {
             <div class="btn-lam col-xl-4 col-md-6">
-                <a asp-action="PaginaEnConstruccion" asp-controller="Home" class="text-decoration-none">
+                <a asp-action="Index" asp-controller="Inventarios" class="text-decoration-none">
                     <div class="card mb-4 text-dark">
                         <div class="card-body bg-card text-center py-5">
                             <i class="fas fa-exchange-alt display-4 text-warning mb-3"></i>
-                            <h4 class="mb-0">Devoluciones</h4>
-                            <p class="mb-2">Devoluciones de productos</p>
-                            <span class="badge bg-light border text-dark fw-normal">@Model.Devoluciones registro(s)</span>
+                            <h4 class="mb-0">Inventarios</h4>
+                            <p class="mb-2">Inventarios de productos</p>
+                            <span class="badge bg-light border text-dark fw-normal">@Model.Inventario registro(s)</span>
                         </div>
                     </div>
                 </a>

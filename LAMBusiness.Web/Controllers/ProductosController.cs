@@ -1,23 +1,22 @@
 ﻿namespace LAMBusiness.Web.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
+    using Helpers;
+    using LAMBusiness.Backend;
+    using LAMBusiness.Contextos;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
-    using BarcodeLib;
-    using LAMBusiness.Contextos;
-    using Helpers;
     using Models.ViewModels;
     using Shared.Aplicacion;
     using Shared.Catalogo;
     using Shared.Movimiento;
-    using LAMBusiness.Backend;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public class ProductosController : GlobalController
     {
@@ -503,7 +502,7 @@
 
             if (pattern == null || pattern == "")
                 return null;
-            
+
             skip = skip == null ? 0 : skip;
 
             var marcas = await _getHelper.GetMarcasByPatternAsync(pattern, (int)skip);
@@ -657,12 +656,26 @@
 
             ViewBag.MostrarPrecioVenta = mostrarPrecioVenta;
 
-            return new PartialViewResult
+            var productos = filtro.Datos;
+            if (productos != null && productos.Count > 0)
             {
-                ViewName = "_GetProductos",
-                ViewData = new ViewDataDictionary
-                            <Filtro<List<Producto>>>(ViewData, filtro)
-            };
+                return Json(productos.Select(m => new
+                {
+                    Id = m.ProductoID.ToString(),
+                    Text = m.Nombre,
+                    m.PrecioCosto,
+                    m.PrecioVenta,
+                    EsPaquete = m.Unidades.Paquete
+                }));
+            }
+
+            return null;
+            //return new PartialViewResult
+            //{
+            //    ViewName = "_GetProductos",
+            //    ViewData = new ViewDataDictionary
+            //                <Filtro<List<Producto>>>(ViewData, filtro)
+            //};
         }
 
         private bool PaqueteExists(Guid id)

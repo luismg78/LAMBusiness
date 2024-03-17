@@ -23,7 +23,10 @@ namespace LAMBusiness.Backend
         {
             var registros = FiltrarRegistro();
 
-            return await registros.FirstOrDefaultAsync(p => p.ProductoID == id);
+            return await registros
+                .Include(p => p.Unidades)
+                .Where(p => p.ProductoID == id)
+                .FirstOrDefaultAsync();
         }
 
         /// <summary>

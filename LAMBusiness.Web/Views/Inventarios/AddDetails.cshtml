@@ -1,18 +1,18 @@
-﻿@model LAMBusiness.Shared.Movimiento.EntradaDetalle
+﻿@model LAMBusiness.Web.Models.ViewModels.InventarioDetalleViewModel
 
 @{
-    ViewData["Title"] = "Detalle de Entradas";
+    ViewData["Title"] = "Detalle de Inventarios";
 }
 
 <form asp-action="AddDetails">
     <div class="modal-content border-0 box-shadow box-responsive mx-auto">
         <div class="modal-header pb-0 align-items-baseline">
             <div>
-                <h3 class="modal-title" id="exampleModalLabel">Detalle de Entradas</h3>
+                <h3 class="modal-title" id="exampleModalLabel">Detalle de Inventarios</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
                     <li class="breadcrumb-item"><a asp-action="Movimiento" asp-controller="Home">Movimientos</a></li>
-                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Entradas">Entradas</a></li>
-                    <li class="breadcrumb-item"><a asp-action="Details" asp-controller="Entradas" asp-route-id="@Model.EntradaID">Detalle de Entrada</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Inventarios">Inventarios</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Details" asp-controller="Inventarios" asp-route-id="@Model.InventarioID">Detalle de Inventario</a></li>
                     <li class="breadcrumb-item active">Nuevo Registro</li>
                 </ul>
             </div>
@@ -20,11 +20,11 @@
                 <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewCreate', event);">
                     <i class="fa fa-question-circle"></i>
                 </a>
-                <a asp-action="Details" asp-controller="Entradas" asp-route-id="@Model.EntradaID" class="btn-close me-md-1" aria-label="Close"></a>
+                <a asp-action="Details" asp-controller="Inventarios" asp-route-id="@Model.InventarioID" class="btn-close me-md-1" aria-label="Close"></a>
             </div>
         </div>
         <div class="modal-body py-4">
-            <input type="hidden" asp-for="EntradaID" />
+            <input type="hidden" asp-for="InventarioID" />
             <div class="row px-md-3">
                 <!-- Almacén -->
                 <div class="col-12">
@@ -43,7 +43,7 @@
                 <div class="col-12">
                     <div class="form-group">
                         <label asp-for="ProductoID" class="control-label required"></label>
-                        <select asp-for="ProductoID" class="form-select">
+                        <select asp-for="ProductoID" class="form-select" autofocus>
                             @if (Model.ProductoID != null && Model.ProductoID != Guid.Empty && Model.Productos != null)
                             {
                                 <option value="@Model.ProductoID">@Model.Productos.Codigo @Model.Productos.Nombre</option>
@@ -52,37 +52,8 @@
                         <span asp-validation-for="ProductoID" class="text-danger"></span>
                     </div>
                 </div>
-                <!-- Precio venta -->
-                <div class="col-12 col-md-6">
-                    <div class="form-group">
-                        <label asp-for="PrecioVenta" class="control-label"></label>
-                        <div class="input-group search-0">
-                            <span class="input-group-text">
-                                <i class="fas fa-dollar-sign"></i>
-                            </span>
-                            <input asp-for="PrecioVenta" type="number" value="@Model.PrecioVenta"
-                                   step="0.01" min="0.00" class="form-control" />
-                        </div>
-                        <span asp-validation-for="PrecioVenta" class="text-danger"></span>
-                    </div>
-                </div>
-                <!-- Precio costo -->
-                <div class="col-12 col-md-6 mt-4 mt-lg-0">
-                    <div class="form-group">
-                        <label asp-for="PrecioCosto" class="control-label"></label>
-                        <div class="input-group search-0">
-                            <span class="input-group-text">
-                                <i class="fas fa-dollar-sign"></i>
-                            </span>
-                            <input asp-for="PrecioCosto" type="number" value="@Model.PrecioCosto"
-                                   step="0.01" min="0.00" class="form-control"
-                                   onkeyup="multiplyCantByPriceWhenChangeValue('PrecioCosto');" />
-                        </div>
-                        <span asp-validation-for="PrecioCosto" class="text-danger"></span>
-                    </div>
-                </div>
-                <!-- Cantidad -->
-                <div class="col-12 col-md-6 mt-4">
+                <!-- Cantidad inventariada -->
+                <div class="col-12 mt-4">
                     <div class="form-group">
                         <label asp-for="Cantidad" class="control-label"></label>
                         <div class="input-group search-0">
@@ -90,17 +61,31 @@
                                 <i class="fas fa-cash-register"></i>
                             </span>
                             <input asp-for="Cantidad" type="number" value="@Model.Cantidad"
-                                   step="0.0001" min="0.0000" class="form-control"
-                                   autofocus onkeyup="multiplyCantByPriceWhenChangeValue('PrecioCosto');" />
+                                   step="0.0001" min="0.0000" class="form-control" />
                         </div>
                         <span asp-validation-for="Cantidad" class="text-danger"></span>
                     </div>
                 </div>
-                <!-- Importe (cant x pcosto) -->
-                <div class="col-12 col-md-6 mt-4">
+                <!-- Cantidad en piezas -->
+                @{
+                    string ocultar = "d-none";
+                    @if (Model.EsPaquete)
+                    {
+                        ocultar = "";
+                    }
+                }
+                <input type="hidden" asp-for="EsPaquete" />
+                <div id="cantidadEnPiezas" class="col-12 mt-4 @ocultar">
                     <div class="form-group">
-                        <label class="control-label">Importe (Cant x PCosto)</label>
-                        <h3 id="Importe" class="fw-bold text-dark mt-2">@Convert.ToDecimal(Model.Cantidad * Model.PrecioCosto).ToString("$#,###,##0.00")</h3>
+                        <label asp-for="CantidadEnPiezas" class="control-label"></label>
+                        <div class="input-group search-0">
+                            <span class="input-group-text">
+                                <i class="fas fa-cash-register"></i>
+                            </span>
+                            <input asp-for="CantidadEnPiezas" type="number" value="@Model.CantidadEnPiezas"
+                                   step="0.0001" min="0.0000" class="form-control" />
+                        </div>
+                        <span asp-validation-for="CantidadEnPiezas" class="text-danger"></span>
                     </div>
                 </div>
             </div>
@@ -108,7 +93,7 @@
         <div class="modal-footer justify-content-between">
             <div class="px-md-3">
                 <input type="submit" value="Agregar Detalle" class="btn btn-base" />
-                <a asp-action="Details" asp-controller="Entradas" asp-route-id="@Model.EntradaID" class="btn btn-outline-secondary">Regresar</a>
+                <a asp-action="Details" asp-controller="Inventarios" asp-route-id="@Model.InventarioID" class="btn btn-outline-secondary">Regresar</a>
             </div>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         </div>
@@ -116,7 +101,9 @@
 </form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
     <script>
         let urlAlmacenes = '@Url.Action("GetAlmacenesList", "Almacenes")';

@@ -53,7 +53,7 @@
 
             var entradas = _context.Entradas
                 .Include(e => e.Proveedores)
-                .OrderBy(e => e.Folio)
+                .OrderByDescending(e => e.FechaActualizacion)
                 .ThenBy(e => e.Proveedores.Nombre);
 
             var filtro = new Filtro<List<Entrada>>()
@@ -474,9 +474,9 @@
                 else
                 {
                     existencia.PrecioCosto = (
-                        (existencia.ExistenciaEnAlmacen * existencia.PrecioCosto) +
+                        (Math.Abs(existencia.ExistenciaEnAlmacen) * existencia.PrecioCosto) +
                         (_cantidad * _precioCosto)
-                        ) / (existencia.ExistenciaEnAlmacen + _cantidad);
+                        ) / (Math.Abs(existencia.ExistenciaEnAlmacen) + _cantidad);
                     existencia.ExistenciaEnAlmacen += _cantidad;
                 }
 
@@ -561,7 +561,7 @@
             catch (Exception ex)
             {
                 string excepcion = ex.InnerException != null ? ex.InnerException.Message.ToString() : ex.ToString();
-                TempData["toast"] = "Error al aplicar el movimieno, verifique bitácora de errores.";
+                TempData["toast"] = "Error al aplicar el movimiento, verifique bitácora de errores.";
                 await BitacoraAsync("Aplicar", entrada, excepcion);
             }
 

@@ -1,20 +1,19 @@
 ﻿namespace LAMBusiness.Web.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
+    using Helpers;
+    using LAMBusiness.Contextos;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
-    using LAMBusiness.Contextos;
-    using Helpers;
     using Models.ViewModels;
     using Shared.Aplicacion;
     using Shared.Catalogo;
     using Shared.Contacto;
-    using Microsoft.EntityFrameworkCore.Diagnostics;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public class ProveedoresController : GlobalController
     {
@@ -449,15 +448,8 @@
             }
 
             return null;
-
-            //return new PartialViewResult
-            //{
-            //    ViewName = "_GetProveedores",
-            //    ViewData = new ViewDataDictionary
-            //                <Filtro<List<Proveedor>>>(ViewData, filtro)
-            //};
         }
-
+        
         //Contactos
 
         public async Task<IActionResult> AddContacto(Guid? id)

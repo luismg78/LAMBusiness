@@ -1,17 +1,17 @@
-﻿@model LAMBusiness.Shared.Movimiento.Entrada
+﻿@model LAMBusiness.Shared.Movimiento.Inventario
 
 @{
-    ViewData["Title"] = "Entradas";
+    ViewData["Title"] = "Inventarios";
 }
 
 <form asp-action="Edit">
     <div class="modal-content border-0 box-shadow box-responsive mx-auto">
         <div class="modal-header pb-0 align-items-baseline">
             <div>
-                <h3 class="modal-title" id="exampleModalLabel">Entradas</h3>
+                <h3 class="modal-title" id="exampleModalLabel">Inventarios</h3>
                 <ul class="breadcrumb bg-transparent p-0 small">
                     <li class="breadcrumb-item"><a asp-action="Movimiento" asp-controller="Home">Movimientos</a></li>
-                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Entradas">Entradas</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Inventarios">Inventarios</a></li>
                     <li class="breadcrumb-item active">Editar Registro</li>
                 </ul>
             </div>
@@ -19,39 +19,20 @@
                 <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewEdit', event);">
                     <i class="fa fa-question-circle"></i>
                 </a>
-                <a asp-action="Index" asp-controller="Entradas" class="btn-close me-md-1" aria-label="Close"></a>
+                <a asp-action="Index" asp-controller="Inventarios" class="btn-close me-md-1" aria-label="Close"></a>
             </div>
         </div>
         <div class="modal-body py-4">
-            <input type="hidden" asp-for="EntradaID" />
+            <input type="hidden" asp-for="InventarioID" />
             <div class="row px-md-3">
                 <div class="col-12">
-                    <div class="form-group">
-                        <label asp-for="ProveedorID" class="control-label required"></label>
-                        <select asp-for="ProveedorID" class="form-select">
-                            @if (Model.ProveedorID != null && Model.ProveedorID != Guid.Empty && Model.Proveedores != null)
-                            {
-                                <option value="@Model.ProveedorID">@Model.Proveedores.Nombre</option>
-                            }
-                        </select>
-                        <span asp-validation-for="ProveedorID" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6">
-                    <div class="form-group">
-                        <label asp-for="Folio" class="control-label required"></label>
-                        <input asp-for="Folio" class="form-control" autofocus />
-                        <span asp-validation-for="Folio" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6">
                     <div class="form-group">
                         <label asp-for="Fecha" class="control-label required"></label>
                         <input asp-for="Fecha" class="form-control" max="@DateTime.Now.ToString("yyyy-MM-dd")" />
                         <span asp-validation-for="Fecha" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="col-sm-12">
+                <div class="col-12">
                     <div class="form-group">
                         <label asp-for="Observaciones" class="control-label"></label>
                         <textarea asp-for="Observaciones" class="form-control"></textarea>
@@ -72,10 +53,4 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
-    <script>
-        let urlProveedores = '@Url.Action("GetSuppliers", "Proveedores")';
-    </script>
-
-    <script src="~/js/movements.js"></script>
 }

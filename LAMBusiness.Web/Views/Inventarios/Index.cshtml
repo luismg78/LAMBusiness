@@ -1,0 +1,48 @@
+﻿@model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Shared.Movimiento.Inventario>>
+
+@{
+    ViewData["Title"] = "Inventarios";
+}
+
+<div class="modal-content border-0 box-shadow">
+    <div class="modal-header pb-0 align-items-baseline">
+        <div class="ms-3">
+            <h3 class="modal-title" id="exampleModalLabel">Inventarios</h3>
+            <ul class="breadcrumb bg-transparent p-0 small">
+                <li class="breadcrumb-item"><a asp-action="Movimiento" asp-controller="Home">Movimientos</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Inventarios">Inventarios</a></li>
+                <li class="breadcrumb-item active text-muted">Lista</li>
+            </ul>
+        </div>
+        <div class="d-flex align-items-center">
+            <a class="btn-help text-secondary me-3" href="/" onclick="help('ViewIndex', event);">
+                <i class="fa fa-question-circle"></i>
+            </a>
+            <a asp-action="Movimiento" asp-controller="Home" class="btn-close me-md-1" aria-label="Close"></a>
+        </div>
+    </div>
+    <div class="modal-body py-4 mb-4" data-module="Inventarios">
+        <div class="row px-md-3">
+            <div class="col-9 col-md-8 pr-0 pr-md-3">
+                <div class="input-group mb-3 search">
+                    <input type="search" id="SearchInput" class="form-control" placeholder="Buscar..." onkeypress="search(event);">
+                    <button class="btn btn-light border" type="button" onclick="search(event);"><i class="fa fa-search"></i></button>
+                </div>
+            </div>
+            <div class="col-3 col-md-4 text-end">
+                @if (Model.PermisoEscritura)
+                {
+                    <p><a asp-action="Create" class="btn btn-base"><i class="fas fa-plus"></i><span class="d-none d-md-inline-block ms-2">Nuevo Registro</span></a></p>
+                }
+            </div>
+        </div>
+        <div>
+            <partial name="_AddRowsNextAsync" model="Model" />
+        </div>
+    </div>
+</div>
+
+@if (Model.PermisoEscritura)
+{
+    <partial name="_DeleteConfirmDialog" />
+}

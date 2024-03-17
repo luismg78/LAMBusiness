@@ -17,6 +17,8 @@
         Task<DatoPersonalViewModel> ToDatoPersonalViewModelAsync(DatoPersonal datoPersonal);
         Task<Entrada> ToEntradaAsync(EntradaViewModel entradaViewModel, bool isNew);
         Task<EntradaViewModel> ToEntradaViewModelAsync(Entrada entrada);
+        Inventario ToInventarioAsync(InventarioViewModel entradaViewModel, bool isNew);
+        Task<InventarioViewModel> ToInventarioViewModelAsync(Inventario entrada);
         FileContentResult ToImageBase64(string path);
         Modulo ToModulo(ModuloViewModel moduloViewModel, bool isNew);
         Task<ModuloViewModel> ToModuloViewModelAsync(Modulo modulo);

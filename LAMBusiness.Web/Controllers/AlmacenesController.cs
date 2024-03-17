@@ -397,12 +397,17 @@
 
             filtro = await _getHelper.GetAlmacenesByPatternAsync(filtro);
 
-            return new PartialViewResult
+            var almacenes = filtro.Datos;
+            if (almacenes != null && almacenes.Count > 0)
             {
-                ViewName = "_GetAlmacenes",
-                ViewData = new ViewDataDictionary
-                            <Filtro<List<Almacen>>>(ViewData, filtro)
-            };
+                return Json(almacenes.Select(m => new
+                {
+                    Id = m.AlmacenID.ToString(),
+                    Text = m.Nombre,
+                }));
+            }
+
+            return null;
         }
 
         private bool AlmacenExists(Guid id)

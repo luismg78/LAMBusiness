@@ -78,7 +78,7 @@
                     estadisticaDiaria.Entradas += 1;
                     estadisticaDiaria.EntradasImporte += estadisticaMovimiento.Importe;
                     break;
-                case TipoMovimiento.Devolucion:
+                case TipoMovimiento.Inventario:
                     estadisticaMensual.Devoluciones += 1;
                     estadisticaMensual.DevolucionesImporte += estadisticaMovimiento.Importe;
                     estadisticaDiaria.Devoluciones += 1;

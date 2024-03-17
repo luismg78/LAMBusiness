@@ -478,6 +478,56 @@
                 .FirstOrDefaultAsync(m => m.ProductoID == productoId && m.AlmacenID == almacenId);
         }
 
+        //Inventarios
+
+        /// <summary>
+        /// Obtener Inventario por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Inventario> GetInventarioByIdAsync(Guid id)
+        {
+            return await _context.Inventarios
+                .Include(e => e.Usuarios)
+                .FirstOrDefaultAsync(m => m.InventarioID == id);
+        }
+
+        /// <summary>
+        /// obtener detalle de inventario por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<InventarioDetalle> GetInventarioDetalleByIdAsync(Guid id)
+        {
+            return await _context.InventariosDetalle
+                .Include(e => e.Almacenes)
+                .Include(e => e.Inventarios)
+                .Include(e => e.Productos)
+                .FirstOrDefaultAsync(m => m.InventarioDetalleID == id);
+        }
+
+        /// <summary>
+        /// Obtener lista de detalle de inventario por InventarioID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<List<InventarioDetalle>> GetInventarioDetalleByInventarioIdAsync(Guid id)
+        {
+            return await _context.InventariosDetalle
+                .Include(e => e.Inventarios)
+                .Include(e => e.Almacenes)
+                .Include(e => e.Productos)
+                .ThenInclude(e => e.Unidades)
+                .Include(e => e.Productos)
+                .ThenInclude(e => e.Paquete)
+                .Include(e => e.Productos)
+                .ThenInclude(e => e.Existencias)
+                .Where(m => m.InventarioID == id)
+                .OrderBy(m => m.Productos.Nombre)
+                .ThenBy(m => m.Almacenes.Nombre)
+                .ToListAsync();
+        }
+
         //Marcas
 
         /// <summary>

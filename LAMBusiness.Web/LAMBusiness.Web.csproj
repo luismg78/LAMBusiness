@@ -37,6 +37,45 @@
     <Folder Include="wwwroot\images\productos\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Views\Inventarios\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Inventarios\_AddRowsNextAsync.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Inventarios\AddDetails.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Inventarios\AddDetails.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Inventarios\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Inventarios\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Inventarios\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Inventarios\EditDetails.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Inventarios\Create.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Inventarios\Details.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Inventarios\Edit.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Inventarios\EditDetails.cshtml" />
+  </ItemGroup>
 
 </Project>

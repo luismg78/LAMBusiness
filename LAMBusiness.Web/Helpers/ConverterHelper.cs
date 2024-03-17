@@ -372,6 +372,52 @@
 
         }
 
+        //Inventarios
+
+        /// <summary>
+        /// Convertir clase InventarioviewModel a Inventario.
+        /// </summary>
+        /// <param name="inventarioViewModel"></param>
+        /// <param name="isNew"></param>
+        /// <returns></returns>
+        public Inventario ToInventarioAsync(InventarioViewModel inventarioViewModel, bool isNew)
+        {
+            return new Inventario()
+            {
+                Aplicado = inventarioViewModel.Aplicado,
+                InventarioID = isNew ? Guid.NewGuid() : inventarioViewModel.InventarioID,
+                Fecha = inventarioViewModel.Fecha,
+                FechaActualizacion = DateTime.Now,
+                FechaCreacion = isNew ? DateTime.Now : inventarioViewModel.FechaCreacion,
+                Observaciones = inventarioViewModel.Observaciones == null ? "" : inventarioViewModel.Observaciones.Trim().ToUpper(),
+                UsuarioID = inventarioViewModel.UsuarioID
+            };
+        }
+
+        /// <summary>
+        /// Convertir clase Inventario a InventarioViewModel.
+        /// </summary>
+        /// <param name="inventario"></param>
+        /// <returns></returns>
+        public async Task<InventarioViewModel> ToInventarioViewModelAsync(Inventario inventario)
+        {
+            var _inventario = await _getHelper.GetInventarioByIdAsync(inventario.InventarioID);
+
+            return new InventarioViewModel()
+            {
+                Aplicado = inventario == null ? false : inventario.Aplicado,
+                InventarioID = inventario == null ? Guid.NewGuid() : inventario.InventarioID,
+                Fecha = inventario == null ? DateTime.Now : inventario.Fecha,
+                FechaActualizacion = inventario == null ? DateTime.Now : inventario.FechaActualizacion,
+                FechaCreacion = _inventario == null ? DateTime.Now : _inventario.FechaCreacion,
+                Observaciones = inventario.Observaciones == null ? "" : inventario.Observaciones.Trim().ToUpper(),
+                UsuarioID = inventario.UsuarioID,
+                Usuarios = inventario.Usuarios,
+                InventarioDetalle = await _getHelper.GetInventarioDetalleByInventarioIdAsync(inventario.InventarioID)
+            };
+
+        }
+
         //Módulos
 
         /// <summary>

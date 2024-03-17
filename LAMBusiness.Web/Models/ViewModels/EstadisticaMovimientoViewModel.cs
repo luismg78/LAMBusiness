@@ -16,6 +16,6 @@
         Entrada = 0,
         Salida = 1,
         Venta = 2,
-        Devolucion = 3
+        Inventario = 3
     }
 }

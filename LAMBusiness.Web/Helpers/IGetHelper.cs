@@ -30,6 +30,9 @@
         Task<Existencia> GetExistenciaByIdAsync(Guid id);
         Task<Existencia> GetExistenciaByProductoIdAndAlmacenIdAsync(Guid productoId, Guid almacenId);
         Task<decimal> GetExistenciaByProductoIdAsync(Guid productoId);
+        Task<Inventario> GetInventarioByIdAsync(Guid id);
+        Task<List<InventarioDetalle>> GetInventarioDetalleByInventarioIdAsync(Guid id);
+        Task<InventarioDetalle> GetInventarioDetalleByIdAsync(Guid id);
         Task<Marca> GetMarcaByIdAsync(Guid id);
         Task<Marca> GetMarcaByNombreAsync(string marca);
         Task<List<Marca>> GetMarcasByPatternAsync(string pattern, int skip);

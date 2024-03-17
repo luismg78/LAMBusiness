@@ -221,8 +221,8 @@
             var movimiento = new Movimiento()
             {
                 CorteDeCaja = GetCountCortesDeCajas(),
-                Devoluciones = GetCountDevoluciones(),
                 Entradas = GetCountEntradas(),
+                Inventario = GetCountInventarios(),
                 RetiroDeCaja = GetCountRetiros(),
                 Salidas = GetCountSalidas(),
                 Ventas = GetCountVentas(),
@@ -337,10 +337,9 @@
         {
             return 0; //_context.corte.Where(r => r.VentaCierreID == Guid.Empty).Count();
         }
-        private int GetCountDevoluciones()
+        private int GetCountInventarios()
         {
-            //cambiar entradas por devoluciones
-            return _context.Entradas.Count();
+            return _context.Inventarios.Count();
         }
         private int GetCountEntradas()
         {
