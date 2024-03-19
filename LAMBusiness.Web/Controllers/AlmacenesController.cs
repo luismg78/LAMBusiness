@@ -403,7 +403,7 @@
                 return Json(almacenes.Select(m => new
                 {
                     Id = m.AlmacenID.ToString(),
-                    Text = m.Nombre,
+                    Text = $"{m.Nombre} - {m.Descripcion}",
                 }));
             }
 

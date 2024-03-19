@@ -666,7 +666,7 @@
                 return Json(productos.Select(m => new
                 {
                     Id = m.ProductoID.ToString(),
-                    Text = m.Nombre,
+                    Text = $"{m.Codigo} - {m.Nombre}",
                     m.PrecioCosto,
                     m.PrecioVenta,
                     EsPaquete = m.Unidades.Paquete
