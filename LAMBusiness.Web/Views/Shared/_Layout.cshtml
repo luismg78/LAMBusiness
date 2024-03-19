@@ -16,7 +16,7 @@
     <meta property="og:site_name" content="LAMBusiness">
     <meta property="og:image" content="http://www.lambusiness.com/Imagen/icono.png">
     @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />*@
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />    
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="~/lib/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link href="~/css/helper.css" rel="stylesheet" />
@@ -42,17 +42,21 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1 justify-content-end">
                         @*<li class="nav-item">
-                            <a class="nav-link"
-                                href="javascript:void(0);"
-                                onClick="toggleFullScreen();">
-                                <div class="btn-icon rounded-circle d-inline-block">
-                                    <i class="fa fa-expand-arrows-alt"></i>
-                                </div>
-                                <span class="d-md-none ms-2">Expandir Pantalla</span>
-                            </a>
+                        <a class="nav-link"
+                        href="javascript:void(0);"
+                        onClick="toggleFullScreen();">
+                        <div class="btn-icon rounded-circle d-inline-block">
+                        <i class="fa fa-expand-arrows-alt"></i>
+                        </div>
+                        <span class="d-md-none ms-2">Expandir Pantalla</span>
+                        </a>
                         </li>*@
                         <li class="nav-item">
-                            <a id="LAMNotificationText" class="nav-link @if (menu == "notificaciones") {<text>fw-bold text-base</text>} else {<text>text-dark</text>} "
+                            <a id="LAMNotificationText" class="nav-link @if (menu == "notificaciones") {
+                            <text>fw-bold text-base</text>
+} else {
+                            <text>text-dark</text>
+} "
                                asp-area="" asp-controller="Home" asp-action="Index">
                                 <div id="LAMNotificationIcon" class="btn-icon rounded-circle d-inline-block">
                                     <i class="fa fa-bell"></i>
@@ -104,7 +108,7 @@
     <audio id="audioNotification" controls="controls" class="d-none">
         <source src="~/audio/Notification.mp3" type="audio/mpeg" />
     </audio>
-    
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     @*<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
     <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.js"></script>
@@ -114,8 +118,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
-    
-<script>
+
+    <script>
         var skip = 0;
         var itemToDelete;
         var filter;
@@ -180,11 +184,11 @@
                 addProcessWithSpinner('Cargando datos, por favor espere...');
             }
             var controller = $('[data-module]')[0].dataset.module;
-            var url = '@Url.Action("_AddRowsNext","controlador")';
+            var url = '@Url.Action("_AddRowsNext", "controlador")';
             url = url.replace('controlador', controller);
 
             $('#dRows').attr('data-charging', "1");
-            
+
             $.ajax({
                 url: url,
                 method: 'POST',
@@ -205,6 +209,11 @@
                         removeProcess();
                     } else {
                         removeProcessWithSpinner();
+                    }
+                    if (typeof $('.deleteConfirm') !== 'undefined') {
+                        $('.deleteConfirm').click((e) => {
+                            itemToDelete = e.currentTarget.dataset.id;
+                        });
                     }
                 },
                 error: function (r) {
@@ -276,6 +285,6 @@
                 addRowsNext(skip, true);
             }
         }
-</script>
+    </script>
 </body>
 </html>

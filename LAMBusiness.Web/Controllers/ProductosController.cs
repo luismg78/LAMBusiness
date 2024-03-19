@@ -149,6 +149,7 @@
 
             var productoViewModel = new ProductoViewModel()
             {
+                MarcasDDL = await _combosHelper.GetComboMarcasAsync(),
                 UnidadesDDL = await _combosHelper.GetComboUnidadesAsync(),
                 TasasImpuestosDDL = await _combosHelper.GetComboTasaImpuestosAsync()
             };
@@ -227,6 +228,7 @@
                 }
             }
 
+            productoViewModel.MarcasDDL = await _combosHelper.GetComboMarcasAsync();
             productoViewModel.TasasImpuestosDDL = await _combosHelper.GetComboTasaImpuestosAsync();
             productoViewModel.UnidadesDDL = await _combosHelper.GetComboUnidadesAsync();
             return View(productoViewModel);
@@ -249,6 +251,7 @@
             }
 
             var producto = await _context.Productos
+                .Include(p => p.Unidades)
                 .Include(p => p.Marcas)
                 .FirstOrDefaultAsync(p => p.ProductoID == id);
 
@@ -366,6 +369,7 @@
                 }
             }
 
+            productoViewModel.MarcasDDL = await _combosHelper.GetComboMarcasAsync();
             productoViewModel.TasasImpuestosDDL = await _combosHelper.GetComboTasaImpuestosAsync();
             productoViewModel.UnidadesDDL = await _combosHelper.GetComboUnidadesAsync();
 
@@ -492,7 +496,7 @@
 
         }
 
-        public async Task<IActionResult> GetMarcas(string pattern, int? skip)
+        public async Task<IActionResult> GetProductosPiezas(string pattern, int? skip)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return null; }
@@ -505,14 +509,14 @@
 
             skip = skip == null ? 0 : skip;
 
-            var marcas = await _getHelper.GetMarcasByPatternAsync(pattern, (int)skip);
+            var piezas = await _getHelper.GetProductosPiezasByPatternAsync(pattern, (int)skip);
 
-            if (marcas != null && marcas.Count > 0)
+            if (piezas != null && piezas.Count > 0)
             {
-                return Json(marcas.Select(m => new Select2Items()
+                return Json(piezas.Select(m => new Select2Items()
                 {
-                    Id = m.MarcaID.ToString(),
-                    Text = m.Nombre,
+                    Id = m.ProductoID.ToString(),
+                    Text = $"{m.Codigo} - {m.Nombre}",
                 }));
             }
 
@@ -715,14 +719,14 @@
                 //if field unidad have value, then, validate fields CodigoPieza and Cantidad
                 if (productoViewModel.Unidades.Paquete)
                 {
-                    if (string.IsNullOrEmpty(productoViewModel.CodigoPieza))
+                    if (productoViewModel.ProductoIDPieza == null || productoViewModel.ProductoIDPieza == Guid.Empty)
                     {
-                        ModelState.AddModelError("CodigoPieza", "El campo Unidad es requerido");
+                        ModelState.AddModelError("CodigoPieza", "El campo código de pieza es requerido");
                     }
                     //if field CodigoPieza have value, then, validate if product exist
                     var codepieceexist = await _context.Productos
                         .Include(p => p.Unidades)
-                        .FirstOrDefaultAsync(p => p.Codigo == productoViewModel.CodigoPieza);
+                        .FirstOrDefaultAsync(p => p.ProductoID == productoViewModel.ProductoIDPieza);
                     if (codepieceexist == null)
                     {
                         ModelState.AddModelError("CodigoPieza", "Código de producto inexistente.");

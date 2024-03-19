@@ -103,6 +103,25 @@
         }
 
         //Módulos (Padres)
+        public async Task<IEnumerable<SelectListItem>> GetComboMarcasAsync()
+        {
+            var list = await _context.Marcas
+                .Select(m => new SelectListItem()
+                {
+                    Text = m.Nombre,
+                    Value = m.MarcaID.ToString()
+                }).OrderBy(e => e.Text).ToListAsync();
+
+            list.Insert(0, new SelectListItem()
+            {
+                Text = "[Seleccionar Marca]",
+                Value = ""
+            });
+
+            return list;
+        }
+
+        //Módulos (Padres)
         public async Task<IEnumerable<SelectListItem>> GetComboModulosAsync()
         {
             var list = await _context.Modulos

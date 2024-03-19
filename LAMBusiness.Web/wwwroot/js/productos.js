@@ -1,45 +1,65 @@
 ﻿$(document).ready(function () {
-    $('#UnidadID').select2({
-        language: "es",
-        placeholder: 'Seleccionar unidad',
-        minimumResultsForSearch: Infinity,
-        width: '100%'
-    });
-    $('#MarcaID').on('select2:select', function (e) {
-        var data = e.params.data;
-        $('#MarcaID').val(data.id).change();
-    });
-    $('#MarcaID').select2({
-        ajax: {
-            url: urlObtenerMarcas,
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return {
-                    pattern: params.term
-                };
-            },
-            processResults: function (data) {
-                var results = [];
-                $.each(data, function (index, item) {
-                    results.push({
-                        id: item.id,
-                        text: item.text
+    if (typeof $('#MarcaID') !== 'undefined') {
+        $('#MarcaID').select2({
+            language: "es",
+            placeholder: 'Seleccionar marca',
+            width: '100%'
+        });
+    }
+    if (typeof $('#UnidadID') !== 'undefined') {
+        $('#UnidadID').select2({
+            language: "es",
+            placeholder: 'Seleccionar unidad',
+            minimumResultsForSearch: Infinity,
+            width: '100%'
+        });
+    }
+    if (typeof $('#TasaID') !== 'undefined') {
+        $('#TasaID').select2({
+            language: "es",
+            placeholder: 'Seleccionar tasa',
+            minimumResultsForSearch: Infinity,
+            width: '100%'
+        });
+    }
+    if (typeof $('#ProductoIDPieza') !== 'undefined') {
+        $('#ProductoIDPieza').on('select2:select', function (e) {
+            var data = e.params.data;
+            $('#ProductoIDPieza').val(data.id).change();
+            $('#CodigoPiezaNombre').val(data.text);
+        });
+        $('#ProductoIDPieza').select2({
+            ajax: {
+                url: urlObtenerProductosPiezas,
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        pattern: params.term
+                    };
+                },
+                processResults: function (data) {
+                    var results = [];
+                    $.each(data, function (index, item) {
+                        results.push({
+                            id: item.id,
+                            text: item.text
+                        });
                     });
-                });
 
-                return { results };
+                    return { results };
+                },
+                cache: true
             },
-            cache: true
-        },
-        language: "es",
-        placeholder: 'Seleccionar marca',
-        width: '100%',
-        allowClear: true,
-        language: 'es',
-        minimumInputLength: 3,
-        minimumResultsForSearch: 50
-    });
+            language: "es",
+            placeholder: 'Teclee código o nombre del producto',
+            width: '100%',
+            allowClear: true,
+            language: 'es',
+            minimumInputLength: 3,
+            minimumResultsForSearch: 50
+        });
+    }
     validatedUnitChange();
 });
 

@@ -11,6 +11,7 @@
         Task<IEnumerable<SelectListItem>> GetComboEstadosAsync();
         Task<IEnumerable<SelectListItem>> GetComboEstadosCivilesAsync();
         Task<IEnumerable<SelectListItem>> GetComboGenerosAsync();
+        Task<IEnumerable<SelectListItem>> GetComboMarcasAsync();
         Task<IEnumerable<SelectListItem>> GetComboModulosAsync();
         Task<IEnumerable<SelectListItem>> GetComboMunicipiosAsync(short estadoId);
         Task<IEnumerable<SelectListItem>> GetComboPuestosAsync();

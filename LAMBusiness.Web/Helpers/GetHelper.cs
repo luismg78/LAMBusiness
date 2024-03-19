@@ -542,42 +542,6 @@
         }
 
         /// <summary>
-        /// Obtener lista de marcas de acuerdo al patrón solicitado
-        /// </summary>
-        /// <param name="pattern"></param>
-        /// <returns></returns>
-        public async Task<List<Marca>> GetMarcasByPatternAsync(string pattern, int skip)
-        {
-            string[] patterns = pattern.Trim().Split(' ');
-            IQueryable<Marca> query = null;
-            foreach (var p in patterns)
-            {
-                string _pattern = p.Trim();
-                if (_pattern != "")
-                {
-                    if (query == null)
-                    {
-                        query = _context.Marcas
-                            .Where(p => p.Descripcion.Contains(_pattern) ||
-                                        p.Nombre.Contains(_pattern));
-                    }
-                    else
-                    {
-                        query = query.Where(p => p.Descripcion.Contains(_pattern) ||
-                                                 p.Nombre.Contains(_pattern));
-                    }
-                }
-            }
-
-            if (query == null)
-            {
-                query = _context.Marcas;
-            }
-
-            return await query.OrderBy(m => m.Nombre).Skip(skip).Take(50).ToListAsync();
-        }
-
-        /// <summary>
         /// Obtener marca por nombre.
         /// </summary>
         /// <param name="marca"></param>
@@ -647,6 +611,49 @@
         public async Task<Paquete> GetPaqueteByPieceID(Guid id)
         {
             return await _context.Paquetes.FirstOrDefaultAsync(p => p.PiezaProductoID == id);
+        }
+
+        //Productos
+
+        /// <summary>
+        /// Obtener lista de productos de acuerdo al patrón solicitado
+        /// </summary>
+        /// <param name="pattern"></param>
+        /// <returns></returns>
+        public async Task<List<Producto>> GetProductosPiezasByPatternAsync(string pattern, int skip)
+        {
+            string[] patterns = pattern.Trim().Split(' ');
+            IQueryable<Producto> query = null;
+            foreach (var p in patterns)
+            {
+                string _pattern = p.Trim();
+                if (_pattern != "")
+                {
+                    if (query == null)
+                    {
+                        query = _context.Productos
+                            .Include(p => p.Unidades)
+                            .Where(p => p.Unidades.Paquete == false &&
+                                       (p.Codigo.Contains(_pattern) ||
+                                        p.Descripcion.Contains(_pattern) ||
+                                        p.Nombre.Contains(_pattern)));
+                    }
+                    else
+                    {
+                        query = query.Where(p => p.Unidades.Paquete == false &&
+                                       (p.Codigo.Contains(_pattern) ||
+                                        p.Descripcion.Contains(_pattern) ||
+                                        p.Nombre.Contains(_pattern)));
+                    }
+                }
+            }
+
+            if (query == null)
+            {
+                query = _context.Productos;
+            }
+
+            return await query.OrderBy(m => m.Nombre).Skip(skip).Take(50).ToListAsync();
         }
 
         //Proveedores
@@ -1348,6 +1355,6 @@
                               select m.ModuloID).Distinct().ToListAsync();
             }
         }
-        
+
     }
 }

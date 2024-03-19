@@ -488,7 +488,7 @@
             if (productoViewModel.Unidades.Paquete)
             {
                 var _productos = new Productos(_context);
-                var pieza = await _productos.ObtenerRegistroPorCodigoAsync(productoViewModel.CodigoPieza);
+                var pieza = await _productos.ObtenerRegistroPorIdAsync((Guid)productoViewModel.ProductoIDPieza);
 
                 var paquete = new Paquete()
                 {
@@ -525,13 +525,14 @@
                 Nombre = producto.Nombre,
                 TasaID = producto.TasaID,
                 TasasImpuestos = producto.TasasImpuestos,
+                MarcasDDL = await _combosHelper.GetComboMarcasAsync(),
                 TasasImpuestosDDL = await _combosHelper.GetComboTasaImpuestosAsync(),
                 Unidades = producto.Unidades,
                 UnidadesDDL = await _combosHelper.GetComboUnidadesAsync(),
                 UnidadID = producto.UnidadID,
                 //Paquete
                 CantidadProductoxPaquete = 0,
-                CodigoPieza = ""
+                ProductoIDPieza = null
             };
 
             var paquete = await _context.Paquetes.FindAsync(producto.ProductoID);
@@ -541,7 +542,8 @@
 
                 var _productos = new Productos(_context);
                 var pieza = await _productos.ObtenerRegistroPorIdAsync(paquete.PiezaProductoID);
-                productoViewModel.CodigoPieza = pieza.Codigo;
+                productoViewModel.ProductoIDPieza = pieza.ProductoID;
+                productoViewModel.CodigoPiezaNombre = $"{pieza.Codigo} - {pieza.Nombre}";
             }
 
             return productoViewModel;

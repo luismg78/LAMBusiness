@@ -35,7 +35,6 @@
         Task<InventarioDetalle> GetInventarioDetalleByIdAsync(Guid id);
         Task<Marca> GetMarcaByIdAsync(Guid id);
         Task<Marca> GetMarcaByNombreAsync(string marca);
-        Task<List<Marca>> GetMarcasByPatternAsync(string pattern, int skip);
         Task<List<Guid>> GetModulesByUsuarioIDAndModuloPadreID(Guid usuarioId, Guid moduloPadreId);
         Task<Modulo> GetModuloByIdAsync(Guid id);
         Task<EstadisticaMovimientoChartViewModel> GetMovementsDashboardAsync(List<int> años);
@@ -43,6 +42,7 @@
         Task<List<Municipio>> GetMunicipiosByEstadoIdAsync(short id);
         Task<Paquete> GetPaqueteByIdAsync(Guid id);
         Task<Paquete> GetPaqueteByPieceID(Guid id);
+        Task<List<Producto>> GetProductosPiezasByPatternAsync(string pattern, int skip);
         Task<Proveedor> GetProveedorByIdAsync(Guid id);
         Task<Proveedor> GetProveedorByRFCAsync(string rfc);
         Task<Filtro<List<Proveedor>>> GetProveedoresByPatternAsync(Filtro<List<Proveedor>> filtro);

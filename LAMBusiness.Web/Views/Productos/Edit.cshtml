@@ -70,12 +70,7 @@
                 <div class="col-12">
                     <div class="form-group">
                         <label asp-for="MarcaID" class="control-label required"></label>
-                        <select asp-for="MarcaID" class="form-select">
-                            @if (Model.MarcaID != null && Model.MarcaID != Guid.Empty && Model.Marcas != null)
-                            {
-                                <option value="@Model.MarcaID">@Model.Marcas.Nombre</option>
-                            }
-                        </select>
+                        <select asp-for="MarcaID" class="form-select" asp-items="Model.MarcasDDL"></select>
                         <span asp-validation-for="MarcaID" class="text-danger"></span>
                     </div>
                 </div>
@@ -84,9 +79,15 @@
                     <div class="row">
                         <div class="col-12 col-md-6">
                             <div class="form-group">
-                                <label asp-for="CodigoPieza" class="control-label"></label>
-                                <input asp-for="CodigoPieza" class="form-control" />
-                                <span asp-validation-for="CodigoPieza" class="text-danger"></span>
+                                <input type="hidden" asp-for="CodigoPiezaNombre" />
+                                <label asp-for="ProductoIDPieza" class="control-label"></label>
+                                <select asp-for="ProductoIDPieza" class="form-select">
+                                    @if (Model.Unidades != null && Model.Unidades.Paquete == true && Model.ProductoIDPieza != null)
+                                    {
+                                        <option value="@Model.ProductoIDPieza">@Model.CodigoPiezaNombre</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="ProductoIDPieza" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-12 col-md-6">
@@ -129,7 +130,7 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
-        var urlObtenerMarcas = '@Url.Action("GetMarcas", "Productos")';
+        var urlObtenerProductosPiezas = '@Url.Action("GetProductosPiezas", "Productos")';
     </script>
-    <script src="~/js/productos.js" asp-append-version="true"></script>
+    <script src="~/js/productos.js" asp-append-version="true"></script> 
 }
