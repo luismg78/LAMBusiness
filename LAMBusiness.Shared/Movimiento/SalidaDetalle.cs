@@ -1,9 +1,11 @@
 ﻿namespace LAMBusiness.Shared.Movimiento
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using Catalogo;
+    using Microsoft.AspNetCore.Mvc.Rendering;
     using Newtonsoft.Json;
 
     public class SalidaDetalle
@@ -45,5 +47,9 @@
         [Display(Name = "Precio (Costo)")]
         [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = false)]
         public decimal? PrecioCosto { get; set; }
+
+        [NotMapped]
+        public virtual IEnumerable<SelectListItem> AlmacenesDDL { get; set; }
+
     }
 }

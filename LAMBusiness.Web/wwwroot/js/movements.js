@@ -209,44 +209,55 @@ function searchRetiros(e) {
     }
 }
 
-if (typeof urlAlmacenes !== 'undefined' && urlAlmacenes !== undefined && urlAlmacenes !== null) {
-    $(almacenId).on('select2:select', function (e) {
-        var data = e.params.data;
-        $(almacenId).val(data.id).change();
-    });
-    $(almacenId).select2({
-        ajax: {
-            url: urlAlmacenes,
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return {
-                    Patron: params.term,
-                    Skip: 0
-                };
-            },
-            processResults: function (data) {
-                var results = [];
-                $.each(data, function (index, item) {
-                    results.push({
-                        id: item.id,
-                        text: item.text
-                    });
-                });
+//if (typeof urlAlmacenes !== 'undefined' && urlAlmacenes !== undefined && urlAlmacenes !== null) {
+//    $(almacenId).on('select2:select', function (e) {
+//        var data = e.params.data;
+//        $(almacenId).val(data.id).change();
+//    });
+//    $(almacenId).select2({
+//        ajax: {
+//            url: urlAlmacenes,
+//            dataType: 'json',
+//            delay: 250,
+//            data: function (params) {
+//                return {
+//                    Patron: params.term,
+//                    Skip: 0
+//                };
+//            },
+//            processResults: function (data) {
+//                var results = [];
+//                $.each(data, function (index, item) {
+//                    results.push({
+//                        id: item.id,
+//                        text: item.text
+//                    });
+//                });
 
-                return { results };
-            },
-            cache: true
-        },
+//                return { results };
+//            },
+//            cache: true
+//        },
+//        language: "es",
+//        placeholder: 'Seleccionar almacén',
+//        width: '100%',
+//        allowClear: true,
+//        language: 'es',
+//        minimumInputLength: 3,
+//        minimumResultsForSearch: 50
+//    });
+//}
+
+if (typeof $(almacenId) !== 'undefined' && $(almacenId) !== undefined && $(almacenId) !== null) {
+    $(almacenId).select2({
         language: "es",
         placeholder: 'Seleccionar almacén',
         width: '100%',
         allowClear: true,
-        language: 'es',
-        minimumInputLength: 3,
-        minimumResultsForSearch: 50
+        language: 'es'
     });
 }
+
 if (typeof urlProductos !== 'undefined' && urlProductos !== undefined && urlProductos !== null) {
     $(productoId).on('select2:select', function (e) {
         var data = e.params.data;

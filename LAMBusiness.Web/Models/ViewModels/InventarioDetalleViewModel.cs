@@ -1,5 +1,7 @@
 ﻿using LAMBusiness.Shared.Catalogo;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace LAMBusiness.Web.Models.ViewModels
@@ -30,5 +32,8 @@ namespace LAMBusiness.Web.Models.ViewModels
         public decimal? CantidadEnPiezas { get; set; } = 0;
         
         public bool EsPaquete { get; set; }
+
+        public virtual IEnumerable<SelectListItem> AlmacenesDDL { get; set; }
+
     }
 }

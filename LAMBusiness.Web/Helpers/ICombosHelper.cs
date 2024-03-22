@@ -7,6 +7,7 @@
 
     public interface ICombosHelper
     {
+        Task<IEnumerable<SelectListItem>> GetComboAlmacenesAsync();
         Task<IEnumerable<SelectListItem>> GetComboAdministradoresAsync(Guid usuarioId);
         Task<IEnumerable<SelectListItem>> GetComboEstadosAsync();
         Task<IEnumerable<SelectListItem>> GetComboEstadosCivilesAsync();

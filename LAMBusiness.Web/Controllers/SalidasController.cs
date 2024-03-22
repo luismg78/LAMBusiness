@@ -572,6 +572,7 @@
                 SalidaID = (Guid)id,
                 Cantidad = 0,
                 PrecioCosto = 0,
+                AlmacenesDDL = await _combosHelper.GetComboAlmacenesAsync()
             });
         }
 
@@ -592,6 +593,8 @@
                 TempData["toast"] = "Identificador incorrecto.";
                 return RedirectToAction(nameof(Index));
             }
+
+            salidaDetalle.AlmacenesDDL = await _combosHelper.GetComboAlmacenesAsync();
 
             if (SalidaAplicada(salidaDetalle.SalidaID))
             {
@@ -683,6 +686,7 @@
                         SalidaID = salidaDetalle.SalidaID,
                         Cantidad = 0,
                         PrecioCosto = 0,
+                        AlmacenesDDL = await _combosHelper.GetComboAlmacenesAsync()
                     });
 
                 }
@@ -694,8 +698,7 @@
                     await BitacoraAsync("Alta", salidaDetalle, salidaDetalle.SalidaID, excepcion);
                 }
             }
-
-            salidaDetalle.Almacenes = almacen;
+            
             salidaDetalle.Productos = producto;
             return View(salidaDetalle);
         }
@@ -724,6 +727,7 @@
                 return RedirectToAction(nameof(Details), new { id = detalle.SalidaID });
             }
 
+            detalle.AlmacenesDDL = await _combosHelper.GetComboAlmacenesAsync();
             return View(detalle);
         }
 
@@ -745,6 +749,8 @@
                 return RedirectToAction(nameof(Index));
             }
 
+            salidaDetalle.AlmacenesDDL = await _combosHelper.GetComboAlmacenesAsync();
+            
             if (SalidaAplicada(salidaDetalle.SalidaID))
             {
                 TempData["toast"] = "Salida aplicada no se permiten cambios.";

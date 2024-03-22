@@ -20,6 +20,7 @@ namespace LAMBusiness.Web.Controllers
     {
         private readonly DataContext _context;
         private readonly IGetHelper _getHelper;
+        private readonly ICombosHelper _combosHelper;
         private readonly IConverterHelper _converterHelper;
         private readonly IConfiguration _configuration;
         private readonly IDashboard _dashboard;
@@ -28,12 +29,14 @@ namespace LAMBusiness.Web.Controllers
 
         public InventariosController(DataContext context,
             IGetHelper getHelper,
+            ICombosHelper combosHelper,
             IConverterHelper converterHelper,
             IConfiguration configuration,
             IDashboard dashboard)
         {
             _context = context;
             _getHelper = getHelper;
+            _combosHelper = combosHelper;
             _converterHelper = converterHelper;
             _configuration = configuration;
             _dashboard = dashboard;
@@ -422,7 +425,7 @@ namespace LAMBusiness.Web.Controllers
                 Guid _almacenId = (Guid)item.AlmacenID;
                 Guid _productoId = (Guid)item.ProductoID;
                 decimal _cantidadInventariada = (decimal)item.CantidadInventariada;
-               
+
                 if (item.Productos.Unidades.Pieza)
                     _cantidadInventariada = (int)_cantidadInventariada;
 
@@ -531,7 +534,8 @@ namespace LAMBusiness.Web.Controllers
                 InventarioID = (Guid)id,
                 Cantidad = 0,
                 CantidadEnPiezas = 0,
-                EsPaquete = false
+                EsPaquete = false,
+                AlmacenesDDL = await _combosHelper.GetComboAlmacenesAsync()
             });
         }
 
@@ -550,6 +554,8 @@ namespace LAMBusiness.Web.Controllers
                 TempData["toast"] = "Identificador incorrecto.";
                 return RedirectToAction(nameof(Index));
             }
+            
+            inventarioDetalleVM.AlmacenesDDL = await _combosHelper.GetComboAlmacenesAsync();
 
             if (InventarioAplicada(inventarioDetalleVM.InventarioID))
             {
@@ -597,7 +603,7 @@ namespace LAMBusiness.Web.Controllers
             if (producto.Unidades.Paquete)
             {
                 var paquete = await _context.Paquetes.FirstOrDefaultAsync(p => p.ProductoID == producto.ProductoID);
-                if(paquete == null)
+                if (paquete == null)
                 {
                     TempData["toast"] = "El producto es paquete y no existe registro de la pieza asociada.";
                     ModelState.AddModelError("ProductoID", "El producto es paquete y no existe registro de la pieza asociada.");
@@ -634,9 +640,9 @@ namespace LAMBusiness.Web.Controllers
                 InventarioDetalleID = Guid.NewGuid(),
                 InventarioID = inventarioDetalleVM.InventarioID,
                 PrecioCosto = 0,
-                ProductoID = inventarioDetalleVM.ProductoID
+                ProductoID = inventarioDetalleVM.ProductoID,
             };
-            
+
             try
             {
                 _context.Add(inventarioDetalle);
@@ -652,7 +658,8 @@ namespace LAMBusiness.Web.Controllers
                     Almacenes = almacen,
                     InventarioID = inventarioDetalleVM.InventarioID,
                     Cantidad = 0,
-                    CantidadEnPiezas = 0
+                    CantidadEnPiezas = 0,
+                    AlmacenesDDL = await _combosHelper.GetComboAlmacenesAsync()
                 });
 
             }
@@ -664,7 +671,6 @@ namespace LAMBusiness.Web.Controllers
                 await BitacoraAsync("Alta", inventarioDetalle, inventarioDetalle.InventarioID, excepcion);
             }
 
-            inventarioDetalleVM.Almacenes = almacen;
             return View(inventarioDetalleVM);
         }
 
@@ -702,7 +708,8 @@ namespace LAMBusiness.Web.Controllers
                 InventarioDetalleID = detalle.InventarioDetalleID,
                 InventarioID = detalle.InventarioID,
                 ProductoID = detalle.ProductoID,
-                Productos = detalle.Productos
+                Productos = detalle.Productos,
+                AlmacenesDDL = await _combosHelper.GetComboAlmacenesAsync()
             };
 
             return View(detalleVM);
@@ -725,6 +732,8 @@ namespace LAMBusiness.Web.Controllers
                 TempData["toast"] = "Identificador incorrecto.";
                 return RedirectToAction(nameof(Index));
             }
+
+            inventarioDetalleVM.AlmacenesDDL = await _combosHelper.GetComboAlmacenesAsync();
 
             if (InventarioAplicada(inventarioDetalleVM.InventarioID))
             {

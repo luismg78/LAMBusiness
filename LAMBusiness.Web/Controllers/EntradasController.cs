@@ -20,6 +20,7 @@
     {
         private readonly DataContext _context;
         private readonly IGetHelper _getHelper;
+        private readonly ICombosHelper _combosHelper;
         private readonly IConverterHelper _converterHelper;
         private readonly IConfiguration _configuration;
         private readonly IDashboard _dashboard;
@@ -28,12 +29,14 @@
 
         public EntradasController(DataContext context,
             IGetHelper getHelper,
+            ICombosHelper combosHelper,
             IConverterHelper converterHelper,
             IConfiguration configuration,
             IDashboard dashboard)
         {
             _context = context;
             _getHelper = getHelper;
+            _combosHelper = combosHelper;
             _converterHelper = converterHelper;
             _configuration = configuration;
             _dashboard = dashboard;
@@ -607,7 +610,8 @@
                 EntradaID = (Guid)id,
                 Cantidad = 0,
                 PrecioCosto = 0,
-                PrecioVenta = 0
+                PrecioVenta = 0,
+                AlmacenesDDL = await _combosHelper.GetComboAlmacenesAsync()
             });
         }
 
@@ -628,6 +632,8 @@
                 TempData["toast"] = "Identificador incorrecto.";
                 return RedirectToAction(nameof(Index));
             }
+
+            entradaDetalle.AlmacenesDDL = await _combosHelper.GetComboAlmacenesAsync();
 
             if (EntradaAplicada(entradaDetalle.EntradaID))
             {
@@ -695,7 +701,8 @@
                         EntradaID = entradaDetalle.EntradaID,
                         Cantidad = 0,
                         PrecioCosto = 0,
-                        PrecioVenta = 0
+                        PrecioVenta = 0,
+                        AlmacenesDDL = await _combosHelper.GetComboAlmacenesAsync()
                     });
 
                 }
@@ -708,7 +715,6 @@
                 }
             }
 
-            entradaDetalle.Almacenes = almacen;
             entradaDetalle.Productos = producto;
             return View(entradaDetalle);
         }
@@ -737,6 +743,7 @@
                 return RedirectToAction(nameof(Details), new { id = detalle.EntradaID });
             }
 
+            detalle.AlmacenesDDL = await _combosHelper.GetComboAlmacenesAsync();
             return View(detalle);
         }
 
@@ -763,6 +770,8 @@
                 TempData["toast"] = "Entrada aplicada no se permiten cambios.";
                 return RedirectToAction(nameof(Details), new { id = entradaDetalle.EntradaID });
             }
+
+            entradaDetalle.AlmacenesDDL = await _combosHelper.GetComboAlmacenesAsync();
 
             if (entradaDetalle.AlmacenID == null)
             {

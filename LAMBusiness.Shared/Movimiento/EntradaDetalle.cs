@@ -1,10 +1,12 @@
 ﻿namespace LAMBusiness.Shared.Movimiento
 {
+    using Catalogo;
+    using Microsoft.AspNetCore.Mvc.Rendering;
+    using Newtonsoft.Json;
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using Catalogo;
-    using Newtonsoft.Json;
 
     public class EntradaDetalle
     {
@@ -52,5 +54,8 @@
         [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = true)]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public decimal? PrecioVenta { get; set; }
+
+        [NotMapped]
+        public virtual IEnumerable<SelectListItem> AlmacenesDDL { get; set; }
     }
 }

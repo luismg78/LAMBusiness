@@ -17,6 +17,24 @@
             _context = context;
         }
 
+        //Almacenes
+        public async Task<IEnumerable<SelectListItem>> GetComboAlmacenesAsync()
+        {
+            var list = await _context.Almacenes.Select(e => new SelectListItem()
+            {
+                Text = e.Nombre,
+                Value = e.AlmacenID.ToString()
+            }).OrderBy(e => e.Text).ToListAsync();
+
+            list.Insert(0, new SelectListItem()
+            {
+                Text = "[Seleccionar Almacén]",
+                Value = ""
+            });
+
+            return list;
+        }
+
         //Administradores
         public async Task<IEnumerable<SelectListItem>> GetComboAdministradoresAsync(Guid usuarioId)
         {

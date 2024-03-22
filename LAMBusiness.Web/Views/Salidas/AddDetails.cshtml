@@ -30,12 +30,7 @@
                 <div class="col-12">
                     <div class="form-group">
                         <label asp-for="AlmacenID" class="control-label required"></label>
-                        <select asp-for="AlmacenID" class="form-select">
-                            @if (Model.AlmacenID != null && Model.AlmacenID != Guid.Empty && Model.Almacenes != null)
-                            {
-                                <option value="@Model.AlmacenID">@Model.Almacenes.Nombre</option>
-                            }
-                        </select>
+                        <select asp-for="AlmacenID" class="form-select" asp-items="@Model.AlmacenesDDL"></select>
                         <span asp-validation-for="AlmacenID" class="text-danger"></span>
                     </div>
                 </div>
@@ -43,10 +38,10 @@
                 <div class="col-12">
                     <div class="form-group">
                         <label asp-for="ProductoID" class="control-label required"></label>
-                        <select asp-for="ProductoID" class="form-select">
+                        <select asp-for="ProductoID" class="form-select" autofocus>
                             @if (Model.ProductoID != null && Model.ProductoID != Guid.Empty && Model.Productos != null)
                             {
-                                <option value="@Model.ProductoID">@Model.Productos.Codigo @Model.Productos.Nombre</option>
+                                <option value="@Model.ProductoID">@Model.Productos.Codigo - @Model.Productos.Nombre</option>
                             }
                         </select>
                         <span asp-validation-for="ProductoID" class="text-danger"></span>
@@ -82,7 +77,7 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <script>
-        let urlAlmacenes = '@Url.Action("GetAlmacenesList", "Almacenes")';
+        // let urlAlmacenes = '@Url.Action("GetAlmacenesList", "Almacenes")';
         let urlProductos = '@Url.Action("GetProductList", "Productos")';
     </script>
     <script src="~/js/movements.js"></script>
