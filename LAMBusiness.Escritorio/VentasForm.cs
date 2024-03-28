@@ -835,7 +835,7 @@ namespace LAMBusiness.Escritorio
         private async Task ObtenerCambio()
         {
             decimal total = CalcularTotal();
-            _pago += Convert.ToDecimal(CodigoTextBox.Text);
+            //_pago += Convert.ToDecimal(CodigoTextBox.Text);
             decimal diferencia = _pago - total;
             if (diferencia < 0)
             {
@@ -1043,7 +1043,20 @@ namespace LAMBusiness.Escritorio
                 return resultado;
             }
 
-            resultado.Datos = Convert.ToDecimal(CodigoTextBox.Text);
+            decimal total = CalcularTotal();
+            _pago += Convert.ToDecimal(CodigoTextBox.Text);
+            decimal diferencia = _pago - total;
+            if (diferencia < 0)
+            {
+                resultado.Error = true;
+                resultado.Mensaje = $"Resta {Math.Abs(diferencia):$0.00}";
+                TotalLabel.Text = $"Resta {Math.Abs(diferencia):$0.00}";
+                TotalLabel.ForeColor = Color.Gray;
+                CodigoTextBox.Text = "";
+                return resultado;
+            }
+
+            resultado.Datos = _pago;
             return resultado;
         }
 
