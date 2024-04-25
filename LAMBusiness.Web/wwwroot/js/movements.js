@@ -358,3 +358,14 @@ if (typeof urlProveedores !== 'undefined' && urlProveedores !== undefined && url
         minimumResultsForSearch: 50
     });
 }
+
+function kardexDeMovimientos() {
+    var url = `${urlKardexDeMovimientos}?productoId=${productoId.val()}&almacenId=${almacenId.val()}`
+    let kardex = document.getElementById('kardexProductos');
+    kardex.innerHTML = '<div class="p-5 text-center"><div class="spinner-border text-base" role="status"><span class="visually-hidden">Loading...</span></div></div>'
+    fetch(url)
+        .then((response) => { return response.text(); })
+        .then((result) => {
+            kardex.innerHTML = result;
+        })
+}

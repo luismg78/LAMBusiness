@@ -1,0 +1,44 @@
+﻿@model LAMBusiness.Shared.Kardex.KardexDeProducto
+
+@if (Model != null)
+{
+    <div id="dRows" data-charging="0" data-rows-next="0">
+        <div class="p-3">
+            <div class="fw-bold">Existencia: @Model.Existencia</div>
+        </div>
+        <div class="px-md-3">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Usuario</th>
+                            <th scope="col" class="text-center">Fecha</th>
+                            <th scope="col" class="text-center">Estatus</th>
+                            <th scope="col">Movimiento</th>
+                            <th scope="col" class="text-center"></th>
+                            <th scope="col" class="text-end">Cantidad</th>
+                            <th scope="col" class="text-end">Existencia</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.KardexDeProductoDetalle != null && Model.KardexDeProductoDetalle.Count > 0)
+                        {
+                            foreach (var item in Model.KardexDeProductoDetalle)
+                            {
+                                <tr>
+                                    <td class="text-capitalize">@item.Usuario</td>
+                                    <td class="text-center">@item.Fecha</td>
+                                    <td class="text-center">@item.Estatus</td>
+                                    <td>@item.Movimiento</td>
+                                    <td class="text-center" style="background-color:@item.IconoColor"><i class="@item.Icono text-white"></i></td>
+                                    <td class="text-end">@item.Cantidad</td>
+                                    <td class="text-end">@item.Existencia</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

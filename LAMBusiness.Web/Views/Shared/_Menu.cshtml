@@ -12,7 +12,11 @@
     <ul class="navbar-nav flex-grow-1">
         <!-- menú inicio -->
         <li class="nav-item">
-            <a class="nav-link @if (menu == "home") {<text>fw-bold text-base</text>} else {<text>text-dark</text>} "
+            <a class="nav-link @if (menu == "home") {
+            <text>fw-bold text-base</text>
+} else {
+            <text>text-dark</text>
+} "
                asp-area="" asp-controller="Home" asp-action="Index">
                 <div class="d-md-none btn-icon rounded-circle d-inline-block">
                     <i class="fa fa-store"></i>
@@ -25,73 +29,111 @@
         {
             <!-- menú catálogo -->
             @if (Model.Administrador == "SA" || Model.Administrador == "GA" ||
-                Model.UsuariosModulos.Contains(Guid.Parse("50B65B8C-1CBA-47E4-8327-5F1A34375394")))
+           Model.UsuariosModulos.Contains(Guid.Parse("50B65B8C-1CBA-47E4-8327-5F1A34375394")))
             {
                 <li class="nav-item">
                     <a class="nav-link @if (menu == "catalogo")
-                {<text>fw-bold text-base</text>}
+               {
+            <text>fw-bold text-base</text>
+}
                 else
-                {<text>text-dark</text>} "
-                       asp-area="" asp-controller="Home" asp-action="Catalogo">
-                        <div class="d-md-none btn-icon rounded-circle d-inline-block">
-                            <i class="fa fa-th"></i>
-                        </div>
-                        <span class="ms-2 ms-md-0">Catálogos</span>
-                    </a>
+                {
+            <text>text-dark</text>
+} "
+                               asp-area="" asp-controller="Home" asp-action="Catalogo">
+                                <div class="d-md-none btn-icon rounded-circle d-inline-block">
+                                    <i class="fa fa-th"></i>
+                                </div>
+                                <span class="ms-2 ms-md-0">Catálogos</span>
+                            </a>
                 </li>
             }
 
             <!-- menú contacto -->
             @if (Model.Administrador == "SA" || Model.Administrador == "GA" ||
-                Model.UsuariosModulos.Contains(Guid.Parse("25C76712-5552-44C5-93A1-298590F337FA")))
+           Model.UsuariosModulos.Contains(Guid.Parse("25C76712-5552-44C5-93A1-298590F337FA")))
             {
                 <li class="nav-item">
                     <a class="nav-link @if (menu == "contacto")
-                {<text>fw-bold text-base</text>}
+               {
+            <text>fw-bold text-base</text>
+}
                 else
-                {<text>text-dark</text>} "
-                       asp-area="" asp-controller="Home" asp-action="Contacto">
-                        <div class="d-md-none btn-icon rounded-circle d-inline-block">
-                            <i class="fa fa-users"></i>
-                        </div>
-                        <span class="ms-2 ms-md-0">Contactos</span>
-                    </a>
+                {
+            <text>text-dark</text>
+} "
+                               asp-area="" asp-controller="Home" asp-action="Contacto">
+                                <div class="d-md-none btn-icon rounded-circle d-inline-block">
+                                    <i class="fa fa-users"></i>
+                                </div>
+                                <span class="ms-2 ms-md-0">Contactos</span>
+                            </a>
                 </li>
             }
 
             <!-- menú movimiento-->
             @if (Model.Administrador == "SA" || Model.Administrador == "GA" ||
-                Model.UsuariosModulos.Contains(Guid.Parse("4BA5D993-8BEB-48AF-A45F-4813825A658F")))
+           Model.UsuariosModulos.Contains(Guid.Parse("4BA5D993-8BEB-48AF-A45F-4813825A658F")))
             {
                 <li class="nav-item">
                     <a class="nav-link @if (menu == "movimiento")
-                {<text>fw-bold text-base</text>}
+               {
+            <text>fw-bold text-base</text>
+}
                 else
-                {<text>text-dark</text>} "
-                       asp-area="" asp-controller="Home" asp-action="Movimiento">
+                {
+            <text>text-dark</text>
+} "
+                               asp-area="" asp-controller="Home" asp-action="Movimiento">
+                                <div class="d-md-none btn-icon rounded-circle d-inline-block">
+                                    <i class="fa fa-shopping-cart"></i>
+                                </div>
+                                <span class="ms-2 ms-md-0">Movimientos</span>
+                            </a>
+                </li>
+            }
+
+            <!-- menú kardex -->
+            @if (Model.Administrador == "SA" || Model.Administrador == "GA" ||
+           Model.UsuariosModulos.Contains(Guid.Parse("9A3994DC-D054-49D0-BED4-5CF4D0599597")))
+            {
+                <li class="nav-item">
+                    <a class="nav-link @if (menu == "kardex")
+                    {
+                        <text>fw-bold text-base</text>
+                    }
+                    else
+                    {
+                        <text>text-dark</text>
+                    } "
+                        asp-area="" asp-controller="Home" asp-action="Kardex">
                         <div class="d-md-none btn-icon rounded-circle d-inline-block">
-                            <i class="fa fa-shopping-cart"></i>
+                            <i class="fa fa-users"></i>
                         </div>
-                        <span class="ms-2 ms-md-0">Movimientos</span>
+                        <span class="ms-2 ms-md-0">Kardex</span>
                     </a>
                 </li>
             }
 
             <!-- menú dashboard-->
             @if (Model.Administrador == "SA" || Model.Administrador == "GA" ||
-                 Model.UsuariosModulos.Contains(Guid.Parse("C803EECE-79A9-4B7F-955C-3A0CC70BFEDB")))
+           Model.UsuariosModulos.Contains(Guid.Parse("C803EECE-79A9-4B7F-955C-3A0CC70BFEDB")))
             {
                 <li class="nav-item">
                     <a class="nav-link @if (menu == "dashboard")
-                {<text>fw-bold text-base</text>}
+               {
+            <text>fw-bold text-base</text>
+}
                 else
-                {<text>text-dark</text>} "
-                       asp-area="" asp-controller="Home" asp-action="Dashboard">
-                        <div class="d-md-none btn-icon rounded-circle d-inline-block">
-                            <i class="fa fa-shopping-cart"></i>
-                        </div>
-                        <span class="ms-2 ms-md-0">Dashboard</span>
-                    </a>
+                {
+            <text>text-dark</text>
+} "
+                               asp-area="" asp-controller="Home" asp-action="Dashboard">
+                                <div class="d-md-none btn-icon rounded-circle d-inline-block">
+                                    <i class="fa fa-shopping-cart"></i>
+                                </div>
+                                <span class="ms-2 ms-md-0">Dashboard</span>
+                            </a>
                 </li>
             }
 
@@ -100,15 +142,19 @@
             {
                 <li class="nav-item">
                     <a class="nav-link @if (menu == "aplicacion")
-                {<text>fw-bold text-base</text>}
+               {
+            <text>fw-bold text-base</text>
+}
                 else
-                {<text>text-dark</text>} "
-                       asp-area="" asp-controller="Home" asp-action="Aplicacion">
-                        <div class="d-md-none btn-icon rounded-circle d-inline-block">
-                            <i class="fa fa-user-cog"></i>
-                        </div>
-                        <span class="ms-2 ms-md-0">Aplicaciones</span>
-                    </a>
+                {
+            <text>text-dark</text>
+} "
+                               asp-area="" asp-controller="Home" asp-action="Aplicacion">
+                                <div class="d-md-none btn-icon rounded-circle d-inline-block">
+                                    <i class="fa fa-user-cog"></i>
+                                </div>
+                                <span class="ms-2 ms-md-0">Aplicaciones</span>
+                            </a>
                 </li>
             }
         }

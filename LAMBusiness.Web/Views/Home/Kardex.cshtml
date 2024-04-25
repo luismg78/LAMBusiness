@@ -1,0 +1,35 @@
+﻿@model LAMBusiness.Shared.Dashboard.Kardex
+
+@{
+    ViewData["Title"] = "Kardex";
+}
+
+<div class="pb-0">
+    <div>
+        <h3 class="modal-title" id="exampleModalLabel">Kardex</h3>
+        <ul class="breadcrumb bg-transparent p-0 small">
+            <li class="breadcrumb-item">Menú</li>
+            <li class="breadcrumb-item active">Kardex</li>
+        </ul>
+    </div>
+</div>
+<div class="modal-body py-4">
+    <div class="row">
+        <!--Productos-->
+        @if (Model.ModulosMenu.Contains(Guid.Parse("3B55740F-0263-410B-8A5C-65AFE195625C")))
+        {
+            <div class="btn-lam col-xl-4 col-md-6">
+                <a asp-action="Productos" asp-controller="Kardex" class="text-decoration-none">
+                    <div class="card mb-4 text-dark">
+                        <div class="card-body bg-card text-center py-5">
+                            <i class="fab fa-product-hunt display-4 mb-3 text-info"></i>
+                            <h4 class="mb-0">Productos</h4>
+                            <p class="mb-2">Kardex de productos</p>
+                            <span class="badge bg-light border text-dark fw-normal">Entradas, Salidas, Ventas, etc.</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</div>

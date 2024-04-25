@@ -207,6 +207,24 @@
             return View(dashboard);
         }
 
+        public async Task<IActionResult> Kardex()
+        {
+            var validateToken = await ValidatedToken(_configuration, _getHelper, "kardex");
+            if (validateToken != null) { return validateToken; }
+
+            Guid moduloId = Guid.Parse("9A3994DC-D054-49D0-BED4-5CF4D0599597");
+            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var kardex = new Kardex()
+            {
+                ModulosMenu = await _getHelper.GetModulesByUsuarioIDAndModuloPadreID(token.UsuarioID, moduloId)
+            };
+            return View(kardex);
+        }
+
         public async Task<IActionResult> Movimiento()
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
