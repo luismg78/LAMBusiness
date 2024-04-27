@@ -1,11 +1,10 @@
 ﻿namespace LAMBusiness.Shared.Movimiento
 {
+    using Catalogo;
+    using Newtonsoft.Json;
     using System;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using Catalogo;
-    using Contacto;
-    using Newtonsoft.Json;
 
     public class VentaImporte
     {

@@ -1002,6 +1002,13 @@ namespace LAMBusiness.Escritorio
                     Fecha = venta.Fecha?.ToString("dd/MM/yyyy HH:mm"),
                     Folio = venta.Folio.ToString("000000000"),
                     ImporteTotalDeVenta = venta.ImporteTotal.ToString("$#,###,###,##0.00"),
+                    FormasDePagoDetalle = venta.VentasImportes.Select(v => new FormasDePagoDTO
+                    {
+                        FormaDePagoId = v.FormaPagoID,
+                        Importe = v.Importe,
+                        Nombre = v.FormasPago.Nombre
+                    }).ToList(),
+                    Cambio = venta.VentasImportes.Sum(v => v.Importe) - venta.ImporteTotal,
                     DetalleDeVenta = new()
                 };
 

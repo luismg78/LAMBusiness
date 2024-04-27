@@ -581,9 +581,9 @@ namespace LAMBusiness.Backend
                     Almacenes = p.Almacenes,
                     Fecha = p.Fecha,
                     Folio = p.Folio,
-                    ImporteTotal = _contexto.VentasImportes
+                    ImporteTotal = _contexto.VentasDetalle
                     .Where(v => v.VentaID == p.VentaID)
-                    .Sum(v => v.Importe),
+                    .Sum(v => v.Cantidad * v.PrecioVenta),
                     Usuarios = p.Usuarios,
                     VentaID = p.VentaID,
                 });
@@ -842,14 +842,23 @@ namespace LAMBusiness.Backend
                 return resultado;
             }
 
+            var formasDePago = await _contexto.VentasImportes
+                .Include(v => v.FormasPago)
+                .Where(v => v.VentaID == id)
+                .ToListAsync();
+            if (formasDePago == null || formasDePago.Count == 0)
+                formasDePago = new List<VentaImporte>();
+
             resultado.Datos = new VentasDTO()
             {
                 Fecha = venta.Fecha,
                 Folio = venta.Folio,
                 Usuarios = venta.Usuarios,
                 VentasDetalle = detalle,
-                ImporteTotal = detalle.Sum(d => d.Cantidad * d.PrecioVenta)
+                ImporteTotal = detalle.Sum(d => d.Cantidad * d.PrecioVenta),
+                VentasImportes = formasDePago
             };
+
 
             return resultado;
         }
