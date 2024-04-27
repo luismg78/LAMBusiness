@@ -76,23 +76,24 @@
             return Json(new { Estatus = agregar.Mensaje, agregar.Reiniciar, agregar.Error });
         }
 
-        public async Task<IActionResult> Aplicar(Guid? id, decimal importe)
+        public async Task<IActionResult> Aplicar(Guid? id)
         {
-            var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
-            if (validateToken != null) { return Json(new { Reiniciar = true, Error = true }); }
+            //var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+            //if (validateToken != null) { return Json(new { Reiniciar = true, Error = true }); }
 
-            if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
-                return Json(new { Reiniciar = true, Error = true });
+            //if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoEscritura))
+            //    return Json(new { Reiniciar = true, Error = true });
 
-            var venta = await _ventas.Aplicar(id, token.UsuarioID, importe);
-            if (venta.Error)
-            {
-                await BitacoraAsync("Aplicar", venta.Datos, venta.Excepcion);
-                return Json(new { Estatus = "Venta no realizada.", Error = true });
-            }
+            //var venta = await _ventas.Aplicar(id, token.UsuarioID, formade);
+            //if (venta.Error)
+            //{
+            //    await BitacoraAsync("Aplicar", venta.Datos, venta.Excepcion);
+            //    return Json(new { Estatus = "Venta no realizada.", Error = true });
+            //}
 
-            await BitacoraAsync("Aplicar", venta.Datos);
-            return PartialView(venta.Datos);
+            //await BitacoraAsync("Aplicar", venta.Datos);
+            //return PartialView(venta.Datos);
+            return null;
         }
 
         public async Task<IActionResult> CerrarVentas()

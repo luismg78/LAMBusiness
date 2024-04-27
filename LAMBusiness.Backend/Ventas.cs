@@ -98,7 +98,7 @@ namespace LAMBusiness.Backend
             return resultado;
         }
 
-        public async Task<Resultado<VentasDTO>> Aplicar(Guid? id, Guid usuarioId, decimal importe)
+        public async Task<Resultado<VentasDTO>> Aplicar(Guid? id, Guid usuarioId, Dictionary<byte, decimal> importe)
         {
             Resultado<VentasDTO> resultado = new();
 
@@ -132,7 +132,7 @@ namespace LAMBusiness.Backend
 
             var ventasNoAplicadasDetalleCanceladas = ventasNoAplicadasDetalle
                 .Where(v => v.Cantidad < 0).ToList();
-            if(ventasNoAplicadasDetalleCanceladas != null && ventasNoAplicadasDetalleCanceladas.Count> 0)
+            if (ventasNoAplicadasDetalleCanceladas != null && ventasNoAplicadasDetalleCanceladas.Count > 0)
             {
                 Guid ventaCanceladaId = Guid.NewGuid();
                 _contexto.Add(new VentaCancelada()
@@ -142,7 +142,7 @@ namespace LAMBusiness.Backend
                     UsuarioID = usuarioId,
                     VentaCompleta = false
                 });
-                foreach(var item in ventasNoAplicadasDetalleCanceladas)
+                foreach (var item in ventasNoAplicadasDetalleCanceladas)
                 {
                     _contexto.Add(new VentaCanceladaDetalle()
                     {
@@ -170,7 +170,8 @@ namespace LAMBusiness.Backend
                 }).ToList();
 
             decimal importeTotal = ventasNoAplicadasDetalleAgrupada.Sum(v => v.Importe);
-            if (importeTotal > importe)
+            decimal importeTotalCliente = importe.Sum(i => i.Value);
+            if (importeTotal > importeTotalCliente)
             {
                 resultado.Error = true;
                 resultado.Mensaje = "Importe inferior al total.";
@@ -199,17 +200,20 @@ namespace LAMBusiness.Backend
 
             _contexto.Ventas.Add(venta);
 
-            List<VentaImporte> ventasImporte = new List<VentaImporte>();
-            VentaImporte ventaImporte = new VentaImporte()
+            List<VentaImporte> ventasImportes = new();
+            foreach (var imp in importe)
             {
-                FormaPagoID = 1,
-                Importe = importeTotal,
-                VentaID = (Guid)id,
-                VentaImporteID = Guid.NewGuid()
-            };
+                VentaImporte ventaImporte = new()
+                {
+                    FormaPagoID = imp.Key,
+                    Importe = imp.Value,
+                    VentaID = (Guid)id,
+                    VentaImporteID = Guid.NewGuid()
+                };
+                ventasImportes.Add(ventaImporte);
+                _contexto.VentasImportes.Add(ventaImporte);
+            }
 
-            ventasImporte.Add(ventaImporte);
-            _contexto.VentasImportes.Add(ventaImporte);
 
             List<VentaDetalle> ventasDetalle = new List<VentaDetalle>();
 
@@ -285,13 +289,13 @@ namespace LAMBusiness.Backend
                 ClienteID = Guid.Empty,
                 Fecha = fecha,
                 Folio = (decimal)folio,
-                ImporteCobro = importe,
+                ImporteCobro = importe.Sum(i => i.Value),
                 ImporteTotal = importeTotal,
                 UsuarioID = usuarioId,
                 VentaCierreID = null,
                 VentaID = (Guid)id,
                 VentasDetalle = ventasDetalle,
-                VentasImportes = ventasImporte
+                VentasImportes = ventasImportes
             };
 
             EstadisticaMovimientoDTO estadisticaMovimiento = new()
@@ -454,7 +458,7 @@ namespace LAMBusiness.Backend
             Resultado<CorteDeCajaDTO> resultado = new();
 
             var usuario = await _contexto.Usuarios.FindAsync(usuarioId);
-            if(usuario == null)
+            if (usuario == null)
             {
                 resultado.Error = true;
                 resultado.Mensaje = "El identificador del usuario es incorrecto.";
@@ -463,17 +467,39 @@ namespace LAMBusiness.Backend
 
             Guid ventaDeCierreId = Guid.NewGuid();
 
-            var importesDelSistema = await (from v in _contexto.Ventas
-                                            join vi in _contexto.VentasImportes on v.VentaID equals vi.VentaID
-                                            join fp in _contexto.FormasPago on vi.FormaPagoID equals fp.FormaPagoID
-                                            where v.UsuarioID == usuarioId && (v.VentaCierreID == null || v.VentaCierreID == Guid.Empty)
-                                            group new { fp, vi } by new { fp.FormaPagoID, fp.Nombre } into g
-                                            select new ImporteDelSistemaDetalle()
-                                            {
-                                                FormaDePagoId = g.Key.FormaPagoID,
-                                                FormaDePago = g.Key.Nombre,
-                                                Importe = g.Sum(a => a.vi.Importe)
-                                            }).ToListAsync();
+            var importeDelSistema = await (from v in _contexto.Ventas
+                                           join d in _contexto.VentasDetalle on v.VentaID equals d.VentaID
+                                           where v.UsuarioID == usuarioId && (v.VentaCierreID == null || v.VentaCierreID == Guid.Empty)
+                                           select d).SumAsync(v => v.Cantidad * v.PrecioVenta);
+
+            var retirosDeCaja = await _contexto.RetirosCaja
+                .Where(r => r.UsuarioID == usuarioId && (r.VentaCierreID == null || r.VentaCierreID == Guid.Empty))
+                .ToListAsync();
+
+            if (retirosDeCaja == null || !retirosDeCaja.Any())
+            {
+                resultado.Error = true;
+                resultado.Mensaje = "Proceso no realizado, ingrese al menos un retiro de caja.";
+                return resultado;
+            }
+
+            foreach (var retiro in retirosDeCaja)
+            {
+                retiro.VentaCierreID = ventaDeCierreId;
+                _contexto.Update(retiro);
+            }
+
+            var formasDePago = await (from v in _contexto.Ventas
+                                      join vi in _contexto.VentasImportes on v.VentaID equals vi.VentaID
+                                      join fp in _contexto.FormasPago on vi.FormaPagoID equals fp.FormaPagoID
+                                      where v.UsuarioID == usuarioId && (v.VentaCierreID == null || v.VentaCierreID == Guid.Empty)
+                                      group new { fp, vi } by new { fp.FormaPagoID, fp.Nombre } into g
+                                      select new FormasDePagoDTO()
+                                      {
+                                          FormaDePagoId = g.Key.FormaPagoID,
+                                          Nombre = g.Key.Nombre,
+                                          Importe = g.Sum(a => a.vi.Importe)
+                                      }).ToListAsync();
 
             var ventas = await (from v in _contexto.Ventas
                                 join vi in _contexto.VentasImportes on v.VentaID equals vi.VentaID
@@ -494,39 +520,23 @@ namespace LAMBusiness.Backend
                 _contexto.Update(venta);
             }
 
-            var importeDelUsuario = await _contexto.RetirosCaja
-                .Where(r => r.UsuarioID == usuarioId && (r.VentaCierreID == null || r.VentaCierreID == Guid.Empty)).ToListAsync();
 
-            if (importeDelUsuario == null || !importeDelUsuario.Any())
-            {
-                resultado.Error = true;
-                resultado.Mensaje = "Proceso no realizado, ingrese al menos un retiro de caja.";
-                return resultado;
-            }
-
-            foreach (var retiro in importeDelUsuario)
-            {
-                retiro.VentaCierreID = ventaDeCierreId;
-                _contexto.Update(retiro);
-            }
-
-            decimal totalSistema = importesDelSistema == null || !importesDelSistema.Any() ? 0 : importesDelSistema.Sum(i => i.Importe);
-            decimal totalUsuario = importeDelUsuario == null || !importeDelUsuario.Any() ? 0 : importeDelUsuario.Sum(r => r.Importe);
+            decimal totalUsuario = retirosDeCaja == null || retirosDeCaja.Count == 0 ? 0 : retirosDeCaja.Sum(r => r.Importe);
 
             var fecha = DateTime.Now;
             _contexto.VentasCierre.Add(new VentaCierre()
             {
                 Fecha = fecha,
-                ImporteSistema = totalSistema,
+                ImporteSistema = importeDelSistema,
                 ImporteUsuario = totalUsuario,
                 UsuarioCajaID = usuarioId,
                 UsuarioID = usuarioId,
                 VentaCierreID = ventaDeCierreId
             });
 
-            if (importesDelSistema != null && importesDelSistema.Any())
+            if (formasDePago != null && formasDePago.Any())
             {
-                foreach (var item in importesDelSistema)
+                foreach (var item in formasDePago)
                 {
                     _contexto.VentasCierreDetalle.Add(new VentaCierreDetalle()
                     {
@@ -542,9 +552,9 @@ namespace LAMBusiness.Backend
             {
                 Fecha = fecha,
                 Usuario = usuario.NombreCompleto,
-                ImporteDelSistema = totalSistema,
+                ImporteDelSistema = importeDelSistema,
                 ImporteDelUsuario = totalUsuario,
-                ImporteDelSistemaDetalle = importesDelSistema
+                FormasDePagoDetalle = formasDePago
             };
 
             try
@@ -815,7 +825,7 @@ namespace LAMBusiness.Backend
             var venta = await _contexto.Ventas
                 .Include(v => v.Usuarios)
                 .FirstOrDefaultAsync(v => v.VentaID == id);
-            if(venta == null)
+            if (venta == null)
             {
                 resultado.Error = true;
                 resultado.Mensaje = "El identificador de la venta es incorrecto.";
@@ -843,7 +853,7 @@ namespace LAMBusiness.Backend
 
             return resultado;
         }
-                
+
         public async Task<Filtro<List<VentasDTO>>> ObtenerVentasAsync(Filtro<List<VentasDTO>> filtro)
         {
             IQueryable<VentasDTO> registros = FiltrarRegistro();

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace LAMBusiness.Shared.DTO.Movimiento
 {
@@ -22,6 +23,8 @@ namespace LAMBusiness.Shared.DTO.Movimiento
         //corte de caja
         public string ImporteTotalDeSistema { get; set; }
         public string ImporteTotalDeRetiros { get; set; }
+        public decimal Cambio { get; set; }
+        public List<FormasDePagoDTO> FormasDePagoDetalle { get; set; } = null!;
 
         public List<TicketDetalleDTO> DetalleDeVenta { get; set; }
     }   

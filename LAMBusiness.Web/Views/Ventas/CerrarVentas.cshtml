@@ -9,11 +9,11 @@
             </div>
             <div class="col-6 mb-3">Sistema</div>
             <div class="col-6 mb-3 text-end">@Model.ImporteDelSistema.ToString("$###,###,##0.00")</div>
-            @if (Model.ImporteDelSistemaDetalle != null && Model.ImporteDelSistemaDetalle.Any())
+            @if (Model.FormasDePagoDetalle != null && Model.FormasDePagoDetalle.Any())
             {
-                foreach (var item in Model.ImporteDelSistemaDetalle)
+                foreach (var item in Model.FormasDePagoDetalle)
                 {
-                    <div class="col-6 mb-3 text-muted">@item.FormaDePago</div>
+                    <div class="col-6 mb-3 text-muted">@item.Nombre</div>
                     <div class="col-6 mb-3 text-muted text-end">@item.Importe.ToString("$###,###,##0.00")</div>
                 }
             }
