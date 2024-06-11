@@ -25,6 +25,9 @@ namespace LAMBusiness.Backend
                 return resultado;
             }
 
+            formaDePago.PorcentajeDeCobroExtra ??= 0;
+            formaDePago.TextoPorCobroExtra ??= "";
+
             resultado.Datos = formaDePago;
             return resultado;
         }

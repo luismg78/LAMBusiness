@@ -33,5 +33,13 @@
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public decimal Importe { get; set; }
 
+        [Column(TypeName = "decimal(18,2)")]
+        [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = true)]
+        public decimal ImporteSinPorcentaje { get; set; } = 0;
+
+        [Column(TypeName = "decimal(18,2)")]
+        [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = true)]
+        public decimal ImporteDelPorcentaje { get; set; } = 0;
+
     }
 }

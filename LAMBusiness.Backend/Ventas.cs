@@ -201,14 +201,28 @@ namespace LAMBusiness.Backend
             _contexto.Ventas.Add(venta);
 
             List<VentaImporte> ventasImportes = new();
+            var formasDePago = await _contexto.FormasPago.ToListAsync();
             foreach (var imp in importe)
             {
+                var formaDePago = formasDePago.FirstOrDefault(f => f.FormaPagoID == imp.Key);
+                if(formaDePago == null)
+                {
+                    resultado.Error = true;
+                    resultado.Mensaje = "forma de pago inexistente.";
+                    return resultado;
+                }
+                formaDePago.PorcentajeDeCobroExtra ??= 0;
+                decimal importeDelPorcentaje = imp.Value * (decimal)formaDePago.PorcentajeDeCobroExtra / 100;
+
                 VentaImporte ventaImporte = new()
                 {
                     FormaPagoID = imp.Key,
-                    Importe = imp.Value,
+                    Importe = imp.Value + importeDelPorcentaje,
                     VentaID = (Guid)id,
-                    VentaImporteID = Guid.NewGuid()
+                    VentaImporteID = Guid.NewGuid(),
+                    ImporteDelPorcentaje = importeDelPorcentaje,
+                    ImporteSinPorcentaje = imp.Value,
+                    PorcentajeDeCobroExtra = formaDePago.PorcentajeDeCobroExtra,
                 };
                 ventasImportes.Add(ventaImporte);
                 _contexto.VentasImportes.Add(ventaImporte);
@@ -498,7 +512,9 @@ namespace LAMBusiness.Backend
                                       {
                                           FormaDePagoId = g.Key.FormaPagoID,
                                           Nombre = g.Key.Nombre,
-                                          Importe = g.Sum(a => a.vi.Importe)
+                                          Importe = g.Sum(a => a.vi.Importe),
+                                          ImporteSinPorcentaje = g.Sum(a => (decimal?)a.vi.ImporteSinPorcentaje) ?? 0,
+                                          ImporteDelPorcentaje = g.Sum(a => (decimal?)a.vi.ImporteDelPorcentaje) ?? 0
                                       }).ToListAsync();
 
             var ventas = await (from v in _contexto.Ventas
@@ -542,6 +558,8 @@ namespace LAMBusiness.Backend
                     {
                         FormaPagoID = item.FormaDePagoId,
                         Importe = item.Importe,
+                        ImporteDelPorcentaje = item.ImporteDelPorcentaje,
+                        ImporteSinPorcentaje = item.ImporteSinPorcentaje,
                         VentaCierreDetalleID = Guid.NewGuid(),
                         VentaCierreID = ventaDeCierreId
                     });

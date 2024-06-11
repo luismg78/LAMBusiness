@@ -32,5 +32,9 @@
         [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = true)]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public decimal Importe { get; set; }
+        
+        public decimal? ImporteSinPorcentaje { get; set; }
+        public decimal? ImporteDelPorcentaje { get; set; }
+        public int? PorcentajeDeCobroExtra { get; set; }
     }
 }

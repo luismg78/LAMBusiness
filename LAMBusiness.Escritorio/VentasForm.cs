@@ -6,10 +6,7 @@ using LAMBusiness.Shared.Catalogo;
 using LAMBusiness.Shared.DTO.Movimiento;
 using LAMBusiness.Shared.Movimiento;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using static LAMBusiness.Shared.Accion.Accion;
 
 namespace LAMBusiness.Escritorio
 {
@@ -224,40 +221,43 @@ namespace LAMBusiness.Escritorio
 
         private async Task RemoverDetalleDeVenta(int i)
         {
-            decimal cantidad = Convert.ToDecimal(ProductosDataGridView.Rows[i].Cells[0].Value) * -1;
-            decimal precio = Convert.ToDecimal(ProductosDataGridView.Rows[i].Cells[3].Value);
-            Guid id = Guid.Parse(ProductosDataGridView.Rows[i].Cells[5].Value.ToString()!);
-
-            string pregunta = "¿Desea eliminar el detalle del producto?";
-            Color color = Color.Red;
-            if (cantidad > 0)
+            if (!string.IsNullOrEmpty(ProductosDataGridView.Rows[i].Cells[5].Value.ToString()))
             {
-                color = Color.Black;
-                pregunta = "¿Desea restablecer el detalle del producto?";
-            }
+                decimal cantidad = Convert.ToDecimal(ProductosDataGridView.Rows[i].Cells[0].Value) * -1;
+                decimal precio = Convert.ToDecimal(ProductosDataGridView.Rows[i].Cells[3].Value);
+                Guid id = Guid.Parse(ProductosDataGridView.Rows[i].Cells[5].Value.ToString()!);
 
-            if (MessageBox.Show(pregunta, "Eliminación parcial", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.OK)
-            {
-                using var contexto = new DataContext(_configuracion);
-                Ventas ventas = new(contexto);
-                var resultado = await ventas.CancelarVentaParcial(id, (Guid)Global.UsuarioId!);
-                if (!resultado.Error)
+                string pregunta = "¿Desea eliminar el detalle del producto?";
+                Color color = Color.Red;
+                if (cantidad > 0)
                 {
-                    var importe = precio * cantidad;
-                    ProductosDataGridView.Rows[i].Cells[0].Value = $"{cantidad:0.0000}";
-                    ProductosDataGridView.Rows[i].Cells[4].Value = $"{importe:0.00}";
-                    ProductosDataGridView.Rows[i].DefaultCellStyle.ForeColor = color;
-                    ObtenerTotal();
-                    Notificar("El producto fue cancelado con éxito.");
+                    color = Color.Black;
+                    pregunta = "¿Desea restablecer el detalle del producto?";
+                }
+
+                if (MessageBox.Show(pregunta, "Eliminación parcial", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.OK)
+                {
+                    using var contexto = new DataContext(_configuracion);
+                    Ventas ventas = new(contexto);
+                    var resultado = await ventas.CancelarVentaParcial(id, (Guid)Global.UsuarioId!);
+                    if (!resultado.Error)
+                    {
+                        var importe = precio * cantidad;
+                        ProductosDataGridView.Rows[i].Cells[0].Value = $"{cantidad:0.0000}";
+                        ProductosDataGridView.Rows[i].Cells[4].Value = $"{importe:0.00}";
+                        ProductosDataGridView.Rows[i].DefaultCellStyle.ForeColor = color;
+                        ObtenerTotal();
+                        Notificar("El producto fue cancelado con éxito.");
+                    }
+                    else
+                    {
+                        Notificar(resultado.Mensaje);
+                    }
                 }
                 else
                 {
-                    Notificar(resultado.Mensaje);
+                    Notificar("Operación cancelada por el usuario");
                 }
-            }
-            else
-            {
-                Notificar("Operación cancelada por el usuario");
             }
         }
         #endregion
@@ -658,17 +658,21 @@ namespace LAMBusiness.Escritorio
                 {
                     _ventaId = ventaNoAplicada.VentaNoAplicadaID;
                     ProductosDataGridView.Rows.Clear();
-                    _totalConFormaDePago.Clear();
                 }
                 else
                 {
-#warning eliminar las filas cuando se cancela la operación de cobro
-                    foreach (DataGridViewRow item in ProductosDataGridView.Rows)
+                    for (var i = 0; i < ProductosDataGridView.Rows.Count; i++)
                     {
-                        if (string.IsNullOrEmpty(item.Cells[5].Value.ToString()))
-                            ProductosDataGridView.Rows.RemoveAt(item.Index);
+                        if (string.IsNullOrEmpty(ProductosDataGridView.Rows[i].Cells[5].Value.ToString()))
+                        {
+                            ProductosDataGridView.Rows.RemoveAt(i);
+                            i--;
+                        }
+                        else
+                            continue;
                     }
                 }
+                _totalConFormaDePago.Clear();
                 ObtenerTotal();
                 CodigoTextBox.CharacterCasing = CharacterCasing.Upper;
                 CodigoTextBox.Text = string.Empty;
@@ -783,6 +787,11 @@ namespace LAMBusiness.Escritorio
                 foreach (var formaDePago in corte.FormasDePagoDetalle)
                 {
                     ProductosDataGridView.Rows.Add("*", "", formaDePago.Nombre, "", $"{formaDePago.Importe:$###,###,##0.00}", "");
+                    if(formaDePago.ImporteDelPorcentaje > 0)
+                    {
+                        ProductosDataGridView.Rows.Add("-", "", "Importe sin porcentaje", "", $"{formaDePago.ImporteSinPorcentaje:$###,###,##0.00}", "");
+                        ProductosDataGridView.Rows.Add("-", "", "Importe del porcentaje", "", $"{formaDePago.ImporteDelPorcentaje:$###,###,##0.00}", "");
+                    }
                 }
             }
             var diferencia = corte.ImporteDelSistema - corte.ImporteDelUsuario;
@@ -882,7 +891,7 @@ namespace LAMBusiness.Escritorio
             decimal total = 0;
             for (var i = 0; i < ProductosDataGridView.Rows.Count; i++)
             {
-                var id = ProductosDataGridView.Rows[i].Cells[5].Value;
+                var id = ProductosDataGridView.Rows[i].Cells[0].Value;
                 if (id != null && !string.IsNullOrEmpty(id.ToString()))
                 {
                     decimal importe = Convert.ToDecimal(ProductosDataGridView.Rows[i].Cells[4].Value);
@@ -944,10 +953,10 @@ namespace LAMBusiness.Escritorio
             rpt.CreateDocument();
             try
             {
-                //string ruta = AppDomain.CurrentDomain.BaseDirectory;
-                //var pdf = Path.Combine(ruta, "Reportes", "ticketDeCorteDeCaja.pdf");
-                //rpt.ExportToPdf(pdf);
-                rpt.Print();
+                string ruta = AppDomain.CurrentDomain.BaseDirectory;
+                var pdf = Path.Combine(ruta, "Reportes", "ticketDeCorteDeCaja.pdf");
+                rpt.ExportToPdf(pdf);
+                //rpt.Print();
             }
             catch (Exception)
             {
@@ -969,10 +978,10 @@ namespace LAMBusiness.Escritorio
             rpt.CreateDocument();
             try
             {
-                //string ruta = AppDomain.CurrentDomain.BaseDirectory;
-                //var pdf = Path.Combine(ruta, "Reportes", "ticketDeRetiroDeCaja.pdf");
-                //rpt.ExportToPdf(pdf);
-                rpt.Print();
+                string ruta = AppDomain.CurrentDomain.BaseDirectory;
+                var pdf = Path.Combine(ruta, "Reportes", "ticketDeRetiroDeCaja.pdf");
+                rpt.ExportToPdf(pdf);
+                //rpt.Print();
             }
             catch (Exception)
             {
@@ -991,10 +1000,10 @@ namespace LAMBusiness.Escritorio
             rpt.CreateDocument();
             try
             {
-                //string ruta = AppDomain.CurrentDomain.BaseDirectory;
-                //var pdf = Path.Combine(ruta, "Reportes", "ticketDeVenta.pdf");
-                //rpt.ExportToPdf(pdf);
-                rpt.Print();
+                string ruta = AppDomain.CurrentDomain.BaseDirectory;
+                var pdf = Path.Combine(ruta, "Reportes", "ticketDeVenta.pdf");
+                rpt.ExportToPdf(pdf);
+                //rpt.Print();
             }
             catch (Exception)
             {

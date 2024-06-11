@@ -11,7 +11,7 @@ namespace LAMBusiness.Shared.DTO.Movimiento
         public decimal ImporteDelSistema { get; set; }
         public decimal ImporteDelUsuario { get; set; }
         public List<FormasDePagoDTO> FormasDePagoDetalle { get; set; } = null!;
-        public decimal Cambio => FormasDePagoDetalle.Sum(x => x.Importe) - ImporteDelSistema;
+        public decimal Cambio => FormasDePagoDetalle.Sum(x => x.ImporteSinPorcentaje) - ImporteDelSistema;
     }
 
     public class FormasDePagoDTO
@@ -19,5 +19,7 @@ namespace LAMBusiness.Shared.DTO.Movimiento
         public byte FormaDePagoId { get; set; }
         public string Nombre { get; set; }
         public decimal Importe { get; set; }
+        public decimal ImporteSinPorcentaje { get; set; }
+        public decimal ImporteDelPorcentaje { get; set; }
     }
 }
