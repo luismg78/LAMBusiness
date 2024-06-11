@@ -22,14 +22,33 @@
                 <a asp-action="Index" asp-controller="FormasPago" class="btn-close me-md-1" aria-label="Close"></a>
             </div>
         </div>
-        <div class="modal-body py-4">
-            <div class="row px-md-3">
-                <div class="col">
+        <div class="modal-body py-4 px-md-3">
+            <div class="row">
+                <div class="col-12">
                     <div class="form-group">
                         <label asp-for="Nombre" class="control-label required"></label>
                         <input asp-for="Nombre" class="form-control" autofocus/>
                         <span asp-validation-for="Nombre" class="text-danger"></span>
                     </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label asp-for="PorcentajeDeCobroExtra" class="control-label"></label>
+                        <div class="input-group">
+                            <input asp-for="PorcentajeDeCobroExtra" class="form-control" />
+                            <span class="input-group-text">%</span>
+                        </div>
+                        <span asp-validation-for="PorcentajeDeCobroExtra" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label asp-for="TextoPorCobroExtra" class="control-label"></label>
+                        <input asp-for="TextoPorCobroExtra" class="form-control" />
+                        <span asp-validation-for="TextoPorCobroExtra" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-12">
                     <div class="form-group">
                         <label asp-for="ValorPorDefault" class="control-label"></label>
                         <small class="text-muted fst-italic d-block mb-3">(marque la casilla si desea dejar como predeterminada esta forma de pago)</small>

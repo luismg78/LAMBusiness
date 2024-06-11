@@ -1,21 +1,24 @@
 ﻿using LAMBusiness.Backend;
 using LAMBusiness.Contextos;
 using LAMBusiness.Shared.Aplicacion;
+using LAMBusiness.Shared.Catalogo;
 
 namespace LAMBusiness.Escritorio
 {
     public partial class FormasDePagoForm : Form
     {
         private readonly Configuracion _configuracion;
-        private byte _formaDePagoId;
-        private string _formaDePagoNombre;
+        private FormaPago _formaDePago;
+        //private byte _formaDePagoId;
+        //private string _formaDePagoNombre;
 
         public FormasDePagoForm(Configuracion configuracion)
         {
             InitializeComponent();
             _configuracion = configuracion;
-            _formaDePagoId = 0;
-            _formaDePagoNombre = "";
+            _formaDePago = new();
+            //_formaDePagoId = 0;
+            //_formaDePagoNombre = "";
         }
 
         private async void FormasDePagoForm_Load(object sender, EventArgs e)
@@ -35,7 +38,8 @@ namespace LAMBusiness.Escritorio
                     {
                         if (formaDePago.FormaPagoID > 0)
                         {
-                            FormasDePagoDataGridView.Rows.Add(formaDePago.FormaPagoID, formaDePago.Nombre);
+                            string porcentaje = formaDePago.PorcentajeDeCobroExtra > 0 ? $"{formaDePago.PorcentajeDeCobroExtra}%" : "0";
+                            FormasDePagoDataGridView.Rows.Add(formaDePago.FormaPagoID, formaDePago.Nombre,porcentaje);
                             FormasDePagoDataGridView.Rows[^1].Selected = true;
                         }
                     }
@@ -57,20 +61,22 @@ namespace LAMBusiness.Escritorio
             }
         }
 
-        private void ObtenerFormaDePago(int index)
+        private async void ObtenerFormaDePago(int index)
         {
-            _formaDePagoId = (byte)FormasDePagoDataGridView.Rows[index].Cells[0].Value;
-            _formaDePagoNombre = (string)FormasDePagoDataGridView.Rows[index].Cells[1].Value;
+            using var contexto = new DataContext(_configuracion);
+            FormasDePagos formasDePago = new(contexto);
+            byte formaDePagoId = (byte)FormasDePagoDataGridView.Rows[index].Cells[0].Value;
+            var formaDePagoResult = await formasDePago.ObtenerRegistroAsync(formaDePagoId);
+            if (!formaDePagoResult.Error)
+                _formaDePago = formaDePagoResult.Datos;
+            else
+                _formaDePago = new();
             Close();
         }
 
         private void FormasDePagoForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Global.FormaDePago = new Shared.Catalogo.FormaPago
-            {
-                FormaPagoID = _formaDePagoId,
-                Nombre = _formaDePagoNombre
-            };
+            Global.FormaDePago = _formaDePago;
         }
     }
 }

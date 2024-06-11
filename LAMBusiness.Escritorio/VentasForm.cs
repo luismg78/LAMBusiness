@@ -6,7 +6,10 @@ using LAMBusiness.Shared.Catalogo;
 using LAMBusiness.Shared.DTO.Movimiento;
 using LAMBusiness.Shared.Movimiento;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using static LAMBusiness.Shared.Accion.Accion;
 
 namespace LAMBusiness.Escritorio
 {
@@ -30,7 +33,7 @@ namespace LAMBusiness.Escritorio
         private decimal _cantidad;
         private decimal _pago;
         private Dictionary<byte, decimal> _totalConFormaDePago;
-        private byte _formaDePagoId;
+        private FormaPago _formaDePago;
         private Guid _usuarioId;
         private Proceso _proceso = Proceso.Capturar;
         public Guid _ventaId;
@@ -349,12 +352,12 @@ namespace LAMBusiness.Escritorio
         {
             IniciarCorteDeCaja();
         }
-        
+
         private void ImprimirTicketButton_Click(object sender, EventArgs e)
         {
             ImprimirVentaModal();
         }
-        
+
         private async void RecuperarButton_Click(object sender, EventArgs e)
         {
             await RecuperarVentasModal();
@@ -444,16 +447,14 @@ namespace LAMBusiness.Escritorio
             {
                 var form = new FormasDePagoForm(_configuracion);
                 form.ShowDialog();
-                _formaDePagoId = 0;
-                var formaDePago = Global.FormaDePago;
-                if (formaDePago != null && formaDePago.FormaPagoID > 0)
+                _formaDePago = Global.FormaDePago!;
+                if (_formaDePago != null && _formaDePago.FormaPagoID > 0)
                 {
-                    _formaDePagoId = formaDePago.FormaPagoID;
-                    NotificarFormaDePago(formaDePago.Nombre);
+                    NotificarFormaDePago(_formaDePago.Nombre);
                 }
                 else
-                    _formaDePagoId = await FormaDePagoPredeterminadaId();
-                    Notificar("");
+                    _formaDePago = await FormaDePagoPredeterminadaId();
+                Notificar("");
             }
         }
         public async Task CancelarVentaModal()
@@ -659,6 +660,15 @@ namespace LAMBusiness.Escritorio
                     ProductosDataGridView.Rows.Clear();
                     _totalConFormaDePago.Clear();
                 }
+                else
+                {
+#warning eliminar las filas cuando se cancela la operación de cobro
+                    foreach (DataGridViewRow item in ProductosDataGridView.Rows)
+                    {
+                        if (string.IsNullOrEmpty(item.Cells[5].Value.ToString()))
+                            ProductosDataGridView.Rows.RemoveAt(item.Index);
+                    }
+                }
                 ObtenerTotal();
                 CodigoTextBox.CharacterCasing = CharacterCasing.Upper;
                 CodigoTextBox.Text = string.Empty;
@@ -667,7 +677,7 @@ namespace LAMBusiness.Escritorio
             }
         }
         private async Task IniciarCobro()
-        {            
+        {
             bool ok = HayRegistrosDeVentasPorAplicar();
             if (ok)
             {
@@ -675,7 +685,7 @@ namespace LAMBusiness.Escritorio
                 _proceso = Proceso.Aplicar;
                 ConfiguracionButtonBgColor("cobrar");
                 ObtenerTotal();
-                _formaDePagoId = await FormaDePagoPredeterminadaId();
+                _formaDePago = await FormaDePagoPredeterminadaId();
                 BuscarButton.Enabled = false;
                 CobrarButton.Enabled = false;
                 CancelarButton.Enabled = false;
@@ -768,9 +778,9 @@ namespace LAMBusiness.Escritorio
 
             var corte = resultadoCorteDeCaja.Datos;
 
-            if(corte.FormasDePagoDetalle != null && corte.FormasDePagoDetalle.Count > 0)
+            if (corte.FormasDePagoDetalle != null && corte.FormasDePagoDetalle.Count > 0)
             {
-                foreach(var formaDePago in corte.FormasDePagoDetalle)
+                foreach (var formaDePago in corte.FormasDePagoDetalle)
                 {
                     ProductosDataGridView.Rows.Add("*", "", formaDePago.Nombre, "", $"{formaDePago.Importe:$###,###,##0.00}", "");
                 }
@@ -872,8 +882,12 @@ namespace LAMBusiness.Escritorio
             decimal total = 0;
             for (var i = 0; i < ProductosDataGridView.Rows.Count; i++)
             {
-                decimal importe = Convert.ToDecimal(ProductosDataGridView.Rows[i].Cells[4].Value);
-                total += importe > 0 ? importe : 0;
+                var id = ProductosDataGridView.Rows[i].Cells[5].Value;
+                if (id != null && !string.IsNullOrEmpty(id.ToString()))
+                {
+                    decimal importe = Convert.ToDecimal(ProductosDataGridView.Rows[i].Cells[4].Value);
+                    total += importe > 0 ? importe : 0;
+                }
             }
 
             return total;
@@ -994,7 +1008,6 @@ namespace LAMBusiness.Escritorio
             var resultado = await ventas.ObtenerVentaAsync(ventaId);
             if (!resultado.Error)
             {
-
                 var venta = resultado.Datos;
                 TicketDTO ticket = new()
                 {
@@ -1063,18 +1076,16 @@ namespace LAMBusiness.Escritorio
         #endregion
 
         #region FormasDePago
-        private async Task<byte> FormaDePagoPredeterminadaId()
+        private async Task<FormaPago> FormaDePagoPredeterminadaId()
         {
             var resultado = await ObtenerFormaDePagoPredeterminada();
             if (resultado.Error)
             {
                 Notificar(resultado.Mensaje);
-                _formaDePagoId = 0;
-                return _formaDePagoId;
+                return new FormaPago();
             }
-            var formaDePago = resultado.Datos;
-            NotificarFormaDePago(formaDePago.Nombre);
-            return formaDePago.FormaPagoID;
+            NotificarFormaDePago(resultado.Datos.Nombre);
+            return resultado.Datos;
         }
         private async Task<Resultado<FormaPago>> ObtenerFormaDePagoPredeterminada()
         {
@@ -1084,13 +1095,12 @@ namespace LAMBusiness.Escritorio
             var registro = await formasDePagos.ObtenerRegistroPredeterminadoAsync();
             if (registro.Error)
             {
-                _formaDePagoId = 0;
                 resultado.Error = true;
                 resultado.Mensaje = registro.Mensaje;
                 return resultado;
             }
 
-            resultado.Datos = registro.Datos;            
+            resultado.Datos = registro.Datos;
             return resultado;
         }
         #endregion
@@ -1165,10 +1175,22 @@ namespace LAMBusiness.Escritorio
             //validar que sea el importe del total de la venta
             decimal total = CalcularTotal();
             decimal pagoInformado = Convert.ToDecimal(CodigoTextBox.Text);
+            decimal porcentajePagoInformado = pagoInformado + pagoInformado * ((decimal)_formaDePago.PorcentajeDeCobroExtra! / 100);
             _pago += pagoInformado;
             decimal diferencia = _pago - total;
             if (diferencia < 0)
             {
+                if (!string.IsNullOrEmpty(_formaDePago.TextoPorCobroExtra))
+                {
+                    ProductosDataGridView.Rows.Add("", "", _formaDePago.TextoPorCobroExtra, $"{pagoInformado:0.00}", $"{porcentajePagoInformado:0.00}", "");
+                    for (var i = 0; i <= 5; i++)
+                    {
+                        ProductosDataGridView.Rows[^1].Cells[i].Style.ForeColor = Color.Red;
+                    }
+                    ProductosDataGridView.Rows[^1].Selected = true;
+                    ProductosDataGridView.FirstDisplayedScrollingRowIndex = ProductosDataGridView.Rows.Count - 1;
+                }
+
                 resultado.Error = true;
                 resultado.Mensaje = $"Resta {Math.Abs(diferencia):$0.00}";
                 TotalLabel.Text = $"Resta {Math.Abs(diferencia):$0.00}";
@@ -1176,17 +1198,14 @@ namespace LAMBusiness.Escritorio
                 CodigoTextBox.Text = "";
                 //return resultado;
             }
-
-            if (_totalConFormaDePago.ContainsKey(_formaDePagoId))
-                _totalConFormaDePago[_formaDePagoId] += pagoInformado;
+            if (_totalConFormaDePago.ContainsKey(_formaDePago.FormaPagoID))
+                _totalConFormaDePago[_formaDePago.FormaPagoID] += pagoInformado;
             else
-                _totalConFormaDePago.Add(_formaDePagoId, pagoInformado);
-
-            _formaDePagoId = await FormaDePagoPredeterminadaId();
+                _totalConFormaDePago.Add(_formaDePago.FormaPagoID, pagoInformado);
+            _formaDePago = await FormaDePagoPredeterminadaId();
             resultado.Datos = _pago;
             return resultado;
         }
-
         private bool HayRegistrosDeVentasPorAplicar()
         {
             if (ProductosDataGridView == null)

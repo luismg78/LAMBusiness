@@ -122,7 +122,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FormaPagoID,Nombre,ValorPorDefault")] FormaPago formaPago)
+        public async Task<IActionResult> Create([Bind("FormaPagoID,Nombre,ValorPorDefault,PorcentajeDeCobroExtra,TextoPorCobroExtra")] FormaPago formaPago)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }
@@ -137,6 +137,18 @@
             {
                 try
                 {
+                    if(formaPago.PorcentajeDeCobroExtra > 0)
+                    {
+                        if (string.IsNullOrEmpty(formaPago.TextoPorCobroExtra))
+                        {
+                            TempData["toast"] = "Existe un porcentaje de cobro extra para la forma de pago, ingrese el texto correspondiente.";
+                            return View(formaPago);
+                        }
+                    }
+                    else
+                    {
+                        formaPago.TextoPorCobroExtra = string.Empty;
+                    }
                     if (formaPago.ValorPorDefault)
                     {
                         var formaPagoPredeterminada = await _context.FormasPago.FirstOrDefaultAsync(f => f.ValorPorDefault == true);
@@ -204,7 +216,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(byte id, [Bind("FormaPagoID,Nombre,ValorPorDefault")] FormaPago formaPago)
+        public async Task<IActionResult> Edit(byte id, [Bind("FormaPagoID,Nombre,ValorPorDefault,PorcentajeDeCobroExtra,TextoPorCobroExtra")] FormaPago formaPago)
         {
             var validateToken = await ValidatedToken(_configuration, _getHelper, "catalogo");
             if (validateToken != null) { return validateToken; }
@@ -223,6 +235,20 @@
             TempData["toast"] = "Falta información en algún campo, verifique.";
             if (ModelState.IsValid)
             {
+                if (formaPago.PorcentajeDeCobroExtra > 0)
+                {
+                    if (string.IsNullOrEmpty(formaPago.TextoPorCobroExtra))
+                    {
+                        TempData["toast"] = "Existe un porcentaje de cobro extra para la forma de pago, ingrese el texto correspondiente.";
+                        ModelState.AddModelError("TextoPorCobroExtra", "Porcentaje asignado, campo requerido.");
+                        return View(formaPago);
+                    }
+                }
+                else
+                {
+                    formaPago.TextoPorCobroExtra = string.Empty;
+                }
+
                 var formaPagoPredeterminada = await _context.FormasPago
                     .FirstOrDefaultAsync(f => f.ValorPorDefault == true && 
                                               f.FormaPagoID != formaPago.FormaPagoID);

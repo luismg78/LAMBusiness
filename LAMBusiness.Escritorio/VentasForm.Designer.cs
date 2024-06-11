@@ -153,7 +153,7 @@
             RetirarEfectivoButton.Name = "RetirarEfectivoButton";
             RetirarEfectivoButton.Size = new Size(192, 58);
             RetirarEfectivoButton.TabIndex = 7;
-            RetirarEfectivoButton.Text = "Retirar Efectivo [F11]";
+            RetirarEfectivoButton.Text = "Retirar Efect. [F11]";
             RetirarEfectivoButton.UseVisualStyleBackColor = false;
             RetirarEfectivoButton.Click += RetirarEfectivoButton_Click;
             // 
@@ -418,7 +418,7 @@
             NotificacionToolStripStatusLabel.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold);
             NotificacionToolStripStatusLabel.ForeColor = Color.FromArgb(192, 0, 0);
             NotificacionToolStripStatusLabel.Name = "NotificacionToolStripStatusLabel";
-            NotificacionToolStripStatusLabel.Size = new Size(1379, 34);
+            NotificacionToolStripStatusLabel.Size = new Size(1534, 34);
             NotificacionToolStripStatusLabel.Spring = true;
             NotificacionToolStripStatusLabel.Text = "...";
             NotificacionToolStripStatusLabel.TextAlign = ContentAlignment.MiddleLeft;

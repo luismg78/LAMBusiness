@@ -28,6 +28,27 @@ namespace LAMBusiness.Backend
             resultado.Datos = formaDePago;
             return resultado;
         }
+        public async Task<Resultado<FormaPago>> ObtenerRegistroAsync(byte? id)
+        {
+            Resultado<FormaPago> resultado = new();
+            if (id == null || id == 0)
+            {
+                resultado.Error = true;
+                resultado.Mensaje = "El identificador de la forma de pago es incorrecto.";
+                return resultado;
+            }
+
+            var formaDePago = await _contexto.FormasPago.FindAsync(id);
+            if (formaDePago == null)
+            {
+                resultado.Error = true;
+                resultado.Mensaje = "No hay registro de formas de pago, verifique catálogo en el sistema administrador.";
+                return resultado;
+            }
+
+            resultado.Datos = formaDePago;
+            return resultado;
+        }
         public async Task<Resultado<List<FormaPago>>> ObtenerRegistrosAsync()
         {
             Resultado<List<FormaPago>> resultado = new();
