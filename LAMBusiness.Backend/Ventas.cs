@@ -205,7 +205,7 @@ namespace LAMBusiness.Backend
             foreach (var imp in importe)
             {
                 var formaDePago = formasDePago.FirstOrDefault(f => f.FormaPagoID == imp.Key);
-                if(formaDePago == null)
+                if (formaDePago == null)
                 {
                     resultado.Error = true;
                     resultado.Mensaje = "forma de pago inexistente.";
@@ -594,14 +594,14 @@ namespace LAMBusiness.Backend
             return _contexto.Ventas
                 .Include(p => p.Usuarios)
                 .Include(p => p.Almacenes)
+                .Include(p => p.VentasDetalles)
+                .Include(p => p.VentasImportes)
                 .Select(p => new VentasDTO()
                 {
                     Almacenes = p.Almacenes,
                     Fecha = p.Fecha,
                     Folio = p.Folio,
-                    ImporteTotal = _contexto.VentasDetalle
-                    .Where(v => v.VentaID == p.VentaID)
-                    .Sum(v => v.Cantidad * v.PrecioVenta),
+                    ImporteTotal = p.VentasDetalles.Sum(v => v.Cantidad * v.PrecioVenta) + p.VentasImportes.Sum(p => (decimal)p.ImporteDelPorcentaje!),
                     Usuarios = p.Usuarios,
                     VentaID = p.VentaID,
                 });
@@ -873,7 +873,7 @@ namespace LAMBusiness.Backend
                 Folio = venta.Folio,
                 Usuarios = venta.Usuarios,
                 VentasDetalle = detalle,
-                ImporteTotal = detalle.Sum(d => d.Cantidad * d.PrecioVenta),
+                ImporteTotal = detalle.Sum(d => d.Cantidad * d.PrecioVenta) + formasDePago.Sum(f => (decimal)f.ImporteDelPorcentaje!),
                 VentasImportes = formasDePago
             };
 

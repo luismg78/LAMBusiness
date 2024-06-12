@@ -1,6 +1,8 @@
 ﻿namespace LAMBusiness.Shared.Movimiento
 {
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using Catalogo;
@@ -46,6 +48,12 @@
 
         [JsonIgnore]
         public virtual VentaCierre VentasCierre { get; set; }
+        
+        [JsonIgnore]
+        public virtual ICollection<VentaDetalle> VentasDetalles { get; set; }
+        
+        [JsonIgnore]
+        public virtual ICollection<VentaImporte> VentasImportes { get; set; }
 
     }
 }

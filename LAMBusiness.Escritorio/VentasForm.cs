@@ -393,6 +393,16 @@ namespace LAMBusiness.Escritorio
             if (resultado.Error)
                 return resultado;
 
+            bool confimarAplicarVenta = _totalConFormaDePago.Any(t => t.Key == 2);
+            if (confimarAplicarVenta)
+            {
+                if (MessageBox.Show("¿La venta en la terminal bancaria ya ha sido aplicada?", "Venta", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+                {
+                    resultado.Error = true;
+                    resultado.Mensaje = "Proceso cancelado";
+                    return resultado;
+                }
+            }
             //decimal importe = resultado.Datos;
             var venta = await ventas.Aplicar(_ventaId, _usuarioId, _totalConFormaDePago);
             if (venta.Error)
@@ -787,7 +797,7 @@ namespace LAMBusiness.Escritorio
                 foreach (var formaDePago in corte.FormasDePagoDetalle)
                 {
                     ProductosDataGridView.Rows.Add("*", "", formaDePago.Nombre, "", $"{formaDePago.Importe:$###,###,##0.00}", "");
-                    if(formaDePago.ImporteDelPorcentaje > 0)
+                    if (formaDePago.ImporteDelPorcentaje > 0)
                     {
                         ProductosDataGridView.Rows.Add("-", "", "Importe sin porcentaje", "", $"{formaDePago.ImporteSinPorcentaje:$###,###,##0.00}", "");
                         ProductosDataGridView.Rows.Add("-", "", "Importe del porcentaje", "", $"{formaDePago.ImporteDelPorcentaje:$###,###,##0.00}", "");
@@ -1028,6 +1038,8 @@ namespace LAMBusiness.Escritorio
                     {
                         FormaDePagoId = v.FormaPagoID,
                         Importe = v.Importe,
+                        ImporteDelPorcentaje = (decimal)v.ImporteDelPorcentaje!,
+                        ImporteSinPorcentaje = (decimal)v.ImporteSinPorcentaje!,
                         Nombre = v.FormasPago.Nombre
                     }).ToList(),
                     Cambio = venta.VentasImportes.Sum(v => v.Importe) - venta.ImporteTotal,
@@ -1187,19 +1199,18 @@ namespace LAMBusiness.Escritorio
             decimal porcentajePagoInformado = pagoInformado + pagoInformado * ((decimal)_formaDePago.PorcentajeDeCobroExtra! / 100);
             _pago += pagoInformado;
             decimal diferencia = _pago - total;
+            if (!string.IsNullOrEmpty(_formaDePago.TextoPorCobroExtra))
+            {
+                ProductosDataGridView.Rows.Add("", "", _formaDePago.TextoPorCobroExtra, $"{pagoInformado:0.00}", $"{porcentajePagoInformado:0.00}", "");
+                for (var i = 0; i <= 5; i++)
+                {
+                    ProductosDataGridView.Rows[^1].Cells[i].Style.ForeColor = Color.Red;
+                }
+                ProductosDataGridView.Rows[^1].Selected = true;
+                ProductosDataGridView.FirstDisplayedScrollingRowIndex = ProductosDataGridView.Rows.Count - 1;
+            }
             if (diferencia < 0)
             {
-                if (!string.IsNullOrEmpty(_formaDePago.TextoPorCobroExtra))
-                {
-                    ProductosDataGridView.Rows.Add("", "", _formaDePago.TextoPorCobroExtra, $"{pagoInformado:0.00}", $"{porcentajePagoInformado:0.00}", "");
-                    for (var i = 0; i <= 5; i++)
-                    {
-                        ProductosDataGridView.Rows[^1].Cells[i].Style.ForeColor = Color.Red;
-                    }
-                    ProductosDataGridView.Rows[^1].Selected = true;
-                    ProductosDataGridView.FirstDisplayedScrollingRowIndex = ProductosDataGridView.Rows.Count - 1;
-                }
-
                 resultado.Error = true;
                 resultado.Mensaje = $"Resta {Math.Abs(diferencia):$0.00}";
                 TotalLabel.Text = $"Resta {Math.Abs(diferencia):$0.00}";
