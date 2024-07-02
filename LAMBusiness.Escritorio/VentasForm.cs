@@ -794,18 +794,28 @@ namespace LAMBusiness.Escritorio
 
             if (corte.FormasDePagoDetalle != null && corte.FormasDePagoDetalle.Count > 0)
             {
+                int index = 0;
                 foreach (var formaDePago in corte.FormasDePagoDetalle)
                 {
+                    if(formaDePago.FormaDePagoId == 1)
+                        formaDePago.Importe -= corte.Cambio;
                     ProductosDataGridView.Rows.Add("*", "", formaDePago.Nombre, "", $"{formaDePago.Importe:$###,###,##0.00}", "");
                     if (formaDePago.ImporteDelPorcentaje > 0)
                     {
+                        index += 2;
                         ProductosDataGridView.Rows.Add("-", "", "Importe sin porcentaje", "", $"{formaDePago.ImporteSinPorcentaje:$###,###,##0.00}", "");
                         ProductosDataGridView.Rows.Add("-", "", "Importe del porcentaje", "", $"{formaDePago.ImporteDelPorcentaje:$###,###,##0.00}", "");
+                        for (var i = 0; i <= 5; i++)
+                        {
+                            ProductosDataGridView.Rows[index - 1].Cells[i].Style.ForeColor = Color.Gray;
+                            ProductosDataGridView.Rows[index].Cells[i].Style.ForeColor = Color.Gray;
+                        }
                     }
+                    index++;
                 }
             }
             var diferencia = corte.ImporteDelSistema - corte.ImporteDelUsuario;
-            ProductosDataGridView.Rows.Add("*", "", "Cambio", "", $"-{corte.Cambio:$###,###,##0.00}", "");
+            //ProductosDataGridView.Rows.Add("*", "", "Cambio", "", $"-{corte.Cambio:$###,###,##0.00}", "");
             ProductosDataGridView.Rows.Add("", "", "", "", "-------------", "");
             ProductosDataGridView.Rows.Add("*", "", "Importe del sistema", "", $"{corte.ImporteDelSistema:$###,###,##0.00}", "");
             ProductosDataGridView.Rows.Add("*", "", "Importe del usuario (retiros)", "", $"{corte.ImporteDelUsuario:$###,###,##0.00}", "");
@@ -963,10 +973,10 @@ namespace LAMBusiness.Escritorio
             rpt.CreateDocument();
             try
             {
-                string ruta = AppDomain.CurrentDomain.BaseDirectory;
-                var pdf = Path.Combine(ruta, "Reportes", "ticketDeCorteDeCaja.pdf");
-                rpt.ExportToPdf(pdf);
-                //rpt.Print();
+                //string ruta = AppDomain.CurrentDomain.BaseDirectory;
+                //var pdf = Path.Combine(ruta, "Reportes", "ticketDeCorteDeCaja.pdf");
+                //rpt.ExportToPdf(pdf);
+                rpt.Print();
             }
             catch (Exception)
             {
@@ -988,10 +998,10 @@ namespace LAMBusiness.Escritorio
             rpt.CreateDocument();
             try
             {
-                string ruta = AppDomain.CurrentDomain.BaseDirectory;
-                var pdf = Path.Combine(ruta, "Reportes", "ticketDeRetiroDeCaja.pdf");
-                rpt.ExportToPdf(pdf);
-                //rpt.Print();
+                //string ruta = AppDomain.CurrentDomain.BaseDirectory;
+                //var pdf = Path.Combine(ruta, "Reportes", "ticketDeRetiroDeCaja.pdf");
+                //rpt.ExportToPdf(pdf);
+                rpt.Print();
             }
             catch (Exception)
             {
@@ -1010,10 +1020,10 @@ namespace LAMBusiness.Escritorio
             rpt.CreateDocument();
             try
             {
-                string ruta = AppDomain.CurrentDomain.BaseDirectory;
-                var pdf = Path.Combine(ruta, "Reportes", "ticketDeVenta.pdf");
-                rpt.ExportToPdf(pdf);
-                //rpt.Print();
+                //string ruta = AppDomain.CurrentDomain.BaseDirectory;
+                //var pdf = Path.Combine(ruta, "Reportes", "ticketDeVenta.pdf");
+                //rpt.ExportToPdf(pdf);
+                rpt.Print();
             }
             catch (Exception)
             {
@@ -1028,11 +1038,14 @@ namespace LAMBusiness.Escritorio
             if (!resultado.Error)
             {
                 var venta = resultado.Datos;
+                decimal porcentajeTotal = venta.VentasImportes.Sum(f => (decimal)f.ImporteDelPorcentaje!);
                 TicketDTO ticket = new()
                 {
                     AtendidoPor = venta.Usuarios.NombreCompleto.ToUpper(),
                     Fecha = venta.Fecha?.ToString("dd/MM/yyyy HH:mm"),
                     Folio = venta.Folio.ToString("000000000"),
+                    SubtotalDeVenta = venta.VentasDetalle.Sum(d => d.Cantidad * d.PrecioVenta).ToString("$#,###,###,##0.00"),
+                    PorcentajeTotalCobroExtra = porcentajeTotal > 0 ? porcentajeTotal.ToString("$#,###,###,##0.00") : "",
                     ImporteTotalDeVenta = venta.ImporteTotal.ToString("$#,###,###,##0.00"),
                     FormasDePagoDetalle = venta.VentasImportes.Select(v => new FormasDePagoDTO
                     {
@@ -1053,10 +1066,10 @@ namespace LAMBusiness.Escritorio
                     {
                         detalle.Add(new()
                         {
-                            Cantidad = $"{item.Cantidad:0.0000}",
+                            Cantidad = $"{item.Cantidad:#,0.0000}",
                             NombreDelProducto = item.Productos.Nombre.ToUpper(),
-                            Precio = $"{item.PrecioVenta:$0.00}",
-                            Importe = $"{item.Cantidad * item.PrecioVenta:$0.00}",
+                            Precio = $"{item.PrecioVenta:$#,0.00}",
+                            Importe = $"{item.Cantidad * item.PrecioVenta:$#,0.00}",
                         });
                     }
 

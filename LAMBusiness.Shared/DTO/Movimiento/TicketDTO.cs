@@ -19,6 +19,8 @@ namespace LAMBusiness.Shared.DTO.Movimiento
         public string AtendidoPor { get; set; }
         public string Folio { get; set; }
         public string Fecha { get; set; }
+        public string SubtotalDeVenta { get; set; }
+        public string PorcentajeTotalCobroExtra { get; set; }
         public string ImporteTotalDeVenta { get; set; }
         //corte de caja
         public string ImporteTotalDeSistema { get; set; }
