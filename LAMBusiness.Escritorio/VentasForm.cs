@@ -973,10 +973,10 @@ namespace LAMBusiness.Escritorio
             rpt.CreateDocument();
             try
             {
-                //string ruta = AppDomain.CurrentDomain.BaseDirectory;
-                //var pdf = Path.Combine(ruta, "Reportes", "ticketDeCorteDeCaja.pdf");
-                //rpt.ExportToPdf(pdf);
-                rpt.Print();
+                string ruta = AppDomain.CurrentDomain.BaseDirectory;
+                var pdf = Path.Combine(ruta, "Reportes", "ticketDeCorteDeCaja.pdf");
+                rpt.ExportToPdf(pdf);
+                //rpt.Print();
             }
             catch (Exception)
             {
