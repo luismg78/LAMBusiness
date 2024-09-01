@@ -25,7 +25,7 @@ function addProcess(text, tiempo = 0, fondo = 'bg-transparent-dark') {
             }, tiempo);
         }
     }
-    $("#inputDisabled").focus();
+    $("#inputDisabled").trigger('focus');
 }
 
 function addProcessWithProgressBar(text) {

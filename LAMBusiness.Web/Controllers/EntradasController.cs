@@ -544,13 +544,10 @@
                     .FirstOrDefaultAsync(x => x.ProductoID == p.productoID);
 
                 var existenciaActual = await _context.Existencias
-                    .Where(p => p.ProductoID == p.ProductoID)
+                    .Where(x => x.ProductoID == p.productoID)
                     .SumAsync(e => e.ExistenciaEnAlmacen);
 
-                producto.PrecioCosto = ((p.existencia * p.precioCosto) +
-                                        (producto.PrecioCosto * existenciaActual)) /
-                                       (p.existencia + existenciaActual);
-
+                producto.PrecioCosto = ((p.existencia * p.precioCosto) + (producto.PrecioCosto * existenciaActual)) / (p.existencia + existenciaActual);
                 _context.Update(producto);
             }
 

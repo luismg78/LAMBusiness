@@ -112,6 +112,7 @@ function addRowsNextRetiros(skip, todos, inicio = false) {
     });
 }
 function apply(e) {
+    addProcess("Aplicando movimiento...");
     var url = urlApply;
     url = url.replace('paramId', itemToApply);
 
