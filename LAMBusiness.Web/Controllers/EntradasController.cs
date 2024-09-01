@@ -532,7 +532,7 @@
             var productos = existencias.GroupBy(e => e.ProductoID)
                 .Select(g => new
                 {
-                    produdtoID = g.Key,
+                    productoID = g.Key,
                     existencia = g.Sum(p => p.ExistenciaEnAlmacen),
                     precioCosto = (g.Sum(p => p.ExistenciaEnAlmacen * p.PrecioCosto) / g.Sum(p => p.ExistenciaEnAlmacen))
                 })
@@ -541,7 +541,7 @@
             foreach (var p in productos)
             {
                 var producto = await _context.Productos
-                    .FirstOrDefaultAsync(p => p.ProductoID == p.ProductoID);
+                    .FirstOrDefaultAsync(x => x.ProductoID == p.productoID);
 
                 var existenciaActual = await _context.Existencias
                     .Where(p => p.ProductoID == p.ProductoID)
