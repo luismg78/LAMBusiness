@@ -13,7 +13,7 @@
         [Display(Name = "Proveedor")]
         public Guid ProveedorID { get; set; }
 
-        [RegularExpression(@"^([a-zA-Z][AEIOUXaeioux][a-zA-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[a-zA-Z\d]{3})$", ErrorMessage = "Formato Incorrecto.")]
+        [RegularExpression(@"^([A-ZÑ\x26]{3,4}([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[A-Z|\d]{3})$", ErrorMessage = "Formato Incorrecto.")]
         [MaxLength(13, ErrorMessage = "La longitud máxima del campo {0} es de {1} caracteres.")]
         [Required(ErrorMessage = "El campo {0} es requerido.")]
         public string RFC { get; set; }
