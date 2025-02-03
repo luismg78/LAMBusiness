@@ -791,11 +791,56 @@
 
         }
 
-        //public FileContentResult GenerateBarcode(string _data, Type t)
-        //{
-        //    throw new NotImplementedException();
-        //}
+		//public FileContentResult GenerateBarcode(string _data, Type t)
+		//{
+		//    throw new NotImplementedException();
+		//}
 
-        #endregion
-    }
+		//Ventas
+
+		/// <summary>
+		/// Convertir clase VentaviewModel a Venta.
+		/// </summary>
+		/// <param name="ventasViewModel"></param>
+		/// <param name="isNew"></param>
+		/// <returns></returns>
+		public Venta ToVenta(VentasViewModel ventaViewModel, bool isNew)
+		{
+			return new Venta()
+			{
+                VentaID = ventaViewModel.VentaID,
+                AlmacenID = ventaViewModel.AlmacenID,
+				ClienteID = ventaViewModel.ClienteID,
+				VentaCierreID = ventaViewModel.VentaCierreID,
+				Fecha = ventaViewModel.Fecha,
+				Folio = ventaViewModel.Folio,
+				UsuarioID = ventaViewModel.UsuarioID,
+			};
+
+		}
+
+		/// <summary>
+		/// Convertir clase Venta a VentaViewModel.
+		/// </summary>
+		/// <param name="venta"></param>
+		/// <returns></returns>
+		public VentasViewModel ToVentaViewModel(Venta venta)
+		{
+			return new VentasViewModel()
+			{
+				VentaID = venta == null ? Guid.NewGuid() : venta.VentaID,
+				AlmacenID = venta.AlmacenID,
+                Almacenes = venta.Almacenes,
+				ClienteID = venta.ClienteID,
+                ImporteTotal = venta.VentasDetalles.Sum(e => e.Cantidad * e.PrecioVenta),
+                Usuarios = venta.Usuarios,
+                VentasDetalles = venta.VentasDetalles,
+				VentaCierreID = venta.VentaCierreID,
+				Fecha = venta.Fecha,
+				Folio = venta.Folio,
+				UsuarioID = venta.UsuarioID,
+			};
+		}
+		#endregion
+	}
 }

@@ -123,7 +123,7 @@
     <script>
         var skip = 0;
         var itemToDelete;
-        var filter;
+        // var filter;
 
         $(document).ready(function () {
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
@@ -151,7 +151,7 @@
                     var scrollPosition = $(window).height() + $(window).scrollTop();
                     var result = (scrollHeight - scrollPosition) / scrollHeight;
                     if (result <= 0.0005) {
-                        skip += 50;
+                        skip += 100;
                         addRowsNext(skip);
                     }
                 }
@@ -163,7 +163,7 @@
                     var scrollPosition = $(window).height() + $(window).scrollTop();
                     var result = (scrollHeight - scrollPosition) / scrollHeight;
                     if (result <= 0.0005) {
-                        skip += 50;
+                        skip += 100;
                         addRowsNextListBox(skip);
                     }
                 }
@@ -189,13 +189,17 @@
             url = url.replace('controlador', controller);
 
             $('#dRows').attr('data-charging', "1");
+            var searchBy = $('#SearchInput')[0] === undefined ? "" : $('#SearchInput').val();
 
             $.ajax({
                 url: url,
                 method: 'POST',
                 datatype: 'text',
                 data: {
-                    filtro: filter
+                    filtro: {
+                        Patron: searchBy,
+                        Skip: skip
+                    }
                 },
                 success: function (r) {
                     if (inicio) { $('#dRows').empty(); }

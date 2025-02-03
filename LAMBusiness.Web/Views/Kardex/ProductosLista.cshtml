@@ -2,22 +2,25 @@
 
 @if (Model != null)
 {
+    int registro = 1;
     <div id="dRows" data-charging="0" data-rows-next="0">
-        <div class="p-3">
-            <div class="fw-bold">Existencia: @Model.Existencia</div>
-        </div>
         <div class="px-md-3">
             <div class="table-responsive">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th scope="col">Usuario</th>
-                            <th scope="col" class="text-center">Fecha</th>
-                            <th scope="col" class="text-center">Estatus</th>
-                            <th scope="col">Movimiento</th>
-                            <th scope="col" class="text-center"></th>
-                            <th scope="col" class="text-end">Cantidad</th>
-                            <th scope="col" class="text-end">Existencia</th>
+                            <th scope="col" class="text-center align-middle">#</th>
+                            <th scope="col" class="align-middle">Usuario</th>
+                            <th scope="col" class="text-center align-middle">Fecha</th>
+                            <th scope="col" class="text-center align-middle">Estatus</th>
+                            <th scope="col" class="text-center align-middle">Folio</th>
+                            <th scope="col" class="text-center align-middle">Movimiento</th>
+                            <th scope="col" class="text-center align-middle"></th>
+                            <th scope="col" class="text-end align-middle">
+                                Cantidad
+                                <span class="d-block text-muted" style="font-size:0.75rem;">x Precio</span>
+                            </th>
+                            <th scope="col" class="text-end align-middle">Importe</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -26,14 +29,22 @@
                             foreach (var item in Model.KardexDeProductoDetalle)
                             {
                                 <tr>
-                                    <td class="text-capitalize">@item.Usuario</td>
-                                    <td class="text-center">@item.Fecha</td>
-                                    <td class="text-center">@item.Estatus</td>
-                                    <td>@item.Movimiento</td>
-                                    <td class="text-center" style="background-color:@item.IconoColor"><i class="@item.Icono text-white"></i></td>
-                                    <td class="text-end">@item.Cantidad</td>
-                                    <td class="text-end">@item.Existencia</td>
+                                    <td class="text-center align-middle">@registro</td>
+                                    <td class="text-capitalize align-middle">@item.Usuario</td>
+                                    <td class="text-center align-middle">@item.Fecha</td>
+                                    <td class="text-center align-middle">@item.Estatus</td>
+                                    <td class="text-center align-middle">
+                                        <a href="@item.Url" class="text-decoration-none" target="_blank">@item.Folio</a>
+                                    </td>
+                                    <td class="text-center align-middle">@item.Movimiento</td>
+                                    <td class="text-center align-middle" style="background-color:@item.IconoColor"><i class="@item.Icono text-white"></i></td>
+                                    <td class="text-end align-middle">
+                                        @Convert.ToDecimal(item.Cantidad).ToString("#,0.0000")
+                                        <span class="d-block text-muted" style="font-size:0.75rem;">x @Convert.ToDecimal(item.Precio).ToString("$#,0.00")</span>
+                                    </td>
+                                    <td class="text-end align-middle">@Convert.ToDecimal(item.Importe).ToString("$#,0.00")</td>
                                 </tr>
+                                registro++;
                             }
                         }
                     </tbody>

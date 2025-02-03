@@ -22,20 +22,18 @@
         </div>
     </div>
     <div class="modal-body pt-4">
-        <div class="row px-md-3">
-            <div class="col-12 pr-0 pr-md-3">
-                <div class="row">
+        <div class="row g-2 px-3">
                     <!-- Almacén -->
-                    <div class="col-6">
+                    <div class="col-12 col-md-6 mb-3">
                         <div class="form-group">
-                            <label asp-for="AlmacenID" class="control-label required"></label>
+                            <label asp-for="AlmacenID" class="control-label required">Almacén</label>
                             <select asp-for="AlmacenID" class="form-select" asp-items="@Model.AlmacenesDDL"></select>
                             <span asp-validation-for="AlmacenID" class="text-danger"></span>
                         </div>
                     </div>
                     <!-- Producto -->
-                    <div class="col-6">
-                        <label asp-for="ProductoID" class="control-label required"></label>
+                    <div class="col-12 col-md-6 mb-3">
+                        <label asp-for="ProductoID" class="control-label required">Producto</label>
                         <div class="d-flex justify-content-end align-items-center">
                             <select asp-for="ProductoID" class="form-select" autofocus>
                                 @if (Model.ProductoID != Guid.Empty && Model.Producto != null)
@@ -43,13 +41,11 @@
                                     <option value="@Model.ProductoID">@Model.Producto.Codigo - @Model.Producto.Nombre</option>
                                 }
                             </select>
-                            <button class="btn btn-light border ms-2" type="button" onclick="kardexDeMovimientos(event);"><i class="fa fa-search"></i></button>
+                            <button class="btn btn-light border ms-2" type="button" onclick="kardexDeMovimientos();"><i class="fa fa-search"></i></button>
                         </div>
                         <span asp-validation-for="ProductoID" class="text-danger"></span>
                     </div>
                 </div>
-            </div>            
-        </div>
         <div id="kardexProductos">
             <partial name="ProductosLista" model="Model" />
         </div>

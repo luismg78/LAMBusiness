@@ -39,6 +39,11 @@
 
         public async Task<IActionResult> Index()
         {
+            var validaVigencia = ValidarVigenciaDelSistema();
+            if (!validaVigencia) {
+				return RedirectToAction(nameof(Vigencia));
+			}
+
             var validateToken = await ValidatedToken(_configuration, _getHelper, "home");
             if (validateToken != null)
             {
@@ -51,7 +56,13 @@
 
         public async Task<IActionResult> SignIn()
         {
-            var validateToken = await ValidatedToken(_configuration, _getHelper, "signin", false);
+			var validaVigencia = ValidarVigenciaDelSistema();
+			if (!validaVigencia)
+			{
+				return RedirectToAction(nameof(Vigencia));
+			}
+
+			var validateToken = await ValidatedToken(_configuration, _getHelper, "signin", false);
             if (validateToken != null) { return validateToken; }
 
             return View();
@@ -258,8 +269,13 @@
             return View();
         }
 
-        #region Aplicacation's counts
-        private int GetCountModulos()
+		public async Task<IActionResult> Vigencia()
+		{
+			return View();
+		}
+
+		#region Aplicacation's counts
+		private int GetCountModulos()
         {
             return _context.Modulos.Count();
         }

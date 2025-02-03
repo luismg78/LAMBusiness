@@ -255,14 +255,14 @@ if (typeof $(almacenId) !== 'undefined' && $(almacenId) !== undefined && $(almac
         placeholder: 'Seleccionar almacén',
         width: '100%',
         allowClear: true,
+        minimumResultsForSearch: Infinity,
         language: 'es'
     });
 }
-
 if (typeof urlProductos !== 'undefined' && urlProductos !== undefined && urlProductos !== null) {
     $(productoId).on('select2:select', function (e) {
         var data = e.params.data;
-        $(productoId).val(data.id).change();
+        $(productoId).val(data.id).trigger('change');
         $(precioCosto).val(data.precioCosto);
         $(precioVenta).val(data.precioVenta);
         if (typeof importe !== 'undefined' && importe !== null) {

@@ -1,0 +1,124 @@
+﻿@model LAMBusiness.Web.Models.ViewModels.VentasViewModel
+
+@{
+    ViewData["Title"] = "Ventas";
+}
+
+<div class="modal-content border-0 box-shadow">
+    <div class="modal-header pb-0 align-items-baseline">
+        <div class="ms-3">
+            <h3 class="modal-title" id="exampleModalLabel">Ventas</h3>
+            <ul class="breadcrumb bg-transparent p-0 small">
+                <li class="breadcrumb-item"><a asp-action="Movimiento" asp-controller="Home">Movimientos</a></li>
+                <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Ventas">Ventas</a></li>
+                <li class="breadcrumb-item active">Detalle</li>
+            </ul>
+        </div>
+        <div class="d-flex align-items-center">
+            <a class="btn-help text-secondary me-3" href="/" onclick="help('DetailsMovimientos', event);">
+                <i class="fa fa-question-circle"></i>
+            </a>
+            <a asp-action="Index" asp-controller="Ventas" class="btn-close me-md-1" aria-label="Close"></a>
+        </div>
+    </div>
+    <div class="modal-body py-4">
+        <div class="row px-md-3">
+            <!--Información de la venta-->
+            <div class="card-lam-d1 col-12">
+                <div class="card-header-lam-d1">
+                    <div class="col-12">
+                        <div class="row g-0">
+                            <div class="col-12 col-md-8">
+                                <p class="fw-bold m-0 pt-2 pt-md-0 title text-capitalize">
+                                    @Html.DisplayFor(model => model.Usuarios.NombreCompleto)
+                                </p>
+                                <span class="d-block subtitle text-muted">@Html.DisplayFor(model => model.Usuarios.Email)</span>
+                                <span class="d-block subtitle text-muted">@Html.DisplayFor(model => model.Almacenes.Nombre)</span>
+                            </div>
+                            <div class="col-12 col-md-4 text-md-end">
+                                <h5 class="d-block subtitle text-muted mb-0">Folio <span class="text-base">@Model.Folio.ToString("000000")</span></h5>
+                                <span class="d-block subtitle text-muted mb-3">@Convert.ToDateTime(Model.Fecha).ToString("dd MMMM, yyyy")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="mb-4">
+                    @if (Model.VentasDetalles.Count > 0)
+                    {
+                        <p class="fw-bold text-base">Detalle</p>
+                        <hr class="mb-0" />
+                        <div class="row g-0 py-1 d-none d-md-flex border-bottom">
+                            <div class="col-md-6">
+                                <span class="fw-bold d-block">Producto</span>
+                            </div>
+                            <div class="col-md-2">
+                                <span class="fw-bold d-block">Almacén</span>
+                            </div>
+                            <div class="col-md-2 text-md-end">
+                                <span class="fw-bold d-block">Cantidad x Precio</span>
+                            </div>
+                            <div class="col-md-2 text-md-end">
+                                <span class="fw-bold d-block">Importe</span>
+                            </div>
+                        </div>
+                        foreach (var item in Model.VentasDetalles)
+                        {
+                            <div class="bg-row row align-items-center border-bottom py-2 px-2 g-0">
+                                <div class="col-12 col-md-6">
+                                    <span class="fw-bold d-block d-md-none">Producto</span>
+                                    <div class="d-flex justify-content-start align-items-center">
+                                        <div class="me-3">
+                                            <img class="rounded-circle" style="width:2rem;" src="@Url.Action("GetProductImages", "Productos", new { productoId = item.ProductoID, imageId = item.ProductoID, tipo = "sm" })" alt="Image Product" />
+                                        </div>
+                                        <div>
+                                            <span class="d-block">@item.Productos.Nombre</span>
+                                            <a href="#" class="d-block small" onclick="getProductoDetail('@item.ProductoID');">@item.Productos.Codigo</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-2">
+                                    <span class="fw-bold d-block d-md-none">Almacén</span>
+                                    <span class="d-block">@item.Ventas.Almacenes.Nombre</span>
+                                </div>
+                                <div class="col-12 col-md-2 text-md-end">
+                                    <span class="fw-bold d-block d-md-none">Cantidad x Precio</span>
+                                    <span class="d-block">@Convert.ToDecimal(item.Cantidad).ToString("#,###,##0.0000")</span>
+                                    <small class="d-block">x @Convert.ToDecimal(item.PrecioVenta).ToString("$#,###,##0.00")</small>
+                                </div>
+                                <div class="col-12 col-md-2 text-md-end">
+                                    <span class="fw-bold d-block d-md-none">Importe</span>
+                                    <span class="d-block">@Convert.ToDecimal(item.Cantidad * item.PrecioVenta).ToString("$#,###,##0.00")</span>
+                                </div>
+                            </div>
+                        }
+                        <div class="row g-0 pt-4">
+                            <div class="col-12 col-md-6 order-2 text-center text-md-start pt-3 pt-md-0 order-md-1">
+                                <a asp-action="Index" class="btn btn-outline-secondary mt-2 mt-md-0">Regresar</a>
+                            </div>
+                            <div class="col-12 col-md-6 order-1 order-md-2 text-center text-md-end">
+                                <h3 class="fw-bold">Total @Convert.ToDecimal(Model.VentasDetalles.Sum(e => e.Cantidad * e.PrecioVenta)).ToString("$#,###,##0.00")</h3>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-base">Sin registro en el detalle de ventas.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        let urlProductoDetails = '@Url.Action("GetProductDetail", "Productos")';
+    </script>
+    <script src="~/js/movements.js"></script>
+}

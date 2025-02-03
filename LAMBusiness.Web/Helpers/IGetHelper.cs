@@ -56,5 +56,8 @@
         Task<UsuarioModulo> GetUsuarioModuloByUsuarioAndModuloIDAsync(Guid usuarioId, Guid moduloId);
         Task SetBitacoraAsync(Token token, string accion, Guid moduloId, object clase, string parametroId, string directorio, string excepcion = "");
         Task<Resultado<Token>> SetTokenByUsuarioIDAsync(string sessionId, Guid usuarioId, string directorio);
-    }
+		Task<Venta> GetVentaByIdAsync(Guid id);
+		Task<List<VentaDetalle>> GetVentaDetalleByVentaIdAsync(Guid id);
+		Task<VentaDetalle> GetVentaDetalleByIdAsync(Guid id);
+	}
 }

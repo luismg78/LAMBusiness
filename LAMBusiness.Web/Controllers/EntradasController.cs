@@ -128,7 +128,7 @@
             {
                 ViewName = "_AddRowsNextAsync",
                 ViewData = new ViewDataDictionary
-                            <Filtro<List<Entrada>>>(ViewData, filtro)
+                            <Filtro<List<Venta>>>(ViewData, filtro)
             };
         }
 

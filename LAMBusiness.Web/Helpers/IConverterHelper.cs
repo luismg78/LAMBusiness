@@ -30,6 +30,8 @@
         Task<Salida> ToSalidaAsync(SalidaViewModel salidaViewModel, bool isNew);
         Task<SalidaViewModel> ToSalidaViewModelAsync(Salida salida);
         Task<Usuario> ToUsuarioAsync(UsuarioViewModel usuarioViewModel, bool isNew);
-        byte[] UploadImageBase64(string file, int size);
+		Venta ToVenta(VentasViewModel entradaViewModel, bool isNew);
+		VentasViewModel ToVentaViewModel(Venta entrada);
+		byte[] UploadImageBase64(string file, int size);
     }
 }

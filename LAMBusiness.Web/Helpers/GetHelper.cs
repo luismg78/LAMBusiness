@@ -1356,5 +1356,58 @@
             }
         }
 
-    }
+		//Ventas
+
+		/// <summary>
+		/// Obtener Venta por ID.
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		public async Task<Venta> GetVentaByIdAsync(Guid id)
+		{
+			return await _context.Ventas
+				.Include(e => e.Almacenes)
+				.Include(e => e.Usuarios)
+				.ThenInclude(e => e.DatosPersonales)
+				.Include(e => e.VentasDetalles)
+				.ThenInclude(e => e.Productos)
+				.FirstOrDefaultAsync(m => m.VentaID == id);
+		}
+
+		/// <summary>
+		/// obtener detalle de venta por ID.
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		public async Task<VentaDetalle> GetVentaDetalleByIdAsync(Guid id)
+		{
+			return await _context.VentasDetalle
+				.Include(e => e.Ventas)
+				.ThenInclude(e => e.Almacenes)
+				.Include(e => e.Productos)
+				.FirstOrDefaultAsync(m => m.VentaDetalleID == id);
+		}
+
+		/// <summary>
+		/// Obtener lista de detalle de ventas por VentaID.
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		public async Task<List<VentaDetalle>> GetVentaDetalleByVentaIdAsync(Guid id)
+		{
+			return await _context.VentasDetalle
+				.Include(e => e.Ventas)
+				.ThenInclude(e => e.Almacenes)
+				.Include(e => e.Productos)
+				.ThenInclude(e => e.Unidades)
+				.Include(e => e.Productos)
+				.ThenInclude(e => e.Paquete)
+				.Include(e => e.Productos)
+				.ThenInclude(e => e.Existencias)
+				.Where(m => m.VentaID == id)
+				.OrderBy(m => m.Productos.Nombre)
+				.ThenBy(m => m.Ventas.Almacenes.Nombre)
+				.ToListAsync();
+		}
+	}
 }

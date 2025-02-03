@@ -6,12 +6,14 @@
 
     public class VentasViewModel: Venta
     {
-        public decimal ImporteTotal { get; set; }
+		public bool PermisoEscritura { get; set; }
+
+		public decimal ImporteTotal { get; set; }
         
         [JsonIgnore]
         public decimal ImporteCobro { get; set; }
 
-        public List<VentaImporte> VentasImportes { get; set; }
+        //public List<VentaImporte> VentasImportes { get; set; }
 
         public List<VentaDetalle> VentasDetalle { get; set; }
     }
