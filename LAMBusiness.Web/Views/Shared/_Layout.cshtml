@@ -155,6 +155,45 @@
                         addRowsNext(skip);
                     }
                 }
+                if ($('#dRowCorteDeCaja')[0] !== this.undefined &&
+                    $('#dRowCorteDeCaja').attr('data-rows-next') === "1" &&
+                    $('#dRowCorteDeCaja').attr('data-charging') === "0" &&
+                    $('#dRowCorteDeCaja .bg-row').length % 50 === 0) {
+                        let todos = dRowCorteDeCaja.getAttribute('data-cortesdecaja');
+                    var scrollHeight = $(document).height();
+                    var scrollPosition = $(window).height() + $(window).scrollTop();
+                    var result = (scrollHeight - scrollPosition) / scrollHeight;
+                    if (result <= 0.0005) {
+                        skip += 100;
+                        addRowsNextCortesDeCaja(skip, todos);
+                    }
+                }
+                if ($('#dRowRetiro')[0] !== this.undefined &&
+                    $('#dRowRetiro').attr('data-rows-next') === "1" &&
+                    $('#dRowRetiro').attr('data-charging') === "0" &&
+                    $('#dRowRetiro .bg-row').length % 50 === 0) {
+                        let todos = dRowRetiro.getAttribute('data-retiros');
+                    var scrollHeight = $(document).height();
+                    var scrollPosition = $(window).height() + $(window).scrollTop();
+                    var result = (scrollHeight - scrollPosition) / scrollHeight;
+                    if (result <= 0.0005) {
+                        skip += 100;
+                        addRowsNextRetiros(skip, todos);
+                    }
+                }
+                if ($('#dRowVenta')[0] !== this.undefined &&
+                    $('#dRowVenta').attr('data-rows-next') === "1" &&
+                    $('#dRowVenta').attr('data-charging') === "0" &&
+                    $('#dRowVenta .bg-row').length % 50 === 0) {
+                        let todos = dRowVenta.getAttribute('data-ventas');
+                    var scrollHeight = $(document).height();
+                    var scrollPosition = $(window).height() + $(window).scrollTop();
+                    var result = (scrollHeight - scrollPosition) / scrollHeight;
+                    if (result <= 0.0005) {
+                        skip += 100;
+                        addRowsNextVentas(skip, todos);
+                    }
+                }
                 if ($('#dRowsListBox')[0] !== this.undefined &&
                     $('#dRowsListBox').attr('data-rows-next') === "1" &&
                     $('#dRowsListBox').attr('data-charging') === "0" &&

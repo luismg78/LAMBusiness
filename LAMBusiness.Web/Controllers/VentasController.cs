@@ -6,6 +6,7 @@
 	using LAMBusiness.Contextos;
 	using LAMBusiness.Shared.DTO.Movimiento;
 	using LAMBusiness.Shared.Movimiento;
+	using LAMBusiness.Web.Models.ViewModels;
 	using Microsoft.AspNetCore.Mvc;
 	using Microsoft.AspNetCore.Mvc.ViewFeatures;
 	using Microsoft.EntityFrameworkCore;
@@ -53,18 +54,44 @@
 				return RedirectToAction("Index", "Home");
 			}
 
-			var ventas = _context.Ventas
-				.Include(e => e.Usuarios)
-				.OrderByDescending(e => e.Fecha);
+			var f = DateTime.Now;
+			var fechaInicio = new DateTime(f.Year, f.Month - 1, 1, 0, 0, 0);
+			var fechaFin = new DateTime(f.Year, f.Month, f.Day, 23, 59, 59);
 
-			var filtro = new Filtro<List<Venta>>()
+			var retiros = (from v in _context.Ventas
+						   join u in _context.Usuarios on v.UsuarioID equals u.UsuarioID
+						   where u.AdministradorID != "SA" &&
+								 v.Fecha >= fechaInicio && v.Fecha <= fechaFin &&
+								 (v.VentaCierreID == Guid.Empty || v.VentaCierreID == null)
+						   select new VentasViewModel()
+						   {
+							   VentaID = v.VentaID,
+							   UsuarioID = u.UsuarioID,
+							   Fecha = v.Fecha,
+							   Folio = v.Folio,
+							   Nombre = u.Nombre,
+							   PrimerApellido = u.PrimerApellido,
+							   SegundoApellido = u.SegundoApellido,
+						   });
+
+			var administrador = await EsAdministradorAsync();
+			if (!administrador)
+				retiros = retiros.Where(c => c.UsuarioID == token.UsuarioID);
+
+			var filtro = new Filtro<List<VentasViewModel>>()
 			{
-				Datos = await ventas.Take(50).ToListAsync(),
+				Datos = await retiros.OrderByDescending(q => q.Fecha)
+				.ThenByDescending(u => u.PrimerApellido)
+				.ThenByDescending(u => u.SegundoApellido)
+				.ThenByDescending(u => u.Nombre)
+				.Take(50).ToListAsync(),
 				Patron = "",
+				FechaInicio = fechaInicio,
+				FechaFin = fechaFin,
 				PermisoEscritura = permisosModulo.PermisoEscritura,
 				PermisoImprimir = permisosModulo.PermisoImprimir,
 				PermisoLectura = permisosModulo.PermisoLectura,
-				Registros = await ventas.CountAsync(),
+				Registros = await retiros.CountAsync(),
 				Skip = 0
 			};
 
@@ -72,17 +99,41 @@
 
 		}
 
-		public async Task<IActionResult> _AddRowsNextAsync(Filtro<List<Venta>> filtro)
+		public async Task<IActionResult> _AddRowsNextAsync(Filtro<List<VentasViewModel>> filtro, bool todos)
 		{
-			var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+			var validateToken = await ValidatedToken(_configuration, _getHelper, "contacto");
 			if (validateToken != null) { return null; }
 
 			if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
-			{
 				return null;
-			}
 
-			IQueryable<Venta> query = null;
+			var esAdministrador = await EsAdministradorAsync();
+
+			IQueryable<VentasViewModel> query = (from r in _context.Ventas
+												 join u in _context.Usuarios on r.UsuarioID equals u.UsuarioID
+												 where u.AdministradorID != "SA"
+												 select new VentasViewModel()
+												 {
+													 VentaID = r.VentaID,
+													 UsuarioID = u.UsuarioID,
+													 Fecha = r.Fecha,
+													 Folio = r.Folio,
+													 Nombre = u.Nombre,
+													 PrimerApellido = u.PrimerApellido,
+													 SegundoApellido = u.SegundoApellido,
+												 });
+
+			var fi = filtro.FechaInicio;
+			var ff = filtro.FechaFin;
+			var fechaInicio = new DateTime(fi.Year, fi.Month, fi.Day, 0, 0, 0);
+			var fechaFin = new DateTime(ff.Year, ff.Month, ff.Day, 23, 59, 59);
+
+			query = query.Where(r => r.Fecha >= fechaInicio && r.Fecha <= fechaFin);
+
+			if (!esAdministrador)
+				query = query.Where(c => c.UsuarioID == token.UsuarioID);
+
+
 			if (filtro.Patron != null && filtro.Patron != "")
 			{
 				var words = filtro.Patron.Trim().ToUpper().Split(' ');
@@ -90,35 +141,19 @@
 				{
 					if (w.Trim() != "")
 					{
-						if (query == null)
-						{
-							query = _context.Ventas
-								.Include(e => e.Usuarios)
-								.Where(p => p.Folio.ToString().Contains(w) ||
-											p.Usuarios.Nombre.Contains(w) ||
-											p.Usuarios.PrimerApellido.Contains(w) ||
-											p.Usuarios.SegundoApellido.Contains(w));
-						}
-						else
-						{
-							query = query
-								.Include(e => e.Usuarios)
-								.Where(p => p.Folio.ToString().Contains(w) ||
-											p.Usuarios.Nombre.Contains(w) ||
-											p.Usuarios.PrimerApellido.Contains(w) ||
-											p.Usuarios.SegundoApellido.Contains(w));
-						}
+						query = query.Where(c => c.Nombre.Contains(w) ||
+												 c.PrimerApellido.Contains(w) ||
+												 c.SegundoApellido.Contains(w));
 					}
 				}
-			}
-			if (query == null)
-			{
-				query = _context.Ventas.Include(e => e.Usuarios);
 			}
 
 			filtro.Registros = await query.CountAsync();
 
-			filtro.Datos = await query.OrderByDescending(m => m.Fecha)
+			filtro.Datos = await query.OrderByDescending(q => q.Fecha)
+				.ThenByDescending(u => u.PrimerApellido)
+				.ThenByDescending(u => u.SegundoApellido)
+				.ThenByDescending(u => u.Nombre)
 				.Skip(filtro.Skip)
 				.Take(50)
 				.ToListAsync();
@@ -131,9 +166,108 @@
 			{
 				ViewName = "_AddRowsNextAsync",
 				ViewData = new ViewDataDictionary
-							<Filtro<List<Venta>>>(ViewData, filtro)
+							<Filtro<List<VentasViewModel>>>(ViewData, filtro)
 			};
 		}
+
+		private async Task<bool> EsAdministradorAsync()
+		{
+			return await _context.Usuarios
+				.Where(u => u.UsuarioID == token.UsuarioID && (u.AdministradorID == "SA" || u.AdministradorID == "GA"))
+				.AnyAsync();
+		}
+
+		//public async Task<IActionResult> Index()
+		//{
+		//	var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+		//	if (validateToken != null) { return validateToken; }
+
+		//	if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+		//	{
+		//		return RedirectToAction("Index", "Home");
+		//	}
+
+		//	var ventas = _context.Ventas
+		//		.Include(e => e.Usuarios)
+		//		.OrderByDescending(e => e.Fecha);
+
+		//	var filtro = new Filtro<List<Venta>>()
+		//	{
+		//		Datos = await ventas.Take(50).ToListAsync(),
+		//		Patron = "",
+		//		PermisoEscritura = permisosModulo.PermisoEscritura,
+		//		PermisoImprimir = permisosModulo.PermisoImprimir,
+		//		PermisoLectura = permisosModulo.PermisoLectura,
+		//		Registros = await ventas.CountAsync(),
+		//		Skip = 0
+		//	};
+
+		//	return View(filtro);
+
+		//}
+
+		//public async Task<IActionResult> _AddRowsNextAsync(Filtro<List<Venta>> filtro)
+		//{
+		//	var validateToken = await ValidatedToken(_configuration, _getHelper, "movimiento");
+		//	if (validateToken != null) { return null; }
+
+		//	if (!await ValidateModulePermissions(_getHelper, moduloId, eTipoPermiso.PermisoLectura))
+		//	{
+		//		return null;
+		//	}
+
+		//	IQueryable<Venta> query = null;
+		//	if (filtro.Patron != null && filtro.Patron != "")
+		//	{
+		//		var words = filtro.Patron.Trim().ToUpper().Split(' ');
+		//		foreach (var w in words)
+		//		{
+		//			if (w.Trim() != "")
+		//			{
+		//				if (query == null)
+		//				{
+		//					query = _context.Ventas
+		//						.Include(e => e.Usuarios)
+		//						.Where(p => p.Folio.ToString().Contains(w) ||
+		//									p.Usuarios.Nombre.Contains(w) ||
+		//									p.Usuarios.PrimerApellido.Contains(w) ||
+		//									p.Usuarios.SegundoApellido.Contains(w));
+		//				}
+		//				else
+		//				{
+		//					query = query
+		//						.Include(e => e.Usuarios)
+		//						.Where(p => p.Folio.ToString().Contains(w) ||
+		//									p.Usuarios.Nombre.Contains(w) ||
+		//									p.Usuarios.PrimerApellido.Contains(w) ||
+		//									p.Usuarios.SegundoApellido.Contains(w));
+		//				}
+		//			}
+		//		}
+		//	}
+		//	if (query == null)
+		//	{
+		//		query = _context.Ventas.Include(e => e.Usuarios);
+		//	}
+
+		//	filtro.Registros = await query.CountAsync();
+
+		//	filtro.Datos = await query.OrderByDescending(m => m.Fecha)
+		//		.Skip(filtro.Skip)
+		//		.Take(50)
+		//		.ToListAsync();
+
+		//	filtro.PermisoEscritura = permisosModulo.PermisoEscritura;
+		//	filtro.PermisoImprimir = permisosModulo.PermisoImprimir;
+		//	filtro.PermisoLectura = permisosModulo.PermisoLectura;
+
+		//	return new PartialViewResult
+		//	{
+		//		ViewName = "_AddRowsNextAsync",
+		//		ViewData = new ViewDataDictionary
+		//					<Filtro<List<Venta>>>(ViewData, filtro)
+		//	};
+		//}
 
 		public async Task<IActionResult> Details(Guid? id)
 		{

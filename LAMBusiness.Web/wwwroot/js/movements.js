@@ -13,6 +13,9 @@ let retiroSearchInput = document.getElementById('RetiroSearchInput');
 let retiroTodosButton = document.getElementById('RetiroTodosButton');
 let retiroPendientesButton = document.getElementById('RetiroPendientesButton');
 
+let dRowVenta = document.getElementById('dRowVenta');
+let ventaSearchInput = document.getElementById('VentaSearchInput');
+
 let productoId = $('#ProductoID');
 let cantidad = document.getElementById('Cantidad');
 let precioCosto = document.getElementById('PrecioCosto');
@@ -106,6 +109,45 @@ function addRowsNextRetiros(skip, todos, inicio = false) {
         },
         error: function (r) {
             dRowRetiro.setAttribute('data-charging', "0");
+            removeProcessWithSpinnerInList('SpinListAlmacen', 'fa-search');
+        },
+        cache: false
+    });
+}
+function addRowsNextVentas(skip, todos, inicio = false) {
+    addProcessWithSpinnerInList('SpinListAlmacen', 'fa-search');
+    dRowVenta.setAttribute('data-charging', "1");
+    var searchBy = ventaSearchInput === undefined ? "" : ventaSearchInput.value;
+    var date1 = FechaInicioInput === undefined ? "" : FechaInicioInput.value;
+    var date2 = FechaFinInput === undefined ? "" : FechaFinInput.value;
+
+    $.ajax({
+        url: urlVentas,
+        method: 'POST',
+        datatype: 'text',
+        data: {
+            filtro: {
+                Patron: searchBy,
+                Skip: skip,
+                FechaInicio: date1,
+                FechaFin: date2
+            },
+            todos: todos === '1' ? true : false
+        },
+        success: function (r) {
+            if (inicio) { dRowVenta.innerHTML = ''; }
+            if (r !== null && r.trim() !== '') {
+                dRowVenta.innerHTML += r;
+                dRowVenta.scrollTop -= 100;
+                ventaSearchInput.focus();
+            } else {
+                dRowVenta.setAttribute('data-rows-next', "0");
+            }
+            dRowVenta.setAttribute('data-charging', "0");
+            removeProcessWithSpinnerInList('SpinListAlmacen', 'fa-search');
+        },
+        error: function (r) {
+            dRowVenta.setAttribute('data-charging', "0");
             removeProcessWithSpinnerInList('SpinListAlmacen', 'fa-search');
         },
         cache: false
@@ -209,6 +251,22 @@ function searchRetiros(e) {
         addRowsNextRetiros(skip, todos, true);
     }
 }
+function searchVentas(e) {
+    if (e.keyCode === 13 || e.type === 'click') {
+        e.preventDefault();
+        skip = 0;
+        let todos = dRowVenta.getAttribute('data-ventas');
+        var f = document.getElementById('dfiltro');
+        if (todos === '1') {
+            fechaInicioLabel.innerText = FechaInicioInput.value;
+            fechaFinLabel.innerText = FechaFinInput.value;
+            f.classList.remove('d-none');
+        } else {
+            f.classList.add('d-none');
+        }
+        addRowsNextVentas(skip, todos, true);
+    }
+}
 
 //if (typeof urlAlmacenes !== 'undefined' && urlAlmacenes !== undefined && urlAlmacenes !== null) {
 //    $(almacenId).on('select2:select', function (e) {
@@ -249,7 +307,7 @@ function searchRetiros(e) {
 //    });
 //}
 
-if (typeof $(almacenId) !== 'undefined' && $(almacenId) !== undefined && $(almacenId) !== null) {
+if (typeof $(almacenId) !== 'undefined' && $(almacenId) !== undefined && $(almacenId) !== null && $(almacenId).val() !== undefined) {
     $(almacenId).select2({
         language: "es",
         placeholder: 'Seleccionar almacén',
@@ -322,11 +380,11 @@ if (typeof urlProductos !== 'undefined' && urlProductos !== undefined && urlProd
     });
 }
 if (typeof urlProveedores !== 'undefined' && urlProveedores !== undefined && urlProveedores !== null) {
-    $(proveedorId).on('select2:select', function (e) {
+    $('#ProveedorID').on('select2:select', function (e) {
         var data = e.params.data;
-        $(proveedorID).val(data.id).change();
+        $(proveedorID).val(data.id).trigger('change');
     });
-    $(proveedorId).select2({
+    $('#ProveedorID').select2({
         ajax: {
             url: urlProveedores,
             dataType: 'json',

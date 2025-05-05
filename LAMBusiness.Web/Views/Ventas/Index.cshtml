@@ -1,4 +1,5 @@
-﻿@model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Shared.Movimiento.Venta>>
+﻿@* @model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Shared.Movimiento.Venta>> *@
+@model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Web.Models.ViewModels.VentasViewModel>>
 
 @{
     ViewData["Title"] = "Ventas";
@@ -21,18 +22,54 @@
             <a asp-action="Movimiento" asp-controller="Home" class="btn-close me-md-1" aria-label="Close"></a>
         </div>
     </div>
-    <div class="modal-body py-4 mb-4" data-module="Entradas">
+    <div class="modal-body py-4 mb-4" data-module="Ventas">
         <div class="row px-md-3">
-            <div class="col-12 pr-0 pr-md-3">
+            <div class="col-12 pr-0 pr-md-3 d-inline-flex">
                 <div class="input-group mb-3 search">
-                    <input type="search" id="SearchInput" class="form-control" placeholder="Buscar..." onkeypress="search(event);">
-                    <button class="btn btn-light border" type="button" onclick="search(event);"><i class="fa fa-search"></i></button>
+                    <input type="search" id="VentaSearchInput" class="form-control" placeholder="Buscar..." onkeypress="searchVentas(event);">
+                    <button class="btn btn-light border" type="button" onclick="searchVentas(event);"><i class="fa fa-search"></i></button>
                 </div>
+                <button class="btn btn-light border rounded-circle mb-3 ms-2" data-bs-toggle="modal" data-bs-target="#filtrarFechasModal">
+                    <i class="fas fa-calendar"></i>
+                </button>
             </div>
-        </d
-        iv>
+            <div id="dfiltro" class="col-12">
+                <span class="badge bg-light border text-dark fw-normal">
+                    filtro:
+                    <span id="fechaInicioLabel">@Model.FechaInicio.ToShortDateString()</span> -
+                    <span id="fechaFinLabel">@Model.FechaFin.ToShortDateString()</span>
+                </span>
+            </div>
+        </div>
         <div>
             <partial name="_AddRowsNextAsync" model="Model" />
+        </div>
+    </div>
+    <div>
+        <!-- Modal -->
+        <div class="modal fade" id="filtrarFechasModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Fechas</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label asp-for="FechaInicio" class="control-label">Fecha Inicio</label>
+                            <input asp-for="FechaInicio" type="date" class="form-control" autofocus />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="FechaFin" class="control-label">Fecha Inicio</label>
+                            <input asp-for="FechaFin" type="date" class="form-control" autofocus />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-base" data-bs-dismiss="modal" onclick="searchVentas(event);">Aplicar filtro</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -40,4 +77,16 @@
 @if (Model.PermisoEscritura)
 {
     <partial name="_DeleteConfirmDialog" />
+}
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        let urlVentas = '@Url.Action("_AddRowsNext", "Ventas")';
+    </script>
+    <script src="~/js/movements.js"></script>
 }

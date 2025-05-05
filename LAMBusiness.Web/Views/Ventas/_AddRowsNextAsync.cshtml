@@ -1,8 +1,9 @@
-﻿@model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Shared.Movimiento.Venta>>
+﻿@* @model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Shared.Movimiento.Venta>> *@
+@model LAMBusiness.Shared.Aplicacion.Filtro<List<LAMBusiness.Web.Models.ViewModels.VentasViewModel>>
 
 @if (Model != null)
 {
-    <div id="dRows" data-charging="0" data-rows-next="1">
+    <div id="dRowVenta" data-charging="0" data-rows-next="1" data-ventas="0">
         @if (Model.Skip == 0)
         {
             <div class="row px-md-3">
@@ -21,9 +22,9 @@
                     <div class="border-bottom col-10 col-md-9 p-3">
                         <a asp-action="Details" asp-controller="Usuarios" asp-route-id="@item.UsuarioID" class="text-muted">
                             <span class="text-dark fw-bold">
-                                @Html.DisplayFor(modelItem => item.Usuarios.Nombre)
-                                @Html.DisplayFor(modelItem => item.Usuarios.PrimerApellido)
-                                @Html.DisplayFor(modelItem => item.Usuarios.SegundoApellido)
+                                @Html.DisplayFor(modelItem => item.Nombre)
+                                @Html.DisplayFor(modelItem => item.PrimerApellido)
+                                @Html.DisplayFor(modelItem => item.SegundoApellido)
                             </span>
                         </a>
                         <div class="d-block">
@@ -40,7 +41,7 @@
                         <a asp-action="Details" asp-route-id="@item.VentaID" class="d-block d-md-inline text-decoration-none">
                             <div class="btn-icon rounded-circle" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="bottom" title="ver detalle">
                                 <i class="fa fa-file-alt"></i>
-                            </div>
+                            </div>  
                         </a>
                     </div>
                 </div>
