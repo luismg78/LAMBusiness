@@ -550,7 +550,7 @@
 				var pc = ((p.existencia * p.precioCosto) + (producto.PrecioCosto * existenciaActual));
 
 				if (pc == 0)
-					producto.PrecioCosto = 0;
+					producto.PrecioCosto = p.precioCosto;
 				else
 					producto.PrecioCosto = pc / (p.existencia + existenciaActual);
 				_context.Update(producto);
