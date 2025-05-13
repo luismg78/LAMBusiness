@@ -55,14 +55,14 @@
 			}
 
 			var f = DateTime.Now;
-			var fechaInicio = new DateTime(f.Year, f.Month - 1, 1, 0, 0, 0);
+			var fechaInicio = new DateTime(f.Year, f.Month, f.Day, 0, 0, 0);
 			var fechaFin = new DateTime(f.Year, f.Month, f.Day, 23, 59, 59);
 
 			var retiros = (from v in _context.Ventas
 						   join u in _context.Usuarios on v.UsuarioID equals u.UsuarioID
-						   where u.AdministradorID != "SA" &&
-								 v.Fecha >= fechaInicio && v.Fecha <= fechaFin &&
-								 (v.VentaCierreID == Guid.Empty || v.VentaCierreID == null)
+						   where u.AdministradorID != "SA" 
+						      && v.Fecha >= fechaInicio && v.Fecha <= fechaFin 
+								 //&& (v.VentaCierreID == Guid.Empty || v.VentaCierreID == null)
 						   select new VentasViewModel()
 						   {
 							   VentaID = v.VentaID,

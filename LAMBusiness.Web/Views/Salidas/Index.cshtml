@@ -23,17 +23,26 @@
     </div>
     <div class="modal-body py-4 mb-4" data-module="Salidas">
         <div class="row px-md-3">
-            <div class="col-9 col-md-8 pr-0 pr-md-3">
+            <div class="col-9 col-md-6 pr-0 pr-md-3">
                 <div class="input-group mb-3 search">
                     <input type="search" id="SearchInput" class="form-control" placeholder="Buscar..." onkeypress="search(event);">
                     <button class="btn btn-light border" type="button" onclick="search(event);"><i class="fa fa-search"></i></button>
                 </div>
             </div>
-            <div class="col-3 col-md-4 text-end">
-                @if (Model.PermisoEscritura)
-                {
-                    <p><a asp-action="Create" class="btn btn-base"><i class="fas fa-plus"></i><span class="d-none d-md-inline-block ms-2">Nuevo Registro</span></a></p>
-                }
+            <div class="col-3 col-md-6 text-end">
+                <div class="d-flex justify-content-end align-items-center">
+                    <select asp-for="TipoDeMovimiento" class="btn btn-base" onchange="buscarRegistros();">
+                        <option value="0">Todos</option>
+                        <option value="1">Aplicados</option>
+                        <option value="2">No Aplicados</option>
+                    </select>
+                    @if (Model.PermisoEscritura)
+                    {
+                        <a asp-action="Create" class="btn btn-base ms-1">
+                            <i class="fas fa-plus"></i><span class="d-none d-md-inline-block ms-2">Nuevo Registro</span>
+                        </a>
+                    }
+                </div>
             </div>
         </div>
         <div>

@@ -12,6 +12,7 @@ namespace LAMBusiness.Shared.Aplicacion
         public bool PermisoLectura { get; set; }
         public bool PermisoEscritura { get; set; }
         public bool PermisoImprimir { get; set; }
+        public int TipoDeMovimiento { get; set; }
     }
     public class Filtro<T>: Filtro
     {

@@ -229,6 +229,11 @@
 
             $('#dRows').attr('data-charging', "1");
             var searchBy = $('#SearchInput')[0] === undefined ? "" : $('#SearchInput').val();
+             let tipoDeMovimiento = document.getElementById('TipoDeMovimiento');
+            let tm = 0;
+            if(typeof tipoDeMovimiento !== 'undefined'){
+                tm = parseInt(tipoDeMovimiento.value);
+            }
 
             $.ajax({
                 url: url,
@@ -237,7 +242,8 @@
                 data: {
                     filtro: {
                         Patron: searchBy,
-                        Skip: skip
+                        Skip: skip,
+                        TipoDeMovimiento: tm
                     }
                 },
                 success: function (r) {
@@ -314,20 +320,24 @@
         }
         function search(e) {
             if (e.keyCode === 13 || e.which === 1) {
-                skip = 0;
-                $('#dRows').attr('data-rows-next', "1");
-                var searchBy = $('#SearchInput')[0] === undefined ? "" : $('#SearchInput').val();
-                filter = {
-                    Patron: searchBy,
-                    Skip: skip
-                };
-                //filter = {
-                //    Patron: searchBy,
-                //    Skip: skip,
-                //    ...filter2
-                //};
-                addRowsNext(skip, true);
+                buscarRegistros();
             }
+        }
+        function buscarRegistros(){
+            skip = 0;
+            $('#dRows').attr('data-rows-next', "1");
+            var searchBy = $('#SearchInput')[0] === undefined ? "" : $('#SearchInput').val();
+           
+            filter = {
+                Patron: searchBy,
+                Skip: skip
+            };
+            //filter = {
+            //    Patron: searchBy,
+            //    Skip: skip,
+            //    ...filter2
+            //};
+            addRowsNext(skip, true);
         }
     </script>
 </body>

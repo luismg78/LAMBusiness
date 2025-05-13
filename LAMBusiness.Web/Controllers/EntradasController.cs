@@ -108,16 +108,27 @@
 					}
 				}
 			}
-			if (query == null)
+
+			query ??= _context.Entradas.Include(e => e.Proveedores);
+
+			if (filtro.TipoDeMovimiento > 0)
 			{
-				query = _context.Entradas.Include(e => e.Proveedores);
+				switch (filtro.TipoDeMovimiento)
+				{
+					case 1: //aplicados
+						query = query.Where(e => e.Aplicado == true);
+						break;
+					case 2: //no aplicados
+						query = query.Where(e => e.Aplicado == false);
+						break;
+				}
 			}
 
 			filtro.Registros = await query.CountAsync();
 
 			filtro.Datos = await query.OrderByDescending(m => m.FechaActualizacion)
 				.Skip(filtro.Skip)
-				.Take(50)
+				.Take(100)
 				.ToListAsync();
 
 			filtro.PermisoEscritura = permisosModulo.PermisoEscritura;
@@ -128,7 +139,7 @@
 			{
 				ViewName = "_AddRowsNextAsync",
 				ViewData = new ViewDataDictionary
-							<Filtro<List<Venta>>>(ViewData, filtro)
+							<Filtro<List<Entrada>>>(ViewData, filtro)
 			};
 		}
 
