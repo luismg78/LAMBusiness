@@ -231,7 +231,7 @@
             var searchBy = $('#SearchInput')[0] === undefined ? "" : $('#SearchInput').val();
              let tipoDeMovimiento = document.getElementById('TipoDeMovimiento');
             let tm = 0;
-            if(typeof tipoDeMovimiento !== 'undefined'){
+            if(typeof tipoDeMovimiento !== 'undefined' && tipoDeMovimiento !== null){
                 tm = parseInt(tipoDeMovimiento.value);
             }
 
